@@ -1,0 +1,24 @@
+<!--
+ Author: Edgar Butwilowski
+ Copyright (c) Vermessungsamt Winterthur. All rights reserved.
+-->
+<div style="margin:3em;">
+    <form class="signin-form" #loginForm="ngForm" (ngSubmit)="loginUser(loginForm)">
+        <div>
+            <h2>Anmeldung</h2>
+            <div *ngIf="loginInvalid" class="error_message">Benutzername oder Passphrase ung&uuml;ltig.</div>
+            <br />
+            <mat-form-field>
+                <input matInput type="text" id="loginname" name="loginname" ngModel placeholder="Benutzername"
+                required autofocus />
+            </mat-form-field>
+            <br />
+            <mat-form-field>
+                <input matInput type="password" id="password" name="password" ngModel placeholder="Passphrase"
+                required />
+            </mat-form-field>
+            <br />
+            <button mat-button class="login_button" type="submit">LOGIN</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,22 @@
+<div style="margin: 2em;">
+    <h1>Dashboard</h1>
+    <div fxLayout="row wrap padding">
+        <mat-card class="maincard mat-elevation-z0" fxFlex.xs="100" fxFlex="33" fxFlex.md="33" fxFlex.sm="50"
+            style="padding: 2em;">
+            <mat-card-header style="min-width: 400px;">
+                <mat-card-title>Neue Bauprojekte der letzten Monate</mat-card-title>
+                <mat-card-subtitle>Zeitraum: Letzte 5 Monate<br />
+                    &Uuml;ber die gesamte Stadt</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content style="min-width: 400px;">
+                <div class="chartjs-container">
+                    <canvas baseChart [datasets]="chart3.chartData" [labels]="chart3.chartLabels"
+                        [options]="chart3.chartOptions" [colors]="chart3.chartColors" [legend]="chart3.chartLegend"
+                        [chartType]="chart3ChartType" [plugins]="chart3.chartPlugins">
+                    </canvas>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>

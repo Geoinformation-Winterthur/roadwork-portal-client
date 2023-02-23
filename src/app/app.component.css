@@ -1,0 +1,68 @@
+#mainbox {
+    height: 100%;
+}
+
+mat-toolbar {
+    background-color: white;
+    color:rgb(55,62,68);
+}
+.burger_button{
+    color: red;    
+}
+.logo_title {
+    text-decoration: none;
+    font-style: bold;
+    font-size: 120%;
+}
+.logo_subtitle {
+    text-decoration: none;
+    font-weight: lighter;
+    font-size: 80%;
+}
+.main_logo {
+    height: 70%;
+}
+.chip-initials {
+    border: 2px solid;
+    border-color: red;
+    background-color: white;
+}
+.align-right-spacer {
+    flex: 1 1 auto;
+}
+
+.login_button {
+    color: rgb(255,25,0);
+    background-color: rgb(236,236,234);
+}
+
+mat-sidenav-container {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+}
+mat-sidenav-content {
+    height:100%;
+    background-color: white;
+}
+
+mat-nav-list {
+    background-color: rgb(55,62,68);
+    color: white;
+    padding: 1.5em;
+}
+mat-nav-list a {
+    color: white;
+}
+
+@media print {
+    mat-sidenav-container {
+        position: relative !important;
+    }
+    mat-sidenav {
+        display: none;
+    }
+    mat-sidenav-content {
+        margin: 0 !important;
+    }
+}

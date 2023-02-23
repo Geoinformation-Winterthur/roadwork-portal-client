@@ -1,0 +1,15 @@
+.send_button {
+    padding:30px;
+    display: block;
+    border: 1px solid;
+}
+
+.green_button {
+    background-color:lightgreen;
+    border-color: rgba(0,75,54,1);
+}
+
+.red_button {
+    background-color:rgb(253, 239, 239);
+    border-color: rgb(248, 106, 106);
+}

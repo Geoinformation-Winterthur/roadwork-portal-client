@@ -1,0 +1,74 @@
+<!--
+ Author: Edgar Butwilowski
+ Copyright (c) Vermessungsamt Winterthur. All rights reserved.
+-->
+<div id="mainbox">
+  <mat-toolbar>
+      <mat-toolbar-row>
+          <button mat-icon-button (click)="toggleSideNav($event)" class="burger_button"
+                  aria-label="Button to toggle side navigartion menu">
+              <mat-icon aria-hidden="true">menu</mat-icon>
+          </button>&nbsp;&nbsp;&nbsp;
+          <span>
+              <span *ngIf="isSideNavDisableClose" class="logo_title">{{title}}</span>
+              <span *ngIf="!isSideNavDisableClose" class="logo_title">{{shorttitle}}</span>
+          </span>&nbsp;&nbsp;
+          <span *ngIf="isSideNavDisableClose" class="logo_subtitle">{{subtitle}}</span>
+          <span class="align-right-spacer"></span>
+          <img *ngIf="isSideNavDisableClose" alt="Logo Stadt Winterthur"
+                  src="assets/win_logo.svg" width="147" height="72" class="main_logo">&nbsp;&nbsp;&nbsp;&nbsp;
+          <span *ngIf="!isUserLoggedIn()">
+              <button mat-button class="login_button" routerLink='/login'>
+                  <mat-icon aria-hidden="true">login</mat-icon><span *ngIf="isSideNavDisableClose" i18n>&nbsp;Login</span>
+              </button>
+          </span>
+          <span *ngIf="isUserLoggedIn()">
+              <mat-chip-list aria-label="Menu button with user initials">
+                  <mat-chip class="chip-initials" [matMenuTriggerFor]="rightmenu">
+                      {{ userService.getLocalUser().initials }}
+                  </mat-chip>
+              </mat-chip-list>
+              <mat-menu #rightmenu="matMenu">
+                  <mat-form-field appearance="fill">
+                      <mat-label>Sprache</mat-label>
+                      <mat-select value="deutsch" required>
+                        <mat-option value="deutsch" selected>
+                          Deutsch
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  <button routerLink='/' (click)="logUserOut($event)" mat-menu-item>
+                      <mat-icon aria-label="Logout" >logout</mat-icon>&nbsp;<span i18n>Logout</span>
+                  </button>
+              </mat-menu>
+          </span>
+      </mat-toolbar-row>
+  </mat-toolbar>
+  <mat-sidenav-container>
+      <mat-sidenav [(opened)]="sideNavOpened" #drawer [mode]="sideNavMode" role="navigation">
+          <mat-nav-list>
+              <a mat-list-item routerLink='/' (click)="toggleSideNav($event)">
+                  <mat-icon aria-label="Willkommen">speaker_notes</mat-icon>&nbsp;<span i18n>Willkommen</span>
+              </a>
+              <div *ngIf="isUserLoggedIn()">
+                  <a mat-list-item routerLink='/report' (click)="toggleSideNav($event)">
+                      <mat-icon aria-label="Dashboard">analytics</mat-icon>&nbsp;<span i18n>Dashboard</span>
+                  </a>
+                  <a mat-list-item routerLink='/chooseproject' (click)="toggleSideNav($event)">
+                      <mat-icon aria-label="Bauprojekte">engineering</mat-icon>&nbsp;<span i18n>Bauprojekte</span>
+                  </a>
+                  <a mat-list-item routerLink='/users' *ngIf="userService.getLocalUser().role === 'administrator'"
+                                (click)="toggleSideNav($event)">
+                      <mat-icon aria-label="Benutzer">account_box</mat-icon>&nbsp;<span i18n>Benutzer</span>
+                  </a>
+              </div>
+              <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="toggleSideNav($event)">
+                  <mat-icon aria-label="Impressum">star_border</mat-icon>&nbsp;<span i18n>Impressum</span>
+              </a>
+          </mat-nav-list>
+      </mat-sidenav>
+      <mat-sidenav-content>
+          <router-outlet></router-outlet>
+      </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
