@@ -1,1 +1,35 @@
-<p>user works!</p>
+<div style="margin: 2em;">
+    <h1>Benutzerdaten</h1>
+    <mat-form-field>
+        <input matInput [(ngModel)]="user.lastName" type="text" placeholder="Nachname" required>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+        <input matInput [(ngModel)]="user.firstName" type="text" placeholder="Vorname" required>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+        <input matInput [(ngModel)]="user.mailAddress" type="text" placeholder="E-Mail-Adresse" required>
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+        <input matInput [(ngModel)]="user.passPhrase" type="text" placeholder="Passphrase" type="password" required>
+    </mat-form-field>
+    <br />
+    <mat-form-field appearance="fill">
+        <mat-label>Rolle</mat-label>
+        <mat-select [(ngModel)]="user.role" required>
+            <mat-option value="administrator">Administrator</mat-option>
+            <mat-option value="territorymanager">Gebietsmanager</mat-option>
+            <mat-option value="orderer">Besteller</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-checkbox [(ngModel)]="activeCheckBox" style="margin:10px;">Aktiv</mat-checkbox>
+    <div *ngIf="!userExists">
+        <button mat-button (click)="addUser()" style="background-color: aqua;margin:1em;">BENUTZER ANLEGEN</button>
+    </div>
+    <div *ngIf="userExists">
+        <button mat-button style="background-color: aqua;margin:1em;">NUTZERDATEN &Auml;NDERN</button>
+        <button mat-button style="background-color: rgb(251, 197, 197);margin:1em;">BENUTZER L&Ouml;SCHEN</button>
+    </div>
+</div>

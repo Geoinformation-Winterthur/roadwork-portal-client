@@ -1,0 +1,109 @@
+<div style="margin:2em;">
+    <div *ngIf="roadWorkProjectFeature === undefined">
+        <p style="color: red;">Das Bauprojekt konnte nicht geladen werden.</p>
+    </div>
+    <div *ngIf="roadWorkProjectFeature !== undefined">
+        <h1>Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
+        <mat-tab-group>
+            <mat-tab label="Hauptattribute">
+                <div fxLayout="row wrap padding">
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Hauptattribute</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-chip-list *ngIf="userService.getLocalUser().role !== 'territorymanager'">
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'not_coordinated'"
+                                        class="chip-not-coordinated">Nicht koordiniert</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'coordinated'"
+                                        class="chip-coordinated">koordiniert</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.priority === 'high'"
+                                        class="chip-not-coordinated">Hohe Priorit&auml;t</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.priority=== 'low'"
+                                        class="chip-coordinated">Nierige Priorit&auml;t</mat-chip>
+                                </mat-chip-list>
+                                <mat-form-field  *ngIf="userService.getLocalUser().role === 'territorymanager'">
+                                    <input matInput type="text" placeholder="Status">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="ID" [formControl]="playDeviceOid" readonly>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Ort/Objekt" [formControl]="nameControl"
+                                        (focusout)="storeInDb()" required>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Projekt" [formControl]="passphrase"
+                                        required>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Personen</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Projektbetreuung" [formControl]="username"
+                                        required>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Projektleitung (Bau)">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput [formControl]="passphrase" placeholder="Sachbearbeiter (Verkehr)">
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Realisierung</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Realisierung von</mat-label>
+                                    <input matInput [matDatepicker]="datumsWahl">
+                                    <mat-datepicker #datumsWahl></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="datumsWahl"></mat-datepicker-toggle>
+                                </mat-form-field>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Realisierung bis</mat-label>
+                                    <input matInput [matDatepicker]="datumsWahl2">
+                                    <mat-datepicker #datumsWahl2></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="datumsWahl2"></mat-datepicker-toggle>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Zeit von">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" placeholder="Zeit bis">
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Einstufung</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-checkbox [(ngModel)]="pressCheckBox" style="margin:10px;">Presse</mat-checkbox>
+                                <mat-checkbox [(ngModel)]="internetCheckBox" style="margin:10px;">Internet
+                                </mat-checkbox>
+                                <mat-checkbox [(ngModel)]="civilEngineeringCheckBox" style="margin:10px;">
+                                    Tiefbaurelevant</mat-checkbox>
+                                <mat-checkbox [(ngModel)]="lightSignalCheckBox" style="margin:10px;">Lichtsignal
+                                </mat-checkbox>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+            <mat-tab label="Lage">
+            </mat-tab>
+            <mat-tab label="Vernehmlassung" *ngIf="roadWorkProjectFeature.properties.status === 'coordinated'">
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

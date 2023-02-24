@@ -110,9 +110,21 @@ export class UserService implements CanActivate {
     return resultUser;
   }
 
+  getUser(email: string): Observable<User[]> {
+    let result: Observable<User[]> =
+      this.http.get(environment.apiUrl + "/account/users/?email=" + email) as Observable<User[]>;
+    return result;
+  }
+
+  addUser(user: User): Observable<any> {
+    let result: Observable<any> =
+      this.http.post(environment.apiUrl + "/account/users/", user) as Observable<any>;
+    return result;
+  }
+
   getAllUsers(): Observable<User[]> {
     let result: Observable<User[]> =
-      this.http.get(environment.apiUrl + "/account/getallusers") as Observable<User[]>;
+      this.http.get(environment.apiUrl + "/account/users/") as Observable<User[]>;
     return result;
   }
 

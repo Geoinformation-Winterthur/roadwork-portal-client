@@ -1,4 +1,4 @@
-export class ConstructionProjectPart {
+export class RoadWorkProjectPart {
     id: number = -1;
     name: string = "";
 }

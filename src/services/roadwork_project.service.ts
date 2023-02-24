@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ConstructionProjectFeature } from '../model/construction-project-feature';
+import { RoadWorkProjectFeature } from '../model/road-work-project-feature';
 import { environment } from 'src/environments/environment';
 
 
@@ -22,21 +22,21 @@ export class RoadWorkProjectService {
     return result;
   }
 
-   getConstructionProjectsSummaries(): Observable<ConstructionProjectFeature[]> {
-     let result: Observable<ConstructionProjectFeature[]> =
-           this.http.get(environment.apiUrl + "/constructionproject/summaries") as Observable<ConstructionProjectFeature[]>;
+   getConstructionProjectsSummaries(): Observable<RoadWorkProjectFeature[]> {
+     let result: Observable<RoadWorkProjectFeature[]> =
+           this.http.get(environment.apiUrl + "/roadworkproject/summaries") as Observable<RoadWorkProjectFeature[]>;
      return result;
    }
 
-   getConstructionProjectById(id : number): Observable<ConstructionProjectFeature> {
-    let result: Observable<ConstructionProjectFeature> = 
-              this.http.get(environment.apiUrl + "/constructionproject/byid?id=" + id) as Observable<ConstructionProjectFeature>;
+   getConstructionProjectById(id : number): Observable<RoadWorkProjectFeature> {
+    let result: Observable<RoadWorkProjectFeature> = 
+              this.http.get(environment.apiUrl + "/constructionproject/byid?id=" + id) as Observable<RoadWorkProjectFeature>;
     return result;
   }
 
-  getConstructionProjectByPlace(name : string): Observable<ConstructionProjectFeature> {
-    let result: Observable<ConstructionProjectFeature> = 
-              this.http.get(environment.apiUrl + "/constructionproject/byplace?place=" + name) as Observable<ConstructionProjectFeature>;
+  getConstructionProjectByPlace(name : string): Observable<RoadWorkProjectFeature> {
+    let result: Observable<RoadWorkProjectFeature> = 
+              this.http.get(environment.apiUrl + "/constructionproject/byplace?place=" + name) as Observable<RoadWorkProjectFeature>;
     return result;
   }
 
@@ -46,9 +46,9 @@ export class RoadWorkProjectService {
     return result;
   }
 
-  postRoadworkProject(roadworkProject : ConstructionProjectFeature): Observable<any> {
+  postRoadworkProject(roadworkProject : RoadWorkProjectFeature): Observable<any> {
     let result: Observable<any> = 
-          this.http.post<ConstructionProjectFeature>(environment.apiUrl + "/constructionproject/", roadworkProject);
+          this.http.post<RoadWorkProjectFeature>(environment.apiUrl + "/constructionproject/", roadworkProject);
     return result;
   }
 

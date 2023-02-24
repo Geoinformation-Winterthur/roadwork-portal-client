@@ -2,6 +2,81 @@
  Author: Edgar Butwilowski
  Copyright (c) Vermessungsamt Winterthur. All rights reserved.
 -->
-<div class="choose_device_main_div">
-    <h1 style="font-weight: lighter;text-transform: uppercase;">Auswahl Bauprojekt</h1>
-</div>
+<div style="margin: 2em;">
+    <h1>Bauprojekte des Tiefbauamts<span *ngIf="chosenYear"> im Jahr {{chosenYear}}</span></h1>
+    <div class="fab-button-container">
+      <button mat-fab style="background-color: rgb(133, 99, 212);" class="fab-button">
+        <mat-icon aria-label="+">add</mat-icon>
+      </button>
+    </div>
+    <div style="margin-bottom: 2em;">
+      <mat-accordion>
+        <mat-expansion-panel id="expansionPanel1" (opened)="filterPanelOpen = true" (closed)="filterPanelOpen = false"
+          style="margin-bottom:2em;">
+          <mat-expansion-panel-header>
+            <mat-panel-title>Filter</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div fxLayout="row wrap padding">
+            <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+              fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+              <mat-card-content>
+                <div style="display:flex;flex-direction:column;">
+                  <app-project-name-filter></app-project-name-filter>
+                </div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+              fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+              <mat-card-content>
+                <div style="display:flex;flex-direction:column;">
+                  <app-project-year-filter></app-project-year-filter>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <mat-divider></mat-divider>
+    </div>
+    <div fxLayout="row wrap padding">
+      <mat-card class="maincard mat-elevation-z2" *ngFor="let constructionProject of roadWorkProjectFeaturesFiltered"
+        fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
+        <mat-card-header style="margin: 0.5em;">
+          <mat-card-title>{{ constructionProject.properties.place }}</mat-card-title>
+          <mat-card-subtitle>{{ constructionProject.properties.area }}</mat-card-subtitle>
+        </mat-card-header>
+        <div class="crosshair-frame" style="width: 100%;">
+          <img mat-card-image class="map-img"
+            src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ constructionProject.geometry.coordinates[0] - 10 }},{{ constructionProject.geometry.coordinates[1] - 5 }},{{ constructionProject.geometry.coordinates[0] + 10 }},{{ constructionProject.geometry.coordinates[1] + 5 }}&WIDTH=800&HEIGHT=400">
+        </div>
+        <mat-card-content style="margin: 0.5em;">
+          <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />
+          <a
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ constructionProject.geometry.coordinates[0] }}&y={{ constructionProject.geometry.coordinates[1] }}&back=Hintergrundkarte_LK_AV_Situationsplan">
+            Zeige im Stadtplan Winterthur</a>
+          <br />
+          <br />
+          <a
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ constructionProject.geometry.coordinates[0] }}&y={{ constructionProject.geometry.coordinates[1] }}&back=Hintergrundkarte_LK_AV_Situationsplan">
+            Zeige im WinWebGIS</a>
+          <br />
+          <br />
+          <mat-chip-list>
+            <mat-chip class="chip-done">Bis: {{ constructionProject.properties.realizationUntil | date:"dd.MM.yyyy" }}
+            </mat-chip>
+              <mat-chip *ngIf="constructionProject.properties.status === 'not_coordinated'"
+                  class="chip-not-coordinated">Nicht koordiniert</mat-chip>
+              <mat-chip *ngIf="constructionProject.properties.status === 'coordinated'"
+                  class="chip-coordinated">koordiniert</mat-chip>
+          </mat-chip-list>
+          {{constructionProject.properties.id}}
+          <br />
+        </mat-card-content>
+        <mat-divider></mat-divider>
+        <mat-card-actions style="margin: 0.5em;">
+          <button style="background-color: rgb(42,127,103); color: white;margin-top: 1em;" mat-button
+            [routerLink]="['/projectattributes', constructionProject.properties.id]">BEARBEITEN</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>

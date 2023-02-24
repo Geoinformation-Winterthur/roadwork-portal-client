@@ -15,6 +15,7 @@
  import { MatTableModule } from '@angular/material/table';
  import { MatCardModule } from '@angular/material/card';
  import { MatSnackBarModule } from '@angular/material/snack-bar';
+ import { MatSliderModule } from '@angular/material/slider';
  import { MatTooltipModule } from '@angular/material/tooltip';
  import { MatMenuModule } from '@angular/material/menu';
  import { MatChipsModule } from '@angular/material/chips';
@@ -47,6 +48,9 @@ import { UsersComponent } from "./users/users.component";
  import { ChartsModule } from 'ng2-charts';
  import { UserService } from 'src/services/user.service';
 import { UserComponent } from './user/user.component';
+import { ProjectNameFilterComponent } from './project-name-filter/project-name-filter.component';
+import { ProjectYearFilterComponent } from './project-year-filter/project-year-filter.component';
+import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
  
  
  export function getToken(){
@@ -67,7 +71,10 @@ import { UserComponent } from './user/user.component';
      UsersComponent,
      LoginComponent,
      ChooseProjectComponent,
-     UserComponent
+     UserComponent,
+     ProjectNameFilterComponent,
+     ProjectYearFilterComponent,
+     ProjectAttributesComponent
    ],
    imports: [
      BrowserModule,
@@ -82,6 +89,7 @@ import { UserComponent } from './user/user.component';
      MatTooltipModule,
      MatMenuModule,
      MatChipsModule,
+     MatSliderModule,
      MatFormFieldModule,
      MatInputModule,
      MatCheckboxModule,

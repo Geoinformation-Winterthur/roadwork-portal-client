@@ -9,13 +9,17 @@ import { UsersComponent } from "./users/users.component";
  import { WelcomeComponent } from './welcome/welcome.component';
  import { LoginComponent } from './login/login.component';
  import { ChooseProjectComponent } from './choose-project/choose-project.component';
+ import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
  import { UserService } from 'src/services/user.service';
+import { UserComponent } from './user/user.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
    {path: 'report', component: ReportComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'chooseproject', component: ChooseProjectComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'projectattributes/:id', component: ProjectAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'user/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'login', component: LoginComponent, pathMatch: 'full'}
  ];
  

@@ -4,11 +4,15 @@
 -->
 <div style="margin: 2em;">
     <h1>Benutzerverwaltung</h1>
+    <div class="fab-button-container">
+      <button mat-fab [routerLink]="['/user', '']"
+          style="background-color: rgb(133, 99, 212);" class="fab-button">
+        <mat-icon aria-label="+">add</mat-icon>
+      </button>
+    </div>
     <p>Hier k&ouml;nnen Sie Benutzer dieses Systems hinzuf&uuml;gen, entfernen oder bearbeiten.</p>
     <p *ngIf="responseMessage !== null" style="color: red;">{{ responseMessage }}</p>
-    <button mat-button [routerLink]="['/user', '']"
-         style="margin-bottom: 2em;background-color:rgb(173, 210, 245)">BENUTZER HINZUF&Uuml;GEN</button>
-    
+
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
   
       <ng-container matColumnDef="lastName">

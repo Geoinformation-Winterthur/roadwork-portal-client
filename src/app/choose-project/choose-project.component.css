@@ -3,18 +3,39 @@
     margin: 0.5em;
 }
 
-.choose_device_main_div {
-    margin: 2em;
+.chip-done {
+    background-color: lightgreen;
 }
 
-.choose_device_info {
-    padding: 0.5em;color: blue;
-    background-color: rgb(231, 239, 255);
-    border: 1px solid;
+.crosshair-frame {
+    margin-top: 1em;
+    position: relative;
+    height: 175px;
 }
 
-.choose_device_error {
-    color: red;
-    background-color: rgb(255, 245, 245);
-    border: solid; padding: 0.5em;
+.map-img, .crosshair-img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 109%;
+    height: 100%;
+}
+
+.crosshair-img {
+    width: 90%;
+    height: 90%;
+}
+
+.fab-button-container {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    z-index: 100;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;  
+}
+
+mat-slider {
+    width: 300px;
 }
