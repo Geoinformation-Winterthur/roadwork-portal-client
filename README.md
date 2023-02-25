@@ -15,11 +15,11 @@ Run `ng generate component component-name` to generate a new component. You can 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 Example command to build for production environment (DO NOT USE THIS WITH GIT BASH):
-`ng build --baseHref=/tiefbau/roadworks-portal/ --configuration production --aot --outputHashing=all`
+`ng build --baseHref=/civil-engineering/roadworks-portal/ --configuration production --aot --outputHashing=all`
 => Before this command: INCREMENT VERSION NUMBER in package.json, package-lock.json and welcome.component.ts.
 
 Example command to build for test environment (DO NOT USE THIS WITH GIT BASH):
-`ng build --baseHref=/tiefbau/roadworks-portal/ --configuration test --aot --outputHashing=all`
+`ng build --baseHref=/civil-engineering/roadworks-portal/ --configuration test --aot --outputHashing=all`
 
 ## Running unit tests
 

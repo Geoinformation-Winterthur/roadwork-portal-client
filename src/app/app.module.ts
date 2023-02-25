@@ -51,6 +51,7 @@ import { UserComponent } from './user/user.component';
 import { ProjectNameFilterComponent } from './project-name-filter/project-name-filter.component';
 import { ProjectYearFilterComponent } from './project-year-filter/project-year-filter.component';
 import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
+import { EditProjectMapComponent } from './edit-project-map/edit-project-map.component';
  
  
  export function getToken(){
@@ -74,7 +75,8 @@ import { ProjectAttributesComponent } from './project-attributes/project-attribu
      UserComponent,
      ProjectNameFilterComponent,
      ProjectYearFilterComponent,
-     ProjectAttributesComponent
+     ProjectAttributesComponent,
+     EditProjectMapComponent
    ],
    imports: [
      BrowserModule,
