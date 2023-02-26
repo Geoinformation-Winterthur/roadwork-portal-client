@@ -14,8 +14,6 @@ import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { register } from 'ol/proj/proj4';
 import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
 import proj4 from 'proj4';
@@ -35,28 +33,23 @@ export class EditProjectMapComponent implements OnInit {
   loadSource: VectorSource = new VectorSource();
 
   private roadWorkProjectService: RoadWorkProjectService;
-  private activatedRoute: ActivatedRoute;
   private snackBar: MatSnackBar
 
-  public constructor(activatedRoute: ActivatedRoute, snackBar: MatSnackBar,
+  public constructor(snackBar: MatSnackBar,
     roadWorkProjectService: RoadWorkProjectService) {
     this.roadWorkProjectService = roadWorkProjectService
-    this.activatedRoute = activatedRoute;
     this.snackBar = snackBar;
   }
 
   ngOnInit() {
-    this.activatedRoute.params
-      .subscribe(params => {
-        let constProjId: number = parseInt(params['id']);
-        this.constructionProjectId = constProjId;
-      }, error => {
-      });
+  }
 
+  ngAfterViewInit() {
     proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
     register(proj4);
     this.initializeMap();
   }
+
 
   initializeMap() {
 
@@ -185,17 +178,19 @@ export class EditProjectMapComponent implements OnInit {
     geom2.transform('EPSG:3857', "EPSG:2056");
     this.roadWorkProjectService
       .postGeometry(this.constructionProjectId, geom2.getFlatCoordinates())
-      .subscribe(
-        success => {
+      .subscribe({
+        next: (success) => {
           this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
             duration: 4000,
           });
           this.loadGeometry(false);
-        }, error => {
+        },
+        error: (error) => {
           this.snackBar.open("Baustellengeometrie konnte NICHT gespeichert werden", "", {
             duration: 4000,
           });
-        });
+        }
+      });
 
   }
 
@@ -212,6 +207,11 @@ export class EditProjectMapComponent implements OnInit {
     view.fit(polyExtent);
 
     this.map.setView(view);
+  }
+
+  refresh(){
+    this.map.getLayers().changed();
+    alert("did the refresh");
   }
 
 }

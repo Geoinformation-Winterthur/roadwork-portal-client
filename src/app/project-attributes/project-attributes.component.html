@@ -5,6 +5,9 @@
     <div *ngIf="roadWorkProjectFeature !== undefined">
         <h1>Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
         <mat-tab-group>
+            <mat-tab label="Lage">
+                <app-edit-project-map></app-edit-project-map>
+            </mat-tab>
             <mat-tab label="Hauptattribute">
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
@@ -30,7 +33,7 @@
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="text" placeholder="Ort/Objekt" [formControl]="nameControl"
-                                        (focusout)="storeInDb()" required>
+                                            required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="text" placeholder="Projekt" [formControl]="passphrase"
@@ -99,9 +102,6 @@
                         </mat-card-content>
                     </mat-card>
                 </div>
-            </mat-tab>
-            <mat-tab label="Lage">
-                <app-edit-project-map></app-edit-project-map>
             </mat-tab>
             <mat-tab label="Vernehmlassung" *ngIf="roadWorkProjectFeature.properties.status === 'coordinated'">
             </mat-tab>

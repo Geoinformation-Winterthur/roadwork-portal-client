@@ -54,7 +54,7 @@ export class RoadWorkProjectService {
 
   postGeometry(projectId: number, coordinates: number[]): Observable<any> {
     let result: Observable<any> = 
-          this.http.post<number[]>(environment.apiUrl + "/constructionproject/geometry?projectid=" + projectId, coordinates);
+          this.http.post<number[]>(environment.apiUrl + "/roadworkproject/?projectid=" + projectId, coordinates);
     return result;
   }
 

@@ -5,6 +5,10 @@ import { Subscription } from 'rxjs';
 import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
+import Map from 'ol/Map';
+import Tile from 'ol/layer/Tile';
+import View from 'ol/View';
+import TileWMS from 'ol/source/TileWMS';
 
 @Component({
   selector: 'app-project-attributes',
@@ -69,9 +73,6 @@ export class ProjectAttributesComponent implements OnInit {
             this.isConstructionProjectServiceOnline = false;
           });
       });
-  }
-
-  storeInDb(){
 
   }
 
