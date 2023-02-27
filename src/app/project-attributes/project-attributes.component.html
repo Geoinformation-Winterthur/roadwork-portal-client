@@ -6,7 +6,7 @@
         <h1>Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
-                <app-edit-project-map></app-edit-project-map>
+                <kopal-edit-project-map [roadWorkProjectFeat]="roadWorkProjectFeature"></kopal-edit-project-map>
             </mat-tab>
             <mat-tab label="Hauptattribute">
                 <div fxLayout="row wrap padding">

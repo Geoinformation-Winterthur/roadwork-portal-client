@@ -30,19 +30,20 @@ export class ChooseProjectComponent implements OnInit {
 
   getAllProjects() {
 
-    this.roadWorkProjectService.getConstructionProjectsSummaries().subscribe(
-      constructionprojectsData => {
-        let constructionprojectsObs: RoadWorkProjectFeature[]
-          = constructionprojectsData as RoadWorkProjectFeature[];
+    this.roadWorkProjectService.getRoadWorkProjects().subscribe({
+      next: (roadWorkProjectsData) => {
+        let roadWorkProjectsObs: RoadWorkProjectFeature[]
+          = roadWorkProjectsData as RoadWorkProjectFeature[];
 
-        this.roadWorkProjectFeatures = constructionprojectsObs;
+        this.roadWorkProjectFeatures = roadWorkProjectsObs;
         this.roadWorkProjectFeaturesFiltered = this.roadWorkProjectFeatures;
 
         this.isConstructionProjectServiceOnline = true;
-
-      }, error => {
+      },
+      error: (error) => {
         this.isConstructionProjectServiceOnline = false;
-      });
+      }
+    });
 
   }
 

@@ -5,10 +5,6 @@ import { Subscription } from 'rxjs';
 import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
-import Map from 'ol/Map';
-import Tile from 'ol/layer/Tile';
-import View from 'ol/View';
-import TileWMS from 'ol/source/TileWMS';
 
 @Component({
   selector: 'app-project-attributes',
@@ -17,7 +13,7 @@ import TileWMS from 'ol/source/TileWMS';
 })
 export class ProjectAttributesComponent implements OnInit {
 
-  roadWorkProjectFeature: RoadWorkProjectFeature = new RoadWorkProjectFeature();
+  roadWorkProjectFeature?: RoadWorkProjectFeature;
 
   private constructionProjectService: RoadWorkProjectService;
   isConstructionProjectServiceOnline: boolean = false;
@@ -58,20 +54,23 @@ export class ProjectAttributesComponent implements OnInit {
       .subscribe(params => {
         let constProjId: number = parseInt(params['id']);
 
-        this.constructionProjectService.getConstructionProjectById(constProjId).subscribe(
-          constructionprojectData => {
-            let constructionprojectObs: RoadWorkProjectFeature
-              = constructionprojectData as RoadWorkProjectFeature;
+        this.constructionProjectService.getRoadWorkProjects(constProjId)
+                .subscribe({
+          next: (constructionprojectData) => {
+            if(constructionprojectData.length === 1){
+              let constructionprojectObs: RoadWorkProjectFeature
+                    = constructionprojectData[0];
     
-            this.roadWorkProjectFeature = constructionprojectObs;
-            this.playDeviceOid.setValue(this.roadWorkProjectFeature.properties.id);
-            this.nameControl.setValue(this.roadWorkProjectFeature.properties.place);
+              this.roadWorkProjectFeature = constructionprojectObs;
+              this.playDeviceOid.setValue(this.roadWorkProjectFeature.properties.id);
+              this.nameControl.setValue(this.roadWorkProjectFeature.properties.place);
   
-            this.isConstructionProjectServiceOnline = true;
-    
-          }, error => {
+              this.isConstructionProjectServiceOnline = true;
+            }    
+          },
+          error: (error) => {
             this.isConstructionProjectServiceOnline = false;
-          });
+          }});
       });
 
   }

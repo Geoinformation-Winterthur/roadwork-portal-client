@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
 import { Polygon } from 'ol/geom';
@@ -17,15 +17,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
 import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
 import proj4 from 'proj4';
+import { RoadWorkProjectFeature } from 'src/model/road-work-project-feature';
+import { Geometry } from 'src/model/geometry';
 
 @Component({
-  selector: 'app-edit-project-map',
+  selector: 'kopal-edit-project-map',
   templateUrl: './edit-project-map.component.html',
   styleUrls: ['./edit-project-map.component.css']
 })
 export class EditProjectMapComponent implements OnInit {
 
-  constructionProjectId: number = -1;
+  @Input()
+  roadWorkProjectFeat?: RoadWorkProjectFeature;
 
   map: Map = new Map();
 
@@ -37,7 +40,7 @@ export class EditProjectMapComponent implements OnInit {
 
   public constructor(snackBar: MatSnackBar,
     roadWorkProjectService: RoadWorkProjectService) {
-    this.roadWorkProjectService = roadWorkProjectService
+    this.roadWorkProjectService = roadWorkProjectService;
     this.snackBar = snackBar;
   }
 
@@ -131,67 +134,69 @@ export class EditProjectMapComponent implements OnInit {
   }
 
   loadGeometry(refreshExtent: boolean) {
+    if(this.roadWorkProjectFeat !== undefined)
+    {
+      let coordinatesArray: number[] =
+                this.roadWorkProjectFeat.geometry
+                      .coordinates;
 
-    this.roadWorkProjectService.getGeometry(this.constructionProjectId).subscribe(
-      coordinates => {
-        let coordinatesArray: number[] = coordinates as number[];
-
-        let i: number = 1;
-        let polyCoords = [];
-        for (i; i < coordinatesArray.length; i = i + 2) {
-          let coords: number[] = [];
-          coords[0] = coordinatesArray[i - 1];
-          coords[1] = coordinatesArray[i];
-          polyCoords.push(coords);
-        }
-
-        let ahaPoly: Polygon = new Polygon([polyCoords]);
-        ahaPoly.transform("EPSG:2056", 'EPSG:3857');
-
-
-        let testFeature: Feature = new Feature({
-          type: "Feature",
-          name: "testFeature",
-          id: 231243,
-          geometry: ahaPoly
-        });
-
-        this.loadSource.clear();
-        this.loadSource.addFeature(testFeature);
-        this.loadSource.changed();
-
-        if (refreshExtent) {
-          let polyExtent: Extent = ahaPoly.getExtent();
-          this.setViewToPolyExtent(polyExtent);
-        }
-
-      }, error => {
+      let i: number = 1;
+      let polyCoords = [];
+      for (i; i < coordinatesArray.length; i = i + 2) {
+        let coords: number[] = [];
+        coords[0] = coordinatesArray[i - 1];
+        coords[1] = coordinatesArray[i];
+        polyCoords.push(coords);
       }
-    );
+
+      let ahaPoly: Polygon = new Polygon([polyCoords]);
+      ahaPoly.transform("EPSG:2056", 'EPSG:3857');
+
+
+      let testFeature: Feature = new Feature({
+        type: "Feature",
+        name: "testFeature",
+        id: 231243,
+        geometry: ahaPoly
+      });
+
+      this.loadSource.clear();
+      this.loadSource.addFeature(testFeature);
+      this.loadSource.changed();
+
+      if (refreshExtent) {
+        let polyExtent: Extent = ahaPoly.getExtent();
+        this.setViewToPolyExtent(polyExtent);
+      }
+    }
   }
 
   sendGeometry() {
-    let features = this.userDrawSource.getFeatures();
-    let feature1 = features[0];
-    let geom1: Polygon = feature1.getGeometry() as Polygon;
-    let geom2: Polygon = geom1.clone();
-    geom2.transform('EPSG:3857', "EPSG:2056");
-    this.roadWorkProjectService
-      .postGeometry(this.constructionProjectId, geom2.getFlatCoordinates())
-      .subscribe({
-        next: (success) => {
-          this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
-            duration: 4000,
-          });
-          this.loadGeometry(false);
-        },
-        error: (error) => {
-          this.snackBar.open("Baustellengeometrie konnte NICHT gespeichert werden", "", {
-            duration: 4000,
-          });
-        }
-      });
+    if(this.roadWorkProjectFeat != undefined){
 
+      let features = this.userDrawSource.getFeatures();
+      let feature1 = features[0];
+      let geom1: Polygon = feature1.getGeometry() as Polygon;
+      let geom2: Polygon = geom1.clone();
+      geom2.transform('EPSG:3857', "EPSG:2056");
+      this.roadWorkProjectService
+        .putRoadWorkProject(this.roadWorkProjectFeat.properties.id, geom2.getFlatCoordinates())
+        .subscribe({
+          next: (success) => {
+            this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
+              duration: 4000,
+            });
+            if(this.roadWorkProjectFeat)
+                this.roadWorkProjectFeat.geometry.coordinates = geom2.getFlatCoordinates();
+            this.loadGeometry(false);
+          },
+          error: (error) => {
+            this.snackBar.open("Baustellengeometrie konnte NICHT gespeichert werden", "", {
+              duration: 4000,
+            });
+          }
+        });
+    }
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {
@@ -211,7 +216,6 @@ export class EditProjectMapComponent implements OnInit {
 
   refresh(){
     this.map.getLayers().changed();
-    alert("did the refresh");
   }
 
 }
