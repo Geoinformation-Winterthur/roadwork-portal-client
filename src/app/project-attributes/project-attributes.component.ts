@@ -62,7 +62,7 @@ export class ProjectAttributesComponent implements OnInit {
                     = constructionprojectData[0];
     
               this.roadWorkProjectFeature = constructionprojectObs;
-              this.playDeviceOid.setValue(this.roadWorkProjectFeature.properties.id);
+              this.playDeviceOid.setValue(this.roadWorkProjectFeature.properties.uuid);
               this.nameControl.setValue(this.roadWorkProjectFeature.properties.place);
   
               this.isConstructionProjectServiceOnline = true;

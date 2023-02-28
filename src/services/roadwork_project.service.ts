@@ -29,7 +29,7 @@ export class RoadWorkProjectService {
 
     }
     if(id != -1){
-      queryString += "id="+ id;
+      queryString += "uuid="+ id;
       if(summary) {
         queryString += "&";
       }
