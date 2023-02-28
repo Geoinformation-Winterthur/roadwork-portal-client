@@ -30,10 +30,13 @@ export class EditProjectMapComponent implements OnInit {
   @Input()
   roadWorkProjectFeat?: RoadWorkProjectFeature;
 
+  isInEditingMode: boolean = false;
+
   map: Map = new Map();
 
   userDrawSource: VectorSource = new VectorSource();
   loadSource: VectorSource = new VectorSource();
+  polygonDraw?: Draw;
 
   private roadWorkProjectService: RoadWorkProjectService;
   private snackBar: MatSnackBar
@@ -112,22 +115,18 @@ export class EditProjectMapComponent implements OnInit {
       })
     });
 
-    function newLineInteraction(map: Map, vectorSource: VectorSource) {
-      let draw = new Draw({
-        source: vectorSource,
-        type: "Polygon",
-      });
-      map.addInteraction(draw);
-    }
+    this.polygonDraw = new Draw({
+      source: this.userDrawSource,
+      type: "Polygon",
+    });
 
     this.userDrawSource.on('addfeature', (event) => {
       if (this.userDrawSource.getState() === 'ready') {
         this.sendGeometry();
         this.userDrawSource.clear();
+        // this.endEditing();
       }
     });
-
-    newLineInteraction(this.map, this.userDrawSource);
 
     this.loadGeometry(true);
 
@@ -197,6 +196,26 @@ export class EditProjectMapComponent implements OnInit {
           }
         });
     }
+  }
+
+  startEditing(){
+    if(this.polygonDraw !== undefined){
+      this.map.addInteraction(this.polygonDraw);
+      this.isInEditingMode = true;
+    }
+  }
+
+  endEditing(){
+    if(this.polygonDraw !== undefined){
+      this.map.removeInteraction(this.polygonDraw);
+      this.isInEditingMode = false;
+    }
+  }
+
+  showEditHelp(){
+    alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. "+
+    "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. "+
+    "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {
