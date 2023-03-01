@@ -18,7 +18,7 @@ import { EditProjectMapComponent } from './edit-project-map/edit-project-map.com
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
    {path: 'report', component: ReportComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'chooseproject', component: ChooseProjectComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'projectattributes/:id', component: ProjectAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'project/:id', component: ProjectAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'map/:id', component: EditProjectMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'user/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},

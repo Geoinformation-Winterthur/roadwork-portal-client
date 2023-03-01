@@ -5,7 +5,8 @@
 <div style="margin: 2em;">
     <h1>Bauprojekte des Tiefbauamts<span *ngIf="chosenYear"> im Jahr {{chosenYear}}</span></h1>
     <div class="fab-button-container">
-      <button mat-fab style="background-color: rgb(133, 99, 212);" class="fab-button">
+      <button mat-fab [routerLink]="['/project', 'new']"
+          style="background-color: rgb(133, 99, 212);" class="fab-button">
         <mat-icon aria-label="+">add</mat-icon>
       </button>
     </div>
@@ -74,7 +75,7 @@
         <mat-divider></mat-divider>
         <mat-card-actions style="margin: 0.5em;">
           <button style="background-color: rgb(42,127,103); color: white;margin-top: 1em;" mat-button
-            [routerLink]="['/projectattributes', constructionProject.properties.uuid]">BEARBEITEN</button>
+            [routerLink]="['/project', constructionProject.properties.uuid]">BEARBEITEN</button>
         </mat-card-actions>
       </mat-card>
     </div>

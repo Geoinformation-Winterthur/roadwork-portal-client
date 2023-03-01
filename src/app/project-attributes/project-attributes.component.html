@@ -3,7 +3,8 @@
         <p style="color: red;">Das Bauprojekt konnte nicht geladen werden.</p>
     </div>
     <div *ngIf="roadWorkProjectFeature !== undefined">
-        <h1>Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
+        <h1 *ngIf="roadWorkProjectFeature.properties.uuid!==-1">Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
+        <h1 *ngIf="roadWorkProjectFeature.properties.uuid===-1">Neues Bauprojekt</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
                 <kopal-edit-project-map [roadWorkProjectFeat]="roadWorkProjectFeature"></kopal-edit-project-map>
@@ -17,27 +18,36 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-chip-list *ngIf="userService.getLocalUser().role !== 'territorymanager'">
                                     <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'not_coordinated'"
-                                        class="chip-not-coordinated">Nicht koordiniert</mat-chip>
+                                        class="chip-not-coordinated">nicht koordiniert</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'in_work'"
+                                        class="chip-coordinated">in Bearbeitung</mat-chip>
                                     <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'coordinated'"
                                         class="chip-coordinated">koordiniert</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'prov_fixed'"
+                                        class="chip-coordinated">prov. festgelegt</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'def_fixed'"
+                                        class="chip-coordinated">def. festgesetzt</mat-chip>
+                                    <mat-chip *ngIf="roadWorkProjectFeature.properties.status === 'executed'"
+                                        class="chip-coordinated">ausgef&uuml;hrt</mat-chip>
                                     <mat-chip *ngIf="roadWorkProjectFeature.properties.priority === 'high'"
                                         class="chip-not-coordinated">Hohe Priorit&auml;t</mat-chip>
                                     <mat-chip *ngIf="roadWorkProjectFeature.properties.priority=== 'low'"
                                         class="chip-coordinated">Nierige Priorit&auml;t</mat-chip>
                                 </mat-chip-list>
-                                <mat-form-field  *ngIf="userService.getLocalUser().role === 'territorymanager'">
+                                <mat-form-field *ngIf="userService.getLocalUser().role === 'territorymanager'">
                                     <input matInput type="text" placeholder="Status">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput type="text" placeholder="ID" [formControl]="playDeviceOid" readonly>
+                                    <input matInput type="text" [(ngModel)]="roadWorkProjectFeature.properties.uuid"
+                                                placeholder="UUID"  readonly>
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput type="text" placeholder="Ort/Objekt" [formControl]="nameControl"
-                                            required>
+                                    <input matInput type="text" [(ngModel)]="roadWorkProjectFeature.properties.area"
+                                        placeholder="Ort/Objekt" required>
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput type="text" placeholder="Projekt" [formControl]="passphrase"
-                                        required>
+                                    <input matInput type="text" [(ngModel)]="roadWorkProjectFeature.properties.project"
+                                            placeholder="Projekt" required>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
@@ -48,14 +58,15 @@
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
-                                    <input matInput type="text" placeholder="Projektbetreuung" [formControl]="username"
-                                        required>
+                                    <input matInput type="text" [(ngModel)]="roadWorkProjectFeature.properties.project"
+                                            placeholder="Projektbetreuung" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="text" placeholder="Projektleitung (Bau)">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput [formControl]="passphrase" placeholder="Sachbearbeiter (Verkehr)">
+                                    <input matInput [(ngModel)]="roadWorkProjectFeature.properties.project"
+                                            placeholder="Sachbearbeiter (Verkehr)">
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
@@ -91,12 +102,12 @@
                         <mat-card-title>Einstufung</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <mat-checkbox [(ngModel)]="pressCheckBox" style="margin:10px;">Presse</mat-checkbox>
-                                <mat-checkbox [(ngModel)]="internetCheckBox" style="margin:10px;">Internet
+                                <mat-checkbox [(ngModel)]="roadWorkProjectFeature.properties.active" style="margin:10px;">Presse</mat-checkbox>
+                                <mat-checkbox [(ngModel)]="roadWorkProjectFeature.properties.active" style="margin:10px;">Internet
                                 </mat-checkbox>
-                                <mat-checkbox [(ngModel)]="civilEngineeringCheckBox" style="margin:10px;">
+                                <mat-checkbox [(ngModel)]="roadWorkProjectFeature.properties.active" style="margin:10px;">
                                     Tiefbaurelevant</mat-checkbox>
-                                <mat-checkbox [(ngModel)]="lightSignalCheckBox" style="margin:10px;">Lichtsignal
+                                <mat-checkbox [(ngModel)]="roadWorkProjectFeature.properties.active" style="margin:10px;">Lichtsignal
                                 </mat-checkbox>
                             </div>
                         </mat-card-content>

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
@@ -15,62 +14,49 @@ export class ProjectAttributesComponent implements OnInit {
 
   roadWorkProjectFeature?: RoadWorkProjectFeature;
 
-  private constructionProjectService: RoadWorkProjectService;
-  isConstructionProjectServiceOnline: boolean = false;
-
-  username: FormControl = new FormControl('', [Validators.required]);
-  email: FormControl = new FormControl('', [Validators.required, Validators.email]);
-  passphrase: FormControl = new FormControl('', [Validators.required]);
-
-  pressCheckBox: boolean = false;
-  internetCheckBox: boolean = false;
-  civilEngineeringCheckBox: boolean = false;
-  lightSignalCheckBox: boolean = false;
-  checkBox2: boolean = false;
-  checkBox3: boolean = false;
-
-  panel1Open: boolean = false;
-  panel2Open: boolean = false;
-  panel3Open: boolean = false;
-  panel4Open: boolean = false;
-
-  playDeviceOid: FormControl = new FormControl('', [Validators.required]);
-  nameControl: FormControl = new FormControl('', [Validators.required]);
-
   userService: UserService;
 
+  private roadWorkProjectService: RoadWorkProjectService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
-  constructor(activatedRoute: ActivatedRoute, constructionProjectService: RoadWorkProjectService,
+  constructor(activatedRoute: ActivatedRoute, roadWorkProjectService: RoadWorkProjectService,
         userService: UserService) {
     this.activatedRoute = activatedRoute;
-    this.constructionProjectService = constructionProjectService;
-    this.userService = userService;    
+    this.roadWorkProjectService = roadWorkProjectService;
+    this.userService = userService;
   }
 
   ngOnInit() {
     this.activatedRouteSubscription = this.activatedRoute.params
       .subscribe(params => {
-        let constProjId: number = parseInt(params['id']);
+        let idParamString: string = params['id'];
 
-        this.constructionProjectService.getRoadWorkProjects(constProjId)
-                .subscribe({
-          next: (constructionprojectData) => {
-            if(constructionprojectData.length === 1){
-              let constructionprojectObs: RoadWorkProjectFeature
-                    = constructionprojectData[0];
+        if(idParamString == "new"){
+
+          this.roadWorkProjectFeature = new RoadWorkProjectFeature();
+          this.roadWorkProjectFeature.properties.uuid = -1;
+
+        } else {
+
+          let constProjId: number = parseInt(params['id']);
+
+          this.roadWorkProjectService.getRoadWorkProjects(constProjId)
+                  .subscribe({
+            next: (roadWorkProjectService) => {
+              if(roadWorkProjectService.length === 1){
+                let constructionprojectObs: RoadWorkProjectFeature
+                      = roadWorkProjectService[0];
+      
+                this.roadWorkProjectFeature = constructionprojectObs;
     
-              this.roadWorkProjectFeature = constructionprojectObs;
-              this.playDeviceOid.setValue(this.roadWorkProjectFeature.properties.uuid);
-              this.nameControl.setValue(this.roadWorkProjectFeature.properties.place);
-  
-              this.isConstructionProjectServiceOnline = true;
-            }    
-          },
-          error: (error) => {
-            this.isConstructionProjectServiceOnline = false;
-          }});
+              }    
+            },
+            error: (error) => {
+            }});
+
+        }
+
       });
 
   }
@@ -113,11 +99,6 @@ export class ProjectAttributesComponent implements OnInit {
       if(expansionPanel2 != null)
         expansionPanel2.style.backgroundColor = "rgb(238, 255, 238)";
     }
-  }
-
-  getErrorMessageBezeichnung() {
-    return this.email.hasError('reqired') ? 'Sie müssen einen Wert eingeben' :
-      this.email.hasError('email') ? 'Keine gültige Bezeichnung' : '';
   }
 
   ngOnDestroy() {
