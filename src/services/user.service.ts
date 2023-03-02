@@ -122,6 +122,12 @@ export class UserService implements CanActivate {
     return result;
   }
 
+  updateUser(user: User): Observable<any> {
+    let result: Observable<any> =
+      this.http.put(environment.apiUrl + "/account/users/", user) as Observable<any>;
+    return result;
+  }
+
   getAllUsers(): Observable<User[]> {
     let result: Observable<User[]> =
       this.http.get(environment.apiUrl + "/account/users/") as Observable<User[]>;
@@ -130,7 +136,7 @@ export class UserService implements CanActivate {
 
   deleteUser(mailAddress: string): Observable<string> {
     let result: Observable<string> =
-      this.http.get(environment.apiUrl + "/account/deleteuser?mailAddress=" + mailAddress) as Observable<string>;
+      this.http.delete(environment.apiUrl + "/account/users/" + mailAddress) as Observable<string>;
     return result;
   }
 

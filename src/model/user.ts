@@ -1,5 +1,5 @@
 export class User {
-    position: number = -1;
+    uuid: string = "";
     lastName: string = "";
     firstName: string = "";
     initials: string = "";
