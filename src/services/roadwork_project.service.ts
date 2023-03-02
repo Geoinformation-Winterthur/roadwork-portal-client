@@ -22,13 +22,13 @@ export class RoadWorkProjectService {
     return result;
   }
 
-   getRoadWorkProjects(id: number = -1, summary: boolean = false): Observable<RoadWorkProjectFeature[]> {
+   getRoadWorkProjects(id: string = "", summary: boolean = false): Observable<RoadWorkProjectFeature[]> {
     let queryString = "/roadworkproject/";
-    if(id != -1 || summary) {
+    if(id !== null && id !== "" || summary) {
       queryString += "?";
 
     }
-    if(id != -1){
+    if(id !== null && id !== ""){
       queryString += "uuid="+ id;
       if(summary) {
         queryString += "&";

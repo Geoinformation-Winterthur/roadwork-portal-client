@@ -29,7 +29,7 @@
         <button mat-button (click)="addUser()" style="background-color: aqua;margin:1em;">BENUTZER ANLEGEN</button>
     </div>
     <div *ngIf="userExists">
-        <button mat-button style="background-color: aqua;margin:1em;">NUTZERDATEN &Auml;NDERN</button>
+        <button mat-button (click)="updateUser()" style="background-color: aqua;margin:1em;">NUTZERDATEN &Auml;NDERN</button>
         <button mat-button style="background-color: rgb(251, 197, 197);margin:1em;">BENUTZER L&Ouml;SCHEN</button>
     </div>
 </div>

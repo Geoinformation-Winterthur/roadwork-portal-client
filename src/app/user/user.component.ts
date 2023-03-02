@@ -62,4 +62,14 @@ export class UserComponent implements OnInit {
     })
   }
 
+  updateUser(){
+    this.userService.updateUser(this.user).subscribe({
+      next: (user) => {
+        this.router.navigate(["/users"]);
+      },
+      error: (error) => {
+      }
+    })
+  }
+
 }

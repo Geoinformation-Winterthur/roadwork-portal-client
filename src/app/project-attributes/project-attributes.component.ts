@@ -39,7 +39,7 @@ export class ProjectAttributesComponent implements OnInit {
 
         } else {
 
-          let constProjId: number = parseInt(params['id']);
+          let constProjId: string = params['id'];
 
           this.roadWorkProjectService.getRoadWorkProjects(constProjId)
                   .subscribe({
