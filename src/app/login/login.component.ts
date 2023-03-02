@@ -2,7 +2,6 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Vermessungsamt Winterthur. All rights reserved.
  */
- import { HttpClient } from '@angular/common/http';
  import { Component, OnInit } from '@angular/core';
  import { NgForm } from '@angular/forms';
  import { Router } from '@angular/router';
@@ -27,7 +26,7 @@
    private userService: UserService;
    private roadWorkProjectService: RoadWorkProjectService;
  
-   constructor(router: Router, http: HttpClient, userService: UserService,
+   constructor(router: Router, userService: UserService,
     roadWorkProjectService: RoadWorkProjectService) {
      this.router = router;
      this.userService = userService;

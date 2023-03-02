@@ -21,7 +21,7 @@ import { EditProjectMapComponent } from './edit-project-map/edit-project-map.com
    {path: 'project/:id', component: ProjectAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'map/:id', component: EditProjectMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'user/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'login', component: LoginComponent, pathMatch: 'full'}
  ];
  

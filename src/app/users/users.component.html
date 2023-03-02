@@ -5,7 +5,7 @@
 <div style="margin: 2em;">
     <h1>Benutzerverwaltung</h1>
     <div class="fab-button-container">
-      <button mat-fab [routerLink]="['/user', '']"
+      <button mat-fab [routerLink]="['/users', 'new']"
           style="background-color: rgb(133, 99, 212);" class="fab-button">
         <mat-icon aria-label="+">add</mat-icon>
       </button>
@@ -38,7 +38,7 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef> Aktion </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-button [routerLink]="['/user', element.mailAddress]"
+          <button mat-button [routerLink]="['/users', element.mailAddress]"
                      style="margin: 0.5em;background-color:rgb(173, 210, 245);">BEARBEITEN</button>
           <button mat-button (click)="deleteUser(element.mailAddress)" style="margin: 0.5em;background-color:rgb(243, 174, 174);">ENTFERNEN</button>
         </td>
