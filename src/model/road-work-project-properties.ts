@@ -1,7 +1,7 @@
 import { RoadWorkProjectPart } from "./road-work-project-part";
 
 export class RoadWorkProjectProperties {
-    uuid: number = -1;
+    uuid: string = "";
     place: string = "";
     area: string = "";
     project: string = "";

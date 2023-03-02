@@ -16,12 +16,6 @@ export class RoadWorkProjectService {
     this.http = http;
   }
 
-  getConstructionProjectsNames(): Observable<string[]> {
-    let result: Observable<string[]> =
-          this.http.get(environment.apiUrl + "/constructionproject/onlynames") as Observable<string[]>;
-    return result;
-  }
-
    getRoadWorkProjects(id: string = "", summary: boolean = false): Observable<RoadWorkProjectFeature[]> {
     let queryString = "/roadworkproject/";
     if(id !== null && id !== "" || summary) {
@@ -54,9 +48,9 @@ export class RoadWorkProjectService {
     return result;
   }
 
-  putRoadWorkProject(projectId: number, coordinates: number[]): Observable<any> {
+  putRoadWorkProject(uuid: string, coordinates: number[]): Observable<any> {
     let result: Observable<any> = 
-          this.http.put<number[]>(environment.apiUrl + "/roadworkproject/?projectid=" + projectId, coordinates);
+          this.http.put<number[]>(environment.apiUrl + "/roadworkproject/?uuid=" + uuid, coordinates);
     return result;
   }
 

@@ -35,7 +35,7 @@ export class ProjectAttributesComponent implements OnInit {
         if(idParamString == "new"){
 
           this.roadWorkProjectFeature = new RoadWorkProjectFeature();
-          this.roadWorkProjectFeature.properties.uuid = -1;
+          this.roadWorkProjectFeature.properties.uuid = "";
 
         } else {
 

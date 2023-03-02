@@ -136,7 +136,7 @@ export class UserService implements CanActivate {
 
   deleteUser(mailAddress: string): Observable<string> {
     let result: Observable<string> =
-      this.http.delete(environment.apiUrl + "/account/users/" + mailAddress) as Observable<string>;
+      this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<string>;
     return result;
   }
 

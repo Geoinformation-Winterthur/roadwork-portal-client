@@ -27,40 +27,6 @@ export class ProjectNameFilterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.projectSearchControl.disable();
-
-    this.projectService.getConstructionProjectsNames().subscribe(
-      projectsNamesData => {
-        let projectsNamesArray: string[] = projectsNamesData;
-
-
-        projectsNamesArray.forEach(projectName => {
-          this.projectsNames.push(projectName);
-        });
-
-        //        this.streets.sort();
-
-        this.projectsNamesFiltered = this.projectSearchControl.valueChanges.pipe(
-          startWith(''),
-          map(projectName => this._filterProjectName(projectName))
-        );
-
-        this.projectSearchControl.enable();
-
-        this.projectSearchControl.valueChanges.subscribe(projectName => {
-          if (projectName !== null && projectName !== "") {
-            this.chooseProjectComponent.roadWorkProjectFeaturesFiltered
-              = this.chooseProjectComponent.roadWorkProjectFeatures
-                .filter(roadWorkProjectFeatures => { 
-                  return roadWorkProjectFeatures.properties.place === projectName;
-                 });
-          } else {
-            this.chooseProjectComponent.roadWorkProjectFeaturesFiltered
-                = this.chooseProjectComponent.roadWorkProjectFeatures;
-          }
-        });
-
-      });
   }
 
   private _filterProjectName(projectName: string): string[] {

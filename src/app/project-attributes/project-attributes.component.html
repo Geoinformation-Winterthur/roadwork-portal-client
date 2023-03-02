@@ -3,8 +3,8 @@
         <p style="color: red;">Das Bauprojekt konnte nicht geladen werden.</p>
     </div>
     <div *ngIf="roadWorkProjectFeature !== undefined">
-        <h1 *ngIf="roadWorkProjectFeature.properties.uuid!==-1">Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
-        <h1 *ngIf="roadWorkProjectFeature.properties.uuid===-1">Neues Bauprojekt</h1>
+        <h1 *ngIf="roadWorkProjectFeature.properties.uuid!==''">Bauprojekt {{ roadWorkProjectFeature.properties.place }}</h1>
+        <h1 *ngIf="roadWorkProjectFeature.properties.uuid===''">Neues Bauprojekt</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
                 <kopal-edit-project-map [roadWorkProjectFeat]="roadWorkProjectFeature"></kopal-edit-project-map>
