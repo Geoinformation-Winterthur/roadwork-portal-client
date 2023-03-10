@@ -178,7 +178,7 @@ export class EditProjectMapComponent implements OnInit {
       let geom2: Polygon = geom1.clone();
       geom2.transform('EPSG:3857', "EPSG:2056");
       this.roadWorkProjectService
-        .putRoadWorkProject(this.roadWorkProjectFeat.properties.uuid, geom2.getFlatCoordinates())
+        .updateRoadWorkProject(this.roadWorkProjectFeat)
         .subscribe({
           next: (success) => {
             this.snackBar.open("Baustellengeometrie ist gespeichert", "", {

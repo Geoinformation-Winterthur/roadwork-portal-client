@@ -42,15 +42,15 @@ export class RoadWorkProjectService {
     return result;
   }
 
-  postRoadworkProject(roadworkProject : RoadWorkProjectFeature): Observable<any> {
+  addRoadworkProject(roadworkProject : RoadWorkProjectFeature): Observable<any> {
     let result: Observable<any> = 
-          this.http.post<RoadWorkProjectFeature>(environment.apiUrl + "/constructionproject/", roadworkProject);
+          this.http.post<RoadWorkProjectFeature>(environment.apiUrl + "/roadworkporject/", roadworkProject);
     return result;
   }
 
-  putRoadWorkProject(uuid: string, coordinates: number[]): Observable<any> {
+  updateRoadWorkProject(roadworkProject? : RoadWorkProjectFeature): Observable<any> {
     let result: Observable<any> = 
-          this.http.put<number[]>(environment.apiUrl + "/roadworkproject/?uuid=" + uuid, coordinates);
+          this.http.put(environment.apiUrl + "/roadworkproject/", roadworkProject);
     return result;
   }
 

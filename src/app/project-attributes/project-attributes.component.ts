@@ -61,6 +61,11 @@ export class ProjectAttributesComponent implements OnInit {
 
   }
 
+  save()
+  {
+    this.roadWorkProjectService.updateRoadWorkProject(this.roadWorkProjectFeature);
+  }
+
   validateElement1() {
     let validateButton1 = document.getElementById("validateButton1");
     if(validateButton1 != null)
