@@ -95,34 +95,19 @@ export class ManagementAreasComponent implements OnInit {
     this.managementAreaService
       .getManagementAreas()
       .subscribe({
-        next: (managementAreasArray) => {
-          if (managementAreasArray !== undefined) {
+        next: (managementAreasCollection) => {
+          if (managementAreasCollection !== undefined) {
             this.loadSource.clear();
-            for (let managementAreaFeat of managementAreasArray) {
-              
-              let coordinatesArray: number[] =
-                managementAreaFeat.geometry.coordinates;
-
-              let i: number = 1;
-              let polyCoords = [];
-              for (i; i < coordinatesArray.length; i = i + 2) {
-                let coords: number[] = [];
-                coords[0] = coordinatesArray[i - 1];
-                coords[1] = coordinatesArray[i];
-                polyCoords.push(coords);
-              }
-
-              let ahaPoly: Polygon = new Polygon([polyCoords]);
-              ahaPoly.transform("EPSG:2056", 'EPSG:3857');
-
-              let testFeature: Feature = new Feature({
-                type: "Feature",
-                name: "testFeature",
-                id: 231243,
-                geometry: ahaPoly
+            for(let featureJson of managementAreasCollection.features)
+            {
+              let generalObject: any = featureJson;              
+              let managementAreaPoly: Polygon = new Polygon(generalObject.geometry.coordinates);
+              managementAreaPoly.transform("EPSG:2056", 'EPSG:3857');
+              let managementArea: Feature = new Feature({
+                geometry: managementAreaPoly
               });
-
-              this.loadSource.addFeature(testFeature);
+              managementArea.setProperties(generalObject.properties, true);
+              this.loadSource.addFeature(managementArea);
             }
             this.loadSource.changed();
           }
