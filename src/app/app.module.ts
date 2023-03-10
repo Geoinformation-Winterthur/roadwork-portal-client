@@ -52,6 +52,7 @@ import { ProjectNameFilterComponent } from './project-name-filter/project-name-f
 import { ProjectYearFilterComponent } from './project-year-filter/project-year-filter.component';
 import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
 import { EditProjectMapComponent } from './edit-project-map/edit-project-map.component';
+import { ManagementAreasComponent } from './management-areas/management-areas.component';
  
  
  export function getToken(){
@@ -76,7 +77,8 @@ import { EditProjectMapComponent } from './edit-project-map/edit-project-map.com
      ProjectNameFilterComponent,
      ProjectYearFilterComponent,
      ProjectAttributesComponent,
-     EditProjectMapComponent
+     EditProjectMapComponent,
+     ManagementAreasComponent
    ],
    imports: [
      BrowserModule,

@@ -2,12 +2,11 @@ import { Geometry } from "./geometry";
 import { RoadWorkProjectProperties } from "./road-work-project-properties";
 
 export class RoadWorkProjectFeature {
-    type: string = "";
+    type: string = "Feature";
     properties: RoadWorkProjectProperties;
     geometry: Geometry = new Geometry();
 
     constructor() {
-        this.type = "Feature";
         this.properties = new RoadWorkProjectProperties();
     }
 }

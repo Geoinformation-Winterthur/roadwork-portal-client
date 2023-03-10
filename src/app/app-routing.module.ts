@@ -13,6 +13,7 @@ import { UsersComponent } from "./users/users.component";
  import { UserService } from 'src/services/user.service';
 import { UserComponent } from './user/user.component';
 import { EditProjectMapComponent } from './edit-project-map/edit-project-map.component';
+import { ManagementAreasComponent } from './management-areas/management-areas.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -22,6 +23,7 @@ import { EditProjectMapComponent } from './edit-project-map/edit-project-map.com
    {path: 'map/:id', component: EditProjectMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'managementareas', component: ManagementAreasComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'login', component: LoginComponent, pathMatch: 'full'}
  ];
  

@@ -57,6 +57,10 @@
                   <a mat-list-item routerLink='/chooseproject' (click)="toggleSideNav($event)">
                       <mat-icon aria-label="Bauprojekte">engineering</mat-icon>&nbsp;<span i18n>Bauprojekte</span>
                   </a>
+                  <a mat-list-item routerLink='/managementareas' *ngIf="userService.getLocalUser().role === 'administrator'"
+                                (click)="toggleSideNav($event)">
+                      <mat-icon aria-label="Gebiete">push_pin</mat-icon>&nbsp;<span i18n>Gebiete</span>
+                  </a>
                   <a mat-list-item routerLink='/users' *ngIf="userService.getLocalUser().role === 'administrator'"
                                 (click)="toggleSideNav($event)">
                       <mat-icon aria-label="Benutzer">account_box</mat-icon>&nbsp;<span i18n>Benutzer</span>

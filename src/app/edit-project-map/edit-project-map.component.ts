@@ -18,7 +18,6 @@ import { register } from 'ol/proj/proj4';
 import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
 import proj4 from 'proj4';
 import { RoadWorkProjectFeature } from 'src/model/road-work-project-feature';
-import { Geometry } from 'src/model/geometry';
 
 @Component({
   selector: 'kopal-edit-project-map',
@@ -39,7 +38,7 @@ export class EditProjectMapComponent implements OnInit {
   polygonDraw?: Draw;
 
   private roadWorkProjectService: RoadWorkProjectService;
-  private snackBar: MatSnackBar
+  private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
     roadWorkProjectService: RoadWorkProjectService) {
@@ -90,7 +89,7 @@ export class EditProjectMapComponent implements OnInit {
     });
 
     this.map = new Map({
-      target: 'content_map',
+      target: 'edit_project_map',
       layers: [
         new Tile({
           source: new TileWMS({
