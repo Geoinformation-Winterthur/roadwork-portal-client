@@ -46,19 +46,35 @@ export class ManagementAreasComponent implements OnInit {
 
 
   initializeMap() {
-    let loadLayerStyle: Style = new Style({
-      fill: new Fill({
-        color: 'rgba(255, 145, 19,0.4)'
-      }),
-      stroke: new Stroke({
-        color: 'rgba(255, 145, 19,1.0)'
-      })
-    });
+
+    function managementAreasStyleFunc(feature: any, resolution: any){
+      if(feature.get('managername') === "Edgar Butwilowski"){
+        let managementAreasStyle: Style = new Style({
+          fill: new Fill({
+            color: 'rgba(255, 145, 19,0.4)'
+          }),
+          stroke: new Stroke({
+            color: 'rgba(255, 145, 19,1.0)'
+          })
+        });
+        return [managementAreasStyle];
+      } else {
+        let managementAreasStyle: Style = new Style({
+          fill: new Fill({
+            color: 'rgba(173, 111, 25,0.4)'
+          }),
+          stroke: new Stroke({
+            color: 'rgba(255, 145, 19,1.0)'
+          })
+        });
+        return [managementAreasStyle];
+      }
+    }
 
     this.loadSource = new VectorSource({ wrapX: false });
     let loadLayer = new VectorLayer({
       source: this.loadSource,
-      style: loadLayerStyle
+      style: managementAreasStyleFunc
     });
 
     this.map = new Map({
