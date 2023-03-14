@@ -23,7 +23,7 @@
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkNeedFeature.properties.name"
-                                        placeholder="Name" required>
+                                        placeholder="Bezeichnung" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkNeedFeature.properties.kind"
@@ -37,9 +37,11 @@
                         <mat-card-title>Wer und Wo</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                    <p>Besteller: <b>{{orderer.firstName}} {{orderer.lastName}}</b></p>
-                                    <p>Bedarfsstelle: <b>{{ordererOrgUnitName}}</b></p>
-                                    <p>Gebietsmanager: <b>{{areaManagerName}}</b></p>
+                                    <p>Besteller: <b>{{roadWorkNeedFeature.properties.orderer.firstName}} {{roadWorkNeedFeature.properties.orderer.lastName}}</b></p>
+                                    <p>Bedarfsstelle: <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b></p>
+                                    <p>Gebietsmanager: <b>{{roadWorkNeedFeature.properties.managementarea.properties.manager.firstName}} 
+                                        {{roadWorkNeedFeature.properties.managementarea.properties.manager.lastName}}
+                                    </b></p>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -49,18 +51,18 @@
                     <mat-card-content>
                         <div style="display:flex;flex-direction:column;">
                             <div style="margin: 1em;">
-                            <mat-chip-list *ngIf="userService.getLocalUser().role !== 'territorymanager'">
-                                <mat-chip *ngIf="statusCode === 'not_coordinated'"
+                            <mat-chip-list *ngIf="userService.getLocalUser().role.code !== 'territorymanager'">
+                                <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'notcoord'"
                                     class="chip-not-coordinated">nicht koordiniert</mat-chip>
-                                <mat-chip *ngIf="statusCode === 'in_work'"
+                                <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'inwork'"
                                     class="chip-coordinated">in Bearbeitung</mat-chip>
-                                <mat-chip *ngIf="statusCode === 'coordinated'"
+                                <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'coordinated'"
                                     class="chip-coordinated">koordiniert</mat-chip>
-                                <mat-chip *ngIf="statusCode === 'prov_fixed'"
+                                <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'provfixed'"
                                     class="chip-coordinated">prov. festgelegt</mat-chip>
-                                <mat-chip *ngIf="statusCode === 'def_fixed'"
+                                <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'deffixed'"
                                     class="chip-coordinated">def. festgesetzt</mat-chip>
-                                <mat-chip *ngIf="statusCode === 'executed'"
+                                <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'executed'"
                                     class="chip-coordinated">ausgef&uuml;hrt</mat-chip>
                                 <mat-chip *ngIf="priorityCode === 'high'"
                                     class="chip-not-coordinated">Hohe Priorit&auml;t</mat-chip>
@@ -68,7 +70,7 @@
                                     class="chip-coordinated">Nierige Priorit&auml;t</mat-chip>
                             </mat-chip-list>
                             </div>
-                            <mat-form-field *ngIf="userService.getLocalUser().role === 'territorymanager'">
+                            <mat-form-field *ngIf="userService.getLocalUser().role.code === 'territorymanager'">
                                 <input matInput type="text" placeholder="Status">
                             </mat-form-field>
                             <mat-form-field>
@@ -87,15 +89,17 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
-                                    <input matInput [matDatepicker]="datumsWahl">
-                                    <mat-datepicker #datumsWahl></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="datumsWahl"></mat-datepicker-toggle>
+                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyFrom"
+                                            [matDatepicker]="finishEarlyFrom">
+                                    <mat-datepicker #finishEarlyFrom></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
-                                    <input matInput [matDatepicker]="datumsWahl2">
-                                    <mat-datepicker #datumsWahl2></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="datumsWahl2"></mat-datepicker-toggle>
+                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyTo"
+                                            [matDatepicker]="finishEarlyTo">
+                                    <mat-datepicker #finishEarlyTo></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyTo"></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
@@ -107,14 +111,16 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
-                                    <input matInput>
-                                    <mat-datepicker #datumsWahl></mat-datepicker>
+                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumFrom"
+                                            [matDatepicker]="finishOptimumFrom">
+                                    <mat-datepicker #finishOptimumFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
-                                    <input matInput>
-                                    <mat-datepicker #datumsWahl2></mat-datepicker>
+                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumTo"
+                                            [matDatepicker]="finishOptimumTo">
+                                    <mat-datepicker #finishOptimumTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
@@ -127,14 +133,16 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
-                                    <input matInput>
-                                    <mat-datepicker #datumsWahl></mat-datepicker>
+                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateFrom"
+                                            [matDatepicker]="finishLateFrom">
+                                    <mat-datepicker #finishLateFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
-                                    <input matInput>
-                                    <mat-datepicker #datumsWahl2></mat-datepicker>
+                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateTo"
+                                            [matDatepicker]="finishLateTo">
+                                    <mat-datepicker #finishLateTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix ></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>

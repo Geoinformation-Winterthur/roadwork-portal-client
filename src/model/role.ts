@@ -1,6 +1,7 @@
-
-export class Status {
+export class Role
+{
     public uuid: string = "";
-    public name: string = "";
     public code: string = "";
+    public name: string = "";
 }
+

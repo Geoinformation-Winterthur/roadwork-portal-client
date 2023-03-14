@@ -1,3 +1,6 @@
+import { OrganisationalUnit } from "./organisational-unit";
+import { Role } from "./role";
+
 export class User {
     uuid: string = "";
     lastName: string = "";
@@ -5,7 +8,8 @@ export class User {
     initials: string = "";
     mailAddress: string = "";
     passPhrase: string = "";
-    role: string = "";
-    organisationalUnitUuid: string = "";
+    role: Role = new Role();
+    organisationalUnit: OrganisationalUnit
+        = new OrganisationalUnit();
     token: string = "";
 }

@@ -7,6 +7,7 @@
     <div style="margin: 2em;color: rgb(90, 90, 90);">
         <h3 i18n style="font-weight: lighter;text-transform: uppercase;color: black;">Willkommen <span *ngIf="userService.isUserLoggedIn()">{{userService.getLocalUser().firstName}} 
             {{userService.getLocalUser().lastName}} </span>im Portal zur Planung und Koordination der Tiefbauprojekte der Stadt Winterthur</h3>
+        <p>Ihre Rolle ist: {{userService.getLocalUser().role.code}}</p>
         <p i18n *ngIf="!userService.isUserLoggedIn()">Das Koordinationsportal des Tiefbauamts der Stadtverwaltung Winterthur
             unterst&uuml;tzt bei der Planung und Koordination der st&auml;dtischen Tiefbauprojekte. <i>Hier noch Hinweise zum Prozedere
             f&uuml;r die Registrierung und welche Rollen (Besteller, Gebietsbeautragter etc.) es gibt. Weiterer Begr&uuml;ssungstext

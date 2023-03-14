@@ -5,6 +5,7 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
+import Polygon from 'ol/geom/Polygon';
 
 @Component({
   selector: 'app-project-attributes',
@@ -49,13 +50,11 @@ export class ProjectAttributesComponent implements OnInit {
 
           this.roadWorkNeedService.getRoadWorkNeeds(constProjId)
                   .subscribe({
-            next: (roadWorkNeedService) => {
-              if(roadWorkNeedService.length === 1){
-                let constructionprojectObs: RoadWorkNeedFeature
-                      = roadWorkNeedService[0];
-      
-                this.roadWorkNeedFeature = constructionprojectObs;
-    
+            next: (roadWorkNeeds) => {
+              if(roadWorkNeeds.length === 1){
+                let roadWorkNeed: any = roadWorkNeeds[0];
+                roadWorkNeed.geometry = new Polygon(roadWorkNeed.geometry.coordinates);
+                this.roadWorkNeedFeature = roadWorkNeed;
               }    
             },
             error: (error) => {

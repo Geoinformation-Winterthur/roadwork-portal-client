@@ -1,6 +1,6 @@
-
-export class Status {
+export class OrganisationalUnit
+{
     public uuid: string = "";
     public name: string = "";
-    public code: string = "";
 }
+

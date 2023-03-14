@@ -13,8 +13,6 @@ export class ChooseNeedComponent implements OnInit {
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
   roadWorkNeedFeaturesFiltered: RoadWorkNeedFeature[] = [];
 
-  isConstructionProjectServiceOnline: boolean = false;
-
   filterPanelOpen: boolean = false;
 
   chosenYear: number = new Date().getFullYear();
@@ -36,17 +34,15 @@ export class ChooseNeedComponent implements OnInit {
 
         let roadWorkNeed: any;
         for(roadWorkNeed of roadWorkNeeds){
-          let blowUpPoly: Polygon = new Polygon(roadWorkNeed.geometry.coordinates)
+          let blowUpPoly: Polygon = new Polygon(roadWorkNeed.geometry.coordinates);
           roadWorkNeed.geometry = blowUpPoly;
         }
 
         this.roadWorkNeedFeatures = roadWorkNeeds;
         this.roadWorkNeedFeaturesFiltered = this.roadWorkNeedFeatures;
 
-        this.isConstructionProjectServiceOnline = true;
       },
       error: (error) => {
-        this.isConstructionProjectServiceOnline = false;
       }
     });
 

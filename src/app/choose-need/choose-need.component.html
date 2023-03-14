@@ -5,7 +5,7 @@
 <div style="margin: 2em;">
     <h1>Baubed&uuml;rfnisse des Tiefbauamts<span *ngIf="chosenYear"> des Jahres {{chosenYear}}</span></h1>
     <div class="fab-button-container">
-      <button mat-fab [routerLink]="['/project', 'new']"
+      <button mat-fab [routerLink]="['/need', 'new']"
           style="background-color: rgb(133, 99, 212);" class="fab-button">
         <mat-icon aria-label="+">add</mat-icon>
       </button>
@@ -65,9 +65,9 @@
           <mat-chip-list>
             <mat-chip class="chip-done">Bis: {{ roadWorkNeed.properties.finishOptimumTo | date:"dd.MM.yyyy" }}
             </mat-chip>
-              <mat-chip *ngIf="roadWorkNeed.properties.statusUuid === 'not_coordinated'"
+              <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'not_coordinated'"
                   class="chip-not-coordinated">Nicht koordiniert</mat-chip>
-              <mat-chip *ngIf="roadWorkNeed.properties.statusUuid === 'coordinated'"
+              <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'"
                   class="chip-coordinated">koordiniert</mat-chip>
           </mat-chip-list>
           <br />

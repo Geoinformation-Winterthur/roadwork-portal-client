@@ -36,15 +36,15 @@ export class RoadWorkNeedService {
      return result;
    }
 
-  addRoadworkNeed(roadworkProject : RoadWorkNeedFeature): Observable<any> {
+  addRoadworkNeed(roadworkNeed : RoadWorkNeedFeature): Observable<any> {
     let result: Observable<any> = 
-          this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkneed/", roadworkProject);
+          this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkneed/", roadworkNeed);
     return result;
   }
 
-  updateRoadWorkNeed(roadworkProject? : RoadWorkNeedFeature): Observable<any> {
+  updateRoadWorkNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
     let result: Observable<any> = 
-          this.http.put(environment.apiUrl + "/roadworkneed/", roadworkProject);
+          this.http.put(environment.apiUrl + "/roadworkneed/", roadworkNeed);
     return result;
   }
 

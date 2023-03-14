@@ -9,6 +9,8 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { User } from 'src/model/user';
 import { environment } from 'src/environments/environment';
+import { Role } from 'src/model/role';
+import { OrganisationalUnit } from 'src/model/organisational-unit';
 
 @Injectable({
   providedIn: 'root'
@@ -81,7 +83,7 @@ export class UserService implements CanActivate {
     this.user.initials = "";
     this.user.mailAddress = "";
     this.user.passPhrase = "";
-    this.user.role = "";
+    this.user.role = new Role();
     localStorage.clear();
   }
 
@@ -101,7 +103,7 @@ export class UserService implements CanActivate {
       resultUser.mailAddress = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
       resultUser.firstName = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"];
       resultUser.lastName = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-      resultUser.role = tokenDecoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      resultUser.role.code = tokenDecoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       resultUser.initials = "anonym";
       if (resultUser.lastName !== null && resultUser.lastName.length > 1) {
         resultUser.initials = resultUser.lastName[0].toUpperCase() + resultUser.lastName[1].toUpperCase();
@@ -137,6 +139,18 @@ export class UserService implements CanActivate {
   deleteUser(mailAddress: string): Observable<string> {
     let result: Observable<string> =
       this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<string>;
+    return result;
+  }
+
+  getAllRoleTypes(): Observable<Role[]> {
+    let result: Observable<Role[]> =
+      this.http.get(environment.apiUrl + "/account/userroles/") as Observable<Role[]>;
+    return result;
+  }
+
+  getAllOrgTypes(): Observable<OrganisationalUnit[]> {
+    let result: Observable<OrganisationalUnit[]> =
+      this.http.get(environment.apiUrl + "/account/organisations/") as Observable<OrganisationalUnit[]>;
     return result;
   }
 
