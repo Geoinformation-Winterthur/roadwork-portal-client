@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Polygon } from 'ol/geom';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 
@@ -30,14 +31,16 @@ export class ChooseNeedComponent implements OnInit {
 
   getAllProjects() {
 
-    let roadWorkNeed = this.roadWorkNeedFeaturesFiltered[0];
-
     this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
-      next: (roadWorkNeedsData) => {
-        let roadWorkNeedsObs: RoadWorkNeedFeature[]
-          = roadWorkNeedsData as RoadWorkNeedFeature[];
+      next: (roadWorkNeeds) => {
 
-        this.roadWorkNeedFeatures = roadWorkNeedsObs;
+        let roadWorkNeed: any;
+        for(roadWorkNeed of roadWorkNeeds){
+          let blowUpPoly: Polygon = new Polygon(roadWorkNeed.geometry.coordinates)
+          roadWorkNeed.geometry = blowUpPoly;
+        }
+
+        this.roadWorkNeedFeatures = roadWorkNeeds;
         this.roadWorkNeedFeaturesFiltered = this.roadWorkNeedFeatures;
 
         this.isConstructionProjectServiceOnline = true;
