@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditProjectMapComponent } from './edit-project-map.component';
+import { EditNeedMapComponent } from './edit-need-map.component';
 
-describe('EditProjectMapComponent', () => {
-  let component: EditProjectMapComponent;
-  let fixture: ComponentFixture<EditProjectMapComponent>;
+describe('EditNeedMapComponent', () => {
+  let component: EditNeedMapComponent;
+  let fixture: ComponentFixture<EditNeedMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EditProjectMapComponent ]
+      declarations: [ EditNeedMapComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditProjectMapComponent);
+    fixture = TestBed.createComponent(EditNeedMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

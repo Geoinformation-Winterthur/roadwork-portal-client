@@ -43,7 +43,7 @@ import { UsersComponent } from "./users/users.component";
  import { LoginComponent } from './login/login.component';
  
  import { JwtModule } from '@auth0/angular-jwt';
- import { ChooseProjectComponent } from './choose-project/choose-project.component';
+ import { ChooseNeedComponent } from './choose-need/choose-need.component';
  
  import { ChartsModule } from 'ng2-charts';
  import { UserService } from 'src/services/user.service';
@@ -51,7 +51,7 @@ import { UserComponent } from './user/user.component';
 import { ProjectNameFilterComponent } from './project-name-filter/project-name-filter.component';
 import { ProjectYearFilterComponent } from './project-year-filter/project-year-filter.component';
 import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
-import { EditProjectMapComponent } from './edit-project-map/edit-project-map.component';
+import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
  
  
@@ -72,12 +72,12 @@ import { ManagementAreasComponent } from './management-areas/management-areas.co
      WelcomeComponent,
      UsersComponent,
      LoginComponent,
-     ChooseProjectComponent,
+     ChooseNeedComponent,
      UserComponent,
      ProjectNameFilterComponent,
      ProjectYearFilterComponent,
      ProjectAttributesComponent,
-     EditProjectMapComponent,
+     EditNeedMapComponent,
      ManagementAreasComponent
    ],
    imports: [

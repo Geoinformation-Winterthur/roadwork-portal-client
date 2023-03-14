@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ChooseProjectComponent } from '../choose-project/choose-project.component';
+import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 
 @Component({
   selector: 'app-project-year-filter',
@@ -14,10 +14,10 @@ export class ProjectYearFilterComponent implements OnInit {
   sliderThumbLabel: boolean = true;
 
   // parent component of this component:
-  chooseProjectComponent: ChooseProjectComponent;
+  chooseNeedComponent: ChooseNeedComponent;
 
-  constructor(chooseProjectComponent: ChooseProjectComponent) {
-    this.chooseProjectComponent = chooseProjectComponent;
+  constructor(chooseNeedComponent: ChooseNeedComponent) {
+    this.chooseNeedComponent = chooseNeedComponent;
   }
 
   ngOnInit(): void {
@@ -27,12 +27,12 @@ export class ProjectYearFilterComponent implements OnInit {
   }
 
   filterYears() {
-    this.chooseProjectComponent.roadWorkProjectFeaturesFiltered
-      = this.chooseProjectComponent.roadWorkProjectFeatures
-        .filter(roadWorkProjectFeatures => {
-          if(roadWorkProjectFeatures.properties.realizationUntil){
-            let realizationUntil: Date = new Date(roadWorkProjectFeatures.properties.realizationUntil);
-            return realizationUntil.getFullYear() === this.chooseProjectComponent.chosenYear;  
+    this.chooseNeedComponent.roadWorkNeedFeaturesFiltered
+      = this.chooseNeedComponent.roadWorkNeedFeatures
+        .filter(roadWorkNeedFeatures => {
+          if(roadWorkNeedFeatures.properties.finishOptimumTo){
+            let finishOptimumTo: Date = new Date(roadWorkNeedFeatures.properties.finishOptimumTo);
+            return finishOptimumTo.getFullYear() === this.chooseNeedComponent.chosenYear;  
           } else {
             return false;
           }

@@ -15,19 +15,19 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
-import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
+import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import proj4 from 'proj4';
-import { RoadWorkProjectFeature } from 'src/model/road-work-project-feature';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 
 @Component({
-  selector: 'kopal-edit-project-map',
-  templateUrl: './edit-project-map.component.html',
-  styleUrls: ['./edit-project-map.component.css']
+  selector: 'app-edit-need-map',
+  templateUrl: './edit-need-map.component.html',
+  styleUrls: ['./edit-need-map.component.css']
 })
-export class EditProjectMapComponent implements OnInit {
+export class EditNeedMapComponent implements OnInit {
 
   @Input()
-  roadWorkProjectFeat?: RoadWorkProjectFeature;
+  roadWorkNeedFeat?: RoadWorkNeedFeature;
 
   isInEditingMode: boolean = false;
 
@@ -37,12 +37,12 @@ export class EditProjectMapComponent implements OnInit {
   loadSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
 
-  private roadWorkProjectService: RoadWorkProjectService;
+  private roadWorkNeedService: RoadWorkNeedService;
   private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
-    roadWorkProjectService: RoadWorkProjectService) {
-    this.roadWorkProjectService = roadWorkProjectService;
+    roadWorkNeedService: RoadWorkNeedService) {
+    this.roadWorkNeedService = roadWorkNeedService;
     this.snackBar = snackBar;
   }
 
@@ -132,30 +132,16 @@ export class EditProjectMapComponent implements OnInit {
   }
 
   loadGeometry(refreshExtent: boolean) {
-    if(this.roadWorkProjectFeat !== undefined)
+    if(this.roadWorkNeedFeat !== undefined)
     {
-      let coordinatesArray: number[] =
-                this.roadWorkProjectFeat.geometry
-                      .coordinates;
-
-      let i: number = 1;
-      let polyCoords = [];
-      for (i; i < coordinatesArray.length; i = i + 2) {
-        let coords: number[] = [];
-        coords[0] = coordinatesArray[i - 1];
-        coords[1] = coordinatesArray[i];
-        polyCoords.push(coords);
-      }
-
-      let ahaPoly: Polygon = new Polygon([polyCoords]);
-      ahaPoly.transform("EPSG:2056", 'EPSG:3857');
-
+      let needPoly: Polygon = this.roadWorkNeedFeat.geometry.clone();
+      needPoly.transform("EPSG:2056", 'EPSG:3857');
 
       let testFeature: Feature = new Feature({
         type: "Feature",
         name: "testFeature",
         id: 231243,
-        geometry: ahaPoly
+        geometry: needPoly
       });
 
       this.loadSource.clear();
@@ -163,29 +149,29 @@ export class EditProjectMapComponent implements OnInit {
       this.loadSource.changed();
 
       if (refreshExtent) {
-        let polyExtent: Extent = ahaPoly.getExtent();
+        let polyExtent: Extent = needPoly.getExtent();
         this.setViewToPolyExtent(polyExtent);
       }
     }
   }
 
   sendGeometry() {
-    if(this.roadWorkProjectFeat != undefined){
+    if(this.roadWorkNeedFeat != undefined){
 
       let features = this.userDrawSource.getFeatures();
       let feature1 = features[0];
       let geom1: Polygon = feature1.getGeometry() as Polygon;
       let geom2: Polygon = geom1.clone();
       geom2.transform('EPSG:3857', "EPSG:2056");
-      this.roadWorkProjectService
-        .updateRoadWorkProject(this.roadWorkProjectFeat)
+      this.roadWorkNeedService
+        .updateRoadWorkNeed(this.roadWorkNeedFeat)
         .subscribe({
           next: (success) => {
             this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
               duration: 4000,
             });
-            if(this.roadWorkProjectFeat)
-                this.roadWorkProjectFeat.geometry.coordinates = geom2.getFlatCoordinates();
+            if(this.roadWorkNeedFeat)
+                this.roadWorkNeedFeat.geometry = geom2;
             this.loadGeometry(false);
           },
           error: (error) => {

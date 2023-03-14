@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
+import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
-import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
+import { User } from 'src/model/user';
+import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 
 @Component({
   selector: 'app-project-attributes',
@@ -12,18 +13,23 @@ import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
 })
 export class ProjectAttributesComponent implements OnInit {
 
-  roadWorkProjectFeature?: RoadWorkProjectFeature;
+  roadWorkNeedFeature?: RoadWorkNeedFeature;
+  orderer: User = new User();
+  ordererOrgUnitName: string = "";
+  areaManagerName: string = "";
+  statusCode: string = "";
+  priorityCode: string = "";
 
   userService: UserService;
 
-  private roadWorkProjectService: RoadWorkProjectService;
+  private roadWorkNeedService: RoadWorkNeedService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
-  constructor(activatedRoute: ActivatedRoute, roadWorkProjectService: RoadWorkProjectService,
+  constructor(activatedRoute: ActivatedRoute, roadWorkNeedService: RoadWorkNeedService,
         userService: UserService) {
     this.activatedRoute = activatedRoute;
-    this.roadWorkProjectService = roadWorkProjectService;
+    this.roadWorkNeedService = roadWorkNeedService;
     this.userService = userService;
   }
 
@@ -34,21 +40,21 @@ export class ProjectAttributesComponent implements OnInit {
 
         if(idParamString == "new"){
 
-          this.roadWorkProjectFeature = new RoadWorkProjectFeature();
-          this.roadWorkProjectFeature.properties.uuid = "";
+          this.roadWorkNeedFeature = new RoadWorkNeedFeature();
+          this.roadWorkNeedFeature.properties.uuid = "";
 
         } else {
 
           let constProjId: string = params['id'];
 
-          this.roadWorkProjectService.getRoadWorkProjects(constProjId)
+          this.roadWorkNeedService.getRoadWorkNeeds(constProjId)
                   .subscribe({
-            next: (roadWorkProjectService) => {
-              if(roadWorkProjectService.length === 1){
-                let constructionprojectObs: RoadWorkProjectFeature
-                      = roadWorkProjectService[0];
+            next: (roadWorkNeedService) => {
+              if(roadWorkNeedService.length === 1){
+                let constructionprojectObs: RoadWorkNeedFeature
+                      = roadWorkNeedService[0];
       
-                this.roadWorkProjectFeature = constructionprojectObs;
+                this.roadWorkNeedFeature = constructionprojectObs;
     
               }    
             },
@@ -63,7 +69,7 @@ export class ProjectAttributesComponent implements OnInit {
 
   save()
   {
-    this.roadWorkProjectService.updateRoadWorkProject(this.roadWorkProjectFeature);
+    this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature);
   }
 
   validateElement1() {

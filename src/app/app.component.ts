@@ -9,7 +9,7 @@
  import { MatSnackBar } from '@angular/material/snack-bar';
  import { UserService } from '../services/user.service';
  import { environment } from 'src/environments/environment';
- import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
+ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { MatDrawerMode } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
  
@@ -35,15 +35,15 @@ import { Title } from '@angular/platform-browser';
    private cookieService: CookieService;
    private snckBar: MatSnackBar;
  
-   private roadWorkProjectService: RoadWorkProjectService;
+   private roadWorkNeedService: RoadWorkNeedService;
  
    public userService: UserService;
  
    constructor(cookieService: CookieService, snckBar: MatSnackBar, oMedia: MediaObserver,
-    roadWorkProjectService: RoadWorkProjectService, userService: UserService, titleService: Title) {
+    roadWorkNeedService: RoadWorkNeedService, userService: UserService, titleService: Title) {
      titleService.setTitle(this.title);
      this.cookieService = cookieService;
-     this.roadWorkProjectService = roadWorkProjectService;
+     this.roadWorkNeedService = roadWorkNeedService;
      this.userService = userService;
      this.snckBar = snckBar;
      this.mediaWatcher = oMedia.asObservable().subscribe((mChange: MediaChange[]) => {
@@ -62,7 +62,6 @@ import { Title } from '@angular/platform-browser';
    }
  
    ngOnInit() {
-     this.roadWorkProjectService.activateSelectedRoadWorkProjectFromLocalStorage();
    }
  
    public isUserLoggedIn(): boolean {
@@ -70,7 +69,6 @@ import { Title } from '@angular/platform-browser';
    }
  
    public logUserOut(event: Event) {
-     this.roadWorkProjectService.clearSelectedRoadWorkProject();
      this.userService.logout();
    }
  

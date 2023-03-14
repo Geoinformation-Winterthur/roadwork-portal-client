@@ -6,17 +6,17 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { RoadWorkProjectService } from './roadwork_project.service';
+import { RoadWorkNeedService } from './roadwork-need.service';
 
-describe('RoadWorkProjectService', () => {
-  let service: RoadWorkProjectService;
+describe('RoadWorkNeedService', () => {
+  let service: RoadWorkNeedService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ // only modules go here
         RouterTestingModule, HttpClientTestingModule ]
     });
-    service = TestBed.inject(RoadWorkProjectService);
+    service = TestBed.inject(RoadWorkNeedService);
   });
 
   it('should be created', () => {

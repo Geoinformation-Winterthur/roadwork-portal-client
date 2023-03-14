@@ -8,19 +8,19 @@
 import { UsersComponent } from "./users/users.component";
  import { WelcomeComponent } from './welcome/welcome.component';
  import { LoginComponent } from './login/login.component';
- import { ChooseProjectComponent } from './choose-project/choose-project.component';
+ import { ChooseNeedComponent } from './choose-need/choose-need.component';
  import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
  import { UserService } from 'src/services/user.service';
 import { UserComponent } from './user/user.component';
-import { EditProjectMapComponent } from './edit-project-map/edit-project-map.component';
+import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
    {path: 'report', component: ReportComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'chooseproject', component: ChooseProjectComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'project/:id', component: ProjectAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'map/:id', component: EditProjectMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
+   {path: 'chooseneed', component: ChooseNeedComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'need/:id', component: ProjectAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'map/:id', component: EditNeedMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'managementareas', component: ManagementAreasComponent, pathMatch: 'full', canActivate: [UserService]},

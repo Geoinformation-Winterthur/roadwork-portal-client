@@ -6,5 +6,6 @@ export class User {
     mailAddress: string = "";
     passPhrase: string = "";
     role: string = "";
+    organisationalUnitUuid: string = "";
     token: string = "";
 }

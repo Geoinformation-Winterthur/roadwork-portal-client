@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { RoadWorkProjectService } from '../../services/roadwork_project.service';
+import { RoadWorkNeedService } from '../../services/roadwork-need.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { ChooseProjectComponent } from '../choose-project/choose-project.component';
+import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 
 @Component({
   selector: 'app-project-name-filter',
@@ -16,14 +16,14 @@ export class ProjectNameFilterComponent implements OnInit {
   projectsNamesFiltered: Observable<string[]> = new Observable<string[]>();
   projectSearchControl: FormControl = new FormControl();
 
-  private projectService: RoadWorkProjectService;
+  private needService: RoadWorkNeedService;
   // parent component of this component:
-  private chooseProjectComponent: ChooseProjectComponent;
+  private chooseNeedComponent: ChooseNeedComponent;
 
-  constructor(projectService: RoadWorkProjectService,
-    chooseProjectComponent: ChooseProjectComponent) {
-    this.projectService = projectService;
-    this.chooseProjectComponent = chooseProjectComponent;
+  constructor(needService: RoadWorkNeedService,
+    chooseNeedComponent: ChooseNeedComponent) {
+    this.needService = needService;
+    this.chooseNeedComponent = chooseNeedComponent;
   }
 
   ngOnInit(): void {

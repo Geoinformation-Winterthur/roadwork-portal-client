@@ -5,7 +5,7 @@
  import { Component, OnInit } from '@angular/core';
  import { NgForm } from '@angular/forms';
  import { Router } from '@angular/router';
- import { RoadWorkProjectService } from 'src/services/roadwork_project.service';
+ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
  import { UserService } from 'src/services/user.service';
  import { User } from '../../model/user';
  
@@ -24,13 +24,13 @@
  
    private router: Router;
    private userService: UserService;
-   private roadWorkProjectService: RoadWorkProjectService;
+   private roadWorkNeedService: RoadWorkNeedService;
  
    constructor(router: Router, userService: UserService,
-    roadWorkProjectService: RoadWorkProjectService) {
+    roadWorkNeedService: RoadWorkNeedService) {
      this.router = router;
      this.userService = userService;
-     this.roadWorkProjectService = roadWorkProjectService;
+     this.roadWorkNeedService = roadWorkNeedService;
     }
  
    ngOnInit(): void {
@@ -46,7 +46,6 @@
           () => {
             // in the case of login success:
             this.loginInvalid = false;
-            this.roadWorkProjectService.clearSelectedRoadWorkProject();
             this.router.navigate(["/"]);
           }, 
           () => {
