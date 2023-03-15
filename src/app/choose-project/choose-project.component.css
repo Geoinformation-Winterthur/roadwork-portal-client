@@ -1,0 +1,9 @@
+.add-project-button-container {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    z-index: 100;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;  
+}

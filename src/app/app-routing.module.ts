@@ -14,11 +14,13 @@ import { UsersComponent } from "./users/users.component";
 import { UserComponent } from './user/user.component';
 import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
+import { ChooseProjectComponent } from './choose-project/choose-project.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
    {path: 'report', component: ReportComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'chooseneed', component: ChooseNeedComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'chooseproject', component: ChooseProjectComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'need/:id', component: NeedAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'map/:id', component: EditNeedMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
