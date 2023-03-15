@@ -48,9 +48,9 @@ import { UsersComponent } from "./users/users.component";
  import { ChartsModule } from 'ng2-charts';
  import { UserService } from 'src/services/user.service';
 import { UserComponent } from './user/user.component';
-import { ProjectNameFilterComponent } from './project-name-filter/project-name-filter.component';
-import { ProjectYearFilterComponent } from './project-year-filter/project-year-filter.component';
-import { ProjectAttributesComponent } from './project-attributes/project-attributes.component';
+import { NeedNameFilterComponent } from './need-name-filter/need-name-filter.component';
+import { NeedYearFilterComponent } from './need-year-filter/need-year-filter.component';
+import { NeedAttributesComponent } from './need-attributes/need-attributes.component';
 import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
  
@@ -74,9 +74,9 @@ import { ManagementAreasComponent } from './management-areas/management-areas.co
      LoginComponent,
      ChooseNeedComponent,
      UserComponent,
-     ProjectNameFilterComponent,
-     ProjectYearFilterComponent,
-     ProjectAttributesComponent,
+     NeedNameFilterComponent,
+     NeedYearFilterComponent,
+     NeedAttributesComponent,
      EditNeedMapComponent,
      ManagementAreasComponent
    ],

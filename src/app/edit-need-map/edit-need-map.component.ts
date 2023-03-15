@@ -89,7 +89,7 @@ export class EditNeedMapComponent implements OnInit {
     });
 
     this.map = new Map({
-      target: 'edit_project_map',
+      target: 'edit_need_map',
       layers: [
         new Tile({
           source: new TileWMS({

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProjectAttributesComponent } from './project-attributes.component';
+import { NeedNameFilterComponent } from './need-name-filter.component';
 
-describe('ProjectAttributesComponent', () => {
-  let component: ProjectAttributesComponent;
-  let fixture: ComponentFixture<ProjectAttributesComponent>;
+describe('NeedNameFilterComponent', () => {
+  let component: NeedNameFilterComponent;
+  let fixture: ComponentFixture<NeedNameFilterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProjectAttributesComponent ]
+      declarations: [ NeedNameFilterComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProjectAttributesComponent);
+    fixture = TestBed.createComponent(NeedNameFilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

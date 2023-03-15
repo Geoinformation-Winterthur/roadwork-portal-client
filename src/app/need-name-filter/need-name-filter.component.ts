@@ -6,15 +6,15 @@ import { map, startWith } from 'rxjs/operators';
 import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 
 @Component({
-  selector: 'app-project-name-filter',
-  templateUrl: './project-name-filter.component.html',
-  styleUrls: ['./project-name-filter.component.css']
+  selector: 'app-need-name-filter',
+  templateUrl: './need-name-filter.component.html',
+  styleUrls: ['./need-name-filter.component.css']
 })
-export class ProjectNameFilterComponent implements OnInit {
+export class NeedNameFilterComponent implements OnInit {
 
-  projectsNames: string[] = [];
-  projectsNamesFiltered: Observable<string[]> = new Observable<string[]>();
-  projectSearchControl: FormControl = new FormControl();
+  needsNames: string[] = [];
+  needsNamesFiltered: Observable<string[]> = new Observable<string[]>();
+  needSearchControl: FormControl = new FormControl();
 
   private needService: RoadWorkNeedService;
   // parent component of this component:
@@ -29,11 +29,11 @@ export class ProjectNameFilterComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  private _filterProjectName(projectName: string): string[] {
-    const filterVal = projectName.toLowerCase();
-    let projectNamesFiltered: string[] =
-      this.projectsNames.filter(opt => opt.toLowerCase().indexOf(filterVal) === 0);
-    return projectNamesFiltered;
+  private _filterNeedName(needName: string): string[] {
+    const filterVal = needName.toLowerCase();
+    let needNamesFiltered: string[] =
+      this.needsNames.filter(opt => opt.toLowerCase().indexOf(filterVal) === 0);
+    return needNamesFiltered;
   }
 
 }

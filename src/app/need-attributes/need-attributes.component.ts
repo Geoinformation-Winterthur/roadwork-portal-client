@@ -8,11 +8,11 @@ import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import Polygon from 'ol/geom/Polygon';
 
 @Component({
-  selector: 'app-project-attributes',
-  templateUrl: './project-attributes.component.html',
-  styleUrls: ['./project-attributes.component.css']
+  selector: 'app-need-attributes',
+  templateUrl: './Need-attributes.component.html',
+  styleUrls: ['./need-attributes.component.css']
 })
-export class ProjectAttributesComponent implements OnInit {
+export class NeedAttributesComponent implements OnInit {
 
   roadWorkNeedFeature?: RoadWorkNeedFeature;
   orderer: User = new User();

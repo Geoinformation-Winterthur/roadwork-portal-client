@@ -24,10 +24,10 @@ export class ChooseNeedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAllProjects();
+    this.getAllNeeds();
   }
 
-  getAllProjects() {
+  getAllNeeds() {
 
     this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
       next: (roadWorkNeeds) => {

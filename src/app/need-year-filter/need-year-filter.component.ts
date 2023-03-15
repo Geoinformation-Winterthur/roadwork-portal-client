@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 
 @Component({
-  selector: 'app-project-year-filter',
-  templateUrl: './project-year-filter.component.html',
-  styleUrls: ['./project-year-filter.component.css']
+  selector: 'app-need-year-filter',
+  templateUrl: './need-year-filter.component.html',
+  styleUrls: ['./need-year-filter.component.css']
 })
-export class ProjectYearFilterComponent implements OnInit {
+export class NeedYearFilterComponent implements OnInit {
 
   sliderMin: number = 1980;
   sliderMax: number = new Date().getFullYear();

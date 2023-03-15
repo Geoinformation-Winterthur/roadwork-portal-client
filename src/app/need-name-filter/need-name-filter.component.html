@@ -1,14 +1,14 @@
-<form class="project-filter-form">
-    <mat-form-field class="choose-project">
+<form class="need-filter-form">
+    <mat-form-field class="choose-need">
         <input type="text"
                placeholder="Projektname"
                aria-label="Name"
                matInput
-               [formControl]="projectSearchControl"
+               [formControl]="needSearchControl"
                [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option *ngFor="let projectName of projectsNamesFiltered | async" [value]="projectName">
-            {{projectName}}
+          <mat-option *ngFor="let needName of needsNamesFiltered | async" [value]="needName">
+            {{needName}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field><br>  
