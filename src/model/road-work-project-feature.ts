@@ -1,13 +1,13 @@
-import Polygon from "ol/geom/Polygon";
+import { RoadworkPolygon } from "./road-work-polygon";
 import { RoadWorkProjectProperties } from "./road-work-project-properties";
 
 export class RoadWorkProjectFeature {
     type: string = "RoadWorkProjectFeature";
     properties: RoadWorkProjectProperties;
-    geometry: Polygon;
+    geometry: RoadworkPolygon;
 
     constructor() {
         this.properties = new RoadWorkProjectProperties();
-        this.geometry = new Polygon([]);
+        this.geometry = new RoadworkPolygon();
     }
 }

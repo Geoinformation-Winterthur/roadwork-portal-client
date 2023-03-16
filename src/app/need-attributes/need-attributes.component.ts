@@ -66,6 +66,19 @@ export class NeedAttributesComponent implements OnInit {
 
   }
 
+  add(){
+    this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
+            .subscribe({
+              next: (roadWorkNeedFeature) => {
+                if(this.roadWorkNeedFeature){
+                  this.roadWorkNeedFeature.properties.uuid = roadWorkNeedFeature.properties.uuid;
+                }
+              },
+              error: (error) => {
+              }
+            });
+  }
+
   save()
   {
     this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature);

@@ -36,7 +36,7 @@ export class RoadWorkNeedService {
      return result;
    }
 
-  addRoadworkNeed(roadworkNeed : RoadWorkNeedFeature): Observable<any> {
+  addRoadworkNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
     let result: Observable<any> = 
           this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkneed/", roadworkNeed);
     return result;
