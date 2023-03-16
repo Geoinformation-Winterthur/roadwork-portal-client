@@ -4,10 +4,10 @@ import { RoadworkCoordinate } from "./roadwork-coordinate";
 
 export class RoadworkPolygon
 {
-    public Coordinates: RoadworkCoordinate[];
+    public coordinates: RoadworkCoordinate[];
 
     constructor() {
-        this.Coordinates = [];
+        this.coordinates = [];
     }
 
     public static convertFromOlPolygon(polygon: Polygon) : RoadworkPolygon {
@@ -19,18 +19,18 @@ export class RoadworkPolygon
                 resultCoord = new RoadworkCoordinate();
                 resultCoord.X = coord[0];
                 resultCoord.Y = coord[1];
-                resultCoords.push(new RoadworkCoordinate());
+                resultCoords.push(resultCoord);
             }    
         }
         let roadworkPolygon: RoadworkPolygon = new RoadworkPolygon();
-        roadworkPolygon.Coordinates = resultCoords;
+        roadworkPolygon.coordinates = resultCoords;
         return roadworkPolygon;
     }
 
     public convertToOlPoly(): Polygon {
         let olPoly: Polygon = new Polygon([]);
         let olCoords: Coordinate[] = [];
-        for(let coord of this.Coordinates){
+        for(let coord of this.coordinates){
             olCoords.push([coord.X], [coord.Y]);
         }
         let polyRings = [olCoords];
@@ -41,11 +41,11 @@ export class RoadworkPolygon
     public clone(): RoadworkPolygon {
         let polyClone: RoadworkPolygon = new RoadworkPolygon();
         let coordClone: RoadworkCoordinate;
-        for(let coord of this.Coordinates){
+        for(let coord of this.coordinates){
             coordClone = new RoadworkCoordinate();
             coordClone.X = coord.X;
             coordClone.Y = coord.Y;
-            polyClone.Coordinates.push(coordClone);
+            polyClone.coordinates.push(coordClone);
         }
         return polyClone;
     }

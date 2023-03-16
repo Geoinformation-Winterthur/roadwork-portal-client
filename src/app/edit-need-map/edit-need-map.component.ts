@@ -158,7 +158,6 @@ export class EditNeedMapComponent implements OnInit {
 
   sendGeometry() {
     if (this.roadWorkNeedFeat != undefined) {
-
       let features = this.userDrawSource.getFeatures();
       let feature1 = features[0];
       let geom1: Polygon = feature1.getGeometry() as Polygon;

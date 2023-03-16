@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Polygon } from 'ol/geom';
+import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkProjectService } from 'src/services/roadwork-project.service';
 import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
 
@@ -32,9 +33,9 @@ export class ChooseProjectComponent implements OnInit {
     this.roadWorkProjectService.getRoadWorkProjects().subscribe({
       next: (roadWorkProjects) => {
 
-        let roadWorkProject: any;
-        for(roadWorkProject of roadWorkProjects){
-          let blowUpPoly: Polygon = new Polygon(roadWorkProject.geometry.coordinates);
+        for(let roadWorkProject of roadWorkProjects){
+          let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
+          blowUpPoly.coordinates = roadWorkProject.geometry.coordinates;
           roadWorkProject.geometry = blowUpPoly;
         }
 

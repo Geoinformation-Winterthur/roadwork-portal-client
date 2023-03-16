@@ -6,6 +6,7 @@ import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import Polygon from 'ol/geom/Polygon';
+import { RoadworkPolygon } from 'src/model/road-work-polygon';
 
 @Component({
   selector: 'app-need-attributes',
@@ -53,7 +54,9 @@ export class NeedAttributesComponent implements OnInit {
             next: (roadWorkNeeds) => {
               if(roadWorkNeeds.length === 1){
                 let roadWorkNeed: any = roadWorkNeeds[0];
-                roadWorkNeed.geometry = new Polygon(roadWorkNeed.geometry.coordinates);
+                let rwPoly: RoadworkPolygon = new RoadworkPolygon();
+                rwPoly.coordinates = roadWorkNeed.geometry.coordinates
+                roadWorkNeed.geometry = rwPoly;
                 this.roadWorkNeedFeature = roadWorkNeed;
               }    
             },
