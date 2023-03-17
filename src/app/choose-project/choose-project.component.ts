@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Polygon } from 'ol/geom';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkProjectService } from 'src/services/roadwork-project.service';
 import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
