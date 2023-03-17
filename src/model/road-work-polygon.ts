@@ -17,8 +17,8 @@ export class RoadworkPolygon
         if(extRing){
             for(let coord of extRing.getCoordinates()){
                 resultCoord = new RoadworkCoordinate();
-                resultCoord.X = coord[0];
-                resultCoord.Y = coord[1];
+                resultCoord.x = coord[0];
+                resultCoord.y = coord[1];
                 resultCoords.push(resultCoord);
             }    
         }
@@ -28,13 +28,11 @@ export class RoadworkPolygon
     }
 
     public convertToOlPoly(): Polygon {
-        let olPoly: Polygon = new Polygon([]);
         let olCoords: Coordinate[] = [];
         for(let coord of this.coordinates){
-            olCoords.push([coord.X], [coord.Y]);
+            olCoords.push([coord.x, coord.y]);
         }
-        let polyRings = [olCoords];
-        olPoly.setCoordinates(polyRings);
+        let olPoly: Polygon = new Polygon([olCoords]);
         return olPoly;
     }
 
@@ -43,8 +41,8 @@ export class RoadworkPolygon
         let coordClone: RoadworkCoordinate;
         for(let coord of this.coordinates){
             coordClone = new RoadworkCoordinate();
-            coordClone.X = coord.X;
-            coordClone.Y = coord.Y;
+            coordClone.x = coord.x;
+            coordClone.x = coord.y;
             polyClone.coordinates.push(coordClone);
         }
         return polyClone;

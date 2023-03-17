@@ -2,15 +2,15 @@ import { Coordinate } from "ol/coordinate";
 
 export class RoadworkCoordinate
 {
-    public X: number = 0;
-    public Y: number = 0;
+    public x: number = 0;
+    public y: number = 0;
 
     constructor() {}
 
-    constructFromXY(X: number, Y: number) : RoadworkCoordinate {
+    constructFromXY(x: number, y: number) : RoadworkCoordinate {
         let coordinate: RoadworkCoordinate = new RoadworkCoordinate();
-        coordinate.X = X;
-        coordinate.Y = Y;
+        coordinate.x = x;
+        coordinate.y = y;
         return coordinate;
     }
     
