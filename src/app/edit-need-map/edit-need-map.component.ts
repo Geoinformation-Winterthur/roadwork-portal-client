@@ -55,8 +55,13 @@ export class EditNeedMapComponent implements OnInit {
     proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
     register(proj4);
     this.initializeMap();
+    this.resizeMap(null);
+    addEventListener("resize", this.resizeMap);
   }
 
+  ngOnDestroy() {
+    removeEventListener("resize", this.resizeMap);
+  }
 
   initializeMap() {
 
@@ -207,6 +212,12 @@ export class EditNeedMapComponent implements OnInit {
     alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. " +
       "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
+  }
+
+  private resizeMap(event: any){
+    let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
+    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
+    mapElement.style.height = (window.innerHeight - (Math.round(mapElementRect.top) + 100)) + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {
