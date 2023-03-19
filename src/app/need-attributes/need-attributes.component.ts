@@ -75,6 +75,8 @@ export class NeedAttributesComponent implements OnInit {
               next: (roadWorkNeedFeature) => {
                 if(this.roadWorkNeedFeature){
                   this.roadWorkNeedFeature.properties.uuid = roadWorkNeedFeature.properties.uuid;
+                  this.roadWorkNeedFeature.properties.orderer = roadWorkNeedFeature.properties.orderer;
+                  this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
                 }
               },
               error: (error) => {
@@ -84,7 +86,16 @@ export class NeedAttributesComponent implements OnInit {
 
   save()
   {
-    this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature);
+    this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
+    .subscribe({
+      next: (roadWorkNeedFeature) => {
+        if(this.roadWorkNeedFeature){
+          this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+        }
+      },
+      error: (error) => {
+      }
+    });
   }
 
   validateElement1() {
