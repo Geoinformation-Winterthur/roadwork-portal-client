@@ -46,17 +46,19 @@ export class EditNeedMapComponent implements OnInit {
     roadWorkNeedService: RoadWorkNeedService) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.snackBar = snackBar;
+    setTimeout(() => {
+      this.resizeMap(null);
+    }, 20);
   }
 
   ngOnInit() {
+    addEventListener("resize", this.resizeMap);
   }
 
   ngAfterViewInit() {
     proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
     register(proj4);
     this.initializeMap();
-    this.resizeMap(null);
-    addEventListener("resize", this.resizeMap);
   }
 
   ngOnDestroy() {
@@ -67,10 +69,10 @@ export class EditNeedMapComponent implements OnInit {
 
     let loadLayerStyle: Style = new Style({
       fill: new Fill({
-        color: 'rgba(255, 145, 19,0.4)'
+        color: 'rgba(160, 10, 10,0.4)'
       }),
       stroke: new Stroke({
-        color: 'rgba(255, 145, 19,1.0)'
+        color: 'rgba(160, 10, 10,1.0)'
       })
     });
 
@@ -179,7 +181,10 @@ export class EditNeedMapComponent implements OnInit {
         this.roadWorkNeedService
           .updateRoadWorkNeed(this.roadWorkNeedFeat)
           .subscribe({
-            next: (success) => {
+            next: (roadWorkNeedFeature) => {
+              if(this.roadWorkNeedFeat){
+                this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+              }
               this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
                 duration: 4000,
               });
@@ -215,9 +220,14 @@ export class EditNeedMapComponent implements OnInit {
   }
 
   private resizeMap(event: any){
-    let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
-    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
-    mapElement.style.height = (window.innerHeight - (Math.round(mapElementRect.top) + 100)) + "px";
+      let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
+      let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
+      let topCoord: number = Math.round(mapElementRect.top);
+      let mapHeight: number = window.innerHeight - (topCoord + 70);
+      if(window.innerWidth / mapHeight > 3.5){
+        mapHeight = window.innerWidth / 3.5;
+      }
+      mapElement.style.height = mapHeight + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {

@@ -10,6 +10,7 @@ import VectorLayer from 'ol/layer/Vector';
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
+import Text from 'ol/style/Text';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
 import proj4 from 'proj4';
@@ -33,9 +34,13 @@ export class ManagementAreasComponent implements OnInit {
     managementAreaService: ManagementAreaService) {
     this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
+    setTimeout(() => {
+      this.resizeMap(null);
+    }, 20);
   }
 
   ngOnInit() {
+    addEventListener("resize", this.resizeMap);
   }
 
   ngAfterViewInit() {
@@ -44,31 +49,56 @@ export class ManagementAreasComponent implements OnInit {
     this.initializeMap();
   }
 
+  ngOnDestroy() {
+    removeEventListener("resize", this.resizeMap);
+  }
 
   initializeMap() {
 
-    function managementAreasStyleFunc(feature: any, resolution: any){
-      if(feature.get('managername') === "Edgar Butwilowski"){
+    function managementAreasStyleFunc(feature: any, resolution: any) {
+      if (feature.get('managername') === "Edgar Butwilowski") {
         let managementAreasStyle: Style = new Style({
           fill: new Fill({
-            color: 'rgba(255, 145, 19,0.4)'
+            color: 'rgba(160, 160, 204,0.4)'
           }),
           stroke: new Stroke({
-            color: 'rgba(255, 145, 19,1.0)'
-          })
-        });
-        return [managementAreasStyle];
-      } else {
-        let managementAreasStyle: Style = new Style({
-          fill: new Fill({
-            color: 'rgba(173, 111, 25,0.4)'
+            color: 'rgba(160, 160, 204,1.0)'
           }),
-          stroke: new Stroke({
-            color: 'rgba(255, 145, 19,1.0)'
+          text: new Text({
+            text: "Edgar Butwilowski",
+            font: "20px sans-serif"
           })
         });
         return [managementAreasStyle];
       }
+      if (feature.get('managername') === "Heike Beyer") {
+        let managementAreasStyle: Style = new Style({
+          fill: new Fill({
+            color: 'rgba(82, 170, 200,0.4)'
+          }),
+          stroke: new Stroke({
+            color: 'rgba(82, 170, 200,1.0)'
+          }),
+          text: new Text({
+            text: "Heike Beyer",
+            font: "20px sans-serif"
+          })
+        });
+        return [managementAreasStyle];
+      }
+      let managementAreasStyle: Style = new Style({
+          fill: new Fill({
+            color: 'rgba(40, 110, 180,0.4)'
+          }),
+          stroke: new Stroke({
+            color: 'rgba(40, 110, 180,1.0)'
+          }),
+          text: new Text({
+            text: "Stefan Gahler",
+            font: "20px sans-serif"
+          })
+        });
+        return [managementAreasStyle];
     }
 
     this.loadSource = new VectorSource({ wrapX: false });
@@ -97,8 +127,8 @@ export class ManagementAreasComponent implements OnInit {
         loadLayer
       ],
       view: new View({
-        center: [972000.5, 6023000.72],
-        zoom: 12
+        center: [974000.5, 6024000.72],
+        zoom: 13
       })
     });
 
@@ -114,9 +144,8 @@ export class ManagementAreasComponent implements OnInit {
         next: (managementAreasCollection) => {
           if (managementAreasCollection !== undefined) {
             this.loadSource.clear();
-            for(let featureJson of managementAreasCollection.features)
-            {
-              let generalObject: any = featureJson;              
+            for (let featureJson of managementAreasCollection.features) {
+              let generalObject: any = featureJson;
               let managementAreaPoly: Polygon = new Polygon(generalObject.geometry.coordinates);
               managementAreaPoly.transform("EPSG:2056", 'EPSG:3857');
               let managementArea: Feature = new Feature({
@@ -135,6 +164,17 @@ export class ManagementAreasComponent implements OnInit {
         }
       });
 
+  }
+
+  private resizeMap(event: any) {
+    let mapElement: HTMLElement = document.getElementById("management_areas_map") as HTMLElement;
+    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
+    let topCoord: number = Math.round(mapElementRect.top);
+    let mapHeight: number = window.innerHeight - (topCoord + 70);
+    if (window.innerWidth / mapHeight > 3.5) {
+      mapHeight = window.innerWidth / 3.5;
+    }
+    mapElement.style.height = mapHeight + "px";
   }
 
 }
