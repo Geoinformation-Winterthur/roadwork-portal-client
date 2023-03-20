@@ -181,18 +181,22 @@ export class EditNeedMapComponent implements OnInit {
         this.roadWorkNeedService
           .updateRoadWorkNeed(this.roadWorkNeedFeat)
           .subscribe({
-            next: (roadWorkNeedFeature) => {
+            next: (roadWorkNeedFeature) => {              
               if(this.roadWorkNeedFeat){
-                this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+                if(this.roadWorkNeedFeat.errorMessageCode !== ""){
+                  if(this.roadWorkNeedFeat.errorMessageCode == "RWP-1")
+                  this.snackBar.open("Das Baubedürfnis liegt nicht in einem Verwaltungsgebiet", "", {
+                    duration: 4000,
+                  });
+                }else{
+                  this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+                }
               }
               this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
                 duration: 4000,
               });
             },
             error: (error) => {
-              this.snackBar.open("Baustellengeometrie konnte NICHT gespeichert werden", "", {
-                duration: 4000,
-              });
             }
           });
       }
