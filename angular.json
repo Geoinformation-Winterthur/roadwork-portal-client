@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "roadworks-portal-client": {
+    "roadwork-portal-client": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/roadworks-portal-client",
+            "outputPath": "dist/roadwork-portal-client",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -92,10 +92,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "roadworks-portal-client:build:production"
+              "browserTarget": "roadwork-portal-client:build:production"
             },
             "development": {
-              "browserTarget": "roadworks-portal-client:build:development"
+              "browserTarget": "roadwork-portal-client:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -103,7 +103,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "roadworks-portal-client:build"
+            "browserTarget": "roadwork-portal-client:build"
           }
         },
         "test": {
@@ -128,5 +128,5 @@
       }
     }
   },
-  "defaultProject": "roadworks-portal-client"
+  "defaultProject": "roadwork-portal-client"
 }
