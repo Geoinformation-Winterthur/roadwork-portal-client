@@ -13,7 +13,7 @@
     <p>Hier k&ouml;nnen Sie Benutzer dieses Systems hinzuf&uuml;gen, entfernen oder bearbeiten.</p>
     <p *ngIf="responseMessage !== null" style="color: red;">{{ responseMessage }}</p>
 
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width: 100%">
   
       <ng-container matColumnDef="lastName">
         <th mat-header-cell *matHeaderCellDef> Nachname </th>

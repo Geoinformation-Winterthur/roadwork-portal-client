@@ -52,21 +52,23 @@
                     <mat-icon aria-label="Willkommen">speaker_notes</mat-icon>&nbsp;<span i18n>Willkommen</span>
                 </a>
                 <div *ngIf="isUserLoggedIn()">
-                    <a mat-list-item routerLink='/report' (click)="toggleSideNav($event)">
+                    <a mat-list-item routerLink='/report' (click)="toggleSideNav($event)"
+                            *ngIf="userService.getLocalUser().role.code === 'administrator'">
                         <mat-icon aria-label="Dashboard">analytics</mat-icon>&nbsp;<span i18n>Dashboard</span>
                     </a>
                     <a mat-list-item routerLink='/chooseneed' (click)="toggleSideNav($event)">
                         <mat-icon aria-label="Baubed&uuml;rfnisse">tips_and_updates</mat-icon>&nbsp;<span i18n>Baubed&uuml;rfnisse</span>
                     </a>
-                    <a mat-list-item routerLink='/chooseproject' (click)="toggleSideNav($event)">
+                    <a mat-list-item routerLink='/chooseproject' (click)="toggleSideNav($event)"
+                            *ngIf="userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager'">
                         <mat-icon aria-label="Bauprojekte">engineering</mat-icon>&nbsp;<span i18n>Bauprojekte</span>
                     </a>
-                    <a mat-list-item routerLink='/managementareas'
-                        *ngIf="userService.getLocalUser().role.code === 'administrator'" (click)="toggleSideNav($event)">
+                    <a mat-list-item routerLink='/managementareas' (click)="toggleSideNav($event)"
+                            *ngIf="userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager'">
                         <mat-icon aria-label="Gebiete">push_pin</mat-icon>&nbsp;<span i18n>Gebiete</span>
                     </a>
-                    <a mat-list-item routerLink='/users' *ngIf="userService.getLocalUser().role.code === 'administrator'"
-                        (click)="toggleSideNav($event)">
+                    <a mat-list-item routerLink='/users' (click)="toggleSideNav($event)"
+                            *ngIf="userService.getLocalUser().role.code === 'administrator'">
                         <mat-icon aria-label="Benutzer">account_box</mat-icon>&nbsp;<span i18n>Benutzer</span>
                     </a>
                 </div>
