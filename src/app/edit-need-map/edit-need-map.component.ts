@@ -188,7 +188,7 @@ export class EditNeedMapComponent implements OnInit {
                   let errorMessage: string = roadWorkNeedFeature.errorMessage;
                   if(errorMessage.startsWith("RWP-")){
                     let messageCode: number = Number(errorMessage.split('-')[1]);
-                    errorMessage = ErrorMessages.messages[messageCode];
+                    errorMessage = ErrorMessages.messages[messageCode] + " (" + errorMessage + ")";
                   }
                   this.snackBar.open(errorMessage, "", {
                     duration: 4000
