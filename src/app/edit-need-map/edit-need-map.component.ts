@@ -20,6 +20,7 @@ import proj4 from 'proj4';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
+import { ErrorMessages } from 'src/helper/error-messages';
 
 @Component({
   selector: 'app-edit-need-map',
@@ -182,19 +183,25 @@ export class EditNeedMapComponent implements OnInit {
           .updateRoadWorkNeed(this.roadWorkNeedFeat)
           .subscribe({
             next: (roadWorkNeedFeature) => {              
-              if(this.roadWorkNeedFeat){
-                if(this.roadWorkNeedFeat.errorMessageCode !== ""){
-                  if(this.roadWorkNeedFeat.errorMessageCode == "RWP-1")
-                  this.snackBar.open("Das Baubedürfnis liegt nicht in einem Verwaltungsgebiet", "", {
-                    duration: 4000,
+              if(roadWorkNeedFeature){
+                if(roadWorkNeedFeature.errorMessage !== ""){
+                  let errorMessage: string = roadWorkNeedFeature.errorMessage;
+                  if(roadWorkNeedFeature.errorMessage.startsWith("RWP-")){
+                    let messageCode: number = roadWorkNeedFeature.errorMessage.split('-')[1];
+                    errorMessage = ErrorMessages.messages[messageCode];
+                  }
+                  this.snackBar.open(errorMessage, "", {
+                    duration: 4000
                   });
                 }else{
-                  this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+                  if(this.roadWorkNeedFeat){
+                    this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+                    this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
+                      duration: 4000,
+                    });      
+                  }
                 }
               }
-              this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
-                duration: 4000,
-              });
             },
             error: (error) => {
             }
