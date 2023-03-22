@@ -7,6 +7,8 @@ import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import Polygon from 'ol/geom/Polygon';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
+import { FormControl } from '@angular/forms';
+import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 
 @Component({
   selector: 'app-need-attributes',
@@ -24,9 +26,13 @@ export class NeedAttributesComponent implements OnInit {
 
   userService: UserService;
 
+  roadWorkNeedEnumControl: FormControl = new FormControl();
+  availableRoadWorkNeedEnums: RoadWorkNeedEnum[] = [];
+
   private roadWorkNeedService: RoadWorkNeedService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
+
 
   constructor(activatedRoute: ActivatedRoute, roadWorkNeedService: RoadWorkNeedService,
         userService: UserService) {
@@ -43,7 +49,8 @@ export class NeedAttributesComponent implements OnInit {
         if(idParamString == "new"){
 
           this.roadWorkNeedFeature = new RoadWorkNeedFeature();
-          this.roadWorkNeedFeature.properties.uuid = "";
+          this.roadWorkNeedFeature.properties.status.code = "notcoord";
+          this.roadWorkNeedFeature.properties.priority.code = "middle";
 
         } else {
 
@@ -58,6 +65,11 @@ export class NeedAttributesComponent implements OnInit {
                 rwPoly.coordinates = roadWorkNeed.geometry.coordinates
                 roadWorkNeed.geometry = rwPoly;
                 this.roadWorkNeedFeature = roadWorkNeed;
+                let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
+                if(!this._hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedFeature.properties.kind)){
+                  this.availableRoadWorkNeedEnums.push(roadWorkNeedFeature.properties.kind);
+                }
+                this.roadWorkNeedEnumControl.setValue(roadWorkNeedFeature.properties.kind.code);
               }    
             },
             error: (error) => {
@@ -65,6 +77,18 @@ export class NeedAttributesComponent implements OnInit {
 
         }
 
+      });
+
+      this.roadWorkNeedService.getAllTypes().subscribe({
+        next: (roadWorkNeedTypes) => {
+          for (let roadWorkNeedType of roadWorkNeedTypes) {
+            if(!this._hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedType)){
+              this.availableRoadWorkNeedEnums.push(roadWorkNeedType);
+            }
+          }
+        },
+        error: (error) => {
+        }
       });
 
   }
@@ -138,8 +162,23 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
+  onRoadWorkNeedEnumChange() {
+    if(this.roadWorkNeedFeature){
+      this.roadWorkNeedFeature.properties.kind.code = this.roadWorkNeedEnumControl.value;
+    }
+  }
+
   ngOnDestroy() {
     this.activatedRouteSubscription.unsubscribe();
+  }
+
+  private _hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedEnum: RoadWorkNeedEnum): boolean {
+    for(let availableRoadWorkNeedEnum of this.availableRoadWorkNeedEnums){
+      if(availableRoadWorkNeedEnum.code === roadWorkNeedEnum.code){
+        return true;
+      }
+    }
+    return false;
   }
 
 }

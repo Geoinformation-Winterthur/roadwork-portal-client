@@ -2,7 +2,7 @@ import { CostTypes } from "./cost-types";
 import { ManagementAreaFeature } from "./management-area-feature";
 import { User } from "./user";
 
-export class RoadWorkProjectProperties {
+export class RoadWorkActivityProperties {
     uuid: string = "";
     managementarea: ManagementAreaFeature
             = new ManagementAreaFeature();

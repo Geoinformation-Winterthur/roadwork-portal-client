@@ -1,13 +1,16 @@
 import { ManagementAreaFeature } from "./management-area-feature";
 import { Priority } from "./priority";
+import { RoadWorkNeedEnum } from "./road-work-need-enum";
 import { Status } from "./status";
 import { User } from "./user";
 
 export class RoadWorkNeedProperties {
     uuid: string = "";
-    name: string  = "";
-    kind: string  = "";
+    name: string = "";
+    kind: RoadWorkNeedEnum = new RoadWorkNeedEnum();
     orderer: User  = new User();
+    created: Date = new Date(1, 0, 1);
+    lastModified: Date = new Date(1, 0, 1);
     finishEarlyFrom: Date = new Date(1, 0, 1);
     finishEarlyTo: Date = new Date(1, 0, 1);
     finishOptimumFrom: Date = new Date(1, 0, 1);

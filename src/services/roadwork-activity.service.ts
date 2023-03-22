@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { RoadWorkProjectFeature } from 'src/model/road-work-project-feature';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class RoadWorkProjectService {
+export class RoadWorkActivityService {
 
   http: HttpClient;
 
@@ -16,8 +16,8 @@ export class RoadWorkProjectService {
     this.http = http;
   }
 
-   getRoadWorkProjects(id: string = "", summary: boolean = false): Observable<RoadWorkProjectFeature[]> {
-    let queryString = "/roadworkproject/";
+   getRoadWorkProjects(id: string = "", summary: boolean = false): Observable<RoadWorkActivityFeature[]> {
+    let queryString = "/roadworkactivity/";
     if(id !== null && id !== "" || summary) {
       queryString += "?";
 
@@ -31,8 +31,8 @@ export class RoadWorkProjectService {
     if(summary){
       queryString += "summary=true";
     }
-     let result: Observable<RoadWorkProjectFeature[]> =
-           this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkProjectFeature[]>;
+     let result: Observable<RoadWorkActivityFeature[]> =
+           this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkActivityFeature[]>;
      return result;
    }
 

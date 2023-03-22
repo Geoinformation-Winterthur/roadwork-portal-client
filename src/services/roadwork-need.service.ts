@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoadWorkNeedFeature } from '../model/road-work-need-feature';
 import { environment } from 'src/environments/environment';
+import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 
 
 @Injectable({
@@ -45,6 +46,12 @@ export class RoadWorkNeedService {
   updateRoadWorkNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
     let result: Observable<any> = 
           this.http.put(environment.apiUrl + "/roadworkneed/", roadworkNeed);
+    return result;
+  }
+
+  getAllTypes(): Observable<RoadWorkNeedEnum[]> {
+    let result: Observable<RoadWorkNeedEnum[]> =
+      this.http.get(environment.apiUrl + "/roadworkneedtypes/") as Observable<RoadWorkNeedEnum[]>;
     return result;
   }
 

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChooseProjectComponent } from './choose-project.component';
+import { ChooseActivityComponent } from './choose-activity.component';
 
-describe('ChooseProjectComponent', () => {
-  let component: ChooseProjectComponent;
-  let fixture: ComponentFixture<ChooseProjectComponent>;
+describe('ChooseActivityComponent', () => {
+  let component: ChooseActivityComponent;
+  let fixture: ComponentFixture<ChooseActivityComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChooseProjectComponent ]
+      declarations: [ ChooseActivityComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChooseProjectComponent);
+    fixture = TestBed.createComponent(ChooseActivityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

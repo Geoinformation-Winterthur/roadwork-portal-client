@@ -53,7 +53,7 @@ import { NeedYearFilterComponent } from './need-year-filter/need-year-filter.com
 import { NeedAttributesComponent } from './need-attributes/need-attributes.component';
 import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
-import { ChooseProjectComponent } from './choose-project/choose-project.component';
+import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
  
  
  export function getToken(){
@@ -80,7 +80,7 @@ import { ChooseProjectComponent } from './choose-project/choose-project.componen
      NeedAttributesComponent,
      EditNeedMapComponent,
      ManagementAreasComponent,
-     ChooseProjectComponent
+     ChooseActivityComponent
    ],
    imports: [
      BrowserModule,

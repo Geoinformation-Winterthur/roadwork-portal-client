@@ -114,8 +114,8 @@ export class UserComponent implements OnInit {
   }
 
   onUserRoleChange() {
-    for(let roleType of this.availableUserRoleTypes){
-      if(roleType.name === this.userRoleFormControl.value){
+    for (let roleType of this.availableUserRoleTypes) {
+      if (roleType.name === this.userRoleFormControl.value) {
         this.user.role = roleType;
         continue;
       }
@@ -123,8 +123,8 @@ export class UserComponent implements OnInit {
   }
 
   onUserOrgChange() {
-    for(let orgType of this.availableUserOrgTypes){
-      if(orgType.name === this.userOrgFormControl.value){
+    for (let orgType of this.availableUserOrgTypes) {
+      if (orgType.name === this.userOrgFormControl.value) {
         this.user.organisationalUnit = orgType;
         continue;
       }

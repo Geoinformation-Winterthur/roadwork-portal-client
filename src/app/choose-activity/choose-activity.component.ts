@@ -1,26 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { RoadWorkProjectService } from 'src/services/roadwork-project.service';
-import { RoadWorkProjectFeature } from '../../model/road-work-project-feature';
+import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
+import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature';
 
 @Component({
-  selector: 'app-project-need',
-  templateUrl: './choose-project.component.html',
-  styleUrls: ['./choose-project.component.css']
+  selector: 'app-choose-activity',
+  templateUrl: './choose-activity.component.html',
+  styleUrls: ['./choose-activity.component.css']
 })
-export class ChooseProjectComponent implements OnInit {
+export class ChooseActivityComponent implements OnInit {
 
-  roadWorkProjectFeatures: RoadWorkProjectFeature[] = [];
-  roadWorkProjectFeaturesFiltered: RoadWorkProjectFeature[] = [];
+  roadWorkProjectFeatures: RoadWorkActivityFeature[] = [];
+  roadWorkProjectFeaturesFiltered: RoadWorkActivityFeature[] = [];
 
   filterPanelOpen: boolean = false;
 
   chosenYear: number = new Date().getFullYear();
 
-  private roadWorkProjectService: RoadWorkProjectService;
+  private roadWorkActivityService: RoadWorkActivityService;
 
-  constructor(roadWorkProjectService: RoadWorkProjectService) {
-    this.roadWorkProjectService = roadWorkProjectService;
+  constructor(roadWorkActivityService: RoadWorkActivityService) {
+    this.roadWorkActivityService = roadWorkActivityService;
   }
 
   ngOnInit(): void {
@@ -29,7 +29,7 @@ export class ChooseProjectComponent implements OnInit {
 
   getAllNeeds() {
 
-    this.roadWorkProjectService.getRoadWorkProjects().subscribe({
+    this.roadWorkActivityService.getRoadWorkProjects().subscribe({
       next: (roadWorkProjects) => {
 
         for(let roadWorkProject of roadWorkProjects){

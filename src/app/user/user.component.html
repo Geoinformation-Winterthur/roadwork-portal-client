@@ -1,47 +1,50 @@
 <div style="margin: 2em;">
-    <h1>Benutzerdaten</h1>
-    <mat-form-field>
-        <input matInput [(ngModel)]="user.lastName" type="text" placeholder="Nachname" required>
+  <h1>Benutzerdaten</h1>
+  <mat-form-field>
+    <input matInput [(ngModel)]="user.lastName" type="text" placeholder="Nachname" required>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput [(ngModel)]="user.firstName" type="text" placeholder="Vorname" required>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput [(ngModel)]="user.mailAddress" type="text" placeholder="E-Mail-Adresse" required>
+  </mat-form-field>
+  <br />
+  <mat-form-field>
+    <input matInput [(ngModel)]="user.passPhrase" type="text" placeholder="Passphrase" type="password" required>
+  </mat-form-field>
+  <br />
+  <form class="choose_user_role_form">
+    <mat-form-field appearance="fill">
+      <mat-label>Rolle</mat-label>
+      <mat-select [formControl]="userRoleFormControl" (selectionChange)='onUserRoleChange()' required>
+        <mat-option *ngFor="let userRoleType of availableUserRoleTypes" [value]="userRoleType.name">
+          {{userRoleType.name}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
-    <br />
-    <mat-form-field>
-        <input matInput [(ngModel)]="user.firstName" type="text" placeholder="Vorname" required>
+  </form>
+  <form class="choose_organisation_form">
+    <mat-form-field appearance="fill">
+      <mat-label>Organisationseinheit</mat-label>
+      <mat-select [formControl]="userOrgFormControl" (selectionChange)='onUserOrgChange()' required>
+        <mat-option *ngFor="let userOrgType of availableUserOrgTypes" [value]="userOrgType.name">
+          {{userOrgType.name}}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
-    <br />
-    <mat-form-field>
-        <input matInput [(ngModel)]="user.mailAddress" type="text" placeholder="E-Mail-Adresse" required>
-    </mat-form-field>
-    <br />
-    <mat-form-field>
-        <input matInput [(ngModel)]="user.passPhrase" type="text" placeholder="Passphrase" type="password" required>
-    </mat-form-field>
-    <br />
-    <form class="choose_user_role_form">
-        <mat-form-field appearance="fill">
-          <mat-label>Rolle</mat-label>
-          <mat-select [formControl]="userRoleFormControl" (selectionChange)='onUserRoleChange()' required>
-            <mat-option *ngFor="let userRoleType of availableUserRoleTypes" [value]="userRoleType.name">
-              {{userRoleType.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </form>
-      <form class="choose_organisation_form">
-        <mat-form-field appearance="fill">
-          <mat-label>Organisationseinheit</mat-label>
-          <mat-select [formControl]="userOrgFormControl" (selectionChange)='onUserOrgChange()' required>
-            <mat-option *ngFor="let userOrgType of availableUserOrgTypes" [value]="userOrgType.name">
-              {{userOrgType.name}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </form>
-    <mat-checkbox [(ngModel)]="activeCheckBox" style="margin:10px;">Aktiv</mat-checkbox>
-    <div *ngIf="!userExists">
-        <button mat-button (click)="addUser()" style="background-color: rgb(217, 230, 255);margin:1em;">BENUTZER ANLEGEN</button>
-    </div>
-    <div *ngIf="userExists">
-        <button mat-button (click)="updateUser()" style="background-color: rgb(217, 230, 255);margin:1em;">&Auml;NDERUNG SENDEN</button>
-        <button mat-button (click)="deleteUser()" style="background-color: rgb(251, 197, 197);margin:1em;">BENUTZER L&Ouml;SCHEN</button>
-    </div>
+  </form>
+  <mat-checkbox [(ngModel)]="activeCheckBox" style="margin:10px;">Aktiv</mat-checkbox>
+  <div *ngIf="!userExists">
+    <button mat-button (click)="addUser()" style="background-color: rgb(217, 230, 255);margin:1em;">BENUTZER
+      ANLEGEN</button>
+  </div>
+  <div *ngIf="userExists">
+    <button mat-button (click)="updateUser()" style="background-color: rgb(217, 230, 255);margin:1em;">&Auml;NDERUNG
+      SENDEN</button>
+    <button mat-button (click)="deleteUser()" style="background-color: rgb(251, 197, 197);margin:1em;">BENUTZER
+      L&Ouml;SCHEN</button>
+  </div>
 </div>
