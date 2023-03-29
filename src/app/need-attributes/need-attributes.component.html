@@ -27,12 +27,12 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkNeedFeature.properties.name"
-                                        placeholder="Bezeichnung" (focusout)="save()" required>
+                                        placeholder="Bezeichnung" (focusout)="update()" required>
                                 </mat-form-field>
                                 <form class="choose_user_role_form">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Art</mat-label>
-                                        <mat-select [formControl]="roadWorkNeedEnumControl"  (focusout)="save()"
+                                        <mat-select [formControl]="roadWorkNeedEnumControl"  (focusout)="update()"
                                             (selectionChange)='onRoadWorkNeedEnumChange()' required>
                                             <mat-option *ngFor="let roadWorkNeedEnum of availableRoadWorkNeedEnums"
                                                 [value]="roadWorkNeedEnum.code">
@@ -99,7 +99,7 @@
                                 <mat-form-field>
                                     <mat-label>Bemerkungen</mat-label>
                                     <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="save()"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
                                         placeholder="Bemerkungen..."></textarea>
                                 </mat-form-field>
                             </div>
@@ -113,7 +113,7 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyFrom"
-                                        [matDatepicker]="finishEarlyFrom" (focusout)="save()">
+                                        [matDatepicker]="finishEarlyFrom" (focusout)="update()">
                                     <mat-datepicker #finishEarlyFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishEarlyFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
