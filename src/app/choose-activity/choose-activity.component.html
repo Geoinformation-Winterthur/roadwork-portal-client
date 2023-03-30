@@ -11,42 +11,42 @@
       </button>
     </div>
     <div fxLayout="row wrap padding">
-      <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkProject of roadWorkProjectFeaturesFiltered"
+      <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkActivity of roadWorkActivityFeaturesFiltered"
         fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
         <mat-card-header style="margin: 0.5em;">
-          <mat-card-title>{{ roadWorkProject.properties.uuid }}</mat-card-title>
-          <mat-card-subtitle>{{ roadWorkProject.properties.costs }} CHF</mat-card-subtitle>
+          <mat-card-title>{{ roadWorkActivity.properties.uuid }}</mat-card-title>
+          <mat-card-subtitle>{{ roadWorkActivity.properties.costs }} CHF</mat-card-subtitle>
         </mat-card-header>
         <div class="crosshair-frame" style="width: 100%;">
           <img mat-card-image class="map-img"
-            src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkProject.geometry.coordinates[0].x - 10 }},{{ roadWorkProject.geometry.coordinates[0].y - 5 }},{{ roadWorkProject.geometry.coordinates[0].x + 10 }},{{ roadWorkProject.geometry.coordinates[0].y + 5 }}&WIDTH=800&HEIGHT=400">
+            src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkActivity.geometry.coordinates[0].x - 10 }},{{ roadWorkActivity.geometry.coordinates[0].y - 5 }},{{ roadWorkActivity.geometry.coordinates[0].x + 10 }},{{ roadWorkActivity.geometry.coordinates[0].y + 5 }}&WIDTH=800&HEIGHT=400">
         </div>
         <mat-card-content style="margin: 0.5em;">
           <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />
           <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkProject.geometry.coordinates[0].x }}&y={{ roadWorkProject.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
             Zeige im Stadtplan Winterthur</a>
           <br />
           <br />
           <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkProject.geometry.coordinates[0].x }}&y={{ roadWorkProject.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
             Zeige im WinWebGIS</a>
           <br />
           <br />
           <mat-chip-list>
-            <mat-chip class="chip-done">Bis: {{ roadWorkProject.properties.finishTo | date:"dd.MM.yyyy" }}
+            <mat-chip class="chip-done">Bis: {{ roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}
             </mat-chip>
-              <mat-chip *ngIf="roadWorkProject.properties.costsType.code === 'valuation'"
+              <mat-chip *ngIf="roadWorkActivity.properties.costsType.code === 'valuation'"
                   class="chip-not-coordinated">Schätzung</mat-chip>
-              <mat-chip *ngIf="roadWorkProject.properties.costsType.code !== 'valuation'"
+              <mat-chip *ngIf="roadWorkActivity.properties.costsType.code !== 'valuation'"
                   class="chip-coordinated">exakt</mat-chip>
           </mat-chip-list>
           <br />
         </mat-card-content>
         <mat-divider></mat-divider>
         <mat-card-actions style="margin: 0.5em;">
-          <button style="background-color: rgb(42,127,103); color: white;margin-top: 1em;" mat-button
-            [routerLink]="['/project', roadWorkProject.properties.uuid]">BEARBEITEN</button>
+          <button style="background-color: rgb(138,43,226); color: white;margin-top: 1em;" mat-button
+            [routerLink]="['/activity', roadWorkActivity.properties.uuid]">BEARBEITEN</button>
         </mat-card-actions>
       </mat-card>
     </div>

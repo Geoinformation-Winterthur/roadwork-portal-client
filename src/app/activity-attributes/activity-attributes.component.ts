@@ -9,15 +9,17 @@ import Polygon from 'ol/geom/Polygon';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { FormControl } from '@angular/forms';
 import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 
 @Component({
-  selector: 'app-need-attributes',
-  templateUrl: './need-attributes.component.html',
-  styleUrls: ['./need-attributes.component.css']
+  selector: 'app-activity-attributes',
+  templateUrl: './activity-attributes.component.html',
+  styleUrls: ['./activity-attributes.component.css']
 })
-export class NeedAttributesComponent implements OnInit {
+export class ActivityAttributesComponent implements OnInit {
 
-  roadWorkNeedFeature?: RoadWorkNeedFeature;
+  roadWorkActivityFeature?: RoadWorkActivityFeature;
   orderer: User = new User();
   ordererOrgUnitName: string = "";
   areaManagerName: string = "";
@@ -26,18 +28,18 @@ export class NeedAttributesComponent implements OnInit {
 
   userService: UserService;
 
-  roadWorkNeedEnumControl: FormControl = new FormControl();
-  availableRoadWorkNeedEnums: RoadWorkNeedEnum[] = [];
+  roadWorkActivityEnumControl: FormControl = new FormControl();
+  availableRoadWorkActivityEnums: RoadWorkNeedEnum[] = [];
 
-  private roadWorkNeedService: RoadWorkNeedService;
+  private roadWorkActivityService: RoadWorkActivityService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
 
-  constructor(activatedRoute: ActivatedRoute, roadWorkNeedService: RoadWorkNeedService,
+  constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     userService: UserService) {
     this.activatedRoute = activatedRoute;
-    this.roadWorkNeedService = roadWorkNeedService;
+    this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
   }
 
@@ -48,28 +50,22 @@ export class NeedAttributesComponent implements OnInit {
 
         if (idParamString == "new") {
 
-          this.roadWorkNeedFeature = new RoadWorkNeedFeature();
-          this.roadWorkNeedFeature.properties.status.code = "notcoord";
-          this.roadWorkNeedFeature.properties.priority.code = "middle";
+          this.roadWorkActivityFeature = new RoadWorkActivityFeature();
 
         } else {
 
           let constProjId: string = params['id'];
 
-          this.roadWorkNeedService.getRoadWorkNeeds(constProjId)
+          this.roadWorkActivityService.getRoadWorkActivities(constProjId)
             .subscribe({
-              next: (roadWorkNeeds) => {
-                if (roadWorkNeeds.length === 1) {
-                  let roadWorkNeed: any = roadWorkNeeds[0];
+              next: (roadWorkActivities) => {
+                if (roadWorkActivities.length === 1) {
+                  let roadWorkActivity: any = roadWorkActivities[0];
                   let rwPoly: RoadworkPolygon = new RoadworkPolygon();
-                  rwPoly.coordinates = roadWorkNeed.geometry.coordinates
-                  roadWorkNeed.geometry = rwPoly;
-                  this.roadWorkNeedFeature = roadWorkNeed;
-                  let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
-                  if (!this._hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedFeature.properties.kind)) {
-                    this.availableRoadWorkNeedEnums.push(roadWorkNeedFeature.properties.kind);
-                  }
-                  this.roadWorkNeedEnumControl.setValue(roadWorkNeedFeature.properties.kind.code);
+                  rwPoly.coordinates = roadWorkActivity.geometry.coordinates
+                  roadWorkActivity.geometry = rwPoly;
+                  this.roadWorkActivityFeature = roadWorkActivity;
+                  let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
                 }
               },
               error: (error) => {
@@ -79,30 +75,14 @@ export class NeedAttributesComponent implements OnInit {
         }
 
       });
-
-    this.roadWorkNeedService.getAllTypes().subscribe({
-      next: (roadWorkNeedTypes) => {
-        for (let roadWorkNeedType of roadWorkNeedTypes) {
-          if (!this._hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedType)) {
-            this.availableRoadWorkNeedEnums.push(roadWorkNeedType);
-          }
-        }
-      },
-      error: (error) => {
-      }
-    });
-
   }
 
   add() {
-    this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
+    this.roadWorkActivityService.addRoadworkActivity(this.roadWorkActivityFeature)
       .subscribe({
-        next: (roadWorkNeedFeature) => {
-          if (this.roadWorkNeedFeature) {
-            this.roadWorkNeedFeature.properties.uuid = roadWorkNeedFeature.properties.uuid;
-            this.roadWorkNeedFeature.properties.name = roadWorkNeedFeature.properties.name;
-            this.roadWorkNeedFeature.properties.orderer = roadWorkNeedFeature.properties.orderer;
-            this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+        next: (roadWorkActivityFeature) => {
+          if (this.roadWorkActivityFeature) {
+            this.roadWorkActivityFeature.properties.uuid = roadWorkActivityFeature.properties.uuid;
           }
         },
         error: (error) => {
@@ -111,12 +91,12 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   update() {
-    if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
-      this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
+    if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
+      this.roadWorkActivityService.updateRoadWorkActivity(this.roadWorkActivityFeature)
         .subscribe({
-          next: (roadWorkNeedFeature) => {
-            if (this.roadWorkNeedFeature) {
-              this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+          next: (roadWorkActivityFeature) => {
+            if (this.roadWorkActivityFeature) {
+              this.roadWorkActivityFeature.properties.managementarea = roadWorkActivityFeature.properties.managementarea;
             }
           },
           error: (error) => {
@@ -165,23 +145,8 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  onRoadWorkNeedEnumChange() {
-    if (this.roadWorkNeedFeature) {
-      this.roadWorkNeedFeature.properties.kind.code = this.roadWorkNeedEnumControl.value;
-    }
-  }
-
   ngOnDestroy() {
     this.activatedRouteSubscription.unsubscribe();
-  }
-
-  private _hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedEnum: RoadWorkNeedEnum): boolean {
-    for (let availableRoadWorkNeedEnum of this.availableRoadWorkNeedEnums) {
-      if (availableRoadWorkNeedEnum.code === roadWorkNeedEnum.code) {
-        return true;
-      }
-    }
-    return false;
   }
 
 }

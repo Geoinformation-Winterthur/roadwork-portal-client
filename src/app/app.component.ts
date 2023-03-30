@@ -30,15 +30,15 @@ import { Title } from '@angular/platform-browser';
    shorttitle: string = environment.shorttitle;
    subtitle: string = environment.subtitle;
  
+   userService: UserService;
+ 
    private mediaWatcher: Subscription;
  
    private cookieService: CookieService;
    private snckBar: MatSnackBar;
  
    private roadWorkNeedService: RoadWorkNeedService;
- 
-   public userService: UserService;
- 
+  
    constructor(cookieService: CookieService, snckBar: MatSnackBar, oMedia: MediaObserver,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService, titleService: Title) {
      titleService.setTitle(this.title);

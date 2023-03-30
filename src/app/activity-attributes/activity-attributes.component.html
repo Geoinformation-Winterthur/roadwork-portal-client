@@ -1,0 +1,98 @@
+<div style="margin:2em;">
+    <div *ngIf="roadWorkActivityFeature === undefined">
+        <p style="color: red;">Die Baubmassnahme konnte nicht geladen werden.</p>
+    </div>
+    <div *ngIf="roadWorkActivityFeature !== undefined">
+        <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Baumassnahme {{
+            roadWorkActivityFeature.properties.uuid }}</h1>
+        <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neue Baumassnahme</h1>
+        <mat-tab-group>
+            <mat-tab label="Lage">
+                <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"></app-edit-activity-map>
+            </mat-tab>
+            <mat-tab label="Attribute">
+                <button mat-button
+                    style="margin: 1em;border: 1px solid;border-color: rgb(239, 223, 255); background-color: rgb(237, 240, 255);"
+                    *ngIf="!roadWorkActivityFeature.properties.uuid" (click)="add()">
+                    BAUBED&Uuml;RFNIS ER&Ouml;FFNEN
+                </button>
+                <div fxLayout="row wrap padding">
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-content>
+                            <p *ngIf="roadWorkActivityFeature.properties.uuid">UUID:
+                                <b>{{roadWorkActivityFeature.properties.uuid}}</b>
+                            </p>
+                            <p *ngIf="!roadWorkActivityFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field>
+                                    <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.uuid"
+                                        placeholder="Bezeichnung" (focusout)="update()" required>
+                                </mat-form-field>
+                            </div>
+                            <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
+                            <p>
+                                Zuletzt ge&auml;ndert: <b>{{roadWorkActivityFeature.properties.lastModified |
+                                    date:'dd.MM.yyyy'}}</b>
+                            </p>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Wer und Wo</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <p>Gebietsmanager:
+                                    <b>{{roadWorkActivityFeature.properties.managementarea.properties.manager.firstName}}
+                                        {{roadWorkActivityFeature.properties.managementarea.properties.manager.lastName}}
+                                    </b>
+                                </p>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Status</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field *ngIf="userService.getLocalUser().role.code === 'territorymanager'">
+                                    <input matInput type="text" placeholder="Status">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Bemerkungen</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.comment" (focusout)="update()"
+                                        placeholder="Bemerkungen..."></textarea>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Realisierung</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Realisierung von</mat-label>
+                                    <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
+                                        [matDatepicker]="finishLateFrom">
+                                    <mat-datepicker #finishLateFrom></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                </mat-form-field>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Realisierung bis</mat-label>
+                                    <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
+                                        [matDatepicker]="finishLateTo">
+                                    <mat-datepicker #finishLateTo></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+            <mat-tab label="Vernehmlassung" *ngIf="statusCode === 'coordinated'">
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

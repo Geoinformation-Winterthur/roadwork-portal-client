@@ -54,6 +54,8 @@ import { NeedAttributesComponent } from './need-attributes/need-attributes.compo
 import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
 import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
+import { ActivityAttributesComponent } from './activity-attributes/activity-attributes.component';
+import { EditActivityMapComponent } from './edit-activity-map/edit-activity-map.component';
  
  
  export function getToken(){
@@ -80,7 +82,9 @@ import { ChooseActivityComponent } from './choose-activity/choose-activity.compo
      NeedAttributesComponent,
      EditNeedMapComponent,
      ManagementAreasComponent,
-     ChooseActivityComponent
+     ChooseActivityComponent,
+     ActivityAttributesComponent,
+     EditActivityMapComponent
    ],
    imports: [
      BrowserModule,

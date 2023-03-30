@@ -15,6 +15,7 @@ import { UserComponent } from './user/user.component';
 import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
 import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
+import { ActivityAttributesComponent } from './activity-attributes/activity-attributes.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -22,7 +23,7 @@ import { ChooseActivityComponent } from './choose-activity/choose-activity.compo
    {path: 'chooseneed', component: ChooseNeedComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'chooseactivity', component: ChooseActivityComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'need/:id', component: NeedAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'map/:id', component: EditNeedMapComponent, pathMatch: 'full', canActivate: [UserService]}, // TODO: remove
+   {path: 'activity/:id', component: ActivityAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'managementareas', component: ManagementAreasComponent, pathMatch: 'full', canActivate: [UserService]},

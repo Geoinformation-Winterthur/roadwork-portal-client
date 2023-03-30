@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 
 
 @Injectable({
@@ -16,7 +17,7 @@ export class RoadWorkActivityService {
     this.http = http;
   }
 
-   getRoadWorkProjects(id: string = "", summary: boolean = false): Observable<RoadWorkActivityFeature[]> {
+   getRoadWorkActivities(id: string = "", summary: boolean = false): Observable<RoadWorkActivityFeature[]> {
     let queryString = "/roadworkactivity/";
     if(id !== null && id !== "" || summary) {
       queryString += "?";
@@ -35,5 +36,23 @@ export class RoadWorkActivityService {
            this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkActivityFeature[]>;
      return result;
    }
+
+  addRoadworkActivity(roadworkActivity? : RoadWorkActivityFeature): Observable<any> {
+    let result: Observable<any> = 
+          this.http.post<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+    return result;
+  }
+
+  createRoadworkActivityFromNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
+    let result: Observable<any> = 
+          this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkactivity/", roadworkNeed);
+    return result;
+  }
+
+  updateRoadWorkActivity(roadworkActivity? : RoadWorkActivityFeature): Observable<any> {
+    let result: Observable<any> = 
+          this.http.put(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+    return result;
+  }
 
 }

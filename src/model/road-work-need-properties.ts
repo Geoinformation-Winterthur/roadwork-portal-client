@@ -22,4 +22,5 @@ export class RoadWorkNeedProperties {
     comment: string = "";
     managementarea: ManagementAreaFeature
             = new ManagementAreaFeature();
+    roadWorkActivityUuid: string = "";
 }

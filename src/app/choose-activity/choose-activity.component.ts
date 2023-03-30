@@ -10,8 +10,8 @@ import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature'
 })
 export class ChooseActivityComponent implements OnInit {
 
-  roadWorkProjectFeatures: RoadWorkActivityFeature[] = [];
-  roadWorkProjectFeaturesFiltered: RoadWorkActivityFeature[] = [];
+  roadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
+  roadWorkActivityFeaturesFiltered: RoadWorkActivityFeature[] = [];
 
   filterPanelOpen: boolean = false;
 
@@ -24,22 +24,22 @@ export class ChooseActivityComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAllNeeds();
+    this.getAllActivities();
   }
 
-  getAllNeeds() {
+  getAllActivities() {
 
-    this.roadWorkActivityService.getRoadWorkProjects().subscribe({
-      next: (roadWorkProjects) => {
+    this.roadWorkActivityService.getRoadWorkActivities().subscribe({
+      next: (roadWorkActivities) => {
 
-        for(let roadWorkProject of roadWorkProjects){
+        for(let roadWorkActivity of roadWorkActivities){
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
-          blowUpPoly.coordinates = roadWorkProject.geometry.coordinates;
-          roadWorkProject.geometry = blowUpPoly;
+          blowUpPoly.coordinates = roadWorkActivity.geometry.coordinates;
+          roadWorkActivity.geometry = blowUpPoly;
         }
 
-        this.roadWorkProjectFeatures = roadWorkProjects;
-        this.roadWorkProjectFeaturesFiltered = this.roadWorkProjectFeatures;
+        this.roadWorkActivityFeatures = roadWorkActivities;
+        this.roadWorkActivityFeaturesFiltered = this.roadWorkActivityFeatures;
 
       },
       error: (error) => {
