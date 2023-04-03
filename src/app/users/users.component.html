@@ -39,8 +39,8 @@
         <th mat-header-cell *matHeaderCellDef> Aktion </th>
         <td mat-cell *matCellDef="let element">
           <button mat-button [routerLink]="['/users', element.mailAddress]"
-                     style="margin: 0.5em;background-color:rgb(173, 210, 245);">BEARBEITEN</button>
-          <button mat-button (click)="deleteUser(element.mailAddress)" style="margin: 0.5em;background-color:rgb(243, 174, 174);">ENTFERNEN</button>
+                     style="margin: 0.5em;background-color:rgb(74,90,210);color:white;">BEARBEITEN</button>
+          <button mat-button (click)="deleteUser(element.mailAddress)" style="margin: 0.5em;background-color:rgb(138,71,200);color:white;">ENTFERNEN</button>
         </td>
       </ng-container>
   
