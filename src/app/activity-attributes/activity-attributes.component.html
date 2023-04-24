@@ -3,8 +3,8 @@
         <p style="color: red;">Die Baubmassnahme konnte nicht geladen werden.</p>
     </div>
     <div *ngIf="roadWorkActivityFeature !== undefined">
-        <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Baumassnahme {{
-            roadWorkActivityFeature.properties.uuid }}</h1>
+        <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Baumassnahme <span style="font-weight: normal;"> / {{
+            roadWorkActivityFeature.properties.uuid }}</span></h1>
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neue Baumassnahme</h1>
         <mat-tab-group>
             <mat-tab label="Lage">

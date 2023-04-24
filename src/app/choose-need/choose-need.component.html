@@ -62,6 +62,9 @@
             Zeige im WinWebGIS</a>
           <br />
           <br />
+          <a *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" routerLink='/activity/{{roadWorkNeed.properties.roadWorkActivityUuid}}'>Zur Baumassnahme</a>
+          <br />
+          <br />
           <mat-chip-list>
             <mat-chip class="chip-done">Bis: {{ roadWorkNeed.properties.finishOptimumTo | date:"dd.MM.yyyy" }}
             </mat-chip>
@@ -78,7 +81,7 @@
             [routerLink]="['/need', roadWorkNeed.properties.uuid]">BEARBEITEN</button>
           <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
             *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
-            (click)="createNewActivityFromNeed(roadWorkNeed)">MASSNAHME</button>
+            (click)="createNewActivityFromNeed(roadWorkNeed)">NEUE BAUMASSNAHME</button>
         </mat-card-actions>
       </mat-card>
     </div>
