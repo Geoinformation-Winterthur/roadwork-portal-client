@@ -36,7 +36,7 @@
       </mat-select>
     </mat-form-field>
   </form>
-  <mat-checkbox [(ngModel)]="activeCheckBox" style="margin:10px;">Aktiv</mat-checkbox>
+  <mat-checkbox [(ngModel)]="user.active" style="margin:10px;">Aktiv</mat-checkbox>
   <div *ngIf="!userExists">
     <button mat-button (click)="addUser()" style="background-color: rgb(217, 230, 255);margin:1em;">BENUTZER
       ANLEGEN</button>
