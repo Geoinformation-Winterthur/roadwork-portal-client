@@ -43,12 +43,6 @@ export class RoadWorkActivityService {
     return result;
   }
 
-  createRoadworkActivityFromNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
-    let result: Observable<any> = 
-          this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkactivity/", roadworkNeed);
-    return result;
-  }
-
   updateRoadWorkActivity(roadworkActivity? : RoadWorkActivityFeature): Observable<any> {
     let result: Observable<any> = 
           this.http.put(environment.apiUrl + "/roadworkactivity/", roadworkActivity);

@@ -6,6 +6,7 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 
 @Component({
   selector: 'app-choose-need',
@@ -61,11 +62,14 @@ export class ChooseNeedComponent implements OnInit {
   }
 
   createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature){
-    this.router.navigate(["/chooseactivity/"]);
-    this.roadWorkActivityService.createRoadworkActivityFromNeed(roadWorkNeed)
+    let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
+    roadWorkActivity.geometry = roadWorkNeed.geometry;
+    roadWorkActivity.properties.managementarea = roadWorkNeed.properties.managementarea;    
+
+    this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
     .subscribe({
       next: (roadWorkActivityFeature) => {
-        // this.router.navigate(["/activity/" + roadWorkActivityFeature.properties.uuid]);
+        this.router.navigate(["/activity/" + roadWorkActivityFeature.properties.uuid]);
       },
       error: (error) => {
       }
