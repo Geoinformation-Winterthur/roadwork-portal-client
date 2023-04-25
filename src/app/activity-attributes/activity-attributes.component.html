@@ -29,6 +29,11 @@
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.uuid"
                                         placeholder="Bezeichnung" (focusout)="update()" required>
                                 </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.costs"
+                                        placeholder="Kosten (CHF)" (focusout)="update()" required>
+                                </mat-form-field>
+                                <p>Kostenart: <b>{{roadWorkActivityFeature.properties.costsType.name}}</b></p>
                             </div>
                             <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
                             <p>
@@ -45,6 +50,11 @@
                                 <p>Arealmanager:
                                     <b>{{roadWorkActivityFeature.properties.managementarea.properties.manager.firstName}}
                                         {{roadWorkActivityFeature.properties.managementarea.properties.manager.lastName}}
+                                    </b>
+                                </p>
+                                <p>Verkehrsmanager:
+                                    <b>{{roadWorkActivityFeature.properties.trafficAgent.firstName}}
+                                        {{roadWorkActivityFeature.properties.trafficAgent.lastName}}
                                     </b>
                                 </p>
                             </div>
