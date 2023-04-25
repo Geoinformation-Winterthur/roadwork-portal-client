@@ -14,34 +14,40 @@
     <p *ngIf="responseMessage !== null" style="color: red;">{{ responseMessage }}</p>
 
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width: 100%">
-  
+
+      <ng-container matColumnDef="editAction">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <a><mat-icon [routerLink]="['/users', element.mailAddress]" style="margin: 0.5em;background-color:rgb(74,90,210);color:white;" aria-label="Benutzer bearbeiten">
+            edit_square
+            </mat-icon>
+          </a>
+        </td>
+      </ng-container>
+      
       <ng-container matColumnDef="lastName">
         <th mat-header-cell *matHeaderCellDef> Nachname </th>
-        <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
+        <td mat-cell *matCellDef="let user"> {{user.lastName}} </td>
       </ng-container>
   
       <ng-container matColumnDef="firstName">
         <th mat-header-cell *matHeaderCellDef> Vorname </th>
-        <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
+        <td mat-cell *matCellDef="let user"> {{user.firstName}} </td>
       </ng-container>
   
       <ng-container matColumnDef="mailAddress">
         <th mat-header-cell *matHeaderCellDef> E-Mail-Adresse </th>
-        <td mat-cell *matCellDef="let element"> {{element.mailAddress}} </td>
+        <td mat-cell *matCellDef="let user"> {{user.mailAddress}} </td>
       </ng-container>
   
       <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef> Rolle </th>
-        <td mat-cell *matCellDef="let element"> {{element.role.name}} </td>
+        <td mat-cell *matCellDef="let user"> {{user.role.name}} </td>
       </ng-container>
-  
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef> Aktion </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-button [routerLink]="['/users', element.mailAddress]"
-                     style="margin: 0.5em;background-color:rgb(74,90,210);color:white;">BEARBEITEN</button>
-          <button mat-button (click)="deleteUser(element.mailAddress)" style="margin: 0.5em;background-color:rgb(138,71,200);color:white;">ENTFERNEN</button>
-        </td>
+
+      <ng-container matColumnDef="organisation">
+        <th mat-header-cell *matHeaderCellDef> Organisation </th>
+        <td mat-cell *matCellDef="let user"> {{user.organisationalUnit.name}} </td>
       </ng-container>
   
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

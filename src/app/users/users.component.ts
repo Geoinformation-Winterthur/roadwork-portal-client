@@ -1,7 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user';
 
@@ -12,7 +10,7 @@ import { User } from '../../model/user';
 })
 export class UsersComponent {
 
-  displayedColumns: string[] = ['lastName', 'firstName', 'mailAddress', 'role', 'action'];
+  displayedColumns: string[] = ['editAction', 'lastName', 'firstName', 'mailAddress', 'role', 'organisation'];
   dataSource: User[] = [];  
 
   responseMessage: string = "";
