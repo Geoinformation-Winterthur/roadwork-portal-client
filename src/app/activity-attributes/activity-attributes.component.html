@@ -77,14 +77,14 @@
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
                                         [matDatepicker]="finishLateFrom">
                                     <mat-datepicker #finishLateFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                    <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
                                         [matDatepicker]="finishLateTo">
                                     <mat-datepicker #finishLateTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                    <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>

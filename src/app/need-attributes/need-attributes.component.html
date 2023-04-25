@@ -137,14 +137,14 @@
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumFrom"
                                         [matDatepicker]="finishOptimumFrom">
                                     <mat-datepicker #finishOptimumFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                    <mat-datepicker-toggle matSuffix [for]="finishOptimumFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumTo"
                                         [matDatepicker]="finishOptimumTo">
                                     <mat-datepicker #finishOptimumTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                    <mat-datepicker-toggle matSuffix [for]="finishOptimumTo"></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
@@ -159,14 +159,14 @@
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateFrom"
                                         [matDatepicker]="finishLateFrom">
                                     <mat-datepicker #finishLateFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                    <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateTo"
                                         [matDatepicker]="finishLateTo">
                                     <mat-datepicker #finishLateTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix></mat-datepicker-toggle>
+                                    <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
