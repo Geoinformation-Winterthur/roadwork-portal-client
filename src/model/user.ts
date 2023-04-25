@@ -13,4 +13,5 @@ export class User {
     organisationalUnit: OrganisationalUnit
         = new OrganisationalUnit();
     token: string = "";
+    errorMessage: string = "";
 }

@@ -11,6 +11,7 @@ import { User } from 'src/model/user';
 import { environment } from 'src/environments/environment';
 import { Role } from 'src/model/role';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
+import { ErrorMessage } from 'src/model/error-message';
 
 @Injectable({
   providedIn: 'root'
@@ -136,9 +137,9 @@ export class UserService implements CanActivate {
     return result;
   }
 
-  deleteUser(mailAddress: string): Observable<string> {
-    let result: Observable<string> =
-      this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<string>;
+  deleteUser(mailAddress: string): Observable<ErrorMessage> {
+    let result: Observable<ErrorMessage> =
+      this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<ErrorMessage>;
     return result;
   }
 

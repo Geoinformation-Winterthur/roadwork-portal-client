@@ -6,6 +6,9 @@ import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { Role } from 'src/model/role';
 import { UserService } from 'src/services/user.service';
 import { User } from '../../model/user';
+import { ErrorMessageDictionary } from 'src/model/error-message-dictionary';
+import { ErrorMessage } from 'src/model/error-message';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user',
@@ -28,12 +31,14 @@ export class UserComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private router: Router;
   private userService: UserService;
+  private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, userService: UserService,
-    router: Router) {
+    router: Router, snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.userService = userService;
     this.router = router;
+    this.snckBar = snckBar;
   }
 
   ngOnInit(): void {
@@ -49,7 +54,9 @@ export class UserComponent implements OnInit {
                 this.user = userArray[0];
                 this.userExists = true;
                 this.userRoleFormControl.setValue(this.user.role.name);
-                this.userOrgFormControl.setValue(this.user.organisationalUnit.name);
+                this.userOrgFormControl.setValue(this.user.organisationalUnit.name);  
+              } else {
+                this.user.errorMessage = "Benutzer existiert nicht.";
               }
             },
             error: (error) => {
@@ -105,8 +112,16 @@ export class UserComponent implements OnInit {
 
   deleteUser() {
     this.userService.deleteUser(this.user.mailAddress).subscribe({
-      next: (user) => {
-        this.router.navigate(["/users"]);
+      next: (errorMessage) => {
+        UserComponent._evaluateErrorMessage(errorMessage);
+        if(errorMessage.errorMessage.trim().length !== 0)
+        {
+          this.snckBar.open(errorMessage.errorMessage, "", {
+            duration: 4000
+          });
+        } else {
+          this.router.navigate(["/users"]);
+        }
       },
       error: (error) => {
       }
@@ -129,6 +144,16 @@ export class UserComponent implements OnInit {
         continue;
       }
     }
+  }
+
+  private static _evaluateErrorMessage(errorMessage: User | ErrorMessage) {
+    let errorMessageString: string = errorMessage.errorMessage;
+    if (errorMessageString.startsWith("KOPAL-")) {
+      let messageCode: number = Number(errorMessageString.split('-')[1]);
+      errorMessageString = ErrorMessageDictionary.messages[messageCode]
+        + " (" + errorMessageString + ")";
+    }
+    errorMessage.errorMessage = errorMessageString;
   }
 
 }
