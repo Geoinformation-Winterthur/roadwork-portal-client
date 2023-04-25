@@ -6,9 +6,9 @@ import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { Role } from 'src/model/role';
 import { UserService } from 'src/services/user.service';
 import { User } from '../../model/user';
-import { ErrorMessageDictionary } from 'src/model/error-message-dictionary';
 import { ErrorMessage } from 'src/model/error-message';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 
 @Component({
   selector: 'app-user',
@@ -102,8 +102,16 @@ export class UserComponent implements OnInit {
 
   updateUser() {
     this.userService.updateUser(this.user).subscribe({
-      next: (user) => {
-        this.router.navigate(["/users"]);
+      next: (errorMessage) => {
+        ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+        if(errorMessage.errorMessage.trim().length !== 0)
+        {
+          this.snckBar.open(errorMessage.errorMessage, "", {
+            duration: 4000
+          });
+        } else {
+          this.router.navigate(["/users"]);
+        }
       },
       error: (error) => {
       }
@@ -113,7 +121,7 @@ export class UserComponent implements OnInit {
   deleteUser() {
     this.userService.deleteUser(this.user.mailAddress).subscribe({
       next: (errorMessage) => {
-        UserComponent._evaluateErrorMessage(errorMessage);
+        ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
         if(errorMessage.errorMessage.trim().length !== 0)
         {
           this.snckBar.open(errorMessage.errorMessage, "", {
@@ -144,16 +152,6 @@ export class UserComponent implements OnInit {
         continue;
       }
     }
-  }
-
-  private static _evaluateErrorMessage(errorMessage: User | ErrorMessage) {
-    let errorMessageString: string = errorMessage.errorMessage;
-    if (errorMessageString.startsWith("KOPAL-")) {
-      let messageCode: number = Number(errorMessageString.split('-')[1]);
-      errorMessageString = ErrorMessageDictionary.messages[messageCode]
-        + " (" + errorMessageString + ")";
-    }
-    errorMessage.errorMessage = errorMessageString;
   }
 
 }

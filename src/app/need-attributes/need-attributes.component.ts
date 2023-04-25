@@ -5,10 +5,11 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
-import Polygon from 'ol/geom/Polygon';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { FormControl } from '@angular/forms';
 import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 
 @Component({
   selector: 'app-need-attributes',
@@ -33,12 +34,14 @@ export class NeedAttributesComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
+  private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, roadWorkNeedService: RoadWorkNeedService,
-    userService: UserService) {
+    userService: UserService, snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.roadWorkNeedService = roadWorkNeedService;
     this.userService = userService;
+    this.snckBar = snckBar;
   }
 
   ngOnInit() {
@@ -99,10 +102,17 @@ export class NeedAttributesComponent implements OnInit {
       .subscribe({
         next: (roadWorkNeedFeature) => {
           if (this.roadWorkNeedFeature) {
+            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+            if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
+              this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
+                duration: 4000
+              });
+            }
             this.roadWorkNeedFeature.properties.uuid = roadWorkNeedFeature.properties.uuid;
             this.roadWorkNeedFeature.properties.name = roadWorkNeedFeature.properties.name;
             this.roadWorkNeedFeature.properties.orderer = roadWorkNeedFeature.properties.orderer;
             this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+
           }
         },
         error: (error) => {
@@ -116,6 +126,12 @@ export class NeedAttributesComponent implements OnInit {
         .subscribe({
           next: (roadWorkNeedFeature) => {
             if (this.roadWorkNeedFeature) {
+              ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+              if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
+                this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
+                  duration: 4000
+                });
+              }
               this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
             }
           },

@@ -125,9 +125,9 @@ export class UserService implements CanActivate {
     return result;
   }
 
-  updateUser(user: User): Observable<any> {
-    let result: Observable<any> =
-      this.http.put(environment.apiUrl + "/account/users/", user) as Observable<any>;
+  updateUser(user: User): Observable<ErrorMessage> {
+    let result: Observable<ErrorMessage> =
+      this.http.put(environment.apiUrl + "/account/users/", user) as Observable<ErrorMessage>;
     return result;
   }
 

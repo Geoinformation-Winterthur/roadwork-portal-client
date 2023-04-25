@@ -20,7 +20,7 @@ import proj4 from 'proj4';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { ErrorMessages } from 'src/helper/error-messages';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 
 @Component({
   selector: 'app-edit-need-map',
@@ -174,38 +174,34 @@ export class EditNeedMapComponent implements OnInit {
       this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
       this.loadGeometry(false);
       if (this.roadWorkNeedFeat.properties.uuid) {
-        if(!this.roadWorkNeedFeat.properties.managementarea){
+        if (!this.roadWorkNeedFeat.properties.managementarea) {
           this.roadWorkNeedFeat.properties.managementarea = new ManagementAreaFeature();
         }
         this.roadWorkNeedFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
-        
+
         this.roadWorkNeedService
           .updateRoadWorkNeed(this.roadWorkNeedFeat)
           .subscribe({
-            next: (roadWorkNeedFeature) => {              
-              if(roadWorkNeedFeature){
-                if(roadWorkNeedFeature.errorMessage !== ""){
-                  let errorMessage: string = roadWorkNeedFeature.errorMessage;
-                  if(errorMessage.startsWith("RWP-")){
-                    let messageCode: number = Number(errorMessage.split('-')[1]);
-                    errorMessage = ErrorMessages.messages[messageCode] + " (" + errorMessage + ")";
-                  }
-                  this.snackBar.open(errorMessage, "", {
-                    duration: 4000
-                  });
-                }else{
-                  if(this.roadWorkNeedFeat){
-                    this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
-                    this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
-                      duration: 4000,
-                    });      
+            next: (roadWorkNeedFeature) => {
+              if (roadWorkNeedFeature) {
+                  ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+                  if (roadWorkNeedFeature.errorMessage !== "") {
+                    this.snackBar.open(roadWorkNeedFeature.errorMessage, "", {
+                      duration: 4000
+                    });
+                  } else {
+                    if (this.roadWorkNeedFeat) {
+                      this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
+                      this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
+                        duration: 4000,
+                      });
+                    }
                   }
                 }
+              },
+              error: (error) => {
               }
-            },
-            error: (error) => {
-            }
-          });
+            });
       }
     }
   }
@@ -230,15 +226,15 @@ export class EditNeedMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
-  private resizeMap(event: any){
-      let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
-      let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
-      let topCoord: number = Math.round(mapElementRect.top);
-      let mapHeight: number = window.innerHeight - (topCoord + 70);
-      if(window.innerWidth / mapHeight > 3.5){
-        mapHeight = window.innerWidth / 3.5;
-      }
-      mapElement.style.height = mapHeight + "px";
+  private resizeMap(event: any) {
+    let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
+    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
+    let topCoord: number = Math.round(mapElementRect.top);
+    let mapHeight: number = window.innerHeight - (topCoord + 70);
+    if (window.innerWidth / mapHeight > 3.5) {
+      mapHeight = window.innerWidth / 3.5;
+    }
+    mapElement.style.height = mapHeight + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {

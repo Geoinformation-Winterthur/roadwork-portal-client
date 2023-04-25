@@ -18,9 +18,9 @@ import { register } from 'ol/proj/proj4';
 import proj4 from 'proj4';
 import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { ErrorMessages } from 'src/helper/error-messages';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -174,31 +174,27 @@ export class EditActivityMapComponent implements OnInit {
       this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
       this.loadGeometry(false);
       if (this.roadWorkActivityFeat.properties.uuid) {
-        if(!this.roadWorkActivityFeat.properties.managementarea){
+        if (!this.roadWorkActivityFeat.properties.managementarea) {
           this.roadWorkActivityFeat.properties.managementarea = new ManagementAreaFeature();
         }
         this.roadWorkActivityFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
-        
+
         this.roadWorkActivityService
           .updateRoadWorkActivity(this.roadWorkActivityFeat)
           .subscribe({
-            next: (roadWorkActivityFeature) => {              
-              if(roadWorkActivityFeature){
-                if(roadWorkActivityFeature.errorMessage !== ""){
-                  let errorMessage: string = roadWorkActivityFeature.errorMessage;
-                  if(errorMessage.startsWith("RWP-")){
-                    let messageCode: number = Number(errorMessage.split('-')[1]);
-                    errorMessage = ErrorMessages.messages[messageCode] + " (" + errorMessage + ")";
-                  }
-                  this.snackBar.open(errorMessage, "", {
+            next: (roadWorkActivityFeature) => {
+              if (roadWorkActivityFeature) {
+                ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+                if (roadWorkActivityFeature.errorMessage !== "") {
+                  this.snackBar.open(roadWorkActivityFeature.errorMessage, "", {
                     duration: 4000
                   });
-                }else{
-                  if(this.roadWorkActivityFeat){
+                } else {
+                  if (this.roadWorkActivityFeat) {
                     this.roadWorkActivityFeat.properties.managementarea = roadWorkActivityFeature.properties.managementarea;
                     this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
                       duration: 4000,
-                    });      
+                    });
                   }
                 }
               }
@@ -230,15 +226,15 @@ export class EditActivityMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
-  private resizeMap(event: any){
-      let mapElement: HTMLElement = document.getElementById("edit_activity_map") as HTMLElement;
-      let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
-      let topCoord: number = Math.round(mapElementRect.top);
-      let mapHeight: number = window.innerHeight - (topCoord + 70);
-      if(window.innerWidth / mapHeight > 3.5){
-        mapHeight = window.innerWidth / 3.5;
-      }
-      mapElement.style.height = mapHeight + "px";
+  private resizeMap(event: any) {
+    let mapElement: HTMLElement = document.getElementById("edit_activity_map") as HTMLElement;
+    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
+    let topCoord: number = Math.round(mapElementRect.top);
+    let mapHeight: number = window.innerHeight - (topCoord + 70);
+    if (window.innerWidth / mapHeight > 3.5) {
+      mapHeight = window.innerWidth / 3.5;
+    }
+    mapElement.style.height = mapHeight + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {
