@@ -66,7 +66,7 @@ export class NeedAttributesComponent implements OnInit {
                   roadWorkNeed.geometry = rwPoly;
                   this.roadWorkNeedFeature = roadWorkNeed;
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
-                  if (!this._hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedFeature.properties.kind)) {
+                  if (!this._hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedFeature.properties.kind)) {
                     this.availableRoadWorkNeedEnums.push(roadWorkNeedFeature.properties.kind);
                   }
                   this.roadWorkNeedEnumControl.setValue(roadWorkNeedFeature.properties.kind.code);
@@ -83,7 +83,7 @@ export class NeedAttributesComponent implements OnInit {
     this.roadWorkNeedService.getAllTypes().subscribe({
       next: (roadWorkNeedTypes) => {
         for (let roadWorkNeedType of roadWorkNeedTypes) {
-          if (!this._hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedType)) {
+          if (!this._hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedType)) {
             this.availableRoadWorkNeedEnums.push(roadWorkNeedType);
           }
         }
@@ -175,7 +175,7 @@ export class NeedAttributesComponent implements OnInit {
     this.activatedRouteSubscription.unsubscribe();
   }
 
-  private _hasOnRoadWorkNeedEnumElementAlready(roadWorkNeedEnum: RoadWorkNeedEnum): boolean {
+  private _hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedEnum: RoadWorkNeedEnum): boolean {
     for (let availableRoadWorkNeedEnum of this.availableRoadWorkNeedEnums) {
       if (availableRoadWorkNeedEnum.code === roadWorkNeedEnum.code) {
         return true;

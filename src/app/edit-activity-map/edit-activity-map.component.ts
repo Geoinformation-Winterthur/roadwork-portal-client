@@ -231,7 +231,7 @@ export class EditActivityMapComponent implements OnInit {
   }
 
   private resizeMap(event: any){
-      let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
+      let mapElement: HTMLElement = document.getElementById("edit_activity_map") as HTMLElement;
       let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
       let topCoord: number = Math.round(mapElementRect.top);
       let mapHeight: number = window.innerHeight - (topCoord + 70);

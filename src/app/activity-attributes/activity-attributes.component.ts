@@ -65,7 +65,6 @@ export class ActivityAttributesComponent implements OnInit {
                   rwPoly.coordinates = roadWorkActivity.geometry.coordinates
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
-                  let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
                 }
               },
               error: (error) => {
