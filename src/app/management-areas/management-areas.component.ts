@@ -56,7 +56,7 @@ export class ManagementAreasComponent implements OnInit {
   initializeMap() {
 
     function managementAreasStyleFunc(feature: any, resolution: any) {
-      if (feature.get('managername') === "Edgar Butwilowski") {
+      if (feature.get('name') === "Areal A") {
         let managementAreasStyle: Style = new Style({
           fill: new Fill({
             color: 'rgba(160, 160, 204,0.4)'
@@ -65,13 +65,13 @@ export class ManagementAreasComponent implements OnInit {
             color: 'rgba(160, 160, 204,1.0)'
           }),
           text: new Text({
-            text: "Edgar Butwilowski",
+            text: feature.get('name') + '\n (' + feature.get('managername') + ")",
             font: "20px sans-serif"
           })
         });
         return [managementAreasStyle];
       }
-      if (feature.get('managername') === "Heike Beyer") {
+      if (feature.get('name') === "Areal B") {
         let managementAreasStyle: Style = new Style({
           fill: new Fill({
             color: 'rgba(82, 170, 200,0.4)'
@@ -80,13 +80,14 @@ export class ManagementAreasComponent implements OnInit {
             color: 'rgba(82, 170, 200,1.0)'
           }),
           text: new Text({
-            text: "Heike Beyer",
+            text: feature.get('name') + '\n (' + feature.get('managername') + ")",
             font: "20px sans-serif"
           })
         });
         return [managementAreasStyle];
       }
-      let managementAreasStyle: Style = new Style({
+      if (feature.get('name') === "Areal C") {
+        let managementAreasStyle: Style = new Style({
           fill: new Fill({
             color: 'rgba(40, 110, 180,0.4)'
           }),
@@ -94,11 +95,13 @@ export class ManagementAreasComponent implements OnInit {
             color: 'rgba(40, 110, 180,1.0)'
           }),
           text: new Text({
-            text: "Stefan Gahler",
+            text: feature.get('name') + '\n (' + feature.get('managername') + ")",
             font: "20px sans-serif"
           })
         });
         return [managementAreasStyle];
+      }
+      return [];
     }
 
     this.loadSource = new VectorSource({ wrapX: false });
