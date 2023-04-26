@@ -48,21 +48,25 @@ export class UserComponent implements OnInit {
       .subscribe({
         next: (params) => {
           let userEMail: string = params['email'];
-          this.userService.getUser(userEMail).subscribe({
-            next: (userArray) => {
-              if (userArray !== null && userArray.length === 1) {
-                this.user = userArray[0];
-                this.userExists = true;
-                this.userRoleFormControl.setValue(this.user.role.name);
-                this.userOrgFormControl.setValue(this.user.organisationalUnit.name);  
-              } else {
-                this.user.errorMessage = "Benutzer existiert nicht.";
+          if(userEMail !== "new"){
+            this.userService.getUser(userEMail).subscribe({
+              next: (userArray) => {
+                if (userArray !== null && userArray.length === 1) {
+                  ErrorMessageEvaluation._evaluateErrorMessage(userArray[0]);
+                  if(userArray[0].errorMessage.trim().length === 0){
+                    this.user = userArray[0];
+                    this.userExists = true;
+                    this.userRoleFormControl.setValue(this.user.role.name);
+                    this.userOrgFormControl.setValue(this.user.organisationalUnit.name);    
+                  }
+                } else {
+                  this.user.errorMessage = "Benutzer existiert nicht.";                
+                }
+              },
+              error: (error) => {
               }
-            },
-            error: (error) => {
-            }
-          })
-
+            });
+          }
         },
         error: (error) => {
         }
