@@ -59,9 +59,11 @@
                     <a mat-list-item routerLink='/chooseneed' (click)="toggleSideNav($event)">
                         <mat-icon aria-label="Baubed&uuml;rfnisse">tips_and_updates</mat-icon>&nbsp;<span i18n>Baubed&uuml;rfnisse</span>
                     </a>
-                    <a mat-list-item routerLink='/chooseactivity' (click)="toggleSideNav($event)"
-                            *ngIf="userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager'">
+                    <a mat-list-item routerLink='/chooseactivity' (click)="toggleSideNav($event)">
                         <mat-icon aria-label="Baumassnahmen">engineering</mat-icon>&nbsp;<span i18n>Baumassnahmen</span>
+                    </a>
+                    <a mat-list-item routerLink='/chooseactivity' (click)="toggleSideNav($event)">
+                        <mat-icon aria-label="Events">stadium</mat-icon>&nbsp;<span i18n>Events</span>
                     </a>
                     <a mat-list-item routerLink='/managementareas' (click)="toggleSideNav($event)"
                             *ngIf="userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager'">
@@ -70,6 +72,10 @@
                     <a mat-list-item routerLink='/users' (click)="toggleSideNav($event)"
                             *ngIf="userService.getLocalUser().role.code === 'administrator'">
                         <mat-icon aria-label="Benutzer">account_box</mat-icon>&nbsp;<span i18n>Benutzer</span>
+                    </a>
+                    <a mat-list-item routerLink='/users' (click)="toggleSideNav($event)"
+                            *ngIf="userService.getLocalUser().role.code === 'administrator'">
+                        <mat-icon aria-label="Kofiguration">settings</mat-icon>&nbsp;<span i18n>Kofiguration</span>
                     </a>
                 </div>
                 <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="toggleSideNav($event)">

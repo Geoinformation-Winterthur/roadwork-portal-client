@@ -60,7 +60,7 @@
                                 <p>Bedarfsstelle:
                                     <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
                                 </p>
-                                <p>Arealmanager:
+                                <p>Gebietsmanager:
                                     <b>{{roadWorkNeedFeature.properties.managementarea.properties.manager.firstName}}
                                         {{roadWorkNeedFeature.properties.managementarea.properties.manager.lastName}}
                                     </b>
@@ -97,10 +97,10 @@
                                     <input matInput type="text" placeholder="Status">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <mat-label>Bemerkungen</mat-label>
+                                    <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
-                                        placeholder="Bemerkungen..."></textarea>
+                                        placeholder="Kurzbeschrieb..."></textarea>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>

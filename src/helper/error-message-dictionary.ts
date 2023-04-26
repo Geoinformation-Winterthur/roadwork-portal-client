@@ -13,6 +13,7 @@ export class ErrorMessageDictionary {
              "Die Geometrie des Baubedürfnisses enspricht nicht den Regeln der geometrischen Simplizität (z.B. Selbst-Schnitt).",
              "Die Geometrie des Baubedürfnisses ist nicht valide (z.B. hat Dangles).",
              "Benutzer mit Mail-Adresse 'new' ist nicht zulässig",
-             "Benutzer kann nicht hinzugefügt werden."
+             "Benutzer kann nicht hinzugefügt werden.",
+             "Keine UUID für Baubedürfnis oder UUID für Baumassnahme geliefert."
             ];
 }

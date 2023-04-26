@@ -56,7 +56,7 @@ export class ManagementAreasComponent implements OnInit {
   initializeMap() {
 
     function managementAreasStyleFunc(feature: any, resolution: any) {
-      if (feature.get('name') === "Areal A") {
+      if (feature.get('name') === "Wülflingen/Töss/Altstadt") {
         let managementAreasStyle: Style = new Style({
           fill: new Fill({
             color: 'rgba(160, 160, 204,0.4)'
@@ -71,7 +71,7 @@ export class ManagementAreasComponent implements OnInit {
         });
         return [managementAreasStyle];
       }
-      if (feature.get('name') === "Areal B") {
+      if (feature.get('name') === "Veltheim/Oberwinterthur") {
         let managementAreasStyle: Style = new Style({
           fill: new Fill({
             color: 'rgba(82, 170, 200,0.4)'
@@ -86,7 +86,7 @@ export class ManagementAreasComponent implements OnInit {
         });
         return [managementAreasStyle];
       }
-      if (feature.get('name') === "Areal C") {
+      if (feature.get('name') === "Mattenbach/Seen") {
         let managementAreasStyle: Style = new Style({
           fill: new Fill({
             color: 'rgba(40, 110, 180,0.4)'

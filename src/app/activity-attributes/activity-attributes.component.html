@@ -47,12 +47,12 @@
                         <mat-card-title>Wer und Wo</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Arealmanager:
+                                <p>Gebietsmanager:
                                     <b>{{roadWorkActivityFeature.properties.managementarea.properties.manager.firstName}}
                                         {{roadWorkActivityFeature.properties.managementarea.properties.manager.lastName}}
                                     </b>
                                 </p>
-                                <p>Verkehrsmanager:
+                                <p>Management Baustellenverkehr:
                                     <b>{{roadWorkActivityFeature.properties.trafficAgent.firstName}}
                                         {{roadWorkActivityFeature.properties.trafficAgent.lastName}}
                                     </b>
@@ -69,10 +69,10 @@
                                     <input matInput type="text" placeholder="Status">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <mat-label>Bemerkungen</mat-label>
+                                    <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkActivityFeature.properties.comment" (focusout)="update()"
-                                        placeholder="Bemerkungen..."></textarea>
+                                        placeholder="Kurzbeschrieb..."></textarea>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
