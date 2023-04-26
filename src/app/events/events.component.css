@@ -1,0 +1,41 @@
+.maincard {
+    min-width: 380px;
+    margin: 0.5em;
+}
+
+.chip-done {
+    background-color: lightgreen;
+}
+
+.crosshair-frame {
+    margin-top: 1em;
+    position: relative;
+    height: 175px;
+}
+
+.map-img, .crosshair-img {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 109%;
+    height: 100%;
+}
+
+.crosshair-img {
+    width: 90%;
+    height: 90%;
+}
+
+.add-need-button-container {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    z-index: 100;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;  
+}
+
+mat-slider {
+    width: 300px;
+}

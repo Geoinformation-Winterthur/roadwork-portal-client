@@ -36,7 +36,7 @@ export class UserService implements CanActivate {
 
     let userTokenTemp = localStorage.getItem(UserService.userTokenName);
     let userToken: string = userTokenTemp !== null ? userTokenTemp : "";
-    this.user = this.readUserFromToken(userToken);
+    this.user = this._readUserFromToken(userToken);
   }
 
   getLocalUser(): User {
@@ -52,15 +52,15 @@ export class UserService implements CanActivate {
       }) as Observable<any>;
     reqResult.subscribe({
       next: (userToken) => {
-          // success:
-          successFunc();
-          this.clearLocalUser();
-          localStorage.setItem(UserService.userTokenName, userToken.securityTokenString);
-          this.user = this.readUserFromToken(userToken.securityTokenString);
-        },
+        // success:
+        successFunc();
+        this.clearLocalUser();
+        localStorage.setItem(UserService.userTokenName, userToken.securityTokenString);
+        this.user = this._readUserFromToken(userToken.securityTokenString);
+      },
       error: (error) => {
-          errorFunc();
-        }
+        errorFunc();
+      }
     });
   }
 
@@ -78,7 +78,7 @@ export class UserService implements CanActivate {
     }
   }
 
-  clearLocalUser() {
+  public clearLocalUser() {
     this.user.firstName = "";
     this.user.lastName = "";
     this.user.initials = "";
@@ -96,7 +96,92 @@ export class UserService implements CanActivate {
     return isUserLoggedIn;
   }
 
-  private readUserFromToken(userToken: string): User {
+  public getUser(email: string): Observable<User[]> {
+    let result: Observable<User[]> =
+      this.http.get(environment.apiUrl + "/account/users/?email=" + email) as Observable<User[]>;
+    return result;
+  }
+
+  public addUser(user: User): Observable<any> {
+    let result: Observable<any> =
+      this.http.post(environment.apiUrl + "/account/users/", user) as Observable<any>;
+    return result;
+  }
+
+  public updateUser(user: User): Observable<ErrorMessage> {
+    let result: Observable<ErrorMessage> =
+      this.http.put(environment.apiUrl + "/account/users/", user) as Observable<ErrorMessage>;
+    return result;
+  }
+
+  public getAllUsers(): Observable<User[]> {
+    let result: Observable<User[]> =
+      this.http.get(environment.apiUrl + "/account/users/") as Observable<User[]>;
+    return result;
+  }
+
+  public deleteUser(mailAddress: string): Observable<ErrorMessage> {
+    let result: Observable<ErrorMessage> =
+      this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<ErrorMessage>;
+    return result;
+  }
+
+  public getAllRoleTypes(): Observable<Role[]> {
+    let result: Observable<Role[]> =
+      this.http.get(environment.apiUrl + "/account/userroles/") as Observable<Role[]>;
+    return result;
+  }
+
+  public getAllOrgTypes(): Observable<OrganisationalUnit[]> {
+    let result: Observable<OrganisationalUnit[]> =
+      this.http.get(environment.apiUrl + "/account/organisations/") as Observable<OrganisationalUnit[]>;
+    return result;
+  }
+
+  public hasUserAccess(accessRestrictionRole: string): boolean {
+    let userRole: string = this.getLocalUser().role.code;
+
+    if (accessRestrictionRole === 'administrator') {
+      // Only the administrator can do what the administrator
+      // is allowed to do:
+      if (userRole === 'administrator') {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (accessRestrictionRole === 'territorymanager') {
+      // Eventmanager and orderer are not allowed to do
+      // what the territorymanager is allowed to do:
+      if (userRole === 'eventmanager') {
+        return false;
+      } else if (userRole === 'orderer') {
+        return false;
+      } else {
+        return true;
+      }
+    } else if (accessRestrictionRole === 'orderer') {
+      // Only eventmanager is not allowed to do
+      // what the orderer is allowed to do:
+      if (userRole === 'eventmanager') {
+        return false;
+      } else {
+        return true;
+      }
+    } else if (accessRestrictionRole === 'eventmanager') {
+      // Only orderer is not allowed to do
+      // what the eventmanager is allowed to do:
+      if (userRole === 'orderer') {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      // if nothing fits, restrict access:
+      return false;
+    }
+  }
+
+  private _readUserFromToken(userToken: string): User {
     let resultUser: User = new User();
     if (userToken !== null && "" !== userToken) {
       resultUser = new User();
@@ -111,48 +196,6 @@ export class UserService implements CanActivate {
       }
     }
     return resultUser;
-  }
-
-  getUser(email: string): Observable<User[]> {
-    let result: Observable<User[]> =
-      this.http.get(environment.apiUrl + "/account/users/?email=" + email) as Observable<User[]>;
-    return result;
-  }
-
-  addUser(user: User): Observable<any> {
-    let result: Observable<any> =
-      this.http.post(environment.apiUrl + "/account/users/", user) as Observable<any>;
-    return result;
-  }
-
-  updateUser(user: User): Observable<ErrorMessage> {
-    let result: Observable<ErrorMessage> =
-      this.http.put(environment.apiUrl + "/account/users/", user) as Observable<ErrorMessage>;
-    return result;
-  }
-
-  getAllUsers(): Observable<User[]> {
-    let result: Observable<User[]> =
-      this.http.get(environment.apiUrl + "/account/users/") as Observable<User[]>;
-    return result;
-  }
-
-  deleteUser(mailAddress: string): Observable<ErrorMessage> {
-    let result: Observable<ErrorMessage> =
-      this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<ErrorMessage>;
-    return result;
-  }
-
-  getAllRoleTypes(): Observable<Role[]> {
-    let result: Observable<Role[]> =
-      this.http.get(environment.apiUrl + "/account/userroles/") as Observable<Role[]>;
-    return result;
-  }
-
-  getAllOrgTypes(): Observable<OrganisationalUnit[]> {
-    let result: Observable<OrganisationalUnit[]> =
-      this.http.get(environment.apiUrl + "/account/organisations/") as Observable<OrganisationalUnit[]>;
-    return result;
   }
 
 

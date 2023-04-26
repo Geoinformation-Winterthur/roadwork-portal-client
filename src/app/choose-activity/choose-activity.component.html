@@ -14,7 +14,7 @@
       <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkActivity of roadWorkActivityFeaturesFiltered"
         fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
         <mat-card-header style="margin: 0.5em;">
-          <mat-card-title>{{ roadWorkActivity.properties.uuid }}</mat-card-title>
+          <mat-card-title>{{ roadWorkActivity.properties.name }}</mat-card-title>
           <mat-card-subtitle>{{ roadWorkActivity.properties.costs }} CHF</mat-card-subtitle>
         </mat-card-header>
         <div class="crosshair-frame" style="width: 100%;">

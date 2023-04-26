@@ -12,10 +12,11 @@ import { UsersComponent } from "./users/users.component";
  import { NeedAttributesComponent } from './need-attributes/need-attributes.component';
  import { UserService } from 'src/services/user.service';
 import { UserComponent } from './user/user.component';
-import { EditNeedMapComponent } from './edit-need-map/edit-need-map.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
 import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
 import { ActivityAttributesComponent } from './activity-attributes/activity-attributes.component';
+import { EventsComponent } from './events/events.component';
+import { ConfigurationComponent } from './configuration/configuration.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -27,7 +28,9 @@ import { ActivityAttributesComponent } from './activity-attributes/activity-attr
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'managementareas', component: ManagementAreasComponent, pathMatch: 'full', canActivate: [UserService]},
-   {path: 'login', component: LoginComponent, pathMatch: 'full'}
+   {path: 'login', component: LoginComponent, pathMatch: 'full'},
+   {path: 'events', component: EventsComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'configuration', component: ConfigurationComponent, pathMatch: 'full', canActivate: [UserService]},
  ];
  
  @NgModule({

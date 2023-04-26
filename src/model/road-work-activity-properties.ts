@@ -4,6 +4,7 @@ import { User } from "./user";
 
 export class RoadWorkActivityProperties {
     uuid: string = "";
+    name: string = "";
     managementarea: ManagementAreaFeature
             = new ManagementAreaFeature();
     projectManager: User  = new User();

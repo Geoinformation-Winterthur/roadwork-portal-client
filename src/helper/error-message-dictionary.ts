@@ -14,6 +14,6 @@ export class ErrorMessageDictionary {
              "Die Geometrie des Baubedürfnisses ist nicht valide (z.B. hat Dangles).",
              "Benutzer mit Mail-Adresse 'new' ist nicht zulässig",
              "Benutzer kann nicht hinzugefügt werden.",
-             "Keine UUID für Baubedürfnis oder UUID für Baumassnahme geliefert."
+             "Keine Berechtigung, dieses Baubedürfnis zu editieren."
             ];
 }
