@@ -34,7 +34,7 @@
                                     <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkNeedFeature.properties.description" (focusout)="update()"
-                                        placeholder="Kurzbeschrieb..."
+                                        placeholder="Kurzbeschrieb..." required
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>

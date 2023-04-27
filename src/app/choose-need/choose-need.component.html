@@ -83,7 +83,7 @@
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
-          [routerLink]="['/need', roadWorkNeed.properties.uuid]">BEARBEITEN</button>
+          [routerLink]="['/need', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
         <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
           *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
           (click)="createNewActivityFromNeed(roadWorkNeed)">NEUE BAUMASSNAHME</button>

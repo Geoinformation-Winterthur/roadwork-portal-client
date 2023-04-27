@@ -10,6 +10,8 @@ import { FormControl } from '@angular/forms';
 import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { OrganisationalUnit } from 'src/model/organisational-unit';
+import { ManagementAreaFeature } from 'src/model/management-area-feature';
 
 @Component({
   selector: 'app-need-attributes',
@@ -51,9 +53,8 @@ export class NeedAttributesComponent implements OnInit {
 
         if (idParamString == "new") {
 
-          this.roadWorkNeedFeature = new RoadWorkNeedFeature();
-          this.roadWorkNeedFeature.properties.status.code = "notcoord";
-          this.roadWorkNeedFeature.properties.priority.code = "middle";
+          this.roadWorkNeedFeature = NeedAttributesComponent.
+                _createNewRoadWorkNeedFeature(this.userService.getLocalUser());
 
         } else {
 
@@ -198,6 +199,47 @@ export class NeedAttributesComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  private static _createNewRoadWorkNeedFeature(localUser: User): RoadWorkNeedFeature {
+
+    let roadWorkNeedFeature: RoadWorkNeedFeature = new RoadWorkNeedFeature();
+    roadWorkNeedFeature.properties.status.code = "notcoord";
+    roadWorkNeedFeature.properties.priority.code = "middle";
+    roadWorkNeedFeature.properties.isEditingAllowed = true;
+    roadWorkNeedFeature.properties.created = new Date();
+    roadWorkNeedFeature.properties.lastModified = new Date();
+
+    let userForRoadWorkNeed: User = new User();
+    userForRoadWorkNeed.lastName = localUser.lastName;
+    userForRoadWorkNeed.firstName = localUser.firstName;
+    let organisation: OrganisationalUnit = new OrganisationalUnit();
+    organisation.name = "Noch nicht ermittelt";
+    userForRoadWorkNeed.organisationalUnit = organisation;
+
+    roadWorkNeedFeature.properties.orderer = userForRoadWorkNeed;
+
+    let managementarea: ManagementAreaFeature = new ManagementAreaFeature();
+    let managerForRoadWorkNeed: User = new User();
+    managerForRoadWorkNeed.lastName = "Noch nicht ermittelt";
+    managementarea.properties.manager = managerForRoadWorkNeed;
+
+    roadWorkNeedFeature.properties.managementarea = managementarea;
+
+    let plus50Years: Date = new Date();
+    plus50Years.setFullYear(plus50Years.getFullYear() + 50);
+
+    roadWorkNeedFeature.properties.finishEarlyFrom = new Date();
+    roadWorkNeedFeature.properties.finishEarlyTo = plus50Years;
+
+    roadWorkNeedFeature.properties.finishOptimumFrom = new Date();
+    roadWorkNeedFeature.properties.finishOptimumTo = plus50Years;
+
+    roadWorkNeedFeature.properties.finishLateFrom = new Date();
+    roadWorkNeedFeature.properties.finishLateTo = plus50Years;
+
+    return roadWorkNeedFeature;
+
   }
 
 }
