@@ -43,7 +43,10 @@
     <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkNeed of roadWorkNeedFeaturesFiltered"
       fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
       <mat-card-header style="margin: 0.5em;">
-        <mat-card-title>{{ roadWorkNeed.properties.name }}</mat-card-title>
+        <mat-card-title>
+          {{ roadWorkNeed.properties.name.slice(0, 20) }}
+          <span *ngIf="roadWorkNeed.properties.name.length > 20">...</span>
+        </mat-card-title>
         <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
       </mat-card-header>
       <div class="crosshair-frame" style="width: 100%;">

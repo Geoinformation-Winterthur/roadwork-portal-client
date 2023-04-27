@@ -6,10 +6,10 @@ import { RoadworkPolygon } from 'src/model/road-work-polygon';
 
 @Component({
   selector: 'app-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.css']
+  templateUrl: './choose-events.component.html',
+  styleUrls: ['./choose-events.component.css']
 })
-export class EventsComponent implements OnInit {
+export class ChooseEventsComponent implements OnInit {
 
   eventFeatures: EventFeature[] = [];
   eventFeaturesFiltered: EventFeature[] = [];

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
-import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { ErrorMessage } from 'src/model/error-message';
 
 
 @Injectable({
@@ -46,6 +46,12 @@ export class RoadWorkActivityService {
   updateRoadWorkActivity(roadworkActivity? : RoadWorkActivityFeature): Observable<any> {
     let result: Observable<any> = 
           this.http.put(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+    return result;
+  }
+
+  deleteRoadWorkActivity(uuid: string): Observable<ErrorMessage> {
+    let result: Observable<ErrorMessage> = 
+        this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" + uuid) as Observable<ErrorMessage>;
     return result;
   }
 

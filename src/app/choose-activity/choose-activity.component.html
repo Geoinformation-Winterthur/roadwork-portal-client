@@ -11,10 +11,13 @@
       </button>
     </div>
     <div fxLayout="row wrap padding">
-      <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkActivity of roadWorkActivityFeaturesFiltered"
+      <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkActivity of roadWorkActivityFeatures"
         fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
         <mat-card-header style="margin: 0.5em;">
-          <mat-card-title>{{ roadWorkActivity.properties.name }}</mat-card-title>
+          <mat-card-title>
+            {{ roadWorkActivity.properties.name.slice(0, 20) }}
+            <span *ngIf="roadWorkActivity.properties.name.length > 20">...</span>
+          </mat-card-title>
           <mat-card-subtitle>{{ roadWorkActivity.properties.costs }} CHF</mat-card-subtitle>
         </mat-card-header>
         <div class="crosshair-frame" style="width: 100%;">
@@ -46,7 +49,9 @@
         <mat-divider></mat-divider>
         <mat-card-actions style="margin: 0.5em;">
           <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
-            [routerLink]="['/activity', roadWorkActivity.properties.uuid]">BEARBEITEN</button>
+            [routerLink]="['/activity', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
+          <button style="background-color: rgb(200, 71, 168); color: white;margin-top: 1em;" mat-button
+            (click)="deleteRoadworkActivity(roadWorkActivity.properties.uuid)">L&Ouml;SCHEN</button>
         </mat-card-actions>
       </mat-card>
     </div>

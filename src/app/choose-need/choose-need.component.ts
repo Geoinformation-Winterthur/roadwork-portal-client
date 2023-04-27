@@ -64,7 +64,9 @@ export class ChooseNeedComponent implements OnInit {
   createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature){
     let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
     roadWorkActivity.geometry = roadWorkNeed.geometry;
-    roadWorkActivity.properties.managementarea = roadWorkNeed.properties.managementarea;    
+    roadWorkActivity.properties.name = roadWorkNeed.properties.name;    
+    roadWorkActivity.properties.managementarea = roadWorkNeed.properties.managementarea;
+    roadWorkActivity.properties.roadWorkNeedsUuids.push(roadWorkNeed.properties.uuid);
 
     this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
     .subscribe({

@@ -4,7 +4,7 @@
     </div>
     <div *ngIf="roadWorkActivityFeature !== undefined">
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Baumassnahme <span style="font-weight: normal;"> / {{
-            roadWorkActivityFeature.properties.uuid }}</span></h1>
+            roadWorkActivityFeature.properties.name }}</span></h1>
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neue Baumassnahme</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
@@ -26,7 +26,7 @@
                             <p *ngIf="!roadWorkActivityFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
-                                    <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.uuid"
+                                    <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.name"
                                         placeholder="Bezeichnung" (focusout)="update()" required>
                                 </mat-form-field>
                                 <mat-form-field>

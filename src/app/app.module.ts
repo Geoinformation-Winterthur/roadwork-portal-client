@@ -56,7 +56,7 @@ import { ManagementAreasComponent } from './management-areas/management-areas.co
 import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
 import { ActivityAttributesComponent } from './activity-attributes/activity-attributes.component';
 import { EditActivityMapComponent } from './edit-activity-map/edit-activity-map.component';
-import { EventsComponent } from './events/events.component';
+import { ChooseEventsComponent } from './choose-events/choose-events.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
  
  
@@ -87,7 +87,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
      ChooseActivityComponent,
      ActivityAttributesComponent,
      EditActivityMapComponent,
-     EventsComponent,
+     ChooseEventsComponent,
      ConfigurationComponent
    ],
    imports: [

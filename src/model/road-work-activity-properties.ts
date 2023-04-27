@@ -16,4 +16,5 @@ export class RoadWorkActivityProperties {
     finishTo: Date = new Date(1, 0, 1);
     costs: number = 0;
     costsType: CostTypes = new CostTypes();
+    roadWorkNeedsUuids: string[] = [];
 }

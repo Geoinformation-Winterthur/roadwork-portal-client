@@ -15,7 +15,7 @@ import { UserComponent } from './user/user.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
 import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
 import { ActivityAttributesComponent } from './activity-attributes/activity-attributes.component';
-import { EventsComponent } from './events/events.component';
+import { ChooseEventsComponent } from './choose-events/choose-events.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
  
  const routes: Routes = [
@@ -29,7 +29,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
    {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'managementareas', component: ManagementAreasComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'login', component: LoginComponent, pathMatch: 'full'},
-   {path: 'events', component: EventsComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'events', component: ChooseEventsComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'configuration', component: ConfigurationComponent, pathMatch: 'full', canActivate: [UserService]},
  ];
  
