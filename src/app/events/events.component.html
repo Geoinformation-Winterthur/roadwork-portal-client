@@ -6,7 +6,7 @@
     <h1>Events<span *ngIf="chosenYear" style="font-weight: normal;"> / Jahr
         {{chosenYear}}</span></h1>
     <div class="add-need-button-container">
-      <button mat-fab [routerLink]="['/need', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
+      <button mat-fab [routerLink]="['/event', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
         <mat-icon aria-label="+">add</mat-icon>
       </button>
     </div>
@@ -22,45 +22,41 @@
       <mat-divider></mat-divider>
     </div>
     <div fxLayout="row wrap padding">
-      <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkNeed of roadWorkNeedFeaturesFiltered"
+      <mat-card class="maincard mat-elevation-z2" *ngFor="let event of eventFeaturesFiltered"
         fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
         <mat-card-header style="margin: 0.5em;">
-          <mat-card-title>{{ roadWorkNeed.properties.name }}</mat-card-title>
-          <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
+          <mat-card-title>{{ event.properties.name }}</mat-card-title>
+          <mat-card-subtitle>Event eingegeben am: {{ event.properties.created | date:"dd.MM.yyyy" }}</mat-card-subtitle>
         </mat-card-header>
         <div class="crosshair-frame" style="width: 100%;">
           <img mat-card-image class="map-img"
-            src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkNeed.geometry.coordinates[0].x - 10 }},{{ roadWorkNeed.geometry.coordinates[0].y - 5 }},{{ roadWorkNeed.geometry.coordinates[0].x + 10 }},{{ roadWorkNeed.geometry.coordinates[0].y + 5 }}&WIDTH=800&HEIGHT=400">
+            src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ event.geometry.coordinates[0].x - 10 }},{{ event.geometry.coordinates[0].y - 5 }},{{ event.geometry.coordinates[0].x + 10 }},{{ event.geometry.coordinates[0].y + 5 }}&WIDTH=800&HEIGHT=400">
         </div>
         <mat-card-content style="margin: 0.5em;">
           <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />
           <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ event.geometry.coordinates[0].x }}&y={{ event.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
             Zeige im Stadtplan Winterthur</a>
           <br />
           <br />
           <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ event.geometry.coordinates[0].x }}&y={{ event.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
             Zeige im WinWebGIS</a>
           <br />
           <br />
-          Eingegeben am: {{ roadWorkNeed.properties.created | date:"dd.MM.yyyy" }}
+          Letzte &Auml;nderung: {{ event.properties.lastModified | date:"dd.MM.yyyy" }}
           <br />
           <br />
           <mat-chip-list>
-            <mat-chip class="chip-done">Bis: {{ roadWorkNeed.properties.finishOptimumTo | date:"dd.MM.yyyy" }}
+            <mat-chip class="chip-done">Zeitraum: {{ event.properties.dateFrom | date:"dd.MM.yyyy" }} - {{ event.properties.dateTo | date:"dd.MM.yyyy" }}
             </mat-chip>
-            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'not_coordinated'" class="chip-not-coordinated">Nicht
-              koordiniert</mat-chip>
-            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'"
-              class="chip-coordinated">koordiniert</mat-chip>
           </mat-chip-list>
           <br />
         </mat-card-content>
         <mat-divider></mat-divider>
         <mat-card-actions style="margin: 0.5em;">
           <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
-            [routerLink]="['/need', roadWorkNeed.properties.uuid]">BEARBEITEN</button>
+            [routerLink]="['/event', event.properties.uuid]">BEARBEITEN</button>
         </mat-card-actions>
       </mat-card>
     </div>

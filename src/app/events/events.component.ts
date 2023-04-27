@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { EventFeature } from 'src/model/event-feature';
+import { EventService } from 'src/services/event.service';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
-import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
-import { UserService } from 'src/services/user.service';
-import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
-import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 
 @Component({
   selector: 'app-events',
@@ -14,65 +11,45 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 })
 export class EventsComponent implements OnInit {
 
-  roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
-  roadWorkNeedFeaturesFiltered: RoadWorkNeedFeature[] = [];
+  eventFeatures: EventFeature[] = [];
+  eventFeaturesFiltered: EventFeature[] = [];
 
   filterPanelOpen: boolean = false;
 
   chosenYear: number = new Date().getFullYear();
 
-  userService: UserService;
-
-  private roadWorkNeedService: RoadWorkNeedService;
-  private roadWorkActivityService: RoadWorkActivityService;
+  private eventService: EventService;
   private router: Router;
 
-  constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-      roadWorkActivityService: RoadWorkActivityService, router: Router) {
-    this.roadWorkNeedService = roadWorkNeedService;
-    this.roadWorkActivityService = roadWorkActivityService;
-    this.userService = userService;
+  constructor(eventService: EventService, router: Router) {
+    this.eventService = eventService;
     this.router = router;
   }
 
   ngOnInit(): void {
-    this.getAllNeeds();
+    this.getAllEvents();
   }
 
-  getAllNeeds() {
+  getAllEvents() {
 
-    this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
-      next: (roadWorkNeeds) => {
+    this.eventService.getEvents().subscribe({
+      next: (events) => {
 
-        for(let roadWorkNeed of roadWorkNeeds){
+        for(let event of events){
+          event.properties.dateTo
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
-          blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
-          roadWorkNeed.geometry = blowUpPoly;
+          blowUpPoly.coordinates = event.geometry.coordinates;
+          event.geometry = blowUpPoly;
         }
 
-        this.roadWorkNeedFeatures = roadWorkNeeds;
-        this.roadWorkNeedFeaturesFiltered = this.roadWorkNeedFeatures;
+        this.eventFeatures = events;
+        this.eventFeaturesFiltered = this.eventFeatures;
 
       },
       error: (error) => {
       }
     });
 
-  }
-
-  createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature){
-    let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
-    roadWorkActivity.geometry = roadWorkNeed.geometry;
-    roadWorkActivity.properties.managementarea = roadWorkNeed.properties.managementarea;    
-
-    this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
-    .subscribe({
-      next: (roadWorkActivityFeature) => {
-        this.router.navigate(["/activity/" + roadWorkActivityFeature.properties.uuid]);
-      },
-      error: (error) => {
-      }
-    });
   }
 
 }

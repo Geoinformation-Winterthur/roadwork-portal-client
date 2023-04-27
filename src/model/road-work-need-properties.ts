@@ -19,8 +19,9 @@ export class RoadWorkNeedProperties {
     finishLateTo: Date = new Date(1, 0, 1);
     priority: Priority = new Priority();
     status: Status = new Status();
-    comment: string = "";
+    description: string = "";
     managementarea: ManagementAreaFeature
             = new ManagementAreaFeature();
     roadWorkActivityUuid: string = "";
+    isEditingAllowed: boolean = false;
 }

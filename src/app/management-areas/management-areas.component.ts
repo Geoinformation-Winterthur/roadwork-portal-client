@@ -56,52 +56,24 @@ export class ManagementAreasComponent implements OnInit {
   initializeMap() {
 
     function managementAreasStyleFunc(feature: any, resolution: any) {
-      if (feature.get('name') === "Wülflingen/Töss/Altstadt") {
-        let managementAreasStyle: Style = new Style({
+      let managementAreasStyle: Style = new Style({
+        fill: new Fill({
+          color: feature.get('color_fill')
+        }),
+        stroke: new Stroke({
+          color: feature.get('color_stroke')
+        }),
+        text: new Text({
+          text: feature.get('name') + '\n (' + feature.get('managername') + ")",
           fill: new Fill({
-            color: 'rgba(160, 160, 204,0.4)'
+            color: 'rgba(68, 53, 84,1.0)'
           }),
-          stroke: new Stroke({
-            color: 'rgba(160, 160, 204,1.0)'
-          }),
-          text: new Text({
-            text: feature.get('name') + '\n (' + feature.get('managername') + ")",
-            font: "20px sans-serif"
-          })
-        });
-        return [managementAreasStyle];
-      }
-      if (feature.get('name') === "Veltheim/Oberwinterthur") {
-        let managementAreasStyle: Style = new Style({
-          fill: new Fill({
-            color: 'rgba(82, 170, 200,0.4)'
-          }),
-          stroke: new Stroke({
-            color: 'rgba(82, 170, 200,1.0)'
-          }),
-          text: new Text({
-            text: feature.get('name') + '\n (' + feature.get('managername') + ")",
-            font: "20px sans-serif"
-          })
-        });
-        return [managementAreasStyle];
-      }
-      if (feature.get('name') === "Mattenbach/Seen") {
-        let managementAreasStyle: Style = new Style({
-          fill: new Fill({
-            color: 'rgba(40, 110, 180,0.4)'
-          }),
-          stroke: new Stroke({
-            color: 'rgba(40, 110, 180,1.0)'
-          }),
-          text: new Text({
-            text: feature.get('name') + '\n (' + feature.get('managername') + ")",
-            font: "20px sans-serif"
-          })
-        });
-        return [managementAreasStyle];
-      }
-      return [];
+          overflow: true,
+          textAlign: "center",
+          font: "20px sans-serif"
+        })
+      });
+      return [managementAreasStyle];
     }
 
     this.loadSource = new VectorSource({ wrapX: false });
