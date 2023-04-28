@@ -68,6 +68,7 @@ export class EditNeedMapComponent implements OnInit {
 
   ngOnDestroy() {
     removeEventListener("resize", this.resizeMap);
+    removeEventListener("addfeature", this.addFeatureFinished);
   }
 
   initializeMap() {
@@ -133,13 +134,7 @@ export class EditNeedMapComponent implements OnInit {
       type: "Polygon",
     });
 
-    this.userDrawSource.on('addfeature', (event) => {
-      if (this.userDrawSource.getState() === 'ready') {
-        this.sendGeometry();
-        this.userDrawSource.clear();
-        // this.endEditing();
-      }
-    });
+    this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
     this.loadGeometry(true);
 
@@ -228,6 +223,14 @@ export class EditNeedMapComponent implements OnInit {
     alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. " +
       "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
+  }
+
+  private addFeatureFinished(event: any) {
+    if (this.userDrawSource.getState() === 'ready') {
+      this.sendGeometry();
+      this.userDrawSource.clear();
+      // this.endEditing();
+    }
   }
 
   private resizeMap(event: any) {
