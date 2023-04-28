@@ -1,4 +1,7 @@
-import Polygon from "ol/geom/Polygon";
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { ManagementAreaProperties } from "./management-area-properties";
 import { RoadworkPolygon } from "./road-work-polygon";
 

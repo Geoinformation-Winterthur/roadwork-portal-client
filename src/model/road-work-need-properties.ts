@@ -1,3 +1,7 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { ManagementAreaFeature } from "./management-area-feature";
 import { Priority } from "./priority";
 import { RoadWorkNeedEnum } from "./road-work-need-enum";

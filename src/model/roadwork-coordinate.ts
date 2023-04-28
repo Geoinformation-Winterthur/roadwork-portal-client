@@ -1,5 +1,7 @@
-import { Coordinate } from "ol/coordinate";
-
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 export class RoadworkCoordinate
 {
     public x: number = 0;

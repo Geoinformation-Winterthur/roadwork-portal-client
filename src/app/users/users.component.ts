@@ -1,3 +1,7 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { UserService } from '../../services/user.service';

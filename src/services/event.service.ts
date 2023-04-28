@@ -1,7 +1,10 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RoadWorkNeedFeature } from '../model/road-work-need-feature';
 import { environment } from 'src/environments/environment';
 import { EventFeature } from 'src/model/event-feature';
 

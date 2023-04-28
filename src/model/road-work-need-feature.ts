@@ -1,3 +1,7 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { RoadWorkNeedProperties } from "./road-work-need-properties";
 import { RoadworkPolygon } from "./road-work-polygon";
 

@@ -1,3 +1,7 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { CostTypes } from "./cost-types";
 import { ManagementAreaFeature } from "./management-area-feature";
 import { User } from "./user";
