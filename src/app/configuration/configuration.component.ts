@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { env } from 'process';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-configuration',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./configuration.component.css']
 })
 export class ConfigurationComponent implements OnInit {
+
+  hrefToOpenApi = environment.apiUrl + "/swagger";
 
   constructor() { }
 
