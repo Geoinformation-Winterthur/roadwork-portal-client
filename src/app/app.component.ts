@@ -1,6 +1,6 @@
 /**
  * @author Edgar Butwilowski
- * @copyright Copyright (c) Vermessungsamt Winterthur. All rights reserved.
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Subscription } from 'rxjs';

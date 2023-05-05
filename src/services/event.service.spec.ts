@@ -1,5 +1,8 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { TestBed } from '@angular/core/testing';
-
 import { EventService } from './event.service';
 
 describe('EventService', () => {

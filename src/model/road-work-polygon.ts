@@ -1,3 +1,7 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { Coordinate } from "ol/coordinate";
 import { LinearRing, Polygon } from "ol/geom";
 import { RoadworkCoordinate } from "./roadwork-coordinate";

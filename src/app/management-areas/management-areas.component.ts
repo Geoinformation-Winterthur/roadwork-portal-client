@@ -1,3 +1,7 @@
+/**
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ */
 import { Component, Input, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
