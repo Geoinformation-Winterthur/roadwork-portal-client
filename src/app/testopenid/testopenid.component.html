@@ -1,0 +1,16 @@
+<div style="margin: 1em;">
+    <p>testopenid works!</p>
+    <button (click)="openIdHandleLoginClick()">{{ openIdIsLoggedIn ? 'OpenID Logout' : 'OpenID Login' }}</button>
+
+    <div>
+        <p>Dies ist nur für Testzwecke und wird durch SwissID ersetzt:</p>
+        <p>Zeitpunkt der Token-Ausstellung: {{claims?.iat}}</p>
+        <p>Google Nutzer-ID: {{claims?.sub}}</p>
+        <p>name: {{claims?.given_name}} {{claims?.family_name}}</p>
+        <p>email: {{claims?.email}}</p>
+        <p>email verified: {{claims?.email_verified}}</p>
+        <p>locale: {{claims?.locale}}</p>
+        <p>jti: {{claims?.jti}}</p>
+        <p>Aussteller-ID: {{claims?.iss}}</p>
+    </div>
+</div>

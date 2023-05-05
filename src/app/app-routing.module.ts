@@ -17,6 +17,7 @@ import { ChooseActivityComponent } from './choose-activity/choose-activity.compo
 import { ActivityAttributesComponent } from './activity-attributes/activity-attributes.component';
 import { ChooseEventsComponent } from './choose-events/choose-events.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
+import { TestopenidComponent } from './testopenid/testopenid.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -31,6 +32,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
    {path: 'login', component: LoginComponent, pathMatch: 'full'},
    {path: 'events', component: ChooseEventsComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'configuration', component: ConfigurationComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'openid', component: TestopenidComponent, pathMatch: 'full'},
  ];
  
  @NgModule({

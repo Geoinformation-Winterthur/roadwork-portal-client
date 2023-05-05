@@ -68,6 +68,27 @@ export class UserService implements CanActivate {
     this.clearLocalUser();
   }
 
+  loginWithOpenId(idToken: string, successFunc: () => void, errorFunc: () => void) {
+    let reqResult: Observable<any> = this.http.post(environment.apiUrl + '/account/openidlogin', "\"" + idToken + "\"",
+      {
+        headers: new HttpHeaders({
+          "Content-Type": "application/json"
+        })
+      }) as Observable<any>;
+    reqResult.subscribe({
+      next: (userToken) => {
+        // success:
+        successFunc();
+        this.clearLocalUser();
+        localStorage.setItem(UserService.userTokenName, userToken.securityTokenString);
+        this.user = this._readUserFromToken(userToken.securityTokenString);
+      },
+      error: (error) => {
+        errorFunc();
+      }
+    });
+  }
+
   public isUserLoggedIn(): boolean {
     let userTokenTemp = localStorage.getItem(UserService.userTokenName);
     let userToken: string = userTokenTemp !== null ? userTokenTemp : "";

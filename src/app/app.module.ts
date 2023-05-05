@@ -58,6 +58,8 @@ import { ActivityAttributesComponent } from './activity-attributes/activity-attr
 import { EditActivityMapComponent } from './edit-activity-map/edit-activity-map.component';
 import { ChooseEventsComponent } from './choose-events/choose-events.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
+import { TestopenidComponent } from './testopenid/testopenid.component';
+import { OAuthModule } from 'angular-oauth2-oidc';
  
  
  export function getToken(){
@@ -88,7 +90,8 @@ import { ConfigurationComponent } from './configuration/configuration.component'
      ActivityAttributesComponent,
      EditActivityMapComponent,
      ChooseEventsComponent,
-     ConfigurationComponent
+     ConfigurationComponent,
+     TestopenidComponent
    ],
    imports: [
      BrowserModule,
@@ -123,6 +126,7 @@ import { ConfigurationComponent } from './configuration/configuration.component'
      MatTabsModule,
      ChartsModule,
      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+     OAuthModule.forRoot(),
      JwtModule.forRoot({
        config: {
          tokenGetter: getToken,

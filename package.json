@@ -24,6 +24,8 @@
     "@angular/router": "~13.0.0",
     "@angular/service-worker": "^13.0.0",
     "@auth0/angular-jwt": "^5.0.2",
+    "angular-oauth2-oidc": "^13.0.1",
+    "angular-oauth2-oidc-jwks": "^13.0.1",
     "chart.js": "^2.9.4",
     "file-saver": "^2.0.5",
     "ng2-charts": "^2.4.2",
