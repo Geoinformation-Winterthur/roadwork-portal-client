@@ -2,26 +2,38 @@
     <h1>Konfiguration</h1>
     <mat-tab-group>
         <mat-tab label="Konfiguration">
-            <p>Minimale Fl&auml;chengr&ouml;sse: </p>
-            <p>Maximale Fl&auml;chengr&ouml;sse: </p>
+            <p style="margin-top: 2em;font-weight: bold;">Geometrie-Erfassung</p>
+            <div style="margin: 1em;">
+                <mat-form-field>
+                    <mat-label>Minimale Fl&auml;chengr&ouml;sse</mat-label>
+                    <input matInput maxlength="3" placeholder="Minimale Fl&auml;chengr&ouml;sse..." />
+                </mat-form-field>
+            </div>
+            <div style="margin: 1em;">
+                <mat-form-field>
+                    <mat-label>Maximale Fl&auml;chengr&ouml;sse</mat-label>
+                    <input matInput maxlength="10" placeholder="Maximale Fl&auml;chengr&ouml;sse..." />
+                </mat-form-field>
+            </div>
         </mat-tab>
         <mat-tab label="Benutzer">
             <app-users></app-users>
         </mat-tab>
         <mat-tab label="Gesamtdownload">
-            <p>Diese Applikation erm&ouml;glicht einen <b>full data access</b>. Der gesamte
-            Datenbestand der Applikation (inkl. der Geodaten) kann jederzeit komfortabel
-            &uuml;ber diese Seite heruntergeladen und migriert werden. Die Daten werden im
-            standardisierten, Web-nativen <i>JSON-Format</i> bereitgestellt.</p>
-            <p style="background-color: rgb(229, 174, 174);">Achtung, der Gesamtdownload
+            <p>Diese Applikation erm&ouml;glicht einen <b>Full Data Access</b>. Der gesamte
+                Datenbestand der Applikation (inkl. der Geodaten) kann jederzeit komfortabel
+                &uuml;ber diese Seite heruntergeladen und migriert werden. Die Daten werden im
+                standardisierten, Web-nativen <i>JSON-Format</i> bereitgestellt. Die Beschreibung
+                des Datenschemas erfolgt in der Open-API-Dokumentation (siehe weiter unten).</p>
+            <p style="padding: 1em;background-color: rgb(229, 174, 174);">Achtung, der Gesamtdownload
                 beinhaltet auch personenbezogene Daten der registrierten Benutzer dieser
-                Applikation. Passw&ouml;rter sind im Download jedoch nicht enthalten.
+                Applikation. Passw&ouml;rter k&ouml;nnen  im Download jedoch nicht enthalten sein.
             </p>
             <p>Grunds&auml;tzlich wird die Interoperabilit&auml;t dieser Applikation
                 sichergestellt &uuml;ber die Bereitstellung von standardisierten
                 Service-Schnittstellen auf Basis von <i>Open API</i>. Die technische Dokumentation
-                der Services wird auf dieser Webseite live bereitgestellt:<br />
-                <a href="{{hrefToOpenApi}}">Open API Dokumentation der Services</a>
+                der Services wird auf dieser Webseite live bereitgestellt:<br /><br />
+                <a href="{{hrefToOpenApi}}">Open API Dokumentation der Services &ouml;ffnen</a>
             </p>
         </mat-tab>
     </mat-tab-group>
