@@ -4,7 +4,7 @@
     </div>
     <div *ngIf="roadWorkActivityFeature !== undefined">
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Baumassnahme <span style="font-weight: normal;"> / {{
-            roadWorkActivityFeature.properties.name }}</span></h1>
+                roadWorkActivityFeature.properties.name }}</span></h1>
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neue Baumassnahme</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
@@ -23,7 +23,8 @@
                             <p *ngIf="roadWorkActivityFeature.properties.uuid">UUID:
                                 <b>{{roadWorkActivityFeature.properties.uuid}}</b>
                             </p>
-                            <p *ngIf="!roadWorkActivityFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
+                            <p *ngIf="!roadWorkActivityFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b>
+                            </p>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.name"
@@ -71,8 +72,8 @@
                                 <mat-form-field>
                                     <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkActivityFeature.properties.description" (focusout)="update()"
-                                        placeholder="Kurzbeschrieb..."></textarea>
+                                        [(ngModel)]="roadWorkActivityFeature.properties.description"
+                                        (focusout)="update()" placeholder="Kurzbeschrieb..."></textarea>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
@@ -102,6 +103,13 @@
                 </div>
             </mat-tab>
             <mat-tab label="Bed&uuml;rfnisse">
+                <ul>
+                    <li *ngFor="let roadWorkNeedUuid of roadWorkActivityFeature.properties.roadWorkNeedsUuids"
+                        style="margin: 1em;">
+                        UUID Bed&uuml;rfnis: {{roadWorkNeedUuid}}
+                        <button (click)="removeRoadWorkNeed(roadWorkNeedUuid)" mat-button>ENTFERNEN</button>
+                    </li>
+                </ul>
             </mat-tab>
             <mat-tab label="Vernehmlassung" *ngIf="statusCode === 'coordinated'">
             </mat-tab>

@@ -25,6 +25,8 @@ import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -36,20 +38,26 @@ export class EditActivityMapComponent implements OnInit {
   @Input()
   roadWorkActivityFeat?: RoadWorkActivityFeature;
 
+  roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
+
   isInEditingMode: boolean = false;
 
   map: Map = new Map();
 
   userDrawSource: VectorSource = new VectorSource();
   loadSource: VectorSource = new VectorSource();
+  roadWorkNeedSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
 
   private roadWorkActivityService: RoadWorkActivityService;
   private snackBar: MatSnackBar;
+  private roadWorkNeedService: RoadWorkNeedService;
 
   public constructor(snackBar: MatSnackBar,
-    roadWorkActivityService: RoadWorkActivityService) {
+    roadWorkActivityService: RoadWorkActivityService,
+    roadWorkNeedService: RoadWorkNeedService) {
     this.roadWorkActivityService = roadWorkActivityService;
+    this.roadWorkNeedService = roadWorkNeedService;
     this.snackBar = snackBar;
     setTimeout(() => {
       this.resizeMap(null);
@@ -89,6 +97,21 @@ export class EditActivityMapComponent implements OnInit {
       style: loadLayerStyle
     });
 
+    let roadWorkNeedLayerStyle: Style = new Style({
+      fill: new Fill({
+        color: 'rgba(123, 90, 172,0.4)'
+      }),
+      stroke: new Stroke({
+        color: 'rgba(123, 90, 172,1.0)'
+      })
+    });
+
+    this.roadWorkNeedSource = new VectorSource({ wrapX: false });
+    let roadWorkNeedLayer = new VectorLayer({
+      source: this.roadWorkNeedSource,
+      style: roadWorkNeedLayerStyle
+    });
+
     let userDrawLayerStyle: Style = new Style({
       fill: new Fill({
         color: 'rgba(255, 0, 0,0.4)'
@@ -123,6 +146,7 @@ export class EditActivityMapComponent implements OnInit {
             serverType: 'geoserver',
           })
         }),
+        roadWorkNeedLayer,
         loadLayer,
         userDrawLayer
       ],
@@ -139,31 +163,26 @@ export class EditActivityMapComponent implements OnInit {
 
     this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
-    this.loadGeometry(true);
-
-  }
-
-  loadGeometry(refreshExtent: boolean) {
-    if (this.roadWorkActivityFeat !== undefined) {
-      let needPoly: Polygon = this.roadWorkActivityFeat.geometry.convertToOlPoly();
-      needPoly.transform("EPSG:2056", 'EPSG:3857');
-
-      let testFeature: Feature = new Feature({
-        type: "Feature",
-        name: "testFeature",
-        id: 231243,
-        geometry: needPoly
+    this.roadWorkNeedService.getRoadWorkNeeds()
+      .subscribe({
+        next: (roadWorkNeeds) => {
+          let roadWorkNeed: any;
+          let rwPoly: RoadworkPolygon;
+          this.roadWorkNeedFeatures = [];
+          for (roadWorkNeed of roadWorkNeeds) {
+            rwPoly = new RoadworkPolygon();
+            rwPoly.coordinates = roadWorkNeed.geometry.coordinates
+            roadWorkNeed.geometry = rwPoly;
+            let roadWorkNeedFeature: RoadWorkNeedFeature = roadWorkNeed as RoadWorkNeedFeature;
+            this.roadWorkNeedFeatures.push(roadWorkNeedFeature);
+          }
+          this._putGeometriesOnMap(true);
+        },
+        error: (error) => {
+        }
       });
 
-      this.loadSource.clear();
-      this.loadSource.addFeature(testFeature);
-      this.loadSource.changed();
 
-      if (refreshExtent) {
-        let polyExtent: Extent = needPoly.getExtent();
-        this.setViewToPolyExtent(polyExtent);
-      }
-    }
   }
 
   sendGeometry() {
@@ -174,7 +193,7 @@ export class EditActivityMapComponent implements OnInit {
       let geom2: Polygon = geom1.clone();
       geom2.transform('EPSG:3857', "EPSG:2056");
       this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
-      this.loadGeometry(false);
+      this._putGeometriesOnMap(false);
       if (this.roadWorkActivityFeat.properties.uuid) {
         if (!this.roadWorkActivityFeat.properties.managementarea) {
           this.roadWorkActivityFeat.properties.managementarea = new ManagementAreaFeature();
@@ -227,7 +246,48 @@ export class EditActivityMapComponent implements OnInit {
       "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
-  
+
+  private _putGeometriesOnMap(refreshExtent: boolean) {
+
+    this.roadWorkNeedSource.clear();
+    let i: number = 0;
+    for (let roadWorkNeedFeature of this.roadWorkNeedFeatures) {
+      let needPoly: Polygon = roadWorkNeedFeature.geometry.convertToOlPoly();
+      needPoly.transform("EPSG:2056", 'EPSG:3857');
+
+      let testFeature: Feature = new Feature({
+        type: "Feature",
+        name: "testFeature",
+        id: i++,
+        geometry: needPoly
+      });
+
+      this.roadWorkNeedSource.addFeature(testFeature);
+      this.roadWorkNeedSource.changed();
+    }
+
+    if (this.roadWorkActivityFeat !== undefined) {
+      let needPoly: Polygon = this.roadWorkActivityFeat.geometry.convertToOlPoly();
+      needPoly.transform("EPSG:2056", 'EPSG:3857');
+
+      let testFeature: Feature = new Feature({
+        type: "Feature",
+        name: "testFeature",
+        id: 231243,
+        geometry: needPoly
+      });
+
+      this.loadSource.clear();
+      this.loadSource.addFeature(testFeature);
+      this.loadSource.changed();
+
+      if (refreshExtent) {
+        let polyExtent: Extent = needPoly.getExtent();
+        this.setViewToPolyExtent(polyExtent);
+      }
+    }
+  }
+
   private addFeatureFinished(event: any) {
     if (this.userDrawSource.getState() === 'ready') {
       this.sendGeometry();

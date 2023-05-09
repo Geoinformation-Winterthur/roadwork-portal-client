@@ -105,6 +105,11 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  removeRoadWorkNeed(roadWorkNeedUuid: string){
+    alert("Noch nicht realisiert");
+    // TODO
+  }
+
   validateElement1() {
     let validateButton1 = document.getElementById("validateButton1");
     if (validateButton1 != null)
