@@ -134,6 +134,14 @@ export class EditNeedMapComponent implements OnInit {
       type: "Polygon",
     });
 
+    this.addFeatureFinished = (event) => {
+      if (this.userDrawSource.getState() === 'ready') {
+        this.sendGeometry();
+        this.userDrawSource.clear();
+        // this.endEditing();
+      }
+    }
+
     this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
     this.loadGeometry(true);
@@ -225,13 +233,7 @@ export class EditNeedMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
-  private addFeatureFinished(event: any) {
-    if (this.userDrawSource.getState() === 'ready') {
-      this.sendGeometry();
-      this.userDrawSource.clear();
-      // this.endEditing();
-    }
-  }
+  addFeatureFinished(event: any) {}
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;

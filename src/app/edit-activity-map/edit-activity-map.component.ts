@@ -161,6 +161,14 @@ export class EditActivityMapComponent implements OnInit {
       type: "Polygon",
     });
 
+    this.addFeatureFinished = () => {
+      if (this.userDrawSource.getState() === 'ready') {
+        this.sendGeometry();
+        this.userDrawSource.clear();
+        // this.endEditing();
+      }
+    }
+
     this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
     this.roadWorkNeedService.getRoadWorkNeeds()
@@ -288,13 +296,7 @@ export class EditActivityMapComponent implements OnInit {
     }
   }
 
-  private addFeatureFinished(event: any) {
-    if (this.userDrawSource.getState() === 'ready') {
-      this.sendGeometry();
-      this.userDrawSource.clear();
-      // this.endEditing();
-    }
-  }
+  private addFeatureFinished(event: any) {}
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement = document.getElementById("edit_activity_map") as HTMLElement;
