@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
+import { AuthConfig, JwksValidationHandler, OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from 'src/services/user.service';
 import { environment } from 'src/environments/environment';
 
@@ -18,7 +18,7 @@ export class TestopenidComponent implements OnInit {
   constructor(oauthService: OAuthService, userService: UserService) {
     this.oauthService = oauthService;
     this.userService = userService;
-    this.oauthService.configure(environment);
+    this.oauthService.configure(environment as AuthConfig);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.loadDiscoveryDocumentAndTryLogin();
   }
