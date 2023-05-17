@@ -60,6 +60,7 @@ import { ChooseEventsComponent } from './choose-events/choose-events.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { TestopenidComponent } from './testopenid/testopenid.component';
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { NeedsOfActivityComponent } from './needs-of-activity/needs-of-activity.component';
  
  
  export function getToken(){
@@ -91,7 +92,8 @@ import { OAuthModule } from 'angular-oauth2-oidc';
      EditActivityMapComponent,
      ChooseEventsComponent,
      ConfigurationComponent,
-     TestopenidComponent
+     TestopenidComponent,
+     NeedsOfActivityComponent
    ],
    imports: [
      BrowserModule,

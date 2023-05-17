@@ -21,35 +21,43 @@ export class RoadWorkNeedService {
     this.http = http;
   }
 
-   getRoadWorkNeeds(id: string = "", summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
+  getRoadWorkNeeds(ids: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
-    if(id !== null && id !== "" || summary) {
-      queryString += "?";
-
+    let hasIds = false;
+    if (ids !== null && ids.length !== 0 && ids[0].trim() !== "") {
+      hasIds = true;
+      queryString += "?uuids=";
     }
-    if(id !== null && id !== ""){
-      queryString += "uuid="+ id;
-      if(summary) {
-        queryString += "&";
+
+    for (let id of ids) {
+      if (id !== null && id.trim() !== "") {
+        queryString += id + ",";
       }
     }
-    if(summary){
+
+    if (summary) {
+      if(hasIds){
+          queryString += "&";
+      } else {
+        queryString += "?";
+      }
       queryString += "summary=true";
     }
-     let result: Observable<RoadWorkNeedFeature[]> =
-           this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkNeedFeature[]>;
-     return result;
-   }
 
-  addRoadworkNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
-    let result: Observable<any> = 
-          this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkneed/", roadworkNeed);
+    let result: Observable<RoadWorkNeedFeature[]> =
+      this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkNeedFeature[]>;
     return result;
   }
 
-  updateRoadWorkNeed(roadworkNeed? : RoadWorkNeedFeature): Observable<any> {
-    let result: Observable<any> = 
-          this.http.put(environment.apiUrl + "/roadworkneed/", roadworkNeed);
+  addRoadworkNeed(roadworkNeed?: RoadWorkNeedFeature): Observable<any> {
+    let result: Observable<any> =
+      this.http.post<RoadWorkNeedFeature>(environment.apiUrl + "/roadworkneed/", roadworkNeed);
+    return result;
+  }
+
+  updateRoadWorkNeed(roadworkNeed?: RoadWorkNeedFeature): Observable<any> {
+    let result: Observable<any> =
+      this.http.put(environment.apiUrl + "/roadworkneed/", roadworkNeed);
     return result;
   }
 

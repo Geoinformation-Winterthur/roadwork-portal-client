@@ -6,9 +6,9 @@
     <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Department Bau</h2></div>
     <div style="margin: 2em;color: rgb(90, 90, 90);">
         <h3 i18n style="font-weight: lighter;text-transform: uppercase;color: black;">Willkommen <span *ngIf="userService.isUserLoggedIn()">{{userService.getLocalUser().firstName}} 
-            {{userService.getLocalUser().lastName}} </span>im Portal zur Planung und Koordination der Baumassnahmen der Stadt Winterthur</h3>
+            {{userService.getLocalUser().lastName}} </span>im Tool zur Planung und Koordination der Baumassnahmen der Stadt Winterthur</h3>
         <p *ngIf="userService.isUserLoggedIn()">Ihre Rolle ist: {{userService.getLocalUser().role.code}}</p>
-        <p i18n *ngIf="!userService.isUserLoggedIn()">Das Koordinationsportal des Tiefbauamts der Stadtverwaltung Winterthur
+        <p i18n *ngIf="!userService.isUserLoggedIn()">Das <i>Koordinationstool Strategische Strassenplanung</i> (SSP) des Tiefbauamts der Stadtverwaltung Winterthur
             unterst&uuml;tzt bei der Planung und Koordination der st&auml;dtischen Bauprojekte. <i>Hier noch Hinweise zum Prozedere
             f&uuml;r die Registrierung und welche Rollen (Besteller, Gebietsbeautragter etc.) es gibt. Weiterer Begr&uuml;ssungstext
             f&uuml;r nicht eingeloggte Benutzer.</i></p>

@@ -36,6 +36,7 @@ export class ActivityAttributesComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
+  displayedColumns: string[] = ['roadWorkNeedUuid'];
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     userService: UserService) {
@@ -103,11 +104,6 @@ export class ActivityAttributesComponent implements OnInit {
           }
         });
     }
-  }
-
-  removeRoadWorkNeed(roadWorkNeedUuid: string){
-    alert("Noch nicht realisiert");
-    // TODO
   }
 
   validateElement1() {

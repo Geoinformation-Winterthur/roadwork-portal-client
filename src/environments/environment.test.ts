@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  title: "Koordinationsportal (TEST)",
-  shorttitle: "KOPALTEST",
+  title: "Koordinationstool SSP (TEST)",
+  shorttitle: "SSPTEST",
   subtitle: "Winterthur",
   apiDomain: "stadtplantest.winterthur.ch/civil-engineering/roadworks-services",
   apiUrl: "https://stadtplantest.winterthur.ch/civil-engineering/roadworks-services",

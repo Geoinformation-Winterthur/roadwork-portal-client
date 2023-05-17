@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  title: "Koordinationsportal (DEV)",
-  shorttitle: "KOPALDEV",
+  title: "Koordinationstool SSP (DEV)",
+  shorttitle: "SSPDEV",
   subtitle: "Winterthur",
   apiDomain: "localhost:7295",
   apiUrl: "https://localhost:7295",

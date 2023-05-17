@@ -23,6 +23,7 @@ export class RoadWorkNeedProperties {
     finishLateTo: Date = new Date(1, 0, 1);
     priority: Priority = new Priority();
     status: Status = new Status();
+    longer6Month: boolean = false;
     description: string = "";
     managementarea: ManagementAreaFeature
             = new ManagementAreaFeature();

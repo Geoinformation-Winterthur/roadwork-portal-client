@@ -1,0 +1,21 @@
+<div>
+    <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">BED&Uuml;RFNISSE ZUR BAUMASSNAHME</h2>
+    <table mat-table [dataSource]="roadWorkNeedsUuids" class="mat-elevation-z2" style="width: 100%">
+
+        <ng-container matColumnDef="roadWorkNeedUuid">
+            <th mat-header-cell *matHeaderCellDef> UUID </th>
+            <td mat-cell *matCellDef="let roadWorkNeedUuid"> {{roadWorkNeedUuid}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="deleteAction">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let roadWorkNeedUuid">
+                <button (click)="removeRoadWorkNeed(roadWorkNeedUuid)" mat-button>ENTFERNEN</button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    </table>
+</div>

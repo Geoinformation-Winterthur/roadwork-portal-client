@@ -103,13 +103,7 @@
                 </div>
             </mat-tab>
             <mat-tab label="Bed&uuml;rfnisse">
-                <ul>
-                    <li *ngFor="let roadWorkNeedUuid of roadWorkActivityFeature.properties.roadWorkNeedsUuids"
-                        style="margin: 1em;">
-                        UUID Bed&uuml;rfnis: {{roadWorkNeedUuid}}
-                        <button (click)="removeRoadWorkNeed(roadWorkNeedUuid)" mat-button>ENTFERNEN</button>
-                    </li>
-                </ul>
+                <app-needs-of-activity [roadWorkNeedsUuids]="roadWorkActivityFeature.properties.roadWorkNeedsUuids"></app-needs-of-activity>
             </mat-tab>
             <mat-tab label="Vernehmlassung" *ngIf="statusCode === 'coordinated'">
             </mat-tab>
