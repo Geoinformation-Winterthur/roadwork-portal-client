@@ -57,7 +57,8 @@ export class ChooseActivityComponent implements OnInit {
   deleteRoadworkActivity(uuid: string){
     this.roadWorkActivityService.deleteRoadWorkActivity(uuid).subscribe({
       next: (errorMessage) => {
-        if(errorMessage != null && errorMessage.errorMessage.trim().length !== 0)
+        if(errorMessage != null && errorMessage.errorMessage != null &&
+           errorMessage.errorMessage.trim().length !== 0)
         {
           ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
           this.snckBar.open(errorMessage.errorMessage, "", {

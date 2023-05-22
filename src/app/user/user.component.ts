@@ -110,9 +110,10 @@ export class UserComponent implements OnInit {
   updateUser() {
     this.userService.updateUser(this.user).subscribe({
       next: (errorMessage) => {
-        ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
-        if(errorMessage.errorMessage.trim().length !== 0)
+        if(errorMessage != null && errorMessage.errorMessage != null
+              && errorMessage.errorMessage.trim().length !== 0)
         {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
           this.snckBar.open(errorMessage.errorMessage, "", {
             duration: 4000
           });
@@ -128,9 +129,10 @@ export class UserComponent implements OnInit {
   deleteUser() {
     this.userService.deleteUser(this.user.mailAddress).subscribe({
       next: (errorMessage) => {
-        ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
-        if(errorMessage.errorMessage.trim().length !== 0)
+        if(errorMessage != null && errorMessage.errorMessage != null
+              && errorMessage.errorMessage.trim().length !== 0)
         {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
           this.snckBar.open(errorMessage.errorMessage, "", {
             duration: 4000
           });
