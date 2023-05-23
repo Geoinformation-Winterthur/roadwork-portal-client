@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
@@ -9,12 +9,9 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
   templateUrl: './needs-of-activity.component.html',
   styleUrls: ['./needs-of-activity.component.css']
 })
-export class NeedsOfActivityComponent implements OnInit {
+export class NeedsOfActivityComponent implements OnChanges {
 
-  @Input()
-  roadWorkNeedsUuids: string[] = [];
-
-  roadWorkNeeds: RoadWorkNeedFeature[] = [];
+  @Input() roadWorkNeeds: RoadWorkNeedFeature[] = [];
 
   displayedColumns: string[] = ['name', 'orderer', 'dateCreated', 'deleteAction'];
 
@@ -27,17 +24,10 @@ export class NeedsOfActivityComponent implements OnInit {
     this.snckBar = snckBar;
   }
 
-  ngOnInit(): void {
-    if(this.roadWorkNeedsUuids.length !== 0){
-      this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkNeedsUuids)
-      .subscribe({
-        next: (roadWorkNeeds) => {
-          this.roadWorkNeeds = roadWorkNeeds;
-        },
-        error: (error) => {
-        }
-      });
-    }
+  ngOnChanges() {
+    // hard-trigger UI update by Angular (does not work):
+    let roadWorkNeedsCopy = this.roadWorkNeeds.map((x) => x);
+    this.roadWorkNeeds = roadWorkNeedsCopy;
   }
 
   releaseRoadWorkNeed(roadWorkNeedUuid: string) {
@@ -54,7 +44,9 @@ export class NeedsOfActivityComponent implements OnInit {
             let i: number = 0;
             for (let roadWorkNeed of this.roadWorkNeeds) {
               if(roadWorkNeed.properties.uuid === roadWorkNeedUuid){
-                this.roadWorkNeeds = this.roadWorkNeeds.splice(i, 1);
+                let roadWorkNeedsCopy = this.roadWorkNeeds.map((x) => x);
+                roadWorkNeedsCopy.splice(i, 1);
+                this.roadWorkNeeds = roadWorkNeedsCopy;
                 continue;
               }
               i++;

@@ -38,6 +38,7 @@ export class EditActivityMapComponent implements OnInit {
   @Input()
   roadWorkActivityFeat?: RoadWorkActivityFeature;
 
+  @Input()
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
 
   isInEditingMode: boolean = false;
@@ -189,8 +190,6 @@ export class EditActivityMapComponent implements OnInit {
         error: (error) => {
         }
       });
-
-
   }
 
   sendGeometry() {
@@ -220,7 +219,17 @@ export class EditActivityMapComponent implements OnInit {
                   });
                 } else {
                   if (this.roadWorkActivityFeat) {
-                    this.roadWorkActivityFeat.properties.managementarea = roadWorkActivityFeature.properties.managementarea;
+                    this.roadWorkActivityFeat = roadWorkActivityFeature;
+                    if(roadWorkActivityFeature.properties.roadWorkNeedsUuids.length !== 0){
+                      this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivityFeature.properties.roadWorkNeedsUuids)
+                      .subscribe({
+                        next: (roadWorkNeeds) => {
+                          this.roadWorkNeedFeatures = roadWorkNeeds;
+                        },
+                        error: (error) => {
+                        }
+                      });
+                    }
                     this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
                       duration: 4000,
                     });

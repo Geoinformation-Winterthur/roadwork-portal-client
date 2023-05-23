@@ -12,6 +12,8 @@ import { FormControl } from '@angular/forms';
 import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -21,6 +23,8 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 export class ActivityAttributesComponent implements OnInit {
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
+  roadWorkNeeds: RoadWorkNeedFeature[] = [];
+
   orderer: User = new User();
   ordererOrgUnitName: string = "";
   areaManagerName: string = "";
@@ -33,15 +37,15 @@ export class ActivityAttributesComponent implements OnInit {
   availableRoadWorkActivityEnums: RoadWorkNeedEnum[] = [];
 
   private roadWorkActivityService: RoadWorkActivityService;
+  private roadWorkNeedService: RoadWorkNeedService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
-  displayedColumns: string[] = ['roadWorkNeedUuid'];
-
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
-    userService: UserService) {
+    roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
+    this.roadWorkNeedService = roadWorkNeedService;
     this.userService = userService;
   }
 
@@ -67,6 +71,16 @@ export class ActivityAttributesComponent implements OnInit {
                   rwPoly.coordinates = roadWorkActivity.geometry.coordinates
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
+                  if(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0){
+                    this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
+                    .subscribe({
+                      next: (roadWorkNeeds) => {
+                        this.roadWorkNeeds = roadWorkNeeds;
+                      },
+                      error: (error) => {
+                      }
+                    });
+                  }
                 }
               },
               error: (error) => {

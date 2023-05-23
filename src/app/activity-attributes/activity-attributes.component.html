@@ -8,7 +8,7 @@
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neue Baumassnahme</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
-                <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"></app-edit-activity-map>
+                <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature" [roadWorkNeedFeatures]="roadWorkNeeds"></app-edit-activity-map>
             </mat-tab>
             <mat-tab label="Attribute">
                 <button mat-button
@@ -103,7 +103,7 @@
                 </div>
             </mat-tab>
             <mat-tab label="Bed&uuml;rfnisse">
-                <app-needs-of-activity [roadWorkNeedsUuids]="roadWorkActivityFeature.properties.roadWorkNeedsUuids"></app-needs-of-activity>
+                <app-needs-of-activity [roadWorkNeeds]="roadWorkNeeds"></app-needs-of-activity>
             </mat-tab>
             <mat-tab label="Vernehmlassung" *ngIf="statusCode === 'coordinated'">
             </mat-tab>
