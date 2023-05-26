@@ -8,7 +8,7 @@ export class ErrorMessageDictionary {
              "Benutzerrolle kann nicht geändert werden, da es der letzte Administrator ist.",
              "Der letzte Administrator kann nicht inaktiv gesetzt werden.",
              "Das Baubedürfnis-Polygon hat weniger als 3 Koordinaten.",
-             "Die Fläche des Baubedürfnisses ist kleiner/gleich 10 qm.",
+             "Die Fläche des Baubedürfnisses ist kleiner als die zulässige Mindestgrösse.",
              "Das neue Baubedürfnis liegt nicht in einem der Verwaltungsgebiete.",
              "Die Geometrie des Baubedürfnisses enspricht nicht den Regeln der geometrischen Simplizität (z.B. Selbst-Schnitt).",
              "Die Geometrie des Baubedürfnisses ist nicht valide (z.B. hat Dangles).",
@@ -16,5 +16,6 @@ export class ErrorMessageDictionary {
              "Benutzer kann nicht hinzugefügt werden.",
              "Keine Berechtigung, dieses Baubedürfnis zu editieren.",
              "Es wurde keine gültige UUID empfangen.",
+             "Die Fläche des Baubedürfnisses ist grösser als die zulässige Maximalgrösse.",
             ];
 }

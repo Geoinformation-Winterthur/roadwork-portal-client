@@ -5,14 +5,16 @@
             <p style="margin-top: 2em;font-weight: bold;">Geometrie-Erfassung</p>
             <div style="margin: 1em;">
                 <mat-form-field>
-                    <mat-label>Minimale Fl&auml;chengr&ouml;sse</mat-label>
-                    <input matInput maxlength="3" placeholder="Minimale Fl&auml;chengr&ouml;sse..." />
+                    <mat-label>Minimale Fl&auml;chengr&ouml;sse (m&#178;)</mat-label>
+                    <input matInput maxlength="3" placeholder="Minimale Fl&auml;chengr&ouml;sse..."
+                            [(ngModel)]="configurationData.minAreaSize" (focusout)="update()" />
                 </mat-form-field>
             </div>
             <div style="margin: 1em;">
                 <mat-form-field>
-                    <mat-label>Maximale Fl&auml;chengr&ouml;sse</mat-label>
-                    <input matInput maxlength="10" placeholder="Maximale Fl&auml;chengr&ouml;sse..." />
+                    <mat-label>Maximale Fl&auml;chengr&ouml;sse (m&#178;)</mat-label>
+                    <input matInput maxlength="10" placeholder="Maximale Fl&auml;chengr&ouml;sse..." 
+                            [(ngModel)]="configurationData.maxAreaSize" (focusout)="update()" />
                 </mat-form-field>
             </div>
         </mat-tab>
