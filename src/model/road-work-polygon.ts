@@ -31,9 +31,9 @@ export class RoadworkPolygon
         return roadworkPolygon;
     }
 
-    public convertToOlPoly(): Polygon {
+    public static convertToOlPoly(roadworkPolygon: RoadworkPolygon): Polygon {
         let olCoords: Coordinate[] = [];
-        for(let coord of this.coordinates){
+        for(let coord of roadworkPolygon.coordinates){
             olCoords.push([coord.x, coord.y]);
         }
         let olPoly: Polygon = new Polygon([olCoords]);

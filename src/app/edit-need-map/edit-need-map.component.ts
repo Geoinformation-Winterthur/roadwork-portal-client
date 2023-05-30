@@ -150,7 +150,7 @@ export class EditNeedMapComponent implements OnInit {
 
   loadGeometry(refreshExtent: boolean) {
     if (this.roadWorkNeedFeat !== undefined) {
-      let needPoly: Polygon = this.roadWorkNeedFeat.geometry.convertToOlPoly();
+      let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkNeedFeat.geometry);
       needPoly.transform("EPSG:2056", 'EPSG:3857');
 
       let testFeature: Feature = new Feature({

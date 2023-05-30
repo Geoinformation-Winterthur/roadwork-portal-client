@@ -14,6 +14,7 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
+import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -23,7 +24,6 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 export class ActivityAttributesComponent implements OnInit {
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
-  roadWorkNeeds: RoadWorkNeedFeature[] = [];
 
   orderer: User = new User();
   ordererOrgUnitName: string = "";
@@ -36,16 +36,20 @@ export class ActivityAttributesComponent implements OnInit {
   roadWorkActivityEnumControl: FormControl = new FormControl();
   availableRoadWorkActivityEnums: RoadWorkNeedEnum[] = [];
 
+  needsOfActivityService: NeedsOfActivityService;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
-    roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
+        needsOfActivityService: NeedsOfActivityService,
+        roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
+    this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
   }
 
@@ -75,7 +79,7 @@ export class ActivityAttributesComponent implements OnInit {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
                     .subscribe({
                       next: (roadWorkNeeds) => {
-                        this.roadWorkNeeds = roadWorkNeeds;
+                        this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
                       },
                       error: (error) => {
                       }

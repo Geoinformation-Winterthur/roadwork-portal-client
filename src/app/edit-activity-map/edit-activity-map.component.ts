@@ -27,6 +27,7 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -38,9 +39,6 @@ export class EditActivityMapComponent implements OnInit {
   @Input()
   roadWorkActivityFeat?: RoadWorkActivityFeature;
 
-  @Input()
-  roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
-
   isInEditingMode: boolean = false;
 
   map: Map = new Map();
@@ -50,15 +48,19 @@ export class EditActivityMapComponent implements OnInit {
   roadWorkNeedSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
 
+  public needsOfActivityService: NeedsOfActivityService;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private snackBar: MatSnackBar;
   private roadWorkNeedService: RoadWorkNeedService;
 
   public constructor(snackBar: MatSnackBar,
     roadWorkActivityService: RoadWorkActivityService,
+    needsOfActivityService: NeedsOfActivityService,
     roadWorkNeedService: RoadWorkNeedService) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
+    this.needsOfActivityService = needsOfActivityService;
     this.snackBar = snackBar;
     setTimeout(() => {
       this.resizeMap(null);
@@ -177,14 +179,7 @@ export class EditActivityMapComponent implements OnInit {
         next: (roadWorkNeeds) => {
           let roadWorkNeed: any;
           let rwPoly: RoadworkPolygon;
-          this.roadWorkNeedFeatures = [];
-          for (roadWorkNeed of roadWorkNeeds) {
-            rwPoly = new RoadworkPolygon();
-            rwPoly.coordinates = roadWorkNeed.geometry.coordinates
-            roadWorkNeed.geometry = rwPoly;
-            let roadWorkNeedFeature: RoadWorkNeedFeature = roadWorkNeed as RoadWorkNeedFeature;
-            this.roadWorkNeedFeatures.push(roadWorkNeedFeature);
-          }
+          this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
           this._putGeometriesOnMap(true);
         },
         error: (error) => {
@@ -224,7 +219,7 @@ export class EditActivityMapComponent implements OnInit {
                       this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivityFeature.properties.roadWorkNeedsUuids)
                       .subscribe({
                         next: (roadWorkNeeds) => {
-                          this.roadWorkNeedFeatures = roadWorkNeeds;
+                          this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
                         },
                         error: (error) => {
                         }
@@ -268,8 +263,8 @@ export class EditActivityMapComponent implements OnInit {
 
     this.roadWorkNeedSource.clear();
     let i: number = 0;
-    for (let roadWorkNeedFeature of this.roadWorkNeedFeatures) {
-      let needPoly: Polygon = roadWorkNeedFeature.geometry.convertToOlPoly();
+    for (let roadWorkNeedFeature of this.needsOfActivityService.roadWorkNeeds) {
+      let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(roadWorkNeedFeature.geometry);
       needPoly.transform("EPSG:2056", 'EPSG:3857');
 
       let testFeature: Feature = new Feature({
@@ -284,7 +279,8 @@ export class EditActivityMapComponent implements OnInit {
     }
 
     if (this.roadWorkActivityFeat !== undefined) {
-      let needPoly: Polygon = this.roadWorkActivityFeat.geometry.convertToOlPoly();
+      let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkActivityFeat.geometry);
+
       needPoly.transform("EPSG:2056", 'EPSG:3857');
 
       let testFeature: Feature = new Feature({

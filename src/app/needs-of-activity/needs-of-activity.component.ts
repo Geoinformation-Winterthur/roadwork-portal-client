@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, OnChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
-import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 
 @Component({
@@ -9,25 +9,21 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
   templateUrl: './needs-of-activity.component.html',
   styleUrls: ['./needs-of-activity.component.css']
 })
-export class NeedsOfActivityComponent implements OnChanges {
-
-  @Input() roadWorkNeeds: RoadWorkNeedFeature[] = [];
+export class NeedsOfActivityComponent {
 
   displayedColumns: string[] = ['name', 'orderer', 'dateCreated', 'deleteAction'];
 
-  private roadWorkNeedService: RoadWorkNeedService;
+  public needsOfActivityService: NeedsOfActivityService;
 
+  private roadWorkNeedService: RoadWorkNeedService;
   private snckBar: MatSnackBar;
 
-  constructor(roadWorkNeedService: RoadWorkNeedService, snckBar: MatSnackBar) {
+  constructor(roadWorkNeedService: RoadWorkNeedService,
+    needsOfActivityService: NeedsOfActivityService,
+    snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
+    this.needsOfActivityService = needsOfActivityService;
     this.snckBar = snckBar;
-  }
-
-  ngOnChanges() {
-    // hard-trigger UI update by Angular (does not work):
-    let roadWorkNeedsCopy = this.roadWorkNeeds.map((x) => x);
-    this.roadWorkNeeds = roadWorkNeedsCopy;
   }
 
   releaseRoadWorkNeed(roadWorkNeedUuid: string) {
@@ -40,17 +36,6 @@ export class NeedsOfActivityComponent implements OnChanges {
             this.snckBar.open(errorMessage.errorMessage, "", {
               duration: 4000
             });
-          } else {
-            let i: number = 0;
-            for (let roadWorkNeed of this.roadWorkNeeds) {
-              if(roadWorkNeed.properties.uuid === roadWorkNeedUuid){
-                let roadWorkNeedsCopy = this.roadWorkNeeds.map((x) => x);
-                roadWorkNeedsCopy.splice(i, 1);
-                this.roadWorkNeeds = roadWorkNeedsCopy;
-                continue;
-              }
-              i++;
-            }
           }
         },
         error: (error) => {
