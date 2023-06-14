@@ -49,6 +49,7 @@ export class EditActivityMapComponent implements OnInit {
   polygonDraw?: Draw;
 
   public needsOfActivityService: NeedsOfActivityService;
+  needsOnMap: RoadWorkNeedFeature[] = [];
 
   private roadWorkActivityService: RoadWorkActivityService;
   private snackBar: MatSnackBar;
@@ -177,9 +178,7 @@ export class EditActivityMapComponent implements OnInit {
     this.roadWorkNeedService.getRoadWorkNeeds()
       .subscribe({
         next: (roadWorkNeeds) => {
-          let roadWorkNeed: any;
-          let rwPoly: RoadworkPolygon;
-          this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
+          this.needsOnMap = roadWorkNeeds;
           this._putGeometriesOnMap(true);
         },
         error: (error) => {
@@ -263,7 +262,7 @@ export class EditActivityMapComponent implements OnInit {
 
     this.roadWorkNeedSource.clear();
     let i: number = 0;
-    for (let roadWorkNeedFeature of this.needsOfActivityService.roadWorkNeeds) {
+    for (let roadWorkNeedFeature of this.needsOnMap) {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(roadWorkNeedFeature.geometry);
       needPoly.transform("EPSG:2056", 'EPSG:3857');
 

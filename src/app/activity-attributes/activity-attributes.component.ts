@@ -37,6 +37,7 @@ export class ActivityAttributesComponent implements OnInit {
   availableRoadWorkActivityEnums: RoadWorkNeedEnum[] = [];
 
   needsOfActivityService: NeedsOfActivityService;
+  roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
