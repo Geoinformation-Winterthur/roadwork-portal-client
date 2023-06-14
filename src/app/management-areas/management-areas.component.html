@@ -14,10 +14,17 @@
                     </mat-card-header>
                     <mat-card-content style="width:max-content;">
                         <div style="display:flex;flex-direction:column;">
-                            <mat-form-field>
-                                <input matInput type="text" value="Heinz Mettler"
-                                    placeholder="Hauptmanager" required>
-                            </mat-form-field>
+                            <form class="choose_manager_of_area_1">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Hauptmanager</mat-label>
+                                    <mat-select [formControl]="managerOfArea1EnumControl" required>
+                                        <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
+                                            [value]="areaManagerEnum">
+                                            {{areaManagerEnum}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </form>
                             <mat-form-field>
                                 <input matInput type="text" value="Tobias Juon"
                                     placeholder="Ferienvertretung" required>
