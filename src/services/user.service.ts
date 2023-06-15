@@ -141,6 +141,12 @@ export class UserService implements CanActivate {
     return result;
   }
 
+  public getAllTerritoryManagers(): Observable<User[]> {
+    let result: Observable<User[]> =
+      this.http.get(environment.apiUrl + "/account/users/?role=territorymanager") as Observable<User[]>;
+    return result;
+  }
+
   public deleteUser(mailAddress: string): Observable<ErrorMessage> {
     let result: Observable<ErrorMessage> =
       this.http.delete(environment.apiUrl + "/account/users/?email=" + mailAddress) as Observable<ErrorMessage>;

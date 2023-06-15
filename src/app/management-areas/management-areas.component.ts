@@ -20,6 +20,8 @@ import { register } from 'ol/proj/proj4';
 import proj4 from 'proj4';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { FormControl } from '@angular/forms';
+import { User } from 'src/model/user';
+import { UserService } from 'src/services/user.service';
 
 @Component({
   selector: 'app-management-areas',
@@ -36,14 +38,22 @@ export class ManagementAreasComponent implements OnInit {
   managerOfArea2EnumControl: FormControl = new FormControl();
   managerOfArea3EnumControl: FormControl = new FormControl();
 
-  availableAreaManagerEnums: string[] = ["Heinz Mettler", "Tobias Juon", "Phuentsok Chokchampa"];
+  substituteManagerOfArea1EnumControl: FormControl = new FormControl();
+  substituteManagerOfArea2EnumControl: FormControl = new FormControl();
+  substituteManagerOfArea3EnumControl: FormControl = new FormControl();
+
+  availableAreaManagerEnums: User[] = [];
+
+  userService: UserService;
 
   private managementAreaService: ManagementAreaService;
   private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
-    managementAreaService: ManagementAreaService) {
+    managementAreaService: ManagementAreaService,
+    userService: UserService) {
     this.managementAreaService = managementAreaService;
+    this.userService = userService;
     this.snackBar = snackBar;
     setTimeout(() => {
       this.resizeMap(null);
@@ -52,7 +62,16 @@ export class ManagementAreasComponent implements OnInit {
 
   ngOnInit() {
     addEventListener("resize", this.resizeMap);
-    this.managerOfArea1EnumControl.setValue("Heinz Mettler");
+
+    this.userService.getAllTerritoryManagers()
+    .subscribe({
+      next: (territoryManagers) => {
+          this.availableAreaManagerEnums = territoryManagers;
+      },
+      error: (error) => {
+      }
+    });
+
   }
 
   ngAfterViewInit() {
@@ -140,6 +159,22 @@ export class ManagementAreasComponent implements OnInit {
               });
               managementArea.setProperties(generalObject.properties, true);
               this.loadSource.addFeature(managementArea);
+
+              if(generalObject.properties.name.startsWith("Wülfl")){
+                this.managerOfArea1EnumControl.setValue(generalObject.properties.manager_uuid);
+                this.substituteManagerOfArea1EnumControl.setValue(generalObject.properties.substitutemanager_uuid);
+              }
+
+              if(generalObject.properties.name.startsWith("Velt")){
+                this.managerOfArea2EnumControl.setValue(generalObject.properties.manager_uuid);
+                this.substituteManagerOfArea2EnumControl.setValue(generalObject.properties.substitutemanager_uuid);
+              }
+
+              if(generalObject.properties.name.startsWith("Matten")){
+                this.managerOfArea3EnumControl.setValue(generalObject.properties.manager_uuid);
+                this.substituteManagerOfArea3EnumControl.setValue(generalObject.properties.substitutemanager_uuid);
+              }
+
             }
             this.loadSource.changed();
           }

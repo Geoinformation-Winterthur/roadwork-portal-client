@@ -28,11 +28,13 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.name"
-                                        placeholder="Bezeichnung" (focusout)="update()" required>
+                                        placeholder="Bezeichnung" (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                        placeholder="Kosten (CHF)" (focusout)="update()" required>
+                                        placeholder="Kosten (CHF)" (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
                                 </mat-form-field>
                                 <p>Kostenart: <b>{{roadWorkActivityFeature.properties.costsType.name}}</b></p>
                             </div>
@@ -73,7 +75,9 @@
                                     <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkActivityFeature.properties.description"
-                                        (focusout)="update()" placeholder="Kurzbeschrieb..."></textarea>
+                                        (focusout)="update()" placeholder="Kurzbeschrieb..."
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
@@ -86,14 +90,16 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
-                                        [matDatepicker]="finishLateFrom">
+                                        [matDatepicker]="finishLateFrom"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishLateFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
-                                        [matDatepicker]="finishLateTo">
+                                        [matDatepicker]="finishLateTo"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishLateTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>
                                 </mat-form-field>

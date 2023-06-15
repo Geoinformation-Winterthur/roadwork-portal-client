@@ -21,4 +21,5 @@ export class RoadWorkActivityProperties {
     costs: number = 0;
     costsType: CostTypes = new CostTypes();
     roadWorkNeedsUuids: string[] = [];
+    isEditingAllowed: boolean = false;
 }

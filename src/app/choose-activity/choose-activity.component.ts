@@ -8,6 +8,7 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UserService } from 'src/services/user.service';
 
 @Component({
   selector: 'app-choose-activity',
@@ -22,12 +23,16 @@ export class ChooseActivityComponent implements OnInit {
 
   chosenYear: number = new Date().getFullYear();
 
+  userService: UserService;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private snckBar: MatSnackBar;
 
   constructor(roadWorkActivityService: RoadWorkActivityService,
+          userService: UserService,
           snckBar: MatSnackBar) {
     this.roadWorkActivityService = roadWorkActivityService;
+    this.userService = userService;
     this.snckBar = snckBar;
   }
 

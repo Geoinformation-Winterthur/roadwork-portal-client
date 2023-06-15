@@ -1,14 +1,15 @@
-<button *ngIf="!isInEditingMode" mat-button class="edit_geom_button" (click)="startEditing()"
+<div *ngIf="roadWorkNeedFeat?.properties?.isEditingAllowed">
+    <button *ngIf="!isInEditingMode" mat-button class="edit_geom_button" (click)="startEditing()"
         style="margin: 1em;color:aliceblue;background-color: rgb(138,71,200);">
-    BED&Uuml;RFNISFL&Auml;CHE NEU ZEICHNEN
-</button>
-<button *ngIf="isInEditingMode" mat-button class="edit_geom_button" (click)="endEditing()"
+        BED&Uuml;RFNISFL&Auml;CHE NEU ZEICHNEN
+    </button>
+    <button *ngIf="isInEditingMode" mat-button class="edit_geom_button" (click)="endEditing()"
         style="margin: 1em;color:rgb(255, 255, 255);background-color: rgb(74,90,210);">
-    BEARBEITUNGSMODUS SCHLIESSEN
-</button>
-<button mat-button class="edit_geom_button" (click)="showEditHelp()"
+        BEARBEITUNGSMODUS SCHLIESSEN
+    </button>
+    <button mat-button class="edit_geom_button" (click)="showEditHelp()"
         style="margin: 1em;border-style: solid;border-width: 1px;color:gray;">
         <mat-icon aria-label="Hilfe">question_mark</mat-icon>
-</button>
+    </button>
+</div>
 <div id="edit_need_map" class="edit-need-map"></div>
-
