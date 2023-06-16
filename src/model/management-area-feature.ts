@@ -9,9 +9,11 @@ export class ManagementAreaFeature {
     type: string = "ManagementAreaFeature";
     properties: ManagementAreaProperties;
     geometry: RoadworkPolygon;
+    errorMessage: string;
 
     constructor() {
         this.properties = new ManagementAreaProperties();
         this.geometry = new RoadworkPolygon();
+        this.errorMessage = "";
     }
 }

@@ -22,6 +22,8 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { FormControl } from '@angular/forms';
 import { User } from 'src/model/user';
 import { UserService } from 'src/services/user.service';
+import { ManagementAreaFeature } from 'src/model/management-area-feature';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 
 @Component({
   selector: 'app-management-areas',
@@ -47,6 +49,7 @@ export class ManagementAreasComponent implements OnInit {
   userService: UserService;
 
   private managementAreaService: ManagementAreaService;
+  private managementAreasUuids: string[] = [];
   private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
@@ -64,13 +67,69 @@ export class ManagementAreasComponent implements OnInit {
     addEventListener("resize", this.resizeMap);
 
     this.userService.getAllTerritoryManagers()
-    .subscribe({
-      next: (territoryManagers) => {
+      .subscribe({
+        next: (territoryManagers) => {
           this.availableAreaManagerEnums = territoryManagers;
-      },
-      error: (error) => {
-      }
-    });
+        },
+        error: (error) => {
+        }
+      });
+
+      this.managerOfArea1EnumControl.valueChanges.subscribe({
+        next:() => {
+          this.updateManagerOfArea(this.managerOfArea1EnumControl, 0);
+        },
+        error:() => {
+
+        }
+      });
+
+      this.managerOfArea2EnumControl.valueChanges.subscribe({
+        next:() => {
+          this.updateManagerOfArea(this.managerOfArea2EnumControl, 1);
+        },
+        error:() => {
+
+        }
+      });
+
+      this.managerOfArea3EnumControl.valueChanges.subscribe({
+        next:() => {
+          this.updateManagerOfArea(this.managerOfArea3EnumControl, 2);
+        },
+        error:() => {
+
+        }
+      });
+
+      this.substituteManagerOfArea1EnumControl.valueChanges.subscribe({
+        next:() => {
+          this.updateManagerOfArea(this.substituteManagerOfArea1EnumControl, 0);
+        },
+        error:() => {
+
+        }
+      });
+
+      this.substituteManagerOfArea2EnumControl.valueChanges.subscribe({
+        next:() => {
+          this.updateManagerOfArea(this.substituteManagerOfArea2EnumControl, 1);
+        },
+        error:() => {
+
+        }
+      });
+
+      this.substituteManagerOfArea3EnumControl.valueChanges.subscribe({
+        next:() => {
+          this.updateManagerOfArea(this.substituteManagerOfArea3EnumControl, 2);
+        },
+        error:() => {
+
+        }
+      });
+
+      
 
   }
 
@@ -160,19 +219,22 @@ export class ManagementAreasComponent implements OnInit {
               managementArea.setProperties(generalObject.properties, true);
               this.loadSource.addFeature(managementArea);
 
-              if(generalObject.properties.name.startsWith("Wülfl")){
-                this.managerOfArea1EnumControl.setValue(generalObject.properties.manager_uuid);
-                this.substituteManagerOfArea1EnumControl.setValue(generalObject.properties.substitutemanager_uuid);
+              if (managementArea.get("name").startsWith("Wülfl")) {
+                this.managementAreasUuids[0] = managementArea.get("uuid");
+                this.managerOfArea1EnumControl.setValue(managementArea.get("manager_uuid"));
+                this.substituteManagerOfArea1EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
               }
 
-              if(generalObject.properties.name.startsWith("Velt")){
-                this.managerOfArea2EnumControl.setValue(generalObject.properties.manager_uuid);
-                this.substituteManagerOfArea2EnumControl.setValue(generalObject.properties.substitutemanager_uuid);
+              if (managementArea.get("name").startsWith("Velt")) {
+                this.managementAreasUuids[1] = managementArea.get("uuid");
+                this.managerOfArea2EnumControl.setValue(managementArea.get("manager_uuid"));
+                this.substituteManagerOfArea2EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
               }
 
-              if(generalObject.properties.name.startsWith("Matten")){
-                this.managerOfArea3EnumControl.setValue(generalObject.properties.manager_uuid);
-                this.substituteManagerOfArea3EnumControl.setValue(generalObject.properties.substitutemanager_uuid);
+              if (managementArea.get("name").startsWith("Matten")) {
+                this.managementAreasUuids[2] = managementArea.get("uuid");
+                this.managerOfArea3EnumControl.setValue(managementArea.get("manager_uuid"));
+                this.substituteManagerOfArea3EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
               }
 
             }
@@ -186,6 +248,38 @@ export class ManagementAreasComponent implements OnInit {
         }
       });
 
+  }
+
+  private updateManagerOfArea(managerOfAreaEnumControl: FormControl, areaNo: number){
+    let managementArea: ManagementAreaFeature = new ManagementAreaFeature();
+    managementArea.properties.uuid = this.managementAreasUuids[areaNo];
+    managementArea.properties.manager.uuid = managerOfAreaEnumControl.value;
+    this.managementAreaService.updateManagementArea(managementArea)
+    .subscribe({
+      next: (managementArea) => {
+        ErrorMessageEvaluation._evaluateErrorMessage(managementArea);
+        if (managementArea.errorMessage.trim().length !== 0) {
+          this.snackBar.open(managementArea.errorMessage, "", {
+            duration: 4000
+          });
+        } else {
+          for(let feat of this.loadSource.getFeatures()){
+            if(feat.get("uuid") === managementArea.properties.uuid){
+              feat.set("manager_uuid", managementArea.properties.manager.uuid);
+              feat.set("manager_name",
+                  managementArea.properties.manager.firstName + " " +
+                        managementArea.properties.manager.lastName);
+              // this.loadSource.changed();
+            }
+          }
+          for(let layer of this.map.getAllLayers()){
+            layer.getSource()?.changed();
+          }
+        }
+      },
+      error: (error) => {
+      }
+    });
   }
 
   private resizeMap(event: any) {

@@ -17,5 +17,7 @@ export class ErrorMessageDictionary {
              "Keine Berechtigung, dieses Baubedürfnis zu editieren.",
              "Es wurde keine gültige UUID empfangen.",
              "Die Fläche des Baubedürfnisses ist grösser als die zulässige Maximalgrösse.",
+             "Der zugewiesene Benutzer ist kein Gebietsmanager. Zuweisung abgebrochen.",
+             "Der Gebietsmanager kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist."
             ];
 }
