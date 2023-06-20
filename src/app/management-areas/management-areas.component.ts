@@ -52,6 +52,12 @@ export class ManagementAreasComponent implements OnInit {
   private managementAreasUuids: string[] = [];
   private snackBar: MatSnackBar;
 
+  reloadAreaMap(event: any){
+    if(event.index === 0){
+      document.location.href = "/managementareas"
+    }
+  }
+
   public constructor(snackBar: MatSnackBar,
     managementAreaService: ManagementAreaService,
     userService: UserService) {
@@ -74,62 +80,6 @@ export class ManagementAreasComponent implements OnInit {
         error: (error) => {
         }
       });
-
-      this.managerOfArea1EnumControl.valueChanges.subscribe({
-        next:() => {
-          this.updateManagerOfArea(this.managerOfArea1EnumControl, 0);
-        },
-        error:() => {
-
-        }
-      });
-
-      this.managerOfArea2EnumControl.valueChanges.subscribe({
-        next:() => {
-          this.updateManagerOfArea(this.managerOfArea2EnumControl, 1);
-        },
-        error:() => {
-
-        }
-      });
-
-      this.managerOfArea3EnumControl.valueChanges.subscribe({
-        next:() => {
-          this.updateManagerOfArea(this.managerOfArea3EnumControl, 2);
-        },
-        error:() => {
-
-        }
-      });
-
-      this.substituteManagerOfArea1EnumControl.valueChanges.subscribe({
-        next:() => {
-          this.updateManagerOfArea(this.substituteManagerOfArea1EnumControl, 0);
-        },
-        error:() => {
-
-        }
-      });
-
-      this.substituteManagerOfArea2EnumControl.valueChanges.subscribe({
-        next:() => {
-          this.updateManagerOfArea(this.substituteManagerOfArea2EnumControl, 1);
-        },
-        error:() => {
-
-        }
-      });
-
-      this.substituteManagerOfArea3EnumControl.valueChanges.subscribe({
-        next:() => {
-          this.updateManagerOfArea(this.substituteManagerOfArea3EnumControl, 2);
-        },
-        error:() => {
-
-        }
-      });
-
-      
 
   }
 
@@ -250,7 +200,7 @@ export class ManagementAreasComponent implements OnInit {
 
   }
 
-  private updateManagerOfArea(managerOfAreaEnumControl: FormControl, areaNo: number){
+  updateManagerOfArea(managerOfAreaEnumControl: FormControl, areaNo: number){
     let managementArea: ManagementAreaFeature = new ManagementAreaFeature();
     managementArea.properties.uuid = this.managementAreasUuids[areaNo];
     managementArea.properties.manager.uuid = managerOfAreaEnumControl.value;
