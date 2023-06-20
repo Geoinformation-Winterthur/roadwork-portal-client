@@ -5,3 +5,13 @@
 
 html, body { min-height: 100%; width: 100%;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.ol-zoom-in, .ol-zoom-out {
+    background-color: white;
+    margin: 0.3em;
+    padding: 0.3em;
+}
+
+.ol-rotate-reset {
+    visibility: hidden;
+}
