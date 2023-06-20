@@ -19,6 +19,7 @@ import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
+import { Projection, get as getProjection } from 'ol/proj.js';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import proj4 from 'proj4';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
@@ -103,6 +104,8 @@ export class EditNeedMapComponent implements OnInit {
       style: userDrawLayerStyle
     });
 
+    const epsg2056Proj: Projection =  getProjection('EPSG:2056') as Projection;
+
     this.map = new Map({
       target: 'edit_need_map',
       layers: [
@@ -110,21 +113,22 @@ export class EditNeedMapComponent implements OnInit {
           source: new TileWMS({
             url: 'http://wms.zh.ch/upwms',
             params: { 'LAYERS': 'upwms', 'TILED': true },
-            serverType: 'geoserver',
+            serverType: 'mapserver',
           })
         }),
         new Tile({
           source: new TileWMS({
             url: 'http://wms.zh.ch/OGDCMS3ZH',
             params: { 'LAYERS': 'OGDCMS3ZH', 'TILED': true },
-            serverType: 'geoserver',
+            serverType: 'mapserver',
           })
         }),
         loadLayer,
         userDrawLayer
       ],
       view: new View({
-        center: [972000.5, 6023000.72],
+        projection: epsg2056Proj,
+        center: [2697567.0, 1262079.0],
         zoom: 14
       })
     });
@@ -151,7 +155,6 @@ export class EditNeedMapComponent implements OnInit {
   loadGeometry(refreshExtent: boolean) {
     if (this.roadWorkNeedFeat !== undefined) {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkNeedFeat.geometry);
-      needPoly.transform("EPSG:2056", 'EPSG:3857');
 
       let testFeature: Feature = new Feature({
         type: "Feature",
@@ -175,16 +178,14 @@ export class EditNeedMapComponent implements OnInit {
     if (this.roadWorkNeedFeat != undefined) {
       let features = this.userDrawSource.getFeatures();
       let feature1 = features[0];
-      let geom1: Polygon = feature1.getGeometry() as Polygon;
-      let geom2: Polygon = geom1.clone();
-      geom2.transform('EPSG:3857', "EPSG:2056");
-      this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
+      let geom: Polygon = feature1.getGeometry() as Polygon;
+      this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
       this.loadGeometry(false);
       if (this.roadWorkNeedFeat.properties.uuid) {
         if (!this.roadWorkNeedFeat.properties.managementarea) {
           this.roadWorkNeedFeat.properties.managementarea = new ManagementAreaFeature();
         }
-        this.roadWorkNeedFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
+        this.roadWorkNeedFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
 
         this.roadWorkNeedService
           .updateRoadWorkNeed(this.roadWorkNeedFeat)
@@ -253,9 +254,9 @@ export class EditNeedMapComponent implements OnInit {
       let extentCenterY: number = polyExtent[1] + ((polyExtent[3] - polyExtent[1]) / 2.0);
       var extentCenter: Point = new Point([extentCenterX, extentCenterY]);
 
+      const epsg2056Proj: Projection =  getProjection('EPSG:2056') as Projection;
       let view = new View({
-        center: extentCenter.getCoordinates(),
-        zoom: 15
+        projection: epsg2056Proj
       });
       view.fit(polyExtent);
 
