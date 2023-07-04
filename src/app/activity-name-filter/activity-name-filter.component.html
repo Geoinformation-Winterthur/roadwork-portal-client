@@ -4,12 +4,12 @@
                placeholder="Bezeichnung"
                aria-label="Bezeichnung"
                matInput
-               (ngModelChange)="filterNeedName()"
-               [formControl]="needSearchControl"
+               (ngModelChange)="filterActivityName()"
+               [formControl]="actvitySearchControl"
                [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option *ngFor="let roadWorkNeedFeature of chooseNeedComponent.roadWorkNeedFeatures" [value]="roadWorkNeedFeature.properties.name">
-            {{roadWorkNeedFeature.properties.name}}
+          <mat-option *ngFor="let roadWorkActivityFeature of chooseActivityComponent.roadWorkActivityFeatures" [value]="roadWorkActivityFeature.properties.name">
+            {{roadWorkActivityFeature.properties.name}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field><br>

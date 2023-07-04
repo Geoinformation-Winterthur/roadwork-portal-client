@@ -33,7 +33,7 @@ export class ChooseNeedComponent implements OnInit {
   private router: Router;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-      roadWorkActivityService: RoadWorkActivityService, router: Router) {
+    roadWorkActivityService: RoadWorkActivityService, router: Router) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
@@ -49,7 +49,7 @@ export class ChooseNeedComponent implements OnInit {
     this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
       next: (roadWorkNeeds) => {
 
-        for(let roadWorkNeed of roadWorkNeeds){
+        for (let roadWorkNeed of roadWorkNeeds) {
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
           blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
           roadWorkNeed.geometry = blowUpPoly;
@@ -57,7 +57,6 @@ export class ChooseNeedComponent implements OnInit {
 
         this.roadWorkNeedFeatures = roadWorkNeeds;
         this.filterNeeds();
-
       },
       error: (error) => {
       }
@@ -65,34 +64,34 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
-  createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature){
+  createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
     roadWorkActivity.geometry = roadWorkNeed.geometry;
-    roadWorkActivity.properties.name = roadWorkNeed.properties.name;    
+    roadWorkActivity.properties.name = roadWorkNeed.properties.name;
     roadWorkActivity.properties.managementarea = roadWorkNeed.properties.managementarea;
     roadWorkActivity.properties.roadWorkNeedsUuids.push(roadWorkNeed.properties.uuid);
 
     this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
-    .subscribe({
-      next: (roadWorkActivityFeature) => {
-        this.router.navigate(["/activity/" + roadWorkActivityFeature.properties.uuid]);
-      },
-      error: (error) => {
-      }
-    });
+      .subscribe({
+        next: (roadWorkActivityFeature) => {
+          this.router.navigate(["/activity/" + roadWorkActivityFeature.properties.uuid]);
+        },
+        error: (error) => {
+        }
+      });
   }
 
   filterNeeds() {
     this.roadWorkNeedFeaturesFiltered =
       this.roadWorkNeedFeatures
-        .filter(roadWorkNeedFeatures => {
-          if(roadWorkNeedFeatures.properties && roadWorkNeedFeatures.properties.name
-                && roadWorkNeedFeatures.properties.finishOptimumTo){
+        .filter(roadWorkNeedFeature => {
+          if (roadWorkNeedFeature.properties && roadWorkNeedFeature.properties.name
+            && roadWorkNeedFeature.properties.finishOptimumTo) {
             let roadWorkNeedName: string = this.chosenNeedName.trim().toLowerCase();
-            let finishOptimumTo: Date = new Date(roadWorkNeedFeatures.properties.finishOptimumTo);
+            let finishOptimumTo: Date = new Date(roadWorkNeedFeature.properties.finishOptimumTo);
             return (roadWorkNeedName === ''
-                    || roadWorkNeedFeatures.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
-                    && finishOptimumTo.getFullYear() === this.chosenNeedYearOptTo;
+              || roadWorkNeedFeature.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
+              && finishOptimumTo.getFullYear() === this.chosenNeedYearOptTo;
           } else {
             return false;
           }

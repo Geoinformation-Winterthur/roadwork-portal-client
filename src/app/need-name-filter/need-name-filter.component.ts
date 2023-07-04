@@ -4,8 +4,6 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { RoadWorkNeedService } from '../../services/roadwork-need.service';
-import { Observable } from 'rxjs';
 import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 
 @Component({
@@ -15,17 +13,12 @@ import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 })
 export class NeedNameFilterComponent implements OnInit {
 
-  needsNames: Observable<string[]> = new Observable<string[]>();
-  needsNamesFiltered: Observable<string[]> = new Observable<string[]>();
   needSearchControl: FormControl = new FormControl();
 
-  private needService: RoadWorkNeedService;
   // parent component of this component:
   chooseNeedComponent: ChooseNeedComponent;
 
-  constructor(needService: RoadWorkNeedService,
-    chooseNeedComponent: ChooseNeedComponent) {
-    this.needService = needService;
+  constructor(chooseNeedComponent: ChooseNeedComponent) {
     this.chooseNeedComponent = chooseNeedComponent;
   }
 

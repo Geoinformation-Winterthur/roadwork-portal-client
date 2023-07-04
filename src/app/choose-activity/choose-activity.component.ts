@@ -18,10 +18,12 @@ import { UserService } from 'src/services/user.service';
 export class ChooseActivityComponent implements OnInit {
 
   roadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
+  roadWorkActivityFeaturesFiltered: RoadWorkActivityFeature[] = [];
 
   filterPanelOpen: boolean = false;
 
-  chosenYear: number = new Date().getFullYear();
+  chosenActivityName: string = "";
+  chosenActivityYearTo: number = new Date().getFullYear();
 
   userService: UserService;
 
@@ -52,6 +54,7 @@ export class ChooseActivityComponent implements OnInit {
         }
 
         this.roadWorkActivityFeatures = roadWorkActivities;
+        this.filterActivities();
       },
       error: (error) => {
       }
@@ -83,6 +86,23 @@ export class ChooseActivityComponent implements OnInit {
       error: (error) => {
       }
     });
+  }
+
+  filterActivities() {
+    this.roadWorkActivityFeaturesFiltered =
+      this.roadWorkActivityFeatures
+        .filter(roadWorkActivityFeature => {
+          if(roadWorkActivityFeature.properties && roadWorkActivityFeature.properties.name
+                && roadWorkActivityFeature.properties.finishTo){
+            let roadWorkActivityName: string = this.chosenActivityName.trim().toLowerCase();
+            let finishTo: Date = new Date(roadWorkActivityFeature.properties.finishTo);
+            return (roadWorkActivityName === ''
+                    || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
+                    && finishTo.getFullYear() === this.chosenActivityYearTo;
+          } else {
+            return false;
+          }
+        });
   }
 
 }
