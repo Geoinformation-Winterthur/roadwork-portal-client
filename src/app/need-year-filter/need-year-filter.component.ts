@@ -4,6 +4,7 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { ChooseNeedComponent } from '../choose-need/choose-need.component';
+import { FilterHelper } from 'src/helper/filter-helper';
 
 @Component({
   selector: 'app-need-year-filter',
@@ -12,8 +13,8 @@ import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 })
 export class NeedYearFilterComponent implements OnInit {
 
-  sliderMin: number = 1980;
-  sliderMax: number = new Date().getFullYear();
+  sliderMin: number = new Date().getFullYear() - 10;
+  sliderMax: number = new Date().getFullYear() + 30;
   sliderStep: number = 1;
   sliderThumbLabel: boolean = true;
 
@@ -25,22 +26,12 @@ export class NeedYearFilterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sliderMax = new Date().getFullYear();
-    this.sliderMin = new Date().getFullYear();
-    this.sliderMin = this.sliderMin - 5;
   }
 
   filterYears() {
     this.chooseNeedComponent.roadWorkNeedFeaturesFiltered
-      = this.chooseNeedComponent.roadWorkNeedFeatures
-        .filter(roadWorkNeedFeatures => {
-          if(roadWorkNeedFeatures.properties.finishOptimumTo){
-            let finishOptimumTo: Date = new Date(roadWorkNeedFeatures.properties.finishOptimumTo);
-            return finishOptimumTo.getFullYear() === this.chooseNeedComponent.chosenYear;  
-          } else {
-            return false;
-          }
-        });
+      = FilterHelper.filterRoadWorkNeeds(this.chooseNeedComponent.roadWorkNeedFeatures,
+                this.chooseNeedComponent.chosenYear);
   }
 
 }

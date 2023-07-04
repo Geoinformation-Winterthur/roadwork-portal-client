@@ -10,6 +10,7 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { FilterHelper } from 'src/helper/filter-helper';
 
 @Component({
   selector: 'app-choose-need',
@@ -55,7 +56,8 @@ export class ChooseNeedComponent implements OnInit {
         }
 
         this.roadWorkNeedFeatures = roadWorkNeeds;
-        this.roadWorkNeedFeaturesFiltered = this.roadWorkNeedFeatures;
+        this.roadWorkNeedFeaturesFiltered = FilterHelper
+                  .filterRoadWorkNeeds(this.roadWorkNeedFeatures, this.chosenYear);
 
       },
       error: (error) => {
