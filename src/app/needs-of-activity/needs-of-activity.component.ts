@@ -36,6 +36,10 @@ export class NeedsOfActivityComponent {
             this.snckBar.open(errorMessage.errorMessage, "", {
               duration: 4000
             });
+          } else {
+            this.needsOfActivityService.roadWorkNeeds = 
+                this.needsOfActivityService.roadWorkNeeds
+                    .filter((roadWorkNeed) => roadWorkNeed.properties.uuid !== roadWorkNeedUuid);
           }
         },
         error: (error) => {

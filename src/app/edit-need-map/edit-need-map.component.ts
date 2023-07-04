@@ -249,11 +249,6 @@ export class EditNeedMapComponent implements OnInit {
 
   private setViewToPolyExtent(polyExtent: Extent) {
     if (polyExtent && polyExtent.length >= 0 && polyExtent[0] !== Infinity) {
-      // extent: [minx, miny, maxx, maxy]
-      let extentCenterX: number = polyExtent[0] + ((polyExtent[2] - polyExtent[0]) / 2.0);
-      let extentCenterY: number = polyExtent[1] + ((polyExtent[3] - polyExtent[1]) / 2.0);
-      var extentCenter: Point = new Point([extentCenterX, extentCenterY]);
-
       const epsg2056Proj: Projection =  getProjection('EPSG:2056') as Projection;
       let view = new View({
         projection: epsg2056Proj
