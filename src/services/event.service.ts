@@ -39,4 +39,16 @@ export class EventService {
      return result;
    }
 
+   addEvent(event?: EventFeature): Observable<any> {
+    let result: Observable<any> =
+      this.http.post(environment.apiUrl + "/event/", event);
+    return result;
+  }
+
+   updateEvent(event?: EventFeature): Observable<any> {
+    let result: Observable<any> =
+      this.http.put(environment.apiUrl + "/event/", event);
+    return result;
+  }
+
 }

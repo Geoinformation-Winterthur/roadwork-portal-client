@@ -19,22 +19,21 @@ import Stroke from 'ol/style/Stroke';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
 import { Projection, get as getProjection } from 'ol/proj.js';
-import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import proj4 from 'proj4';
-import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
-import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { EventFeature } from 'src/model/event-feature';
+import { EventService } from 'src/services/event.service';
 
 @Component({
-  selector: 'app-edit-need-map',
-  templateUrl: './edit-need-map.component.html',
-  styleUrls: ['./edit-need-map.component.css']
+  selector: 'app-edit-event-map',
+  templateUrl: './edit-event-map.component.html',
+  styleUrls: ['./edit-event-map.component.css']
 })
-export class EditNeedMapComponent implements OnInit {
+export class EditEventMapComponent implements OnInit {
 
   @Input()
-  roadWorkNeedFeat?: RoadWorkNeedFeature;
+  eventFeat?: EventFeature;
 
   isInEditingMode: boolean = false;
 
@@ -44,12 +43,12 @@ export class EditNeedMapComponent implements OnInit {
   loadSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
 
-  private roadWorkNeedService: RoadWorkNeedService;
+  private eventService: EventService;
   private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
-    roadWorkNeedService: RoadWorkNeedService) {
-    this.roadWorkNeedService = roadWorkNeedService;
+    eventService: EventService) {
+    this.eventService = eventService;
     this.snackBar = snackBar;
     setTimeout(() => {
       this.resizeMap(null);
@@ -106,7 +105,7 @@ export class EditNeedMapComponent implements OnInit {
     const epsg2056Proj: Projection =  getProjection('EPSG:2056') as Projection;
 
     this.map = new Map({
-      target: 'edit_need_map',
+      target: 'edit_event_map',
       layers: [
         new Tile({
           source: new TileWMS({
@@ -152,8 +151,8 @@ export class EditNeedMapComponent implements OnInit {
   }
 
   loadGeometry(refreshExtent: boolean) {
-    if (this.roadWorkNeedFeat !== undefined) {
-      let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkNeedFeat.geometry);
+    if (this.eventFeat !== undefined) {
+      let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.eventFeat.geometry);
 
       let testFeature: Feature = new Feature({
         type: "Feature",
@@ -174,32 +173,26 @@ export class EditNeedMapComponent implements OnInit {
   }
 
   sendGeometry() {
-    if (this.roadWorkNeedFeat != undefined) {
+    if (this.eventFeat != undefined) {
       let features = this.userDrawSource.getFeatures();
       let feature1 = features[0];
       let geom: Polygon = feature1.getGeometry() as Polygon;
-      this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
+      this.eventFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
       this.loadGeometry(false);
-      if (this.roadWorkNeedFeat.properties.uuid) {
-        if (!this.roadWorkNeedFeat.properties.managementarea) {
-          this.roadWorkNeedFeat.properties.managementarea = new ManagementAreaFeature();
-        }
-        this.roadWorkNeedFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
-
-        this.roadWorkNeedService
-          .updateRoadWorkNeed(this.roadWorkNeedFeat)
+      if (this.eventFeat.properties.uuid) {
+        this.eventService
+          .updateEvent(this.eventFeat)
           .subscribe({
-            next: (roadWorkNeedFeature) => {
-              if (roadWorkNeedFeature) {
-                  ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
-                  if (roadWorkNeedFeature.errorMessage !== "") {
-                    this.snackBar.open(roadWorkNeedFeature.errorMessage, "", {
+            next: (eventFeature) => {
+              if (eventFeature) {
+                  ErrorMessageEvaluation._evaluateErrorMessage(eventFeature);
+                  if (eventFeature.errorMessage !== "") {
+                    this.snackBar.open(eventFeature.errorMessage, "", {
                       duration: 4000
                     });
                   } else {
-                    if (this.roadWorkNeedFeat) {
-                      this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
-                      this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
+                    if (this.eventFeat) {
+                      this.snackBar.open("Event ist gespeichert", "", {
                         duration: 4000,
                       });
                     }
@@ -228,7 +221,7 @@ export class EditNeedMapComponent implements OnInit {
   }
 
   showEditHelp() {
-    alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. " +
+    alert("Klicken Sie in die Karte, um mit dem Zeichnen der Eventfläche zu beginnen. " +
       "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
@@ -236,7 +229,7 @@ export class EditNeedMapComponent implements OnInit {
   addFeatureFinished(event: any) {}
 
   private resizeMap(event: any) {
-    let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
+    let mapElement: HTMLElement = document.getElementById("edit_event_map") as HTMLElement;
     let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
     let topCoord: number = Math.round(mapElementRect.top);
     let mapHeight: number = window.innerHeight - (topCoord + 70);

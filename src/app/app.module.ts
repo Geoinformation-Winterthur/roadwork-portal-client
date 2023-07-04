@@ -63,6 +63,8 @@ import { OAuthModule } from 'angular-oauth2-oidc';
 import { NeedsOfActivityComponent } from './needs-of-activity/needs-of-activity.component';
 import { ActivityNameFilterComponent } from './activity-name-filter/activity-name-filter.component';
 import { ActivityYearFilterComponent } from './activity-year-filter/activity-year-filter.component';
+import { EventAttributesComponent } from './event-attributes/event-attributes.component';
+import { EditEventMapComponent } from './edit-event-map/edit-event-map.component';
  
  
  export function getToken(){
@@ -97,7 +99,9 @@ import { ActivityYearFilterComponent } from './activity-year-filter/activity-yea
      TestopenidComponent,
      NeedsOfActivityComponent,
      ActivityNameFilterComponent,
-     ActivityYearFilterComponent
+     ActivityYearFilterComponent,
+     EventAttributesComponent,
+     EditEventMapComponent
    ],
    imports: [
      BrowserModule,
