@@ -4,7 +4,6 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { ChooseNeedComponent } from '../choose-need/choose-need.component';
-import { FilterHelper } from 'src/helper/filter-helper';
 
 @Component({
   selector: 'app-need-year-filter',
@@ -29,9 +28,7 @@ export class NeedYearFilterComponent implements OnInit {
   }
 
   filterYears() {
-    this.chooseNeedComponent.roadWorkNeedFeaturesFiltered
-      = FilterHelper.filterRoadWorkNeeds(this.chooseNeedComponent.roadWorkNeedFeatures,
-                this.chooseNeedComponent.chosenYear);
+    this.chooseNeedComponent.filterNeeds();
   }
 
 }

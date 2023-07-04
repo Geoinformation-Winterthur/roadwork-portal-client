@@ -15,13 +15,13 @@ import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 })
 export class NeedNameFilterComponent implements OnInit {
 
-  needsNames: string[] = [];
+  needsNames: Observable<string[]> = new Observable<string[]>();
   needsNamesFiltered: Observable<string[]> = new Observable<string[]>();
   needSearchControl: FormControl = new FormControl();
 
   private needService: RoadWorkNeedService;
   // parent component of this component:
-  private chooseNeedComponent: ChooseNeedComponent;
+  chooseNeedComponent: ChooseNeedComponent;
 
   constructor(needService: RoadWorkNeedService,
     chooseNeedComponent: ChooseNeedComponent) {
@@ -29,14 +29,13 @@ export class NeedNameFilterComponent implements OnInit {
     this.chooseNeedComponent = chooseNeedComponent;
   }
 
+
   ngOnInit(): void {
   }
 
-  private _filterNeedName(needName: string): string[] {
-    const filterVal = needName.toLowerCase();
-    let needNamesFiltered: string[] =
-      this.needsNames.filter(opt => opt.toLowerCase().indexOf(filterVal) === 0);
-    return needNamesFiltered;
+  filterNeedName() {
+    this.chooseNeedComponent.chosenNeedName = this.needSearchControl.value;
+    this.chooseNeedComponent.filterNeeds();
   }
 
 }

@@ -10,7 +10,6 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
-import { FilterHelper } from 'src/helper/filter-helper';
 
 @Component({
   selector: 'app-choose-need',
@@ -24,7 +23,8 @@ export class ChooseNeedComponent implements OnInit {
 
   filterPanelOpen: boolean = false;
 
-  chosenYear: number = new Date().getFullYear();
+  chosenNeedName: string = "";
+  chosenNeedYearOptTo: number = new Date().getFullYear();
 
   userService: UserService;
 
@@ -56,8 +56,7 @@ export class ChooseNeedComponent implements OnInit {
         }
 
         this.roadWorkNeedFeatures = roadWorkNeeds;
-        this.roadWorkNeedFeaturesFiltered = FilterHelper
-                  .filterRoadWorkNeeds(this.roadWorkNeedFeatures, this.chosenYear);
+        this.filterNeeds();
 
       },
       error: (error) => {
@@ -81,6 +80,23 @@ export class ChooseNeedComponent implements OnInit {
       error: (error) => {
       }
     });
+  }
+
+  filterNeeds() {
+    this.roadWorkNeedFeaturesFiltered =
+      this.roadWorkNeedFeatures
+        .filter(roadWorkNeedFeatures => {
+          if(roadWorkNeedFeatures.properties && roadWorkNeedFeatures.properties.name
+                && roadWorkNeedFeatures.properties.finishOptimumTo){
+            let roadWorkNeedName: string = this.chosenNeedName.trim().toLowerCase();
+            let finishOptimumTo: Date = new Date(roadWorkNeedFeatures.properties.finishOptimumTo);
+            return (roadWorkNeedName === ''
+                    || roadWorkNeedFeatures.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
+                    && finishOptimumTo.getFullYear() === this.chosenNeedYearOptTo;
+          } else {
+            return false;
+          }
+        });
   }
 
 }

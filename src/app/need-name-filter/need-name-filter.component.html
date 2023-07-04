@@ -1,15 +1,16 @@
 <form class="need-filter-form">
     <mat-form-field class="choose-need">
         <input type="text"
-               placeholder="Projektname"
+               placeholder="Bezeichung"
                aria-label="Name"
                matInput
+               (ngModelChange)="filterNeedName()"
                [formControl]="needSearchControl"
                [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-option *ngFor="let needName of needsNamesFiltered | async" [value]="needName">
-            {{needName}}
+          <mat-option *ngFor="let roadWorkNeedFeature of chooseNeedComponent.roadWorkNeedFeatures" [value]="roadWorkNeedFeature.properties.name">
+            {{roadWorkNeedFeature.properties.name}}
           </mat-option>
         </mat-autocomplete>
-      </mat-form-field><br>  
+      </mat-form-field><br>
 </form>
