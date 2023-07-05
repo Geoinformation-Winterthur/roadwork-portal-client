@@ -17,7 +17,7 @@ export class ReportComponent implements OnInit {
 
   chart3 = {
     chartData: [
-      { data: [48, 55, 67, 72, 85], label: 'Anzahl neuer Baubemassnahmen monatlich' }
+      { data: [48, 55, 67, 72, 85], label: 'Anzahl neuer Baumassnahmen monatlich' }
     ],
     chartLabels: ['Nov', 'Dez', 'Jan', 'Feb', 'Mar'],
     chartOptions: {

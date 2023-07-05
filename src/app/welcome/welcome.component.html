@@ -2,17 +2,48 @@
  Author: Edgar Butwilowski
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
-<div style="color: white;padding: 2em;background-color: rgb(196, 30, 30);"><h1>Tiefbau Winterthur</h1><br />
-    <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Department Bau</h2></div>
-    <div style="margin: 2em;color: rgb(90, 90, 90);">
-        <h3 i18n style="font-weight: lighter;text-transform: uppercase;color: black;">Willkommen <span *ngIf="userService.isUserLoggedIn()">{{userService.getLocalUser().firstName}} 
-            {{userService.getLocalUser().lastName}} </span>im Tool zur Planung und Koordination der Baumassnahmen der Stadt Winterthur</h3>
-        <p *ngIf="userService.isUserLoggedIn()">Ihre Rolle ist: {{userService.getLocalUser().role.code}}</p>
-        <p i18n *ngIf="!userService.isUserLoggedIn()">Das <i>Koordinationstool Strategische Strassenplanung</i> (SSP) des Tiefbauamts der Stadtverwaltung Winterthur
-            unterst&uuml;tzt bei der Planung und Koordination der st&auml;dtischen Bauprojekte. <i>Hier noch Hinweise zum Prozedere
-            f&uuml;r die Registrierung und welche Rollen (Besteller, Gebietsbeautragter etc.) es gibt. Weiterer Begr&uuml;ssungstext
-            f&uuml;r nicht eingeloggte Benutzer.</i></p>
-        <p i18n>Begr&uuml;ssungstext f&uuml;r alle Benutzer (<i>eingeloggt</i> und <i>nicht-eingeloggt</i>).</p>
-        <p style="font-size: 0.8em;">v {{ appVersion }}</p>
+<div style="color: white;padding: 2em;background-color: rgb(196, 30, 30);">
+    <h1>Tiefbau Winterthur</h1><br />
+    <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Department Bau</h2>
+</div>
+<div style="margin: 2em;color: rgb(90, 90, 90);">
+    <h3 i18n style="font-weight: lighter;text-transform: uppercase;color: black;">Willkommen <span
+            *ngIf="userService.isUserLoggedIn()">{{userService.getLocalUser().firstName}}
+            {{userService.getLocalUser().lastName}} </span>im Tool zur Planung und Koordination der Baumassnahmen der
+        Stadt Winterthur</h3>
+    <div i18n *ngIf="!userService.isUserLoggedIn()">Das <i>Koordinationstool Strategische Strassenplanung</i> (SSP) des
+        Tiefbauamts der Stadtverwaltung Winterthur
+        unterst&uuml;tzt bei der Planung und Koordination der st&auml;dtischen Bauprojekte. Sie m&uuml;ssen sich
+        <b>einloggen</b>, um die Funktionen verwenden
+        zu k&ouml;nnen. Falls Sie <b>Zugriff auf diese Applikation</b> ben&ouml;tigen, wenden Sie sich bitte an Ihren
+        Applikationsverantwortlichen. Sie erhalten
+        dann ein Abbonement auf diese Applikation. Folgende Rollen sind in dieser Applikation m&ouml;glich:
+        <ul>
+            <li>Eventmanager</li>
+            <li>Besteller</li>
+            <li>Gebietsmanager</li>
+            <li>Administrator</li>
+        </ul>
+        Zum einloggen verwenden Sie bitte den <b>Login-Button</b> in der <b>oberen rechten Ecke</b>.
     </div>
-    
+    <div *ngIf="userService.isUserLoggedIn()">
+        <p>
+            Sie sind in der Rolle <b>
+                <span *ngIf="userService.getLocalUser().role.code === 'eventmanager'">Eventmanager</span>
+                <span *ngIf="userService.getLocalUser().role.code === 'orderer'">Besteller</span>
+                <span *ngIf="userService.getLocalUser().role.code === 'territorymanager'">Gebietsmanager</span>
+                <span *ngIf="userService.getLocalUser().role.code === 'administrator'">Administrator</span></b>.
+        </p>
+        <div *ngIf="roadWorkActivityFeaturesInCoordination.length === 0"><span
+                style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
+                sind zurzeit keine Baumassnahmen in der Vernehmlassung.</span></div>
+        <div *ngIf="roadWorkActivityFeaturesInCoordination.length !== 0">Folgende Baumassnahmen sind zurzeit in der
+            <b>Vernehmlassung</b>:
+            <ul>
+                <li *ngFor="let roadWorkActivityFeatureInCoordination of roadWorkActivityFeaturesInCoordination">
+                    {{roadWorkActivityFeatureInCoordination.properties.name}}</li>
+            </ul>
+        </div>
+    </div>
+    <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
+</div>

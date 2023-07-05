@@ -61,6 +61,7 @@ export class ActivityAttributesComponent implements OnInit {
         if (idParamString == "new") {
 
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
+          this.roadWorkActivityFeature.properties.status.code = "inwork";
 
         } else {
 

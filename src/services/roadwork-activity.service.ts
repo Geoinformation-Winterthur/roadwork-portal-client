@@ -21,14 +21,19 @@ export class RoadWorkActivityService {
     this.http = http;
   }
 
-   getRoadWorkActivities(id: string = "", summary: boolean = false): Observable<RoadWorkActivityFeature[]> {
+   getRoadWorkActivities(id: string = "", status: string = "", summary: boolean = false):
+            Observable<RoadWorkActivityFeature[]> {
     let queryString = "/roadworkactivity/";
-    if(id !== null && id !== "" || summary) {
+    if((id !== null && id !== "") || (status !== null && status !== "") || summary) {
       queryString += "?";
-
     }
     if(id !== null && id !== ""){
       queryString += "uuid="+ id;
+      if(summary) {
+        queryString += "&";
+      }
+    } else if(status !== null && status !== ""){
+      queryString += "status="+ status;
       if(summary) {
         queryString += "&";
       }
