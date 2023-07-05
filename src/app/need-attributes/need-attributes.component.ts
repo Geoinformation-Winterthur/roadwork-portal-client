@@ -146,46 +146,6 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  validateElement1() {
-    let validateButton1 = document.getElementById("validateButton1");
-    if (validateButton1 != null)
-      validateButton1.style.backgroundColor = "lightgreen";
-    let expansionPanel1 = document.getElementById("expansionPanel1");
-    if (expansionPanel1 != null)
-      expansionPanel1.style.backgroundColor = "rgb(238, 255, 238)";
-  }
-
-  validateElement3() {
-    let validateButton3 = document.getElementById("validateButton3");
-    if (validateButton3 != null)
-      validateButton3.style.backgroundColor = "lightgreen";
-    let expansionPanel3 = document.getElementById("expansionPanel3");
-    if (expansionPanel3 != null)
-      expansionPanel3.style.backgroundColor = "rgb(238, 255, 238)";
-    // this.validateElement2();
-  }
-
-  validateElement4() {
-    let validateButton4 = document.getElementById("validateButton4");
-    if (validateButton4 != null)
-      validateButton4.style.backgroundColor = "lightgreen";
-    let expansionPanel4 = document.getElementById("expansionPanel4");
-    if (expansionPanel4 != null)
-      expansionPanel4.style.backgroundColor = "rgb(238, 255, 238)";
-    this.validateElement2();
-  }
-
-  validateElement2() {
-    let validateButton3 = document.getElementById("validateButton3");
-    let validateButton4 = document.getElementById("validateButton4");
-    if (validateButton3 != null && validateButton3.style.backgroundColor === "lightgreen" &&
-      validateButton4 != null && validateButton4.style.backgroundColor === "lightgreen") {
-      let expansionPanel2 = document.getElementById("expansionPanel2");
-      if (expansionPanel2 != null)
-        expansionPanel2.style.backgroundColor = "rgb(238, 255, 238)";
-    }
-  }
-
   onRoadWorkNeedEnumChange() {
     if (this.roadWorkNeedFeature) {
       this.roadWorkNeedFeature.properties.kind.code = this.roadWorkNeedEnumControl.value;

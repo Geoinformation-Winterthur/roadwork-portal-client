@@ -68,9 +68,19 @@
                         <mat-card-title>Status</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <mat-form-field *ngIf="userService.getLocalUser().role.code === 'territorymanager'">
-                                    <input matInput type="text" placeholder="Status">
-                                </mat-form-field>
+                                <form class="choose_user_role_form">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Status</mat-label>
+                                        <mat-select [formControl]="roadWorkActivityStatusEnumControl"  (focusout)="update()"
+                                            (selectionChange)='onRoadWorkActivityStatusEnumChange()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option *ngFor="let roadWorkActivityStatusEnum of availableRoadWorkActivityStatusEnums"
+                                                [value]="roadWorkActivityStatusEnum.code">
+                                                {{roadWorkActivityStatusEnum.name}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </form>
                                 <mat-form-field>
                                     <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"

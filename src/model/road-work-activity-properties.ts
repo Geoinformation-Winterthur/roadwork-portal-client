@@ -4,6 +4,7 @@
  */
 import { CostTypes } from "./cost-types";
 import { ManagementAreaFeature } from "./management-area-feature";
+import { Status } from "./status";
 import { User } from "./user";
 
 export class RoadWorkActivityProperties {
@@ -21,5 +22,6 @@ export class RoadWorkActivityProperties {
     costs: number = 0;
     costsType: CostTypes = new CostTypes();
     roadWorkNeedsUuids: string[] = [];
+    status: Status = new Status();
     isEditingAllowed: boolean = false;
 }

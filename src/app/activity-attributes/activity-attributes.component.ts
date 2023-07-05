@@ -15,6 +15,7 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
+import { StatusService } from 'src/services/status.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -33,25 +34,27 @@ export class ActivityAttributesComponent implements OnInit {
 
   userService: UserService;
 
-  roadWorkActivityEnumControl: FormControl = new FormControl();
-  availableRoadWorkActivityEnums: RoadWorkNeedEnum[] = [];
+  roadWorkActivityStatusEnumControl: FormControl = new FormControl();
+  availableRoadWorkActivityStatusEnums: RoadWorkNeedEnum[] = [];
 
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
+  private statusService: StatusService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
-        needsOfActivityService: NeedsOfActivityService,
-        roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
+    needsOfActivityService: NeedsOfActivityService, statusService: StatusService,
+    roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
+    this.statusService = statusService;
   }
 
   ngOnInit() {
@@ -67,24 +70,35 @@ export class ActivityAttributesComponent implements OnInit {
 
           let constProjId: string = params['id'];
 
+          this.statusService.getAllStatusTypes().subscribe({
+            next: (statusTypes) => {
+              for (let statusType of statusTypes) {
+                this.availableRoadWorkActivityStatusEnums.push(statusType);
+              }
+            },
+            error: (error) => {
+            }
+          });
+
           this.roadWorkActivityService.getRoadWorkActivities(constProjId)
             .subscribe({
               next: (roadWorkActivities) => {
                 if (roadWorkActivities.length === 1) {
                   let roadWorkActivity: any = roadWorkActivities[0];
                   let rwPoly: RoadworkPolygon = new RoadworkPolygon();
-                  rwPoly.coordinates = roadWorkActivity.geometry.coordinates
+                  rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
-                  if(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0){
+                  this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
+                  if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
-                    .subscribe({
-                      next: (roadWorkNeeds) => {
-                        this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
-                      },
-                      error: (error) => {
-                      }
-                    });
+                      .subscribe({
+                        next: (roadWorkNeeds) => {
+                          this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
+                        },
+                        error: (error) => {
+                        }
+                      });
                   }
                 }
               },
@@ -125,43 +139,9 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  validateElement1() {
-    let validateButton1 = document.getElementById("validateButton1");
-    if (validateButton1 != null)
-      validateButton1.style.backgroundColor = "lightgreen";
-    let expansionPanel1 = document.getElementById("expansionPanel1");
-    if (expansionPanel1 != null)
-      expansionPanel1.style.backgroundColor = "rgb(238, 255, 238)";
-  }
-
-  validateElement3() {
-    let validateButton3 = document.getElementById("validateButton3");
-    if (validateButton3 != null)
-      validateButton3.style.backgroundColor = "lightgreen";
-    let expansionPanel3 = document.getElementById("expansionPanel3");
-    if (expansionPanel3 != null)
-      expansionPanel3.style.backgroundColor = "rgb(238, 255, 238)";
-    // this.validateElement2();
-  }
-
-  validateElement4() {
-    let validateButton4 = document.getElementById("validateButton4");
-    if (validateButton4 != null)
-      validateButton4.style.backgroundColor = "lightgreen";
-    let expansionPanel4 = document.getElementById("expansionPanel4");
-    if (expansionPanel4 != null)
-      expansionPanel4.style.backgroundColor = "rgb(238, 255, 238)";
-    this.validateElement2();
-  }
-
-  validateElement2() {
-    let validateButton3 = document.getElementById("validateButton3");
-    let validateButton4 = document.getElementById("validateButton4");
-    if (validateButton3 != null && validateButton3.style.backgroundColor === "lightgreen" &&
-      validateButton4 != null && validateButton4.style.backgroundColor === "lightgreen") {
-      let expansionPanel2 = document.getElementById("expansionPanel2");
-      if (expansionPanel2 != null)
-        expansionPanel2.style.backgroundColor = "rgb(238, 255, 238)";
+  onRoadWorkActivityStatusEnumChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
     }
   }
 
