@@ -24,6 +24,7 @@ export class RoadWorkNeedProperties {
     priority: Priority = new Priority();
     status: Status = new Status();
     longer6Month: boolean = false;
+    relevance: number = 0;
     description: string = "";
     managementarea: ManagementAreaFeature
             = new ManagementAreaFeature();

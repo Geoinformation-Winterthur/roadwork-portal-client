@@ -117,7 +117,7 @@ export class NeedAttributesComponent implements OnInit {
             this.roadWorkNeedFeature.properties.name = roadWorkNeedFeature.properties.name;
             this.roadWorkNeedFeature.properties.orderer = roadWorkNeedFeature.properties.orderer;
             this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
-
+            this.roadWorkNeedFeature.properties.relevance = roadWorkNeedFeature.properties.relevance;
           }
         },
         error: (error) => {

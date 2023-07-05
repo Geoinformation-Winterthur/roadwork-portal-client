@@ -74,10 +74,11 @@
                                         <mat-select [formControl]="roadWorkActivityStatusEnumControl"  (focusout)="update()"
                                             (selectionChange)='onRoadWorkActivityStatusEnumChange()'
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-option *ngFor="let roadWorkActivityStatusEnum of availableRoadWorkActivityStatusEnums"
-                                                [value]="roadWorkActivityStatusEnum.code">
-                                                {{roadWorkActivityStatusEnum.name}}
-                                            </mat-option>
+                                            <mat-option value="deffixed">def. festgesetzt</mat-option>
+                                            <mat-option value="excuted">ausgef&uuml;hrt</mat-option>
+                                            <mat-option value="inconsult">in Vernehmlassung</mat-option>
+                                            <mat-option value="inwork">in Bearbeitung</mat-option>
+                                            <mat-option value="provfixed">prov. festgesetzt</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>

@@ -15,7 +15,6 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
-import { StatusService } from 'src/services/status.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -35,26 +34,23 @@ export class ActivityAttributesComponent implements OnInit {
   userService: UserService;
 
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
-  availableRoadWorkActivityStatusEnums: RoadWorkNeedEnum[] = [];
 
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
-  private statusService: StatusService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
-    needsOfActivityService: NeedsOfActivityService, statusService: StatusService,
+    needsOfActivityService: NeedsOfActivityService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
-    this.statusService = statusService;
   }
 
   ngOnInit() {
@@ -69,16 +65,6 @@ export class ActivityAttributesComponent implements OnInit {
         } else {
 
           let constProjId: string = params['id'];
-
-          this.statusService.getAllStatusTypes().subscribe({
-            next: (statusTypes) => {
-              for (let statusType of statusTypes) {
-                this.availableRoadWorkActivityStatusEnums.push(statusType);
-              }
-            },
-            error: (error) => {
-            }
-          });
 
           this.roadWorkActivityService.getRoadWorkActivities(constProjId)
             .subscribe({

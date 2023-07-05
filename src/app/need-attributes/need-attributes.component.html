@@ -57,7 +57,7 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
-                            <mat-card-title>Besteller, Gebiet, Dauer</mat-card-title>
+                            <mat-card-title>Beteiligte</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
@@ -72,9 +72,6 @@
                                         {{roadWorkNeedFeature.properties.managementarea.properties.manager.lastName}}
                                     </b>
                                 </p>
-                                <p><mat-checkbox [(ngModel)]="roadWorkNeedFeature.properties.longer6Month" (change)="update()" style="margin:10px;">
-                                    Dauer l&auml;nger als 6 Monate
-                                </mat-checkbox></p>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -112,6 +109,27 @@
                                 <p>
                                     Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
+                                </p>
+                                <p><mat-checkbox [(ngModel)]="roadWorkNeedFeature.properties.longer6Month" (change)="update()" style="margin:10px;">
+                                    Dauer l&auml;nger als 6 Monate
+                                    </mat-checkbox>
+                                </p>
+                                <p>Priorit&auml;t:<br>
+                                    <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
+                                                (change)="update()" name="relevance" aria-label="Priorit&auml;t">
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 0" value="0" style="background-color: rgb(173, 255, 197); font-weight: bold;">0</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 0" value="0" style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 1" value="1" style="background-color: rgb(207, 255, 205); font-weight: bold;">1</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 1" value="1" style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 2" value="2" style="background-color: rgb(224, 248, 196); font-weight: bold;">2</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 2" value="2" style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 3" value="3" style="background-color: rgb(252, 253, 203); font-weight: bold;">3</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 3" value="3" style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 4" value="4" style="background-color: rgb(255, 234, 217); font-weight: bold;">4</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 4" value="4" style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 5" value="5" style="background-color: rgb(255, 226, 226); font-weight: bold;">5</mat-button-toggle>
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 5" value="5" style="background-color: rgb(255, 226, 226);">5</mat-button-toggle>
+                                  </mat-button-toggle-group>
                                 </p>
                             </div>
                         </mat-card-content>
@@ -190,8 +208,6 @@
                         </mat-card-content>
                     </mat-card>
                 </div>
-            </mat-tab>
-            <mat-tab label="Vernehmlassung" *ngIf="statusCode === 'coordinated'">
             </mat-tab>
         </mat-tab-group>
     </div>
