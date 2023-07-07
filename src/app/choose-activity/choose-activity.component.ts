@@ -23,7 +23,7 @@ export class ChooseActivityComponent implements OnInit {
   filterPanelOpen: boolean = false;
 
   chosenActivityName: string = "";
-  chosenActivityYearTo: number = new Date().getFullYear();
+  chosenActivityYearFrom: number = new Date().getFullYear();
 
   userService: UserService;
 
@@ -93,12 +93,12 @@ export class ChooseActivityComponent implements OnInit {
       this.roadWorkActivityFeatures
         .filter(roadWorkActivityFeature => {
           if(roadWorkActivityFeature.properties && roadWorkActivityFeature.properties.name
-                && roadWorkActivityFeature.properties.finishTo){
+                && roadWorkActivityFeature.properties.finishFrom){
             let roadWorkActivityName: string = this.chosenActivityName.trim().toLowerCase();
-            let finishTo: Date = new Date(roadWorkActivityFeature.properties.finishTo);
+            let finishFrom: Date = new Date(roadWorkActivityFeature.properties.finishFrom);
             return (roadWorkActivityName === ''
                     || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
-                    && finishTo.getFullYear() === this.chosenActivityYearTo;
+                    && finishFrom.getFullYear() === this.chosenActivityYearFrom;
           } else {
             return false;
           }
