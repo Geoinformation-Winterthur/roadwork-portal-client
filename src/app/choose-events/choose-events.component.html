@@ -3,10 +3,10 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-    <h1>Events<span *ngIf="chosenYear" style="font-weight: normal;"> / Jahr
+    <h1>Events<span *ngIf="chosenYear" style="font-weight: normal;"> / Eventbeginn
         {{chosenYear}}</span></h1>
     <div class="add-need-button-container">
-      <button mat-fab [routerLink]="['/event', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
+      <button mat-fab [routerLink]="['/events', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
         <mat-icon aria-label="+">add</mat-icon>
       </button>
     </div>
@@ -59,7 +59,7 @@
         <mat-divider></mat-divider>
         <mat-card-actions style="margin: 0.5em;">
           <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
-            [routerLink]="['/event', event.properties.uuid]">&Ouml;FFNEN</button>
+            [routerLink]="['/events', event.properties.uuid]">&Ouml;FFNEN</button>
         </mat-card-actions>
       </mat-card>
     </div>

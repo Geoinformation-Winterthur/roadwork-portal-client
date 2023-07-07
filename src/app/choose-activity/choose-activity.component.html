@@ -6,7 +6,7 @@
   <h1>Baumassnahmen<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenActivityYearFrom}}</span></h1>
   <div class="add-project-button-container" *ngIf="userService.hasUserAccess('territorymanager')">
-    <button mat-fab [routerLink]="['/activity', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
+    <button mat-fab [routerLink]="['/activities', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
       <mat-icon aria-label="+">add</mat-icon>
     </button>
   </div>
@@ -78,7 +78,7 @@
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
-          [routerLink]="['/activity', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
+          [routerLink]="['/activities', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
         <button style="background-color: rgb(200, 71, 168); color: white;margin-top: 1em;" mat-button
           (click)="deleteRoadworkActivity(roadWorkActivity.properties.uuid)">L&Ouml;SCHEN</button>
       </mat-card-actions>

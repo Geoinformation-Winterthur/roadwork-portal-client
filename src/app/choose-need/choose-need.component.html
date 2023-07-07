@@ -6,7 +6,7 @@
   <h1>Baubed&uuml;rfnisse<span *ngIf="chosenNeedYearOptTo" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenNeedYearOptTo}}</span></h1>
   <div class="add-need-button-container">
-    <button mat-fab [routerLink]="['/need', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
+    <button mat-fab [routerLink]="['/needs', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
       <mat-icon aria-label="+">add</mat-icon>
     </button>
   </div>
@@ -66,7 +66,7 @@
         <br />
         <br />
         <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
-          <a routerLink='/activity/{{roadWorkNeed.properties.roadWorkActivityUuid}}'>Zur Baumassnahme</a>
+          <a routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}'>Zur Baumassnahme</a>
           <br />
           <br />
         </div>
@@ -86,7 +86,7 @@
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
-          [routerLink]="['/need', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
+          [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
         <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
           *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
           (click)="createNewActivityFromNeed(roadWorkNeed)">NEUE BAUMASSNAHME</button>

@@ -1,1 +1,83 @@
-<p>event-attributes works!</p>
+<div style="margin:2em;">
+    <div *ngIf="eventFeature === undefined">
+        <p style="color: red;">Das Event konnte nicht geladen werden.</p>
+    </div>
+    <div *ngIf="eventFeature !== undefined">
+        <h1 *ngIf="eventFeature.properties.uuid!==''">Event <span style="font-weight: normal;"> / {{
+                eventFeature.properties.name }}</span></h1>
+        <h1 *ngIf="eventFeature.properties.uuid===''">Neues Event</h1>
+        <mat-tab-group>
+            <mat-tab label="Lage">
+                <app-edit-event-map [eventFeat]="eventFeature"></app-edit-event-map>
+            </mat-tab>
+            <mat-tab label="Attribute">
+                <button mat-button
+                    style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
+                    *ngIf="!eventFeature.properties.uuid" (click)="add()">
+                    EVENT ER&Ouml;FFNEN
+                </button>
+                <div fxLayout="row wrap padding">
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-content>
+                            <p *ngIf="eventFeature.properties.uuid">UUID:
+                                <b>{{eventFeature.properties.uuid}}</b>
+                            </p>
+                            <p *ngIf="!eventFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field>
+                                    <input matInput type="text" [(ngModel)]="eventFeature.properties.name"
+                                        placeholder="Bezeichnung" (focusout)="update()" required
+                                        [disabled]="!eventFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Metadaten</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <p>Eingetragen von: <b>{{eventFeature.properties.name}}</b>
+                                </p>
+                                <p>Erstellt: <b>{{eventFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
+                                <p>
+                                    Zuletzt ge&auml;ndert: <b>{{eventFeature.properties.lastModified |
+                                        date:'dd.MM.yyyy'}}</b>
+                                </p>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Zeitraum</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Beginn</mat-label>
+                                    <input matInput [ngModel]="eventFeature.properties.dateFrom"
+                                        [matDatepicker]="finishEarlyFrom" (focusout)="update()"
+                                        [disabled]="!eventFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #finishEarlyFrom></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyFrom"></mat-datepicker-toggle>
+                                </mat-form-field>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Ende</mat-label>
+                                    <input matInput [ngModel]="eventFeature.properties.dateTo"
+                                        [matDatepicker]="finishEarlyTo"
+                                        [disabled]="!eventFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #finishEarlyTo></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyTo"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
