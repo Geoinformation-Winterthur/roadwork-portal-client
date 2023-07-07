@@ -1,4 +1,4 @@
-import { Component, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
@@ -16,7 +16,8 @@ export class NeedsOfActivityComponent {
 
   displayedColumns: string[] = ['name', 'orderer', 'dateCreated', 'optRealYears', 'action'];
 
-  roadWorkActivityFeature: RoadWorkActivityFeature;
+  @Input()
+  roadWorkActivityUuid?: string;
 
   needsOfActivityService: NeedsOfActivityService;
 
@@ -39,7 +40,6 @@ export class NeedsOfActivityComponent {
     snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
-    this.roadWorkActivityFeature = needsOfActivityService.roadWorkActivityFeature;
     this.snckBar = snckBar;
   }
 
@@ -56,7 +56,7 @@ export class NeedsOfActivityComponent {
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "assignedneed";
-    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityFeature.properties.uuid;
+    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
         next: (errorMessage) => {
@@ -117,7 +117,7 @@ export class NeedsOfActivityComponent {
   registerRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "registeredneed";
-    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityFeature.properties.uuid;
+    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
         next: (errorMessage) => {

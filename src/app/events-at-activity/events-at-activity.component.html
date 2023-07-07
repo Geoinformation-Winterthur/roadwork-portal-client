@@ -1,0 +1,75 @@
+<div>
+    <div>
+        <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+            <mat-icon aria-label="Konflikt" style="color: brown;">sync_problem</mat-icon>
+            EVENTS MIT KONFLIKT
+        </h2>
+        <div>Hier werden Events gelistet, die sowohl <i>r&auml;umlich als
+                auch zeitlich</i> mit dieser Baumassnahme <i>im Konflikt</i> stehen.</div>
+        <div *ngIf="eventsWithSpatioTemporalConflict.length === 0"
+            style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+            Es sind zurzeit <i>keine</i> Events registriert, die sowohl <i>r&auml;mlich als
+                auch zeitlich im Konflikt</i> stehen zu dieser Baumassnahme.
+        </div>
+        <div *ngIf="eventsWithSpatioTemporalConflict.length !== 0">
+            <table mat-table [dataSource]="eventsWithSpatioTemporalConflict" class="mat-elevation-z2"
+                style="width: 100%">
+
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                    <td mat-cell *matCellDef="let eventWithSpatioTemporalConflict">
+                        <a routerLink="/events/{{eventWithSpatioTemporalConflict.properties.uuid}}">
+                            {{eventWithSpatioTemporalConflict.properties.name}}
+                        </a>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="startDate">
+                    <th mat-header-cell *matHeaderCellDef> Beginn </th>
+                    <td mat-cell *matCellDef="let eventWithSpatioTemporalConflict">
+                        {{eventWithSpatioTemporalConflict.properties.dateFrom |
+                        date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endDate">
+                    <th mat-header-cell *matHeaderCellDef> Ende </th>
+                    <td mat-cell *matCellDef="let eventWithSpatioTemporalConflict">
+                        {{eventWithSpatioTemporalConflict.properties.dateTo | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastModified">
+                    <th mat-header-cell *matHeaderCellDef> Zuletzt ver&auml;ndert </th>
+                    <td mat-cell *matCellDef="let eventWithSpatioTemporalConflict">
+                        {{eventWithSpatioTemporalConflict.properties.lastModified | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+    <div style="margin-top: 3em;">
+        <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+            <mat-icon aria-label="Raumkonflikt" style="color: darkgreen;">crop_rotate</mat-icon>
+            EVENTS MIT R&Auml;UMLICHEM, JEDOCH KEINEM ZEITLICHEN KONFLIKT
+        </h2>
+        <div>Hier werden Events gelistet, die zwar <i>im selben Raum</i> liegen, wie diese Baumassnahme,
+            jedoch <i>zu einem anderen Zeitpunkt</i> stattfinden.</div>
+        <div *ngIf="0 === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+            Es sind zurzeit <i>keine Events</i> registriert, die <i>nur r&auml;mlich</i>,
+            jedoch <i>nicht zeitlich im Konflikt</i> stehen zu dieser Baumassnahme.
+        </div>
+    </div>
+    <div style="margin-top: 3em;">
+        <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+            <mat-icon aria-label="Zeitkonflikt" style="color: darkgreen;">history</mat-icon>
+            EVENTS MIT ZEITLICHEM, JEDOCH KEINEM R&Auml;UMLICHEN KONFLIKT
+        </h2>
+        <div>Hier werden Events gelistet, die zwar <i>zur selben Zeit</i> stattfinden wie diese
+            Baumassnahme, sich jedoch <i>an einem anderen Ort</i> befinden.</div>
+        <div *ngIf="0 === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+            Es sind zurzeit <i>keine</i> Events registriert, die nur <i>zeitlich</i>,
+            jedoch <i>nicht r&auml;mlich</i> im Konflikt stehen zu dieser Baumassnahme.
+        </div>
+    </div>
+</div>

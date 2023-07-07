@@ -1,11 +1,13 @@
 <div>
     <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
-        <mat-icon aria-label="Zugewiesen" style="color: rgb(138,71,200);">link</mat-icon>
+        <mat-icon aria-label="Zugewiesen">link</mat-icon>
         ZUGEWIESENE BED&Uuml;RFNISSE
     </h2>
-    <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length === 0">Diese Massnahme
-        hat keine zugewiesenen
-        Bed&uuml;rfnisse.</div>
+    <div>Hier werden die Bed&uuml;rfnisse gelistet, die dieser Massnahme zuwiesen wurden.</div>
+    <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length === 0"
+        style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+        Diese Massnahme sind keine Bed&uuml;rfnisse zugewiesen.
+    </div>
     <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length !== 0">
         <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds" class="mat-elevation-z2"
             style="width: 100%">
@@ -43,7 +45,7 @@
                 <th mat-header-cell *matHeaderCellDef> Zuweisung aufheben </th>
                 <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                     <mat-icon (click)="unAssignRoadWorkNeed(assignedRoadWorkNeed)" aria-label="Zuweisung aufheben"
-                        class="arrow_button">arrow_downward</mat-icon>
+                        class="arrow_button" style="color: rgb(138,71,200);">arrow_downward</mat-icon>
                 </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -52,11 +54,18 @@
     </div>
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
-            <mat-icon aria-label="Nicht zugewiesen" style="color: rgb(138,71,200);">link_off</mat-icon>
+            <mat-icon aria-label="Nicht zugewiesen">link_off</mat-icon>
             NICHT ZUGEWIESENE BED&Uuml;RFNISSE IN MASSNAHMENFL&Auml;CHE
         </h2>
-        <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length === 0" style="margin-bottom: 3em;">Diese
-            Massnahme hat keine Bed&uuml;rfnisse in der Massnahmenfl&auml;che (die nicht bereits zugewiesen sind).</div>
+        <div>
+            Hier werden alle Bed&uuml;rfnisse gelistet, die zwar r&auml;umlich in dieser Massnahme liegen,
+            jedoch der Massnahme nicht explizit zugeordnet sind.
+        </div>
+        <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length === 0"
+            style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+            Bei dieser Massnahme liegen keine Bed&uuml;rfnisse in der Massnahmenfl&auml;che
+            vor (die nicht bereits zugewiesen sind).
+        </div>
         <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
             <table mat-table [dataSource]="needsOfActivityService.nonAssignedRoadWorkNeeds" class="mat-elevation-z2"
                 style="width: 100%">
@@ -64,7 +73,7 @@
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
                     <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed"> <a
-                        routerLink="/needs/{{nonAssignedRoadWorkNeed.properties.uuid}}">{{nonAssignedRoadWorkNeed.properties.name}}</a>
+                            routerLink="/needs/{{nonAssignedRoadWorkNeed.properties.uuid}}">{{nonAssignedRoadWorkNeed.properties.name}}</a>
                     </td>
                 </ng-container>
 
@@ -93,7 +102,7 @@
                     <th mat-header-cell *matHeaderCellDef> Zuweisen </th>
                     <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
                         <mat-icon (click)="assignRoadWorkNeed(nonAssignedRoadWorkNeed)" aria-label="Zuweisung entfernen"
-                            class="arrow_button">arrow_upward</mat-icon>
+                            class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
                     </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -103,13 +112,15 @@
     </div>
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
-            <mat-icon aria-label="Angemeldet" style="color: rgb(138,71,200);">app_registration</mat-icon>
+            <mat-icon aria-label="Angemeldet">app_registration</mat-icon>
             MANUELL ANGEMELDETE BED&Uuml;RFNISSE
         </h2>
-        Diese Bed&uuml;rfnisse liegen r&auml;umlich ausserhalb der Massnahmenfl&auml;che, wurden
-        jedoch trotzdem f&uuml;r diese Massnahme angemeldet.
-        <span *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length === 0">Aktuell liegen
-            jedoch keine weiteren angemeldeten Bed&uuml;rfnisse f&uuml;r diese Massnahme vor.</span>
+        <div>Diese Bed&uuml;rfnisse liegen r&auml;umlich ausserhalb der Massnahmenfl&auml;che, wurden
+            jedoch trotzdem f&uuml;r diese Massnahme angemeldet.</div>
+        <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length === 0"
+            style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+            Aktuell liegen keine weiteren angemeldeten Bed&uuml;rfnisse f&uuml;r diese Massnahme vor.
+        </div>
         <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length !== 0">
             <table mat-table [dataSource]="needsOfActivityService.registeredRoadWorkNeeds" class="mat-elevation-z2"
                 style="width: 100%">
@@ -117,7 +128,7 @@
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
                     <td mat-cell *matCellDef="let registeredRoadWorkNeed"> <a
-                        routerLink="/needs/{{registeredRoadWorkNeed.properties.uuid}}">{{registeredRoadWorkNeed.properties.name}}</a>
+                            routerLink="/needs/{{registeredRoadWorkNeed.properties.uuid}}">{{registeredRoadWorkNeed.properties.name}}</a>
                     </td>
                 </ng-container>
 
@@ -146,7 +157,7 @@
                     <th mat-header-cell *matHeaderCellDef> Zuweisen </th>
                     <td mat-cell *matCellDef="let registeredRoadWorkNeed">
                         <mat-icon (click)="assignRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Zuweisung entfernen"
-                            class="arrow_button">arrow_upward</mat-icon>
+                            class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
                     </td>
                 </ng-container>
 
@@ -157,7 +168,7 @@
     </div>
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
-            <mat-icon aria-label="Angemeldet" style="color: rgb(138,71,200);">add_task</mat-icon>
+            <mat-icon aria-label="Angemeldet">add_task</mat-icon>
             BED&Uuml;RFNIS F&Uuml;R DIESE MASSNAHME ANMELDEN
         </h2>
         <mat-accordion>
@@ -244,7 +255,7 @@
                     <th mat-header-cell *matHeaderCellDef> Bed&uuml;rfnis anmelden </th>
                     <td mat-cell *matCellDef="let roadWorkNeed">
                         <mat-icon (click)="registerRoadWorkNeed(roadWorkNeed)" aria-label="Bed&uuml;rfnis anmelden"
-                            class="arrow_button">arrow_upward</mat-icon>
+                            class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
                     </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

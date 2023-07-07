@@ -80,7 +80,6 @@ export class ActivityAttributesComponent implements OnInit {
                   rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
-                  this.needsOfActivityService.roadWorkActivityFeature = roadWorkActivity;
                   this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)

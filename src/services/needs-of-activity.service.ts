@@ -7,9 +7,6 @@ import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 })
 export class NeedsOfActivityService {
 
-  public roadWorkActivityFeature: RoadWorkActivityFeature
-          = new RoadWorkActivityFeature();
-
   public assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
   public nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
   public registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];

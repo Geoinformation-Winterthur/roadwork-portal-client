@@ -66,6 +66,7 @@ import { ActivityNameFilterComponent } from './activity-name-filter/activity-nam
 import { ActivityYearFilterComponent } from './activity-year-filter/activity-year-filter.component';
 import { EventAttributesComponent } from './event-attributes/event-attributes.component';
 import { EditEventMapComponent } from './edit-event-map/edit-event-map.component';
+import { EventsAtActivityComponent } from './events-at-activity/events-at-activity.component';
  
  
  export function getToken(){
@@ -102,7 +103,8 @@ import { EditEventMapComponent } from './edit-event-map/edit-event-map.component
      ActivityNameFilterComponent,
      ActivityYearFilterComponent,
      EventAttributesComponent,
-     EditEventMapComponent
+     EditEventMapComponent,
+     EventsAtActivityComponent
    ],
    imports: [
      BrowserModule,
