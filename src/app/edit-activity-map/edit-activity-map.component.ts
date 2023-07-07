@@ -218,7 +218,21 @@ export class EditActivityMapComponent implements OnInit {
                       this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivityFeature.properties.roadWorkNeedsUuids)
                       .subscribe({
                         next: (roadWorkNeeds) => {
-                          this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
+                          let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                          let nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                          let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                          for(let roadWorkNeed of roadWorkNeeds){
+                            if(roadWorkNeed.properties.activityRelationType === "assignedneed"){
+                              assignedRoadWorkNeeds.push(roadWorkNeed);
+                            } else if(roadWorkNeed.properties.activityRelationType === "nonassignedneed"){
+                              nonAssignedRoadWorkNeeds.push(roadWorkNeed);
+                            } else if(roadWorkNeed.properties.activityRelationType === "registeredneed"){
+                              registeredRoadWorkNeeds.push(roadWorkNeed);
+                            }
+                          }
+                          this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
+                          this.needsOfActivityService.nonAssignedRoadWorkNeeds = nonAssignedRoadWorkNeeds;
+                          this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
                         },
                         error: (error) => {
                         }

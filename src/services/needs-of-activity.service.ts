@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 
 @Injectable({
@@ -6,7 +7,11 @@ import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 })
 export class NeedsOfActivityService {
 
-  public roadWorkNeeds: RoadWorkNeedFeature[] = [];
+  public roadWorkActivityFeature: RoadWorkActivityFeature
+          = new RoadWorkActivityFeature();
 
-  constructor() { }
+  public assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+  public nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+  public registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+
 }

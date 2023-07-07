@@ -1,15 +1,168 @@
 <div>
-    <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">BAUBED&Uuml;RFNISSE ZUR BAUMASSNAHME</h2>
-    <table mat-table [dataSource]="needsOfActivityService.roadWorkNeeds" class="mat-elevation-z2" style="width: 100%">
+    <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+        <mat-icon aria-label="Zugewiesen" style="color: rgb(138,71,200);">link</mat-icon>
+        ZUGEWIESENE BED&Uuml;RFNISSE
+    </h2>
+    <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length === 0" style="margin-bottom: 3em;">Diese Massnahme
+        hat keine zugewiesenen
+        Bed&uuml;rfnisse.</div>
+    <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
+        <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds" class="mat-elevation-z2"
+            style="width: 100%">
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                <td mat-cell *matCellDef="let assignedRoadWorkNeed"> <a
+                        href="need/{{assignedRoadWorkNeed.properties.uuid}}">{{assignedRoadWorkNeed.properties.name}}</a>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderer">
+                <th mat-header-cell *matHeaderCellDef> Besteller </th>
+                <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                    {{assignedRoadWorkNeed.properties.orderer.firstName}}
+                    {{assignedRoadWorkNeed.properties.orderer.lastName}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateCreated">
+                <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
+                <td mat-cell *matCellDef="let assignedRoadWorkNeed"> {{assignedRoadWorkNeed.properties.created |
+                    date:'dd.MM.yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="optRealYears">
+                <th mat-header-cell *matHeaderCellDef> Optimale Realisierung </th>
+                <td mat-cell *matCellDef="let assignedRoadWorkNeed"> {{assignedRoadWorkNeed.properties.finishOptimumFrom
+                    |
+                    date:'yyyy'}} - {{assignedRoadWorkNeed.properties.finishOptimumTo | date:'yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef> Zuweisung aufheben </th>
+                <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                    <mat-icon (click)="unAssignRoadWorkNeed(assignedRoadWorkNeed)"
+                        aria-label="Zuweisung aufheben" class="arrow_button">arrow_downward</mat-icon>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+        <mat-icon aria-label="Nicht zugewiesen" style="color: rgb(138,71,200);">link_off</mat-icon>
+        NICHT ZUGEWIESENE BED&Uuml;RFNISSE IN MASSNAHMENFL&Auml;CHE
+    </h2>
+    <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length === 0" style="margin-bottom: 3em;">Diese
+        Massnahme hat keine Bed&uuml;rfnisse in der Massnahmenfl&auml;che (die nicht bereits zugewiesen sind).</div>
+    <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
+        <table mat-table [dataSource]="needsOfActivityService.nonAssignedRoadWorkNeeds" class="mat-elevation-z2"
+            style="width: 100%">
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed"> <a
+                        href="need/{{nonAssignedRoadWorkNeed.properties.uuid}}">{{nonAssignedRoadWorkNeed.properties.name}}</a>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderer">
+                <th mat-header-cell *matHeaderCellDef> Besteller </th>
+                <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
+                    {{nonAssignedRoadWorkNeed.properties.orderer.firstName}}
+                    {{nonAssignedRoadWorkNeed.properties.orderer.lastName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateCreated">
+                <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
+                <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed"> {{nonAssignedRoadWorkNeed.properties.created |
+                    date:'dd.MM.yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="optRealYears">
+                <th mat-header-cell *matHeaderCellDef> Optimale Realisierung </th>
+                <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
+                    {{nonAssignedRoadWorkNeed.properties.finishOptimumFrom |
+                    date:'yyyy'}} - {{nonAssignedRoadWorkNeed.properties.finishOptimumTo | date:'yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef> Zuweisen </th>
+                <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
+                    <mat-icon (click)="assignRoadWorkNeed(nonAssignedRoadWorkNeed)"
+                        aria-label="Zuweisung entfernen" class="arrow_button">arrow_upward</mat-icon>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+        <mat-icon aria-label="Angemeldet" style="color: rgb(138,71,200);">app_registration</mat-icon>
+        MANUELL ANGEMELDETE BED&Uuml;RFNISSE
+    </h2>
+    <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length === 0" style="margin-bottom: 3em;">Diese
+        Massnahme hat keine weiteren angemeldeten Bed&uuml;rfnisse.</div>
+    <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
+        <table mat-table [dataSource]="needsOfActivityService.registeredRoadWorkNeeds" class="mat-elevation-z2"
+            style="width: 100%">
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                <td mat-cell *matCellDef="let registeredRoadWorkNeed"> <a
+                        href="need/{{registeredRoadWorkNeed.properties.uuid}}">{{registeredRoadWorkNeed.properties.name}}</a>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderer">
+                <th mat-header-cell *matHeaderCellDef> Besteller </th>
+                <td mat-cell *matCellDef="let registeredRoadWorkNeed">
+                    {{registeredRoadWorkNeed.properties.orderer.firstName}}
+                    {{registeredRoadWorkNeed.properties.orderer.lastName}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateCreated">
+                <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
+                <td mat-cell *matCellDef="let registeredRoadWorkNeed"> {{registeredRoadWorkNeed.properties.created |
+                    date:'dd.MM.yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="optRealYears">
+                <th mat-header-cell *matHeaderCellDef> Optimale Realisierung </th>
+                <td mat-cell *matCellDef="let registeredRoadWorkNeed">
+                    {{registeredRoadWorkNeed.properties.finishOptimumFrom
+                    |
+                    date:'yyyy'}} - {{registeredRoadWorkNeed.properties.finishOptimumTo | date:'yyyy'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef> Zuweisen </th>
+                <td mat-cell *matCellDef="let registeredRoadWorkNeed">
+                    <mat-icon (click)="assignRoadWorkNeed(registeredRoadWorkNeed)"
+                        aria-label="Zuweisung entfernen" class="arrow_button">arrow_upward</mat-icon>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
+        <mat-icon aria-label="Angemeldet" style="color: rgb(138,71,200);">add_task</mat-icon>
+        BED&Uuml;RFNIS F&Uuml;R DIESE MASSNAHME ANMELDEN
+    </h2>
+    <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds" class="mat-elevation-z2"
+        style="width: 100%">
 
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
-            <td mat-cell *matCellDef="let roadWorkNeed"> <a href="need/{{roadWorkNeed.properties.uuid}}">{{roadWorkNeed.properties.name}}</a> </td>
+            <td mat-cell *matCellDef="let roadWorkNeed"> <a
+                    href="need/{{roadWorkNeed.properties.uuid}}">{{roadWorkNeed.properties.name}}</a> </td>
         </ng-container>
 
         <ng-container matColumnDef="orderer">
             <th mat-header-cell *matHeaderCellDef> Besteller </th>
-            <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.orderer.firstName}} {{roadWorkNeed.properties.orderer.lastName}}</td>
+            <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.orderer.firstName}}
+                {{roadWorkNeed.properties.orderer.lastName}}</td>
         </ng-container>
 
         <ng-container matColumnDef="dateCreated">
@@ -18,15 +171,19 @@
                 date:'dd.MM.yyyy'}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="deleteAction">
-            <th mat-header-cell *matHeaderCellDef> Aktion </th>
-            <td mat-cell *matCellDef="let roadWorkNeedUuid">
-                <button (click)="releaseRoadWorkNeed(roadWorkNeedUuid.properties.uuid)" mat-button>ENTFERNEN</button>
-            </td>
+        <ng-container matColumnDef="optRealYears">
+            <th mat-header-cell *matHeaderCellDef> Optimale Realisierung </th>
+            <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.finishOptimumFrom |
+                date:'yyyy'}} - {{roadWorkNeed.properties.finishOptimumTo | date:'yyyy'}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef> Aktion </th>
+            <td mat-cell *matCellDef="let roadWorkNeedUuid">
+                <button (click)="registerRoadWorkNeed(roadWorkNeedUuid.properties.uuid)" mat-button>ANMELDEN</button>
+            </td>
+        </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
     </table>
 </div>

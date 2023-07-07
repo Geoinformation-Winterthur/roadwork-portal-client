@@ -9,7 +9,6 @@ import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { FormControl } from '@angular/forms';
-import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
@@ -54,6 +53,11 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.needsOfActivityService.assignedRoadWorkNeeds = [];
+    this.needsOfActivityService.nonAssignedRoadWorkNeeds = [];
+    this.needsOfActivityService.registeredRoadWorkNeeds = [];
+
     this.activatedRouteSubscription = this.activatedRoute.params
       .subscribe(params => {
         let idParamString: string = params['id'];
@@ -76,12 +80,27 @@ export class ActivityAttributesComponent implements OnInit {
                   rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
+                  this.needsOfActivityService.roadWorkActivityFeature = roadWorkActivity;
                   this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
                       .subscribe({
                         next: (roadWorkNeeds) => {
-                          this.needsOfActivityService.roadWorkNeeds = roadWorkNeeds;
+                          let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                          let nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                          let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                          for(let roadWorkNeed of roadWorkNeeds){
+                            if(roadWorkNeed.properties.activityRelationType === "assignedneed"){
+                              assignedRoadWorkNeeds.push(roadWorkNeed);
+                            } else if(roadWorkNeed.properties.activityRelationType === "nonassignedneed"){
+                              nonAssignedRoadWorkNeeds.push(roadWorkNeed);
+                            } else if(roadWorkNeed.properties.activityRelationType === "registeredneed"){
+                              registeredRoadWorkNeeds.push(roadWorkNeed);
+                            }
+                          }
+                          this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
+                          this.needsOfActivityService.nonAssignedRoadWorkNeeds = nonAssignedRoadWorkNeeds;
+                          this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
                         },
                         error: (error) => {
                         }
