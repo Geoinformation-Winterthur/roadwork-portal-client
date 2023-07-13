@@ -7,3 +7,8 @@
     flex-direction: column-reverse;
     align-items: center;  
 }
+
+
+.framing-icon-img {
+    position: absolute;
+}

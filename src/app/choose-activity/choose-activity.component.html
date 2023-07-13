@@ -41,7 +41,7 @@
   </div>
   <div fxLayout="row wrap padding">
     <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkActivity of roadWorkActivityFeaturesFiltered"
-      fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
+      fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50" style="margin: 0.5em;">
       <mat-card-header style="margin: 0.5em;">
         <mat-card-title>
           {{ roadWorkActivity.properties.name.slice(0, 20) }}
@@ -49,9 +49,10 @@
         </mat-card-title>
         <mat-card-subtitle>{{ roadWorkActivity.properties.costs }} CHF</mat-card-subtitle>
       </mat-card-header>
-      <div class="crosshair-frame" style="width: 100%;">
+      <div class="crosshair-frame">
+        <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
         <img mat-card-image class="map-img"
-          src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkActivity.geometry.coordinates[0].x - 10 }},{{ roadWorkActivity.geometry.coordinates[0].y - 5 }},{{ roadWorkActivity.geometry.coordinates[0].x + 10 }},{{ roadWorkActivity.geometry.coordinates[0].y + 5 }}&WIDTH=800&HEIGHT=400">
+          src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkActivity.geometry.coordinates[0].x - 160 }},{{ roadWorkActivity.geometry.coordinates[0].y - 80 }},{{ roadWorkActivity.geometry.coordinates[0].x + 160 }},{{ roadWorkActivity.geometry.coordinates[0].y + 80 }}&WIDTH=800&HEIGHT=400">
       </div>
       <mat-card-content style="margin: 0.5em;">
         <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />

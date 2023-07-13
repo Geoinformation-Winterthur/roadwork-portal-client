@@ -49,9 +49,10 @@
         </mat-card-title>
         <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
       </mat-card-header>
-      <div class="crosshair-frame" style="width: 100%;">
+      <div class="crosshair-frame">
+        <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
         <img mat-card-image class="map-img"
-          src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkNeed.geometry.coordinates[0].x - 10 }},{{ roadWorkNeed.geometry.coordinates[0].y - 5 }},{{ roadWorkNeed.geometry.coordinates[0].x + 10 }},{{ roadWorkNeed.geometry.coordinates[0].y + 5 }}&WIDTH=800&HEIGHT=400">
+          src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkNeed.geometry.coordinates[0].x - 160 }},{{ roadWorkNeed.geometry.coordinates[0].y - 80 }},{{ roadWorkNeed.geometry.coordinates[0].x + 160 }},{{ roadWorkNeed.geometry.coordinates[0].y + 80 }}&WIDTH=800&HEIGHT=400">
       </div>
       <mat-card-content style="margin: 0.5em;">
         <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />
