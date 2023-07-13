@@ -51,25 +51,97 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Raumkonflikt" style="color: darkgreen;">crop_rotate</mat-icon>
-            EVENTS MIT R&Auml;UMLICHEM, JEDOCH KEINEM ZEITLICHEN KONFLIKT
+            EVENTS MIT R&Auml;UMLICHER, JEDOCH KEINER ZEITLICHEN &Uuml;BERSCHNEIDUNG
         </h2>
-        <div>Hier werden Events gelistet, die zwar <i>im selben Raum</i> liegen, wie diese Baumassnahme,
+        <div>Hier werden Events gelistet, die zwar <i>im gleichen Raum</i> liegen, wie diese Baumassnahme,
             jedoch <i>zu einem anderen Zeitpunkt</i> stattfinden.</div>
-        <div *ngIf="0 === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+        <div *ngIf="eventsWithSpatialConflict.length === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
             Es sind zurzeit <i>keine Events</i> registriert, die <i>nur r&auml;mlich</i>,
             jedoch <i>nicht zeitlich im Konflikt</i> stehen zu dieser Baumassnahme.
+        </div>
+        <div *ngIf="eventsWithSpatialConflict.length !== 0">
+            <table mat-table [dataSource]="eventsWithSpatialConflict" class="mat-elevation-z2"
+                style="width: 100%">
+
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                    <td mat-cell *matCellDef="let eventWithSpatialConflict">
+                        <a routerLink="/events/{{eventWithSpatialConflict.properties.uuid}}">
+                            {{eventWithSpatialConflict.properties.name}}
+                        </a>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="startDate">
+                    <th mat-header-cell *matHeaderCellDef> Beginn </th>
+                    <td mat-cell *matCellDef="let eventWithSpatialConflict">
+                        {{eventWithSpatialConflict.properties.dateFrom |
+                        date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endDate">
+                    <th mat-header-cell *matHeaderCellDef> Ende </th>
+                    <td mat-cell *matCellDef="let eventWithSpatialConflict">
+                        {{eventWithSpatialConflict.properties.dateTo | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastModified">
+                    <th mat-header-cell *matHeaderCellDef> Zuletzt ver&auml;ndert </th>
+                    <td mat-cell *matCellDef="let eventWithSpatialConflict">
+                        {{eventWithSpatialConflict.properties.lastModified | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
         </div>
     </div>
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Zeitkonflikt" style="color: darkgreen;">history</mat-icon>
-            EVENTS MIT ZEITLICHEM, JEDOCH KEINEM R&Auml;UMLICHEN KONFLIKT
+            EVENTS MIT ZEITLICHER, JEDOCH KEINER R&Auml;UMLICHEN &Uuml;BERSCHNEIDUNG
         </h2>
-        <div>Hier werden Events gelistet, die zwar <i>zur selben Zeit</i> stattfinden wie diese
+        <div>Hier werden Events gelistet, die zwar <i>zur gleichen Zeit</i> stattfinden wie diese
             Baumassnahme, sich jedoch <i>an einem anderen Ort</i> befinden.</div>
-        <div *ngIf="0 === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
+        <div *ngIf="eventsWithTemporalConflict.length === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
             Es sind zurzeit <i>keine</i> Events registriert, die nur <i>zeitlich</i>,
-            jedoch <i>nicht r&auml;mlich</i> im Konflikt stehen zu dieser Baumassnahme.
+            jedoch <i>nicht r&auml;umlich</i> im Konflikt stehen zu dieser Baumassnahme.
+        </div>
+        <div *ngIf="eventsWithTemporalConflict.length !== 0">
+            <table mat-table [dataSource]="eventsWithTemporalConflict" class="mat-elevation-z2"
+                style="width: 100%">
+
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                    <td mat-cell *matCellDef="let eventWithTemporalConflict">
+                        <a routerLink="/events/{{eventWithTemporalConflict.properties.uuid}}">
+                            {{eventWithTemporalConflict.properties.name}}
+                        </a>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="startDate">
+                    <th mat-header-cell *matHeaderCellDef> Beginn </th>
+                    <td mat-cell *matCellDef="let eventWithTemporalConflict">
+                        {{eventWithTemporalConflict.properties.dateFrom |
+                        date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="endDate">
+                    <th mat-header-cell *matHeaderCellDef> Ende </th>
+                    <td mat-cell *matCellDef="let eventWithTemporalConflict">
+                        {{eventWithTemporalConflict.properties.dateTo | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="lastModified">
+                    <th mat-header-cell *matHeaderCellDef> Zuletzt ver&auml;ndert </th>
+                    <td mat-cell *matCellDef="let eventWithTemporalConflict">
+                        {{eventWithTemporalConflict.properties.lastModified | date:'dd.MM.yyyy'}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
         </div>
     </div>
 </div>

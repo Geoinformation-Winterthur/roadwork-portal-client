@@ -19,20 +19,27 @@ export class EventService {
     this.http = http;
   }
 
-  getEvents(id: string = "", summary: boolean = false, roadWorkActivityUuid: string = ""): Observable<EventFeature[]> {
+  getEvents(uuid: string = "", roadWorkActivityUuid: string = "", temporal: boolean = false,
+          spatial: boolean = false, summary: boolean = false): Observable<EventFeature[]> {
     let queryString = "/events/";
-    if((id !== null && id !== "")
+    if((uuid !== null && uuid !== "")
           || (roadWorkActivityUuid !== null && roadWorkActivityUuid !== "")
           || summary) {
       queryString += "?";
     }
-    if(id !== null && id !== ""){
-      queryString += "uuid="+ id;
+    if(uuid !== null && uuid !== ""){
+      queryString += "uuid="+ uuid;
       if(summary) {
         queryString += "&";
       }
     } else if(roadWorkActivityUuid !== null && roadWorkActivityUuid !== ""){
       queryString += "roadworkactivityuuid="+ roadWorkActivityUuid;
+      if(temporal) {
+        queryString += "&temporal=true";
+      }
+      if(spatial) {
+        queryString += "&spatial=true";
+      }
       if(summary) {
         queryString += "&";
       }
