@@ -10,6 +10,8 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-choose-need',
@@ -30,14 +32,17 @@ export class ChooseNeedComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
+  private snckBar: MatSnackBar;
   private router: Router;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    roadWorkActivityService: RoadWorkActivityService, router: Router) {
+    roadWorkActivityService: RoadWorkActivityService, router: Router,
+      snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
     this.router = router;
+    this.snckBar = snckBar;
   }
 
   ngOnInit(): void {
@@ -96,6 +101,28 @@ export class ChooseNeedComponent implements OnInit {
             return false;
           }
         });
+  }
+
+  delete(uuid: string) {
+    this.roadWorkNeedService.deleteRoadWorkNeed(uuid)
+      .subscribe({
+        next: (errorMessage) => {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+          if (errorMessage && errorMessage.errorMessage &&
+                errorMessage.errorMessage.trim().length !== 0) {
+            this.snckBar.open(errorMessage.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.roadWorkNeedFeatures = this.roadWorkNeedFeatures
+              .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);
+            this.roadWorkNeedFeaturesFiltered = this.roadWorkNeedFeaturesFiltered
+              .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);
+          }
+        },
+        error: (error) => {
+        }
+      });
   }
 
 }

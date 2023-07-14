@@ -81,7 +81,6 @@ export class ChooseEventsComponent implements OnInit {
         error: (error) => {
         }
       });
-
   }
 
 }
