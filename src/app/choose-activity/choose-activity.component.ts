@@ -31,8 +31,8 @@ export class ChooseActivityComponent implements OnInit {
   private snckBar: MatSnackBar;
 
   constructor(roadWorkActivityService: RoadWorkActivityService,
-          userService: UserService,
-          snckBar: MatSnackBar) {
+    userService: UserService,
+    snckBar: MatSnackBar) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
     this.snckBar = snckBar;
@@ -47,7 +47,7 @@ export class ChooseActivityComponent implements OnInit {
     this.roadWorkActivityService.getRoadWorkActivities().subscribe({
       next: (roadWorkActivities) => {
 
-        for(let roadWorkActivity of roadWorkActivities){
+        for (let roadWorkActivity of roadWorkActivities) {
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
           blowUpPoly.coordinates = roadWorkActivity.geometry.coordinates;
           roadWorkActivity.geometry = blowUpPoly;
@@ -62,25 +62,20 @@ export class ChooseActivityComponent implements OnInit {
 
   }
 
-  deleteRoadworkActivity(uuid: string){
+  deleteRoadworkActivity(uuid: string) {
     this.roadWorkActivityService.deleteRoadWorkActivity(uuid).subscribe({
       next: (errorMessage) => {
-        if(errorMessage != null && errorMessage.errorMessage != null &&
-           errorMessage.errorMessage.trim().length !== 0)
-        {
+        if (errorMessage != null && errorMessage.errorMessage != null &&
+          errorMessage.errorMessage.trim().length !== 0) {
           ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
           this.snckBar.open(errorMessage.errorMessage, "", {
             duration: 4000
           });
         } else {
-                this.roadWorkActivityFeatures.filter((roadWorkActivity: RoadWorkActivityFeature,
-                  index: number, featuresArray: RoadWorkActivityFeature[]) => {
-            if(roadWorkActivity.properties.uuid === uuid){
-              featuresArray.splice(index, 1);
-              return true;
-            }
-            return false;
-          });
+          this.roadWorkActivityFeatures = this.roadWorkActivityFeatures
+            .filter((roadWorkActivityFeature) => uuid !== roadWorkActivityFeature.properties.uuid);
+          this.roadWorkActivityFeaturesFiltered = this.roadWorkActivityFeaturesFiltered
+            .filter((roadWorkActivityFeature) => uuid !== roadWorkActivityFeature.properties.uuid);
         }
       },
       error: (error) => {
@@ -92,13 +87,13 @@ export class ChooseActivityComponent implements OnInit {
     this.roadWorkActivityFeaturesFiltered =
       this.roadWorkActivityFeatures
         .filter(roadWorkActivityFeature => {
-          if(roadWorkActivityFeature.properties && roadWorkActivityFeature.properties.name
-                && roadWorkActivityFeature.properties.finishFrom){
+          if (roadWorkActivityFeature.properties && roadWorkActivityFeature.properties.name
+            && roadWorkActivityFeature.properties.finishFrom) {
             let roadWorkActivityName: string = this.chosenActivityName.trim().toLowerCase();
             let finishFrom: Date = new Date(roadWorkActivityFeature.properties.finishFrom);
             return (roadWorkActivityName === ''
-                    || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
-                    && finishFrom.getFullYear() === this.chosenActivityYearFrom;
+              || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
+              && finishFrom.getFullYear() === this.chosenActivityYearFrom;
           } else {
             return false;
           }

@@ -120,7 +120,8 @@
                 </div>
             </mat-tab>
             <mat-tab label="Bed&uuml;rfnisse">
-                <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"></app-needs-of-activity>
+                <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"
+                    [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
             <mat-tab label="Events">
                 <app-events-at-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"></app-events-at-activity>

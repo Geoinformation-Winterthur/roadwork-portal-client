@@ -20,6 +20,9 @@ export class NeedsOfActivityComponent {
   @Input()
   roadWorkActivityUuid?: string;
 
+  @Input()
+  isInEditingMode: boolean = false;
+
   needsOfActivityService: NeedsOfActivityService;
 
   allRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];

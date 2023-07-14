@@ -70,6 +70,7 @@ export class ActivityAttributesComponent implements OnInit {
           let plus50Years: Date = new Date();
           plus50Years.setFullYear(plus50Years.getFullYear() + 50);
           this.roadWorkActivityFeature.properties.finishTo = plus50Years;
+          this.roadWorkActivityFeature.properties.isEditingAllowed = true;
 
         } else {
 

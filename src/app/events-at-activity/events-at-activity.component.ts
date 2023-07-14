@@ -28,34 +28,35 @@ export class EventsAtActivityComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.eventService
-      .getEvents("", this.roadWorkActivityUuid, true, true, false)
-      .subscribe({
-        next: (events) => {
-          this.eventsWithSpatioTemporalConflict = events;
-        },
-        error: (error) => {
-        }
-      });
-    this.eventService
-      .getEvents("", this.roadWorkActivityUuid, true, false, false)
-      .subscribe({
-        next: (events) => {
-          this.eventsWithTemporalConflict = events;
-        },
-        error: (error) => {
-        }
-      });
-    this.eventService
-      .getEvents("", this.roadWorkActivityUuid, false, true, false)
-      .subscribe({
-        next: (events) => {
-          this.eventsWithSpatialConflict = events;
-        },
-        error: (error) => {
-        }
-      });
-
+    if (this.roadWorkActivityUuid) {
+      this.eventService
+        .getEvents("", this.roadWorkActivityUuid, true, true, false)
+        .subscribe({
+          next: (events) => {
+            this.eventsWithSpatioTemporalConflict = events;
+          },
+          error: (error) => {
+          }
+        });
+      this.eventService
+        .getEvents("", this.roadWorkActivityUuid, true, false, false)
+        .subscribe({
+          next: (events) => {
+            this.eventsWithTemporalConflict = events;
+          },
+          error: (error) => {
+          }
+        });
+      this.eventService
+        .getEvents("", this.roadWorkActivityUuid, false, true, false)
+        .subscribe({
+          next: (events) => {
+            this.eventsWithSpatialConflict = events;
+          },
+          error: (error) => {
+          }
+        });
+    }
   }
 
 }
