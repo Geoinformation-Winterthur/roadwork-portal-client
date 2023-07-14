@@ -24,6 +24,8 @@ export class WelcomeComponent implements OnInit {
   roadWorkActivityService: RoadWorkActivityService;
   appVersion: string = "2023.07.05";
 
+  displayedColumns: string[] = ['name', 'manager', 'created', 'period'];
+
   constructor(userService: UserService, roadWorkActivityService: RoadWorkActivityService) {
     this.userService = userService;
     this.roadWorkActivityService = roadWorkActivityService;
