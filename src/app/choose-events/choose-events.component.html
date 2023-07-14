@@ -23,12 +23,11 @@
     </div>
     <div fxLayout="row wrap padding">
       <mat-card class="maincard mat-elevation-z2" *ngFor="let event of eventFeaturesFiltered"
-        fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
+        fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50" style="margin: 0.5em;">
         <mat-card-header style="margin: 0.5em;">
           <div style="width: 80%; margin-right: 1em;">
             <mat-card-title>
-            {{ event.properties.name.slice(0, 20) }}
-            <span *ngIf="event.properties.name.length > 20">...</span>
+            {{ event.properties.name.slice(0, 20) }}<span *ngIf="event.properties.name.length > 20">...</span>
           </mat-card-title>
           <mat-card-subtitle>{{ event.properties.dateFrom | date:"dd.MM.yyyy" }} - {{ event.properties.dateTo | date:"dd.MM.yyyy" }}</mat-card-subtitle>
           </div>

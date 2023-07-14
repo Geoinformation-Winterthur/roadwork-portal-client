@@ -1,3 +1,8 @@
+.maincard {
+    min-width: 380px;
+    margin: 0.5em;
+}
+
 .add-project-button-container {
     position: fixed;
     bottom: 2em;
