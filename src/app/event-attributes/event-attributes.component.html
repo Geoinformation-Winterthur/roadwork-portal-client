@@ -40,8 +40,6 @@
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Eingetragen von: <b>{{eventFeature.properties.name}}</b>
-                                </p>
                                 <p>Erstellt: <b>{{eventFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
                                 <p>
                                     Zuletzt ge&auml;ndert: <b>{{eventFeature.properties.lastModified |
@@ -59,19 +57,21 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Beginn</mat-label>
-                                    <input matInput [ngModel]="eventFeature.properties.dateFrom"
-                                        [matDatepicker]="finishEarlyFrom" (focusout)="update()"
+                                    <input matInput [(ngModel)]="eventFeature.properties.dateFrom"
+                                        [formControl]="dateFromControl"
+                                        [matDatepicker]="dateFrom" (dateChange)="update()"
                                         [disabled]="!eventFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishEarlyFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyFrom"></mat-datepicker-toggle>
+                                    <mat-datepicker #dateFrom></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="dateFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Ende</mat-label>
-                                    <input matInput [ngModel]="eventFeature.properties.dateTo"
-                                        [matDatepicker]="finishEarlyTo"
+                                    <input matInput [(ngModel)]="eventFeature.properties.dateTo"
+                                        [formControl]="dateToControl"
+                                        [matDatepicker]="dateTo" (dateChange)="update()"
                                         [disabled]="!eventFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishEarlyTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyTo"></mat-datepicker-toggle>
+                                    <mat-datepicker #dateTo></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="dateTo"></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>

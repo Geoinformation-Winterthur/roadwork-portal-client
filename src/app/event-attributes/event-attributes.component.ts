@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { EventFeature } from 'src/model/event-feature';
 import { EventService } from 'src/services/event.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-event-attributes',
@@ -23,6 +24,9 @@ export class EventAttributesComponent implements OnInit {
   eventFeature?: EventFeature;
   editor: User = new User();
   editorOrgUnitName: string = "";
+
+  dateFromControl: FormControl = new FormControl();
+  dateToControl: FormControl = new FormControl();
 
   userService: UserService;
 
@@ -48,7 +52,7 @@ export class EventAttributesComponent implements OnInit {
         if (idParamString == "new") {
 
           this.eventFeature = EventAttributesComponent.
-                _createNewEventFeature(this.userService.getLocalUser());
+            _createNewEventFeature();
 
         } else {
 
@@ -102,6 +106,8 @@ export class EventAttributesComponent implements OnInit {
 
   update() {
     if (this.eventFeature && this.eventFeature.properties.uuid) {
+      this.eventFeature.properties.dateFrom = this.dateFromControl.value;
+      this.eventFeature.properties.dateTo = this.dateToControl.value;
       this.eventService.updateEvent(this.eventFeature)
         .subscribe({
           next: (eventFeature) => {
@@ -124,7 +130,7 @@ export class EventAttributesComponent implements OnInit {
     this.activatedRouteSubscription.unsubscribe();
   }
 
-  private static _createNewEventFeature(localUser: User): EventFeature {
+  private static _createNewEventFeature(): EventFeature {
 
     let eventFeature: EventFeature = new EventFeature();
     eventFeature.properties.name = "";
@@ -132,6 +138,7 @@ export class EventAttributesComponent implements OnInit {
     eventFeature.properties.lastModified = new Date();
     eventFeature.properties.dateFrom = new Date();
     eventFeature.properties.dateTo = new Date();
+    eventFeature.properties.isEditingAllowed = true;
 
     return eventFeature;
   }

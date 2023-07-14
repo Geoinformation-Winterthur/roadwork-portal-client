@@ -101,7 +101,7 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
-                                        [matDatepicker]="finishLateFrom"
+                                        [matDatepicker]="finishLateFrom" (dateChange)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishLateFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
@@ -109,7 +109,7 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
-                                        [matDatepicker]="finishLateTo"
+                                        [matDatepicker]="finishLateTo" (dateChange)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishLateTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>

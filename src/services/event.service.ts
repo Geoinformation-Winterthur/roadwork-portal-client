@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { EventFeature } from 'src/model/event-feature';
+import { ErrorMessage } from 'src/model/error-message';
 
 @Injectable({
   providedIn: 'root'
@@ -54,13 +55,19 @@ export class EventService {
 
    addEvent(event?: EventFeature): Observable<any> {
     let result: Observable<any> =
-      this.http.post(environment.apiUrl + "/event/", event);
+      this.http.post(environment.apiUrl + "/events/", event);
     return result;
   }
 
    updateEvent(event?: EventFeature): Observable<any> {
     let result: Observable<any> =
-      this.http.put(environment.apiUrl + "/event/", event);
+      this.http.put(environment.apiUrl + "/events/", event);
+    return result;
+  }
+
+  public deleteEvent(uuid: string): Observable<ErrorMessage> {
+    let result: Observable<ErrorMessage> =
+      this.http.delete(environment.apiUrl + "/events?uuid=" + uuid) as Observable<ErrorMessage>;
     return result;
   }
 

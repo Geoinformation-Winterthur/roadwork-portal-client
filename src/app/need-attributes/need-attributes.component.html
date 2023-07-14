@@ -144,7 +144,7 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyFrom"
-                                        [matDatepicker]="finishEarlyFrom" (focusout)="update()"
+                                        [matDatepicker]="finishEarlyFrom" (dateChange)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishEarlyFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishEarlyFrom"></mat-datepicker-toggle>
@@ -152,7 +152,8 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyTo"
-                                        [matDatepicker]="finishEarlyTo" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        [matDatepicker]="finishEarlyTo" (dateChange)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishEarlyTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishEarlyTo"></mat-datepicker-toggle>
                                 </mat-form-field>
@@ -169,14 +170,16 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumFrom"
-                                        [matDatepicker]="finishOptimumFrom" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        [matDatepicker]="finishOptimumFrom" (dateChange)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishOptimumFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishOptimumFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumTo"
-                                        [matDatepicker]="finishOptimumTo" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        [matDatepicker]="finishOptimumTo" (dateChange)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishOptimumTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishOptimumTo"></mat-datepicker-toggle>
                                 </mat-form-field>
@@ -193,14 +196,16 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateFrom"
-                                        [matDatepicker]="finishLateFrom" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        [matDatepicker]="finishLateFrom" (dateChange)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishLateFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateTo"
-                                        [matDatepicker]="finishLateTo" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        [matDatepicker]="finishLateTo" (dateChange)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishLateTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>
                                 </mat-form-field>

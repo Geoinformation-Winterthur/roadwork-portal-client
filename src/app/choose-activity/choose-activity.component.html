@@ -58,7 +58,7 @@
         <div>
           <mat-chip-list>
             <mat-chip *ngIf="roadWorkActivity.properties.status.code === 'inwork'"
-              class="chip-coordinated">In&nbsp;Arbeit</mat-chip>
+              class="chip-coordinated">In&nbsp;Bearbeitung</mat-chip>
             <mat-chip *ngIf="roadWorkActivity.properties.status.code === 'inconsult'"
               style="background-color: rgb(221, 213, 226)">Vernehmlassung</mat-chip>
           </mat-chip-list>
@@ -91,7 +91,7 @@
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
           [routerLink]="['/activities', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
-        <button style="background-color: rgb(200, 71, 168); color: white;margin-top: 1em;" mat-button
+        <button style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button
           (click)="deleteRoadworkActivity(roadWorkActivity.properties.uuid)">L&Ouml;SCHEN</button>
       </mat-card-actions>
     </mat-card>

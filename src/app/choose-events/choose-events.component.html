@@ -25,11 +25,19 @@
       <mat-card class="maincard mat-elevation-z2" *ngFor="let event of eventFeaturesFiltered"
         fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
         <mat-card-header style="margin: 0.5em;">
-          <mat-card-title>
+          <div style="width: 80%; margin-right: 1em;">
+            <mat-card-title>
             {{ event.properties.name.slice(0, 20) }}
             <span *ngIf="event.properties.name.length > 20">...</span>
           </mat-card-title>
-          <mat-card-subtitle>Event eingegeben am: {{ event.properties.created | date:"dd.MM.yyyy" }}</mat-card-subtitle>
+          <mat-card-subtitle>{{ event.properties.dateFrom | date:"dd.MM.yyyy" }} - {{ event.properties.dateTo | date:"dd.MM.yyyy" }}</mat-card-subtitle>
+          </div>
+          <div>
+            <mat-chip-list>
+              <mat-chip *ngIf="!event.properties.isEditingAllowed"
+                class="chip-not-coordinated">importiert</mat-chip>
+            </mat-chip-list>
+          </div>
         </mat-card-header>
         <div class="crosshair-frame">
           <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
@@ -48,19 +56,14 @@
             Zeige im WinWebGIS</a>
           <br />
           <br />
-          Letzte &Auml;nderung: {{ event.properties.lastModified | date:"dd.MM.yyyy" }}
-          <br />
-          <br />
-          <mat-chip-list>
-            <mat-chip class="chip-done">Zeitraum: {{ event.properties.dateFrom | date:"dd.MM.yyyy" }} - {{ event.properties.dateTo | date:"dd.MM.yyyy" }}
-            </mat-chip>
-          </mat-chip-list>
-          <br />
         </mat-card-content>
         <mat-divider></mat-divider>
         <mat-card-actions style="margin: 0.5em;">
           <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
             [routerLink]="['/events', event.properties.uuid]">&Ouml;FFNEN</button>
+          <button *ngIf="event.properties.isEditingAllowed" (click)="delete(event.properties.uuid)"
+                  style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
+              L&Ouml;SCHEN</button>
         </mat-card-actions>
       </mat-card>
     </div>
