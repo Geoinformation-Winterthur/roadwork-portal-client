@@ -71,14 +71,14 @@
                                 <form class="choose_user_role_form">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Status</mat-label>
-                                        <mat-select [formControl]="roadWorkActivityStatusEnumControl"  (focusout)="update()"
+                                        <mat-select [formControl]="roadWorkActivityStatusEnumControl"
                                             (selectionChange)='onRoadWorkActivityStatusEnumChange()'
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option value="inwork">in Bearbeitung</mat-option>
+                                            <mat-option value="inconsult">in Vernehmlassung</mat-option>
+                                            <mat-option value="provfixed">prov. festgesetzt</mat-option>
                                             <mat-option value="deffixed">def. festgesetzt</mat-option>
                                             <mat-option value="excuted">ausgef&uuml;hrt</mat-option>
-                                            <mat-option value="inconsult">in Vernehmlassung</mat-option>
-                                            <mat-option value="inwork">in Bearbeitung</mat-option>
-                                            <mat-option value="provfixed">prov. festgesetzt</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>

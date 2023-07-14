@@ -86,8 +86,8 @@
                                     <mat-chip-list *ngIf="userService.getLocalUser().role.code !== 'territorymanager'">
                                         <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'notcoord'"
                                             class="chip-not-coordinated">nicht koordiniert</mat-chip>
-                                        <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'inwork'"
-                                            class="chip-coordinated">in Bearbeitung</mat-chip>
+                                        <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'inconsult'"
+                                            style="background-color: rgb(221, 213, 226)">In Vernehmlassung</mat-chip>
                                         <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'coordinated'"
                                             class="chip-coordinated">koordiniert</mat-chip>
                                         <mat-chip *ngIf="roadWorkNeedFeature.properties.status.code === 'provfixed'"

@@ -18,6 +18,8 @@ export class ErrorMessageDictionary {
              "Es wurde keine gültige UUID empfangen.",
              "Die Fläche des Baubedürfnisses ist grösser als die zulässige Maximalgrösse.",
              "Der zugewiesene Benutzer ist kein Gebietsmanager. Zuweisung abgebrochen.",
-             "Der Gebietsmanager kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist."
+             "Der Gebietsmanager kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist.",
+             "Das Datum 'Realisierung von' darf nicht nach dem Datum 'Realisierung bis' liegen.",
+             "Es wurde kein Statuscode empfangen."
             ];
 }

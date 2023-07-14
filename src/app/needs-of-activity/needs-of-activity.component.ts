@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { Status } from 'src/model/status';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 
@@ -56,6 +57,9 @@ export class NeedsOfActivityComponent {
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "assignedneed";
+    let status: Status = new Status();
+    status.code = "coordinated";
+    roadWorkNeed.properties.status = status;
     roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({

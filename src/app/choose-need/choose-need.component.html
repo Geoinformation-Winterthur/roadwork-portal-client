@@ -53,8 +53,8 @@
         <div>
           <mat-chip-list>
             <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'notcoord'" class="chip-not-coordinated">nicht&nbsp;koord.</mat-chip>
-            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'"
-              class="chip-coordinated">koordiniert</mat-chip>
+            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'" class="chip-coordinated">koordiniert</mat-chip>
+            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'inconsult'" style="background-color: rgb(221, 213, 226)">Vernehmlassung</mat-chip>
           </mat-chip-list>
       </div>
       </mat-card-header>

@@ -149,8 +149,9 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   onRoadWorkActivityStatusEnumChange() {
-    if (this.roadWorkActivityFeature) {
+    if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
+      this.update();
     }
   }
 
