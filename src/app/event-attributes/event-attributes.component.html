@@ -20,7 +20,7 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
-                            <p *ngIf="eventFeature.properties.uuid">UUID:
+                            <p *ngIf="eventFeature.properties.uuid" style="margin-bottom:2em;">UUID:
                                 <b>{{eventFeature.properties.uuid}}</b>
                             </p>
                             <p *ngIf="!eventFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
@@ -46,7 +46,13 @@
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
                             </div>
-                        </mat-card-content>
+                            <div style="margin-top: 1em;">
+                                <mat-chip-list>
+                                    <mat-chip *ngIf="!eventFeature.properties.isEditingAllowed"
+                                        class="chip-not-coordinated">importiert</mat-chip>
+                                </mat-chip-list>
+                            </div>    
+                    </mat-card-content>
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
@@ -58,17 +64,15 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Beginn</mat-label>
                                     <input matInput [(ngModel)]="eventFeature.properties.dateFrom"
-                                        [formControl]="dateFromControl"
-                                        [matDatepicker]="dateFrom" (dateChange)="update()"
-                                        [disabled]="!eventFeature.properties.isEditingAllowed">
+                                        [formControl]="dateFromControl" [matDatepicker]="dateFrom"
+                                        (dateChange)="update()" [disabled]="!eventFeature.properties.isEditingAllowed">
                                     <mat-datepicker #dateFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="dateFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Ende</mat-label>
                                     <input matInput [(ngModel)]="eventFeature.properties.dateTo"
-                                        [formControl]="dateToControl"
-                                        [matDatepicker]="dateTo" (dateChange)="update()"
+                                        [formControl]="dateToControl" [matDatepicker]="dateTo" (dateChange)="update()"
                                         [disabled]="!eventFeature.properties.isEditingAllowed">
                                     <mat-datepicker #dateTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="dateTo"></mat-datepicker-toggle>

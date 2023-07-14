@@ -1,3 +1,4 @@
+<div *ngIf="eventFeat?.properties?.isEditingAllowed">
 <button *ngIf="!isInEditingMode" mat-button class="edit_geom_button" (click)="startEditing()"
     style="margin: 1em;color:aliceblue;background-color: rgb(138,71,200);">
     EVENT NEU ZEICHNEN
@@ -10,4 +11,5 @@
     style="margin: 1em;border-style: solid;border-width: 1px;color:gray;">
     <mat-icon aria-label="Hilfe">question_mark</mat-icon>
 </button>
+</div>
 <div id="edit_event_map" class="edit-event-map"></div>
