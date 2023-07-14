@@ -3,8 +3,8 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-  <h1>Baubed&uuml;rfnisse<span *ngIf="chosenNeedYearOptTo" style="font-weight: normal;"> / Realisierungsbeginn
-      {{chosenNeedYearOptTo}}</span></h1>
+  <h1>Baubed&uuml;rfnisse<span *ngIf="chosenNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
+      {{chosenNeedYearOptFrom}}</span></h1>
   <div class="add-need-button-container">
     <button mat-fab [routerLink]="['/needs', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
       <mat-icon aria-label="+">add</mat-icon>
@@ -43,11 +43,20 @@
     <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkNeed of roadWorkNeedFeaturesFiltered"
       fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
       <mat-card-header style="margin: 0.5em;">
+        <div style="width: 80%; margin-right: 1em;">
         <mat-card-title>
           {{ roadWorkNeed.properties.name.slice(0, 20) }}
           <span *ngIf="roadWorkNeed.properties.name.length > 20">...</span>
         </mat-card-title>
         <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
+      </div>
+        <div>
+          <mat-chip-list>
+            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'notcoord'" class="chip-not-coordinated">nicht&nbsp;koord.</mat-chip>
+            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'"
+              class="chip-coordinated">koordiniert</mat-chip>
+          </mat-chip-list>
+      </div>
       </mat-card-header>
       <div class="crosshair-frame">
         <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
@@ -55,42 +64,32 @@
           src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkNeed.geometry.coordinates[0].x - 160 }},{{ roadWorkNeed.geometry.coordinates[0].y - 80 }},{{ roadWorkNeed.geometry.coordinates[0].x + 160 }},{{ roadWorkNeed.geometry.coordinates[0].y + 80 }}&WIDTH=800&HEIGHT=400">
       </div>
       <mat-card-content style="margin: 0.5em;">
-        <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />
+        <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span>
+        <div style="margin-top: 2em;margin-bottom: 2em;">
         <a
           href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
-          Zeige im Stadtplan Winterthur</a>
-        <br />
-        <br />
-        <a
-          href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
-          Zeige im WinWebGIS</a>
-        <br />
-        <br />
-        <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
-          <a routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}'>Zur Baumassnahme</a>
-          <br />
-          <br />
+          Im Stadtplan</a> <a
+          href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+          style="margin: 1em;">Im WinWebGIS</a> <span *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
+        </span>
+      </div>
+        <mat-divider></mat-divider>
+        <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" style="padding-top: 1em;padding-bottom: 1em;">
+          <mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp;<a routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zur Baumassnahme</a>
         </div>
-        Eingereicht am: {{ roadWorkNeed.properties.created | date:"dd.MM.yyyy" }}
-        <br />
-        <br />
-        <mat-chip-list>
-          <mat-chip class="chip-done">Bis: {{ roadWorkNeed.properties.finishOptimumTo | date:"dd.MM.yyyy" }}
-          </mat-chip>
-          <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'not_coordinated'" class="chip-not-coordinated">Nicht
-            koordiniert</mat-chip>
-          <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'"
-            class="chip-coordinated">koordiniert</mat-chip>
-        </mat-chip-list>
-        <br />
+        <div
+          *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
+          style="margin: 1em;">
+          <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
+            (click)="createNewActivityFromNeed(roadWorkNeed)"><mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp; NEUE BAUMASSNAHME</button>
+        </div>  
       </mat-card-content>
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
           [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
-        <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
-          *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
-          (click)="createNewActivityFromNeed(roadWorkNeed)">NEUE BAUMASSNAHME</button>
+          <button style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
+            L&Ouml;SCHEN</button>
       </mat-card-actions>
     </mat-card>
   </div>

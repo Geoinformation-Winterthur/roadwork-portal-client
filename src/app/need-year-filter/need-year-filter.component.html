@@ -1,3 +1,4 @@
-<span style="margin-left: 2em;">Opt. Real. bis</span>
-<mat-slider style="margin-left: 2em;width: 200%;" (change)="filterYears()" [(ngModel)]="this.chooseNeedComponent.chosenNeedYearOptTo" [thumbLabel]="sliderThumbLabel"
-  [min]="sliderMin" [max]="sliderMax" [step]="sliderStep"></mat-slider>
+<mat-form-field>
+  <input matInput maxlength="4" placeholder="Opt. Real. von (Jahr)..." type="number"
+    [(ngModel)]="chooseNeedComponent.chosenNeedYearOptFrom" (change)="filterYears()" />
+</mat-form-field>
