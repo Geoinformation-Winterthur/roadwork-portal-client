@@ -192,7 +192,7 @@ export class ManagementAreasComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.snackBar.open("Baustellengeometrie konnte NICHT gespeichert werden", "", {
+          this.snackBar.open("Gebietsmanager-Flächen konnten NICHT geladen werden", "", {
             duration: 4000,
           });
         }

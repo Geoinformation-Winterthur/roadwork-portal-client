@@ -177,30 +177,57 @@ export class UserService implements CanActivate {
         return false;
       }
     } else if (accessRestriction === 'territorymanager') {
-      // Eventmanager and orderer are not allowed to do
-      // what the territorymanager is allowed to do:
-      if (userRole === 'eventmanager') {
-        return false;
-      } else if (userRole === 'orderer') {
-        return false;
-      } else {
+      // Only territorymanager and administrator are allowed
+      // to do what the territorymanager is allowed to do:
+      if (userRole === 'territorymanager') {
         return true;
+      } else if (userRole === 'administrator') {
+        return true;
+      } else {
+        return false;
       }
     } else if (accessRestriction === 'orderer') {
-      // Eventmanager and trafficmaanger are not allowed
-      // to do what the orderer is allowed to do:
-      if (userRole === 'eventmanager') {
-        return false;
-      } else {
+      // Only orderer, territorymanager and administrator
+      // are allowed to do what the orderer is allowed
+      // to do:
+      if (userRole === 'orderer') {
         return true;
+      } else if (userRole === 'territorymanager') {
+        return true;
+      } else if (userRole === 'administrator') {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (accessRestriction === 'trafficmanager') {
+      // Orderer, trafficmanager, territorymanager and administrator
+      // are allowed to do what the trafficmanager is allowed to do:
+      if (userRole === 'orderer') {
+        return true;
+      } else if (userRole === 'trafficmanager') {
+        return true;
+      } else if (userRole === 'territorymanager') {
+        return true;
+      } else if (userRole === 'administrator') {
+        return true;
+      } else {
+        return false;
       }
     } else if (accessRestriction === 'eventmanager') {
-      // Only orderer is not allowed to do
-      // what the eventmanager is allowed to do:
-      if (userRole === 'orderer') {
-        return false;
-      } else {
+      // All roles are allowed to do what the
+      // eventmanager is allowed to do:
+      if (userRole === 'eventmanager') {
         return true;
+      } else if (userRole === 'orderer') {
+        return true;
+      } else if (userRole === 'trafficmanager') {
+        return true;
+      } else if (userRole === 'territorymanager') {
+        return true;
+      } else if (userRole === 'administrator') {
+        return true;
+      } else {
+        return false;
       }
     } else {
       // if nothing fits, restrict access:

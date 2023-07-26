@@ -61,7 +61,7 @@
                         <mat-icon aria-label="Baubed&uuml;rfnisse">tips_and_updates</mat-icon>&nbsp;<span i18n>Baubed&uuml;rfnisse</span>
                     </a>
                     <a mat-list-item routerLink='/activities' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('orderer')">
+                            *ngIf="userService.hasUserAccess('trafficmanager')">
                         <mat-icon aria-label="Baumassnahmen">engineering</mat-icon>&nbsp;<span i18n>Baumassnahmen</span>
                     </a>
                     <a mat-list-item routerLink='/events' (click)="toggleSideNav($event)"
