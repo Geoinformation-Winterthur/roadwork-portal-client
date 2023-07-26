@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { RoadWorkNeedService } from './roadwork-need.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,5 +11,35 @@ export class NeedsOfActivityService {
   public assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
   public nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
   public registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+
+  private roadWorkNeedService: RoadWorkNeedService;
+
+  constructor(roadWorkNeedService: RoadWorkNeedService) {
+    this.roadWorkNeedService = roadWorkNeedService;
+  }
+
+  updateIntersectingRoadWorkNeeds(roadWorkActivityUuid: string) {
+    this.roadWorkNeedService.getIntersectingRoadWorkNeeds(roadWorkActivityUuid)
+      .subscribe({
+        next: (roadWorkNeeds) => {
+          this.nonAssignedRoadWorkNeeds = [];
+          for (let roadWorkNeed of roadWorkNeeds) {
+            if (!this.assignedRoadWorkNeeds
+              .find(assignedRoadWorkNeed => assignedRoadWorkNeed.properties.uuid == roadWorkNeed.properties.uuid)) {
+              this.nonAssignedRoadWorkNeeds.push(roadWorkNeed);
+            }
+          }
+          for (let regRoadWorkNeed of this.registeredRoadWorkNeeds) {
+            if (!this.nonAssignedRoadWorkNeeds
+              .find(nonAssignedRoadWorkNeed => nonAssignedRoadWorkNeed.properties.uuid == regRoadWorkNeed.properties.uuid)) {
+              this.nonAssignedRoadWorkNeeds.push(regRoadWorkNeed);
+              this.registeredRoadWorkNeeds.filter(regRoadWorkNeedTemp => regRoadWorkNeed.properties.uuid !== regRoadWorkNeedTemp.properties.uuid)
+            }
+          }
+        },
+        error: (error) => {
+        }
+      });
+  }
 
 }

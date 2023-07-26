@@ -55,6 +55,9 @@ export class NeedsOfActivityComponent {
       error: (error) => {
       }
     });
+    if(this.roadWorkActivityUuid){
+      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+    }
   }
 
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
@@ -95,8 +98,7 @@ export class NeedsOfActivityComponent {
 
   unAssignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
-    roadWorkNeed.properties.activityRelationType = "nonassignedneed";
-    this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
+    this.roadWorkNeedService.deleteRoadWorkNeed(roadWorkNeed.properties.uuid, true)
       .subscribe({
         next: (errorMessage) => {
           if (errorMessage != null && errorMessage.errorMessage != null &&
@@ -107,13 +109,13 @@ export class NeedsOfActivityComponent {
               duration: 4000
             });
           } else {
-            let nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[]
-              = this.needsOfActivityService.nonAssignedRoadWorkNeeds.filter(() => true);
+            roadWorkNeed.properties.activityRelationType = "";
             this.needsOfActivityService.assignedRoadWorkNeeds =
               this.needsOfActivityService.assignedRoadWorkNeeds
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
-            nonAssignedRoadWorkNeeds.push(roadWorkNeed);
-            this.needsOfActivityService.nonAssignedRoadWorkNeeds = nonAssignedRoadWorkNeeds;
+            if (this.roadWorkActivityUuid) {
+              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+            }
           }
         },
         error: (error) => {

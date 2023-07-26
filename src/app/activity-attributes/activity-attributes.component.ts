@@ -67,7 +67,6 @@ export class ActivityAttributesComponent implements OnInit {
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
           this.roadWorkActivityFeature.properties.status.code = "inwork";
           this.roadWorkActivityFeature.properties.finishFrom = new Date();
-          this.roadWorkActivityFeature.properties.status.code = "inwork";
           let plus50Years: Date = new Date();
           plus50Years.setFullYear(plus50Years.getFullYear() + 50);
           this.roadWorkActivityFeature.properties.finishTo = plus50Years;
@@ -97,14 +96,11 @@ export class ActivityAttributesComponent implements OnInit {
                           for(let roadWorkNeed of roadWorkNeeds){
                             if(roadWorkNeed.properties.activityRelationType === "assignedneed"){
                               assignedRoadWorkNeeds.push(roadWorkNeed);
-                            } else if(roadWorkNeed.properties.activityRelationType === "nonassignedneed"){
-                              nonAssignedRoadWorkNeeds.push(roadWorkNeed);
                             } else if(roadWorkNeed.properties.activityRelationType === "registeredneed"){
                               registeredRoadWorkNeeds.push(roadWorkNeed);
                             }
                           }
                           this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
-                          this.needsOfActivityService.nonAssignedRoadWorkNeeds = nonAssignedRoadWorkNeeds;
                           this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
                         },
                         error: (error) => {
@@ -127,7 +123,7 @@ export class ActivityAttributesComponent implements OnInit {
       .subscribe({
         next: (roadWorkActivityFeature) => {
           if (this.roadWorkActivityFeature) {
-            this.roadWorkActivityFeature.properties.uuid = roadWorkActivityFeature.properties.uuid;
+            this.roadWorkActivityFeature = roadWorkActivityFeature;
           }
         },
         error: (error) => {
@@ -141,7 +137,7 @@ export class ActivityAttributesComponent implements OnInit {
         .subscribe({
           next: (roadWorkActivityFeature) => {
             if (this.roadWorkActivityFeature) {
-              this.roadWorkActivityFeature.properties.managementarea = roadWorkActivityFeature.properties.managementarea;
+              this.roadWorkActivityFeature = roadWorkActivityFeature;
             }
           },
           error: (error) => {
