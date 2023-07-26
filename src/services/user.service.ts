@@ -165,10 +165,10 @@ export class UserService implements CanActivate {
     return result;
   }
 
-  public hasUserAccess(accessRestrictionRole: string): boolean {
+  public hasUserAccess(accessRestriction: string): boolean {
     let userRole: string = this.getLocalUser().role.code;
 
-    if (accessRestrictionRole === 'administrator') {
+    if (accessRestriction === 'administrator') {
       // Only the administrator can do what the administrator
       // is allowed to do:
       if (userRole === 'administrator') {
@@ -176,7 +176,7 @@ export class UserService implements CanActivate {
       } else {
         return false;
       }
-    } else if (accessRestrictionRole === 'territorymanager') {
+    } else if (accessRestriction === 'territorymanager') {
       // Eventmanager and orderer are not allowed to do
       // what the territorymanager is allowed to do:
       if (userRole === 'eventmanager') {
@@ -186,15 +186,15 @@ export class UserService implements CanActivate {
       } else {
         return true;
       }
-    } else if (accessRestrictionRole === 'orderer') {
-      // Only eventmanager is not allowed to do
-      // what the orderer is allowed to do:
+    } else if (accessRestriction === 'orderer') {
+      // Eventmanager and trafficmaanger are not allowed
+      // to do what the orderer is allowed to do:
       if (userRole === 'eventmanager') {
         return false;
       } else {
         return true;
       }
-    } else if (accessRestrictionRole === 'eventmanager') {
+    } else if (accessRestriction === 'eventmanager') {
       // Only orderer is not allowed to do
       // what the eventmanager is allowed to do:
       if (userRole === 'orderer') {
