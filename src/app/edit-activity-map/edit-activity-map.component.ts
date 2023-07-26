@@ -280,35 +280,35 @@ export class EditActivityMapComponent implements OnInit {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(roadWorkNeedFeature.geometry);
       needPoly.transform("EPSG:2056", 'EPSG:3857');
 
-      let testFeature: Feature = new Feature({
+      let needFeature: Feature = new Feature({
         type: "Feature",
-        name: "testFeature",
+        name: "Roadworkneed Feature",
         id: i++,
         geometry: needPoly
       });
 
-      this.roadWorkNeedSource.addFeature(testFeature);
+      this.roadWorkNeedSource.addFeature(needFeature);
       this.roadWorkNeedSource.changed();
     }
 
     if (this.roadWorkActivityFeat !== undefined) {
-      let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkActivityFeat.geometry);
+      let activityPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkActivityFeat.geometry);
 
-      needPoly.transform("EPSG:2056", 'EPSG:3857');
+      activityPoly.transform("EPSG:2056", 'EPSG:3857');
 
-      let testFeature: Feature = new Feature({
+      let activityFeature: Feature = new Feature({
         type: "Feature",
         name: "testFeature",
         id: 231243,
-        geometry: needPoly
+        geometry: activityPoly
       });
 
       this.loadSource.clear();
-      this.loadSource.addFeature(testFeature);
+      this.loadSource.addFeature(activityFeature);
       this.loadSource.changed();
 
       if (refreshExtent) {
-        let polyExtent: Extent = needPoly.getExtent();
+        let polyExtent: Extent = activityPoly.getExtent();
         this.setViewToPolyExtent(polyExtent);
       }
     }

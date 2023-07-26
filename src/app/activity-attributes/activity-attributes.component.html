@@ -11,11 +11,13 @@
                 <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"></app-edit-activity-map>
             </mat-tab>
             <mat-tab label="Attribute">
-                <button mat-button
-                    style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
-                    *ngIf="!roadWorkActivityFeature.properties.uuid" (click)="add()">
-                    BAUMASSNAHME ER&Ouml;FFNEN
-                </button>
+                <div>
+                    <button mat-button
+                        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
+                        *ngIf="!roadWorkActivityFeature.properties.uuid" (click)="add()">
+                        BAUMASSNAHME ER&Ouml;FFNEN
+                    </button>
+                </div>
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
@@ -66,14 +68,16 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-title>Status</mat-card-title>
+                        <p>{{roadWorkActivityFeature.properties.status.code}}</p>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
                                 <form class="choose_user_role_form">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Status</mat-label>
-                                        <mat-select [formControl]="roadWorkActivityStatusEnumControl"
+                                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.status.code"
+                                            [formControl]="roadWorkActivityStatusEnumControl"
                                             (selectionChange)='onRoadWorkActivityStatusEnumChange()'
-                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
                                             <mat-option value="inwork">in Bearbeitung</mat-option>
                                             <mat-option value="inconsult">in Vernehmlassung</mat-option>
                                             <mat-option value="provfixed">prov. festgesetzt</mat-option>
@@ -119,12 +123,13 @@
                     </mat-card>
                 </div>
             </mat-tab>
-            <mat-tab label="Bed&uuml;rfnisse">
+            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Bed&uuml;rfnisse">
                 <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                     [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
             <mat-tab label="Events">
-                <app-events-at-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"></app-events-at-activity>
+                <app-events-at-activity
+                    [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"></app-events-at-activity>
             </mat-tab>
         </mat-tab-group>
     </div>
