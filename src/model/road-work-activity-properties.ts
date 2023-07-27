@@ -24,4 +24,5 @@ export class RoadWorkActivityProperties {
     roadWorkNeedsUuids: string[] = [];
     status: Status = new Status();
     isEditingAllowed: boolean = false;
+    isInInternet: boolean = false;
 }
