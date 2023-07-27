@@ -51,12 +51,11 @@ export class RoadWorkNeedService {
   }
 
   getIntersectingRoadWorkNeeds(roadWorkActicityUuid: string): Observable<RoadWorkNeedFeature[]> {
-    let queryString = "/roadworkneed/";
+    let result: Observable<RoadWorkNeedFeature[]> = new Observable<RoadWorkNeedFeature[]>();
     if (roadWorkActicityUuid !== null && roadWorkActicityUuid.trim() !== "") {
-      queryString += "?roadworkactivityuuid=" + roadWorkActicityUuid;
+      let queryString = "/roadworkneed/?roadworkactivityuuid=" + roadWorkActicityUuid;
+      result = this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkNeedFeature[]>;
     }
-    let result: Observable<RoadWorkNeedFeature[]> =
-      this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkNeedFeature[]>;
     return result;
   }
 

@@ -14,6 +14,10 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
+import { ManagementArea } from 'src/model/management-area';
+import { ManagementAreaService } from 'src/services/management-area.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -23,6 +27,7 @@ import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 export class ActivityAttributesComponent implements OnInit {
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
+  managementArea?: ManagementArea;
 
   orderer: User = new User();
   ordererOrgUnitName: string = "";
@@ -39,17 +44,22 @@ export class ActivityAttributesComponent implements OnInit {
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
+  private managementAreaService: ManagementAreaService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
+  private snckBar: MatSnackBar;
+
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
-    needsOfActivityService: NeedsOfActivityService,
-    roadWorkNeedService: RoadWorkNeedService, userService: UserService) {
+    needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
+    roadWorkNeedService: RoadWorkNeedService, userService: UserService, snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
+    this.managementAreaService = managementAreaService;
+    this.snckBar = snckBar;
   }
 
   ngOnInit() {
@@ -85,18 +95,31 @@ export class ActivityAttributesComponent implements OnInit {
                   rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
+
+                  let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
+
+                  this.managementAreaService.getIntersectingManagementAreas(roadWorkActivityFeature.geometry)
+                    .subscribe({
+                      next: (managementAreas) => {
+                        if (managementAreas && managementAreas.length !== 0) {
+                          this.managementArea = managementAreas[0];
+                        }
+                      },
+                      error: (error) => {
+                      }
+                    });
+
                   this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
                       .subscribe({
                         next: (roadWorkNeeds) => {
                           let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
-                          let nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
                           let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
-                          for(let roadWorkNeed of roadWorkNeeds){
-                            if(roadWorkNeed.properties.activityRelationType === "assignedneed"){
+                          for (let roadWorkNeed of roadWorkNeeds) {
+                            if (roadWorkNeed.properties.activityRelationType === "assignedneed") {
                               assignedRoadWorkNeeds.push(roadWorkNeed);
-                            } else if(roadWorkNeed.properties.activityRelationType === "registeredneed"){
+                            } else if (roadWorkNeed.properties.activityRelationType === "registeredneed") {
                               registeredRoadWorkNeeds.push(roadWorkNeed);
                             }
                           }
@@ -133,11 +156,32 @@ export class ActivityAttributesComponent implements OnInit {
 
   update() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-      this.roadWorkActivityService.updateRoadWorkActivity(this.roadWorkActivityFeature)
+
+      this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
-          next: (roadWorkActivityFeature) => {
-            if (this.roadWorkActivityFeature) {
-              this.roadWorkActivityFeature = roadWorkActivityFeature;
+          next: (managementAreas) => {
+            if (managementAreas && managementAreas.length !== 0) {
+              this.roadWorkActivityService.updateRoadWorkActivity(this.roadWorkActivityFeature)
+                .subscribe({
+                  next: (roadWorkActivityFeature) => {
+                    if (this.roadWorkActivityFeature) {
+                      ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+                      if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+                        this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
+                          duration: 4000
+                        });
+                      } else {
+                        this.roadWorkActivityFeature = roadWorkActivityFeature;
+                        this.managementArea = managementAreas[0];
+                        this.snckBar.open("Massnahme ist gespeichert", "", {
+                          duration: 4000,
+                        });
+                      }
+                    }
+                  },
+                  error: (error) => {
+                  }
+                });
             }
           },
           error: (error) => {

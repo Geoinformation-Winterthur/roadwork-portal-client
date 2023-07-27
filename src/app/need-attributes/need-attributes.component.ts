@@ -15,7 +15,8 @@ import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
-import { ManagementAreaFeature } from 'src/model/management-area-feature';
+import { ManagementArea } from 'src/model/management-area';
+import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
   selector: 'app-need-attributes',
@@ -25,6 +26,7 @@ import { ManagementAreaFeature } from 'src/model/management-area-feature';
 export class NeedAttributesComponent implements OnInit {
 
   roadWorkNeedFeature?: RoadWorkNeedFeature;
+  managementArea?: ManagementArea;
   orderer: User = new User();
   ordererOrgUnitName: string = "";
   areaManagerName: string = "";
@@ -37,15 +39,18 @@ export class NeedAttributesComponent implements OnInit {
   availableRoadWorkNeedEnums: RoadWorkNeedEnum[] = [];
 
   private roadWorkNeedService: RoadWorkNeedService;
+  private managementAreaService: ManagementAreaService;
   private activatedRoute: ActivatedRoute;
   private activatedRouteSubscription: Subscription = new Subscription();
 
   private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, roadWorkNeedService: RoadWorkNeedService,
-    userService: UserService, snckBar: MatSnackBar) {
+    userService: UserService, snckBar: MatSnackBar,
+    managementAreaService: ManagementAreaService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkNeedService = roadWorkNeedService;
+    this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.snckBar = snckBar;
   }
@@ -56,10 +61,10 @@ export class NeedAttributesComponent implements OnInit {
         let idParamString: string = params['id'];
 
         if (idParamString == "new") {
-
           this.roadWorkNeedFeature = NeedAttributesComponent.
-                _createNewRoadWorkNeedFeature(this.userService.getLocalUser());
-
+            _createNewRoadWorkNeedFeature(this.userService.getLocalUser());
+          this.managementArea = NeedAttributesComponent.
+            _createNewManagementArea();
         } else {
 
           let constProjId: string = params['id'];
@@ -74,6 +79,18 @@ export class NeedAttributesComponent implements OnInit {
                   roadWorkNeed.geometry = rwPoly;
                   this.roadWorkNeedFeature = roadWorkNeed;
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
+
+                  this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
+                    .subscribe({
+                      next: (managementAreas) => {
+                        if (managementAreas && managementAreas.length !== 0) {
+                          this.managementArea = managementAreas[0];
+                        }
+                      },
+                      error: (error) => {
+                      }
+                    });
+
                   if (!this._hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedFeature.properties.kind)) {
                     this.availableRoadWorkNeedEnums.push(roadWorkNeedFeature.properties.kind);
                   }
@@ -116,7 +133,6 @@ export class NeedAttributesComponent implements OnInit {
             this.roadWorkNeedFeature.properties.uuid = roadWorkNeedFeature.properties.uuid;
             this.roadWorkNeedFeature.properties.name = roadWorkNeedFeature.properties.name;
             this.roadWorkNeedFeature.properties.orderer = roadWorkNeedFeature.properties.orderer;
-            this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
             this.roadWorkNeedFeature.properties.relevance = roadWorkNeedFeature.properties.relevance;
           }
         },
@@ -127,17 +143,31 @@ export class NeedAttributesComponent implements OnInit {
 
   update() {
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
-      this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
+      this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
         .subscribe({
-          next: (roadWorkNeedFeature) => {
-            if (this.roadWorkNeedFeature) {
-              ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
-              if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
-                this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
-                  duration: 4000
+          next: (managementAreas) => {
+            if (managementAreas && managementAreas.length !== 0) {
+              this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
+                .subscribe({
+                  next: (roadWorkNeedFeature) => {
+                    if (this.roadWorkNeedFeature) {
+                      ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+                      if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
+                        this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
+                          duration: 4000
+                        });
+                      } else {
+                        this.roadWorkNeedFeature = roadWorkNeedFeature;
+                        this.managementArea = managementAreas[0];
+                        this.snckBar.open("Bedürfnis ist gespeichert", "", {
+                          duration: 4000,
+                        });
+                      }
+                    }
+                  },
+                  error: (error) => {
+                  }
                 });
-              }
-              this.roadWorkNeedFeature.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
             }
           },
           error: (error) => {
@@ -183,13 +213,6 @@ export class NeedAttributesComponent implements OnInit {
 
     roadWorkNeedFeature.properties.orderer = userForRoadWorkNeed;
 
-    let managementarea: ManagementAreaFeature = new ManagementAreaFeature();
-    let managerForRoadWorkNeed: User = new User();
-    managerForRoadWorkNeed.lastName = "Noch nicht ermittelt";
-    managementarea.properties.manager = managerForRoadWorkNeed;
-
-    roadWorkNeedFeature.properties.managementarea = managementarea;
-
     let plus50Years: Date = new Date();
     plus50Years.setFullYear(plus50Years.getFullYear() + 50);
 
@@ -204,6 +227,14 @@ export class NeedAttributesComponent implements OnInit {
 
     return roadWorkNeedFeature;
 
+  }
+
+  private static _createNewManagementArea(): ManagementArea {
+    let managementarea: ManagementArea = new ManagementArea();
+    let managerForRoadWorkNeed: User = new User();
+    managerForRoadWorkNeed.lastName = "Noch nicht ermittelt";
+    managementarea.manager = managerForRoadWorkNeed;
+    return managementarea;
   }
 
 }

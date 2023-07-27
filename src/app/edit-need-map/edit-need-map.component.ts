@@ -22,9 +22,10 @@ import { Projection, get as getProjection } from 'ol/proj.js';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import proj4 from 'proj4';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
-import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { ManagementArea } from 'src/model/management-area';
+import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
   selector: 'app-edit-need-map',
@@ -35,6 +36,8 @@ export class EditNeedMapComponent implements OnInit {
 
   @Input()
   roadWorkNeedFeat?: RoadWorkNeedFeature;
+  @Input()
+  managementArea?: ManagementArea;
 
   isInEditingMode: boolean = false;
 
@@ -45,11 +48,14 @@ export class EditNeedMapComponent implements OnInit {
   polygonDraw?: Draw;
 
   private roadWorkNeedService: RoadWorkNeedService;
+  private managementAreaService: ManagementAreaService;
   private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
-    roadWorkNeedService: RoadWorkNeedService) {
+    roadWorkNeedService: RoadWorkNeedService,
+    managementAreaService: ManagementAreaService) {
     this.roadWorkNeedService = roadWorkNeedService;
+    this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
     setTimeout(() => {
       this.resizeMap(null);
@@ -103,7 +109,7 @@ export class EditNeedMapComponent implements OnInit {
       style: userDrawLayerStyle
     });
 
-    const epsg2056Proj: Projection =  getProjection('EPSG:2056') as Projection;
+    const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
 
     this.map = new Map({
       target: 'edit_need_map',
@@ -181,34 +187,39 @@ export class EditNeedMapComponent implements OnInit {
       this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
       this.loadGeometry(false);
       if (this.roadWorkNeedFeat.properties.uuid) {
-        if (!this.roadWorkNeedFeat.properties.managementarea) {
-          this.roadWorkNeedFeat.properties.managementarea = new ManagementAreaFeature();
-        }
-        this.roadWorkNeedFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
-
-        this.roadWorkNeedService
-          .updateRoadWorkNeed(this.roadWorkNeedFeat)
+        this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeat.geometry)
           .subscribe({
-            next: (roadWorkNeedFeature) => {
-              if (roadWorkNeedFeature) {
-                  ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
-                  if (roadWorkNeedFeature.errorMessage !== "") {
-                    this.snackBar.open(roadWorkNeedFeature.errorMessage, "", {
-                      duration: 4000
-                    });
-                  } else {
-                    if (this.roadWorkNeedFeat) {
-                      this.roadWorkNeedFeat.properties.managementarea = roadWorkNeedFeature.properties.managementarea;
-                      this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
-                        duration: 4000,
-                      });
+            next: (managementAreas) => {
+              if(managementAreas && managementAreas.length !== 0){
+                this.roadWorkNeedService
+                .updateRoadWorkNeed(this.roadWorkNeedFeat)
+                .subscribe({
+                  next: (roadWorkNeedFeature) => {
+                    if (roadWorkNeedFeature) {
+                      ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+                      if (roadWorkNeedFeature.errorMessage !== "") {
+                        this.snackBar.open(roadWorkNeedFeature.errorMessage, "", {
+                          duration: 4000
+                        });
+                      } else {
+                        if (this.roadWorkNeedFeat) {
+                          this.roadWorkNeedFeat = roadWorkNeedFeature;
+                          this.managementArea = managementAreas[0];
+                          this.snackBar.open("Bedürfnisgeometrie ist gespeichert", "", {
+                            duration: 4000,
+                          });
+                        }
+                      }
                     }
+                  },
+                  error: (error) => {
                   }
-                }
-              },
-              error: (error) => {
+                });
               }
-            });
+            },
+            error: (error) => {
+            }
+          });
       }
     }
   }
@@ -233,7 +244,7 @@ export class EditNeedMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
-  addFeatureFinished(event: any) {}
+  addFeatureFinished(event: any) { }
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement = document.getElementById("edit_need_map") as HTMLElement;
@@ -248,7 +259,7 @@ export class EditNeedMapComponent implements OnInit {
 
   private setViewToPolyExtent(polyExtent: Extent) {
     if (polyExtent && polyExtent.length >= 0 && polyExtent[0] !== Infinity) {
-      const epsg2056Proj: Projection =  getProjection('EPSG:2056') as Projection;
+      const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
       let view = new View({
         projection: epsg2056Proj
       });

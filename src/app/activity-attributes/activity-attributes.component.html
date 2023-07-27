@@ -40,8 +40,8 @@
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <p>Gebietsmanager:
-                                    <b>{{roadWorkActivityFeature.properties.managementarea.properties.manager.firstName}}
-                                        {{roadWorkActivityFeature.properties.managementarea.properties.manager.lastName}}
+                                    <b>{{managementArea?.manager?.firstName}}
+                                        {{managementArea?.manager?.lastName}}
                                     </b>
                                 </p>
                                 <p>Projektleiter:

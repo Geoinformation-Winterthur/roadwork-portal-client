@@ -22,8 +22,8 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { FormControl } from '@angular/forms';
 import { User } from 'src/model/user';
 import { UserService } from 'src/services/user.service';
-import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { ManagementArea } from 'src/model/management-area';
 
 @Component({
   selector: 'app-management-areas',
@@ -201,9 +201,9 @@ export class ManagementAreasComponent implements OnInit {
   }
 
   updateManagerOfArea(managerOfAreaEnumControl: FormControl, areaNo: number){
-    let managementArea: ManagementAreaFeature = new ManagementAreaFeature();
-    managementArea.properties.uuid = this.managementAreasUuids[areaNo];
-    managementArea.properties.manager.uuid = managerOfAreaEnumControl.value;
+    let managementArea: ManagementArea = new ManagementArea();
+    managementArea.uuid = this.managementAreasUuids[areaNo];
+    managementArea.manager.uuid = managerOfAreaEnumControl.value;
     this.managementAreaService.updateManagementArea(managementArea)
     .subscribe({
       next: (managementArea) => {
@@ -214,11 +214,11 @@ export class ManagementAreasComponent implements OnInit {
           });
         } else {
           for(let feat of this.loadSource.getFeatures()){
-            if(feat.get("uuid") === managementArea.properties.uuid){
-              feat.set("manager_uuid", managementArea.properties.manager.uuid);
+            if(feat.get("uuid") === managementArea.uuid){
+              feat.set("manager_uuid", managementArea.manager.uuid);
               feat.set("manager_name",
-                  managementArea.properties.manager.firstName + " " +
-                        managementArea.properties.manager.lastName);
+                  managementArea.manager.firstName + " " +
+                        managementArea.manager.lastName);
               // this.loadSource.changed();
             }
           }

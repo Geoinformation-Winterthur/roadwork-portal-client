@@ -7,7 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FeatureCollection } from 'src/model/feature-collection';
-import { ManagementAreaFeature } from 'src/model/management-area-feature';
+import { ManagementArea } from 'src/model/management-area';
+import { RoadworkPolygon } from 'src/model/road-work-polygon';
 
 @Injectable({
   providedIn: 'root'
@@ -22,14 +23,23 @@ export class ManagementAreaService {
 
    getManagementAreas(): Observable<FeatureCollection> {
     let queryString = "/managementarea/";
+    queryString = environment.apiUrl + queryString;
     let result: Observable<FeatureCollection> =
-           this.http.get(environment.apiUrl + queryString) as Observable<FeatureCollection>;
+           this.http.get(queryString) as Observable<FeatureCollection>;
      return result;
    }
 
-   updateManagementArea(managementArea: ManagementAreaFeature): Observable<ManagementAreaFeature> {
-    let result: Observable<ManagementAreaFeature> =
-      this.http.put(environment.apiUrl + "/managementarea/", managementArea) as Observable<ManagementAreaFeature>;
+   getIntersectingManagementAreas(roadWorkPoly: RoadworkPolygon): Observable<ManagementArea[]> {
+    let result: Observable<ManagementArea[]> = new Observable<ManagementArea[]>();
+    if (roadWorkPoly !== null) {
+      result = this.http.post(environment.apiUrl + "/managementarea/", roadWorkPoly) as Observable<ManagementArea[]>;
+    }
+    return result;
+  }
+
+   updateManagementArea(managementArea: ManagementArea): Observable<ManagementArea> {
+    let result: Observable<ManagementArea> =
+      this.http.put(environment.apiUrl + "/managementarea/", managementArea) as Observable<ManagementArea>;
     return result;
   }
 

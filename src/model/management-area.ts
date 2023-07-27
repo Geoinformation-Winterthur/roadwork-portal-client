@@ -4,9 +4,10 @@
  */
 import { User } from "./user";
 
-export class ManagementAreaProperties
+export class ManagementArea
 {
     public uuid: string  = "";
     public manager: User  = new User();
     public substituteManager: User  = new User();
+    public errorMessage: string = "";
 }

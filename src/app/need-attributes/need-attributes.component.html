@@ -8,7 +8,8 @@
         <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neues Baubed&uuml;rfnis</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
-                <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"></app-edit-need-map>
+                <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
+                        [managementArea]="managementArea"></app-edit-need-map>
             </mat-tab>
             <mat-tab label="Attribute">
                 <button mat-button
@@ -68,8 +69,8 @@
                                     <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
                                 </p>
                                 <p>Gebietsmanager:
-                                    <b>{{roadWorkNeedFeature.properties.managementarea.properties.manager.firstName}}
-                                        {{roadWorkNeedFeature.properties.managementarea.properties.manager.lastName}}
+                                    <b>{{managementArea?.manager?.firstName}}
+                                        {{managementArea?.manager?.lastName}}
                                     </b>
                                 </p>
                             </div>

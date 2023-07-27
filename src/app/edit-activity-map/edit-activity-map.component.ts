@@ -20,7 +20,6 @@ import Stroke from 'ol/style/Stroke';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
 import proj4 from 'proj4';
-import { ManagementAreaFeature } from 'src/model/management-area-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
@@ -28,6 +27,8 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
+import { ManagementArea } from 'src/model/management-area';
+import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -54,14 +55,17 @@ export class EditActivityMapComponent implements OnInit {
   private roadWorkActivityService: RoadWorkActivityService;
   private snackBar: MatSnackBar;
   private roadWorkNeedService: RoadWorkNeedService;
+  private managementAreaService: ManagementAreaService;
 
   public constructor(snackBar: MatSnackBar,
     roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService,
-    roadWorkNeedService: RoadWorkNeedService) {
+    roadWorkNeedService: RoadWorkNeedService,
+    managementAreaService: ManagementAreaService) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
+    this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
     setTimeout(() => {
       this.resizeMap(null);
@@ -196,50 +200,55 @@ export class EditActivityMapComponent implements OnInit {
       this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
       this._putGeometriesOnMap(false);
       if (this.roadWorkActivityFeat.properties.uuid) {
-        if (!this.roadWorkActivityFeat.properties.managementarea) {
-          this.roadWorkActivityFeat.properties.managementarea = new ManagementAreaFeature();
-        }
-        this.roadWorkActivityFeat.properties.managementarea.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
 
-        this.roadWorkActivityService
-          .updateRoadWorkActivity(this.roadWorkActivityFeat)
+        this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeat.geometry)
           .subscribe({
-            next: (roadWorkActivityFeature) => {
-              if (roadWorkActivityFeature) {
-                ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
-                if (roadWorkActivityFeature.errorMessage !== "") {
-                  this.snackBar.open(roadWorkActivityFeature.errorMessage, "", {
-                    duration: 4000
-                  });
-                } else {
-                  if (this.roadWorkActivityFeat) {
-                    this.roadWorkActivityFeat = roadWorkActivityFeature;
-                    if(roadWorkActivityFeature.properties.roadWorkNeedsUuids.length !== 0){
-                      this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivityFeature.properties.roadWorkNeedsUuids)
-                      .subscribe({
-                        next: (roadWorkNeeds) => {
-                          let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
-                          let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
-                          for(let roadWorkNeed of roadWorkNeeds){
-                            if(roadWorkNeed.properties.activityRelationType === "assignedneed"){
-                              assignedRoadWorkNeeds.push(roadWorkNeed);
-                            } else if(roadWorkNeed.properties.activityRelationType === "registeredneed"){
-                              registeredRoadWorkNeeds.push(roadWorkNeed);
+            next: (managementAreas) => {
+              if (managementAreas && managementAreas.length !== 0) {
+                this.roadWorkActivityService
+                  .updateRoadWorkActivity(this.roadWorkActivityFeat)
+                  .subscribe({
+                    next: (roadWorkActivityFeature) => {
+                      if (roadWorkActivityFeature) {
+                        ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+                        if (roadWorkActivityFeature.errorMessage !== "") {
+                          this.snackBar.open(roadWorkActivityFeature.errorMessage, "", {
+                            duration: 4000
+                          });
+                        } else {
+                          if (this.roadWorkActivityFeat) {
+                            this.roadWorkActivityFeat = roadWorkActivityFeature;
+                            if (roadWorkActivityFeature.properties.roadWorkNeedsUuids.length !== 0) {
+                              this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivityFeature.properties.roadWorkNeedsUuids)
+                                .subscribe({
+                                  next: (roadWorkNeeds) => {
+                                    let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                                    let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+                                    for (let roadWorkNeed of roadWorkNeeds) {
+                                      if (roadWorkNeed.properties.activityRelationType === "assignedneed") {
+                                        assignedRoadWorkNeeds.push(roadWorkNeed);
+                                      } else if (roadWorkNeed.properties.activityRelationType === "registeredneed") {
+                                        registeredRoadWorkNeeds.push(roadWorkNeed);
+                                      }
+                                    }
+                                    this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
+                                    this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
+                                  },
+                                  error: (error) => {
+                                  }
+                                });
                             }
+                            this.needsOfActivityService.updateIntersectingRoadWorkNeeds(roadWorkActivityFeature.properties.uuid);
+                            this.snackBar.open("Massnahmengeometrie ist gespeichert", "", {
+                              duration: 4000,
+                            });
                           }
-                          this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
-                          this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
-                        },
-                        error: (error) => {
                         }
-                      });
+                      }
+                    },
+                    error: (error) => {
                     }
-                    this.needsOfActivityService.updateIntersectingRoadWorkNeeds(roadWorkActivityFeature.properties.uuid);
-                    this.snackBar.open("Baustellengeometrie ist gespeichert", "", {
-                      duration: 4000,
-                    });
-                  }
-                }
+                  });
               }
             },
             error: (error) => {
@@ -311,7 +320,7 @@ export class EditActivityMapComponent implements OnInit {
     }
   }
 
-  private addFeatureFinished(event: any) {}
+  private addFeatureFinished(event: any) { }
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement = document.getElementById("edit_activity_map") as HTMLElement;
