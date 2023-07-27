@@ -22,22 +22,48 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
-                            <p *ngIf="roadWorkActivityFeature.properties.uuid">UUID:
-                                <b>{{roadWorkActivityFeature.properties.uuid}}</b>
+                            <p>UUID:
+                                <b *ngIf="roadWorkActivityFeature.properties.uuid">{{roadWorkActivityFeature.properties.uuid}}</b>
+                                <b *ngIf="!roadWorkActivityFeature.properties.uuid">keine (nicht er&ouml;ffnet)</b>
                             </p>
-                            <p *ngIf="!roadWorkActivityFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b>
+                            <p>PDB-FID:
+                                <b *ngIf="roadWorkActivityFeature.properties.pdbFid !== 0">{{roadWorkActivityFeature.properties.pdbFid}}</b>
+                                <b *ngIf="roadWorkActivityFeature.properties.pdbFid == 0">keine FID</b>
                             </p>
+                            <p>Strabako-Nummer:
+                                <b *ngIf="roadWorkActivityFeature.properties.strabakoNo">{{roadWorkActivityFeature.properties.strabakoNo}}</b>
+                                <b *ngIf="!roadWorkActivityFeature.properties.strabakoNo">keine Nummer</b>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.name"
                                         placeholder="Bezeichnung" (focusout)="update()"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <p>Gebietsmanager:
                                     <b>{{roadWorkActivityFeature.properties.managementarea.properties.manager.firstName}}
                                         {{roadWorkActivityFeature.properties.managementarea.properties.manager.lastName}}
                                     </b>
                                 </p>
+                                <p>Projektleiter:
+                                    <b>{{roadWorkActivityFeature.properties.projectManager.firstName}}
+                                        {{roadWorkActivityFeature.properties.projectManager.lastName}}
+                                    </b>
+                                </p>
+                                <form class="choose_user_role_form">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Projektleiter</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.status.code"
+                                            [formControl]="roadWorkActivityStatusEnumControl"
+                                            (selectionChange)='onRoadWorkActivityStatusEnumChange()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
+                                            <mat-option value="inwork">in Bearbeitung</mat-option>
+                                            <mat-option value="inconsult">in Vernehmlassung</mat-option>
+                                            <mat-option value="provfixed">prov. festgesetzt</mat-option>
+                                            <mat-option value="deffixed">def. festgesetzt</mat-option>
+                                            <mat-option value="excuted">ausgef&uuml;hrt</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </form>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -46,12 +72,23 @@
                         <mat-card-title>Kosten</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <mat-form-field>
-                                    <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                        placeholder="Kosten (CHF)" (focusout)="update()"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
-                                </mat-form-field>
+                                <div>
+                                    <mat-form-field>
+                                        <input matInput type="number" min="0"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.costs"
+                                            placeholder="Kosten (CHF)" (focusout)="update()"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
+                                    </mat-form-field>
+                                </div>
                                 <p>Kostenart: <b>{{roadWorkActivityFeature.properties.costsType.name}}</b></p>
+                                <div>
+                                    <mat-form-field>
+                                        <input matInput type="number" min="0"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.investmentNo"
+                                            placeholder="Investitionsnummer" (focusout)="update()"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </mat-form-field>
+                                </div>
                                 <mat-form-field>
                                     <mat-label>Kurzbeschrieb</mat-label>
                                     <textarea matInput maxlength="255"
@@ -60,7 +97,7 @@
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
-                            </div>                            
+                            </div>
                         </mat-card-content>
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
@@ -83,11 +120,12 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
-                                <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
+                                <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created | date:'dd.MM.yyyy'}}</b>
+                                </p>
                                 <p>
                                     Zuletzt ge&auml;ndert: <b>{{roadWorkActivityFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
-                                </p>    
+                                </p>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -125,12 +163,30 @@
                                         {{roadWorkActivityFeature.properties.trafficAgent.lastName}}
                                     </b>
                                 </p>
+                                <div>
+                                    <button mat-button
+                                        style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                                        MASSNAHME &Uuml;BERNEHMEN
+                                    </button>
+                                </div>
                                 <p><mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isInInternet"
                                         (change)="update()" style="margin:10px;"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         In Internet
                                     </mat-checkbox>
                                 </p>
+                                <mat-form-field>
+                                    <input matInput type="text"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.billingAddress1"
+                                        placeholder="Rechnungsadresse 1" (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.billingAddress2"
+                                        placeholder="Rechnungsadresse 2" (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
                             </div>
                         </mat-card-content>
                     </mat-card>

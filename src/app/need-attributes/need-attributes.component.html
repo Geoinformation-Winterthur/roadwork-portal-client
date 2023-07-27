@@ -27,7 +27,7 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkNeedFeature.properties.name"
-                                        placeholder="Bezeichnung" (focusout)="update()" required
+                                        placeholder="Bezeichnung" (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>

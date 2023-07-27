@@ -25,4 +25,9 @@ export class RoadWorkActivityProperties {
     status: Status = new Status();
     isEditingAllowed: boolean = false;
     isInInternet: boolean = false;
+    billingAddress1: string = "";
+    billingAddress2: string = "";
+    investmentNo: number = 0;
+    pdbFid: number = 0;
+    strabakoNo: string = "";
 }
