@@ -52,6 +52,14 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
+                                <div>
+                                    <mat-form-field>
+                                        <input matInput type="number" min="0"
+                                            [(ngModel)]="roadWorkNeedFeature.properties.costs"
+                                            placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed" required>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>

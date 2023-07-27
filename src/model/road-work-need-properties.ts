@@ -22,6 +22,7 @@ export class RoadWorkNeedProperties {
     finishLateTo: Date = new Date(1, 0, 1);
     priority: Priority = new Priority();
     status: Status = new Status();
+    costs: number = 0;
     longer6Month: boolean = false;
     relevance: number = 0;
     activityRelationType: string = "";
