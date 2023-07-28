@@ -22,7 +22,6 @@ import { OrganisationService } from 'src/services/organisation.service';
 export class UserComponent implements OnInit {
 
   user: User = new User();
-  userExists: boolean = false;
 
   activeCheckBox: boolean = false;
 
@@ -40,7 +39,7 @@ export class UserComponent implements OnInit {
 
   constructor(activatedRoute: ActivatedRoute, userService: UserService,
     organisationService: OrganisationService, router: Router,
-        snckBar: MatSnackBar) {
+    snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.userService = userService;
     this.organisationService = organisationService;
@@ -50,24 +49,22 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = new User();
-    this.userExists = false;
     this.activatedRoute.params
       .subscribe({
         next: (params) => {
           let userEMail: string = params['email'];
-          if(userEMail !== "new"){
+          if (userEMail !== "new") {
             this.userService.getUser(userEMail).subscribe({
               next: (userArray) => {
                 if (userArray !== null && userArray.length === 1) {
                   ErrorMessageEvaluation._evaluateErrorMessage(userArray[0]);
-                  if(userArray[0].errorMessage.trim().length === 0){
+                  if (userArray[0].errorMessage.trim().length === 0) {
                     this.user = userArray[0];
-                    this.userExists = true;
                     this.userRoleFormControl.setValue(this.user.role.code);
-                    this.userOrgFormControl.setValue(this.user.organisationalUnit.name);    
+                    this.userOrgFormControl.setValue(this.user.organisationalUnit.name);
                   }
                 } else {
-                  this.user.errorMessage = "Benutzer existiert nicht.";                
+                  this.user.errorMessage = "Benutzer existiert nicht.";
                 }
               },
               error: (error) => {
@@ -104,7 +101,24 @@ export class UserComponent implements OnInit {
   addUser() {
     this.userService.addUser(this.user).subscribe({
       next: (user) => {
-        this.router.navigate(["/users"]);
+        if (user) {
+          if (user.errorMessage != null
+            && user.errorMessage.trim().length !== 0) {
+            ErrorMessageEvaluation._evaluateErrorMessage(user);
+            this.snckBar.open(user.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.user = user;
+            this.snckBar.open("Benutzer erfolgreich angelegt", "", {
+              duration: 4000
+            });
+          }
+        } else {
+          this.snckBar.open("Etwas ist schiefgelaufen", "", {
+            duration: 4000
+          });
+        }
       },
       error: (error) => {
       }
@@ -112,17 +126,40 @@ export class UserComponent implements OnInit {
   }
 
   updateUser() {
-    this.userService.updateUser(this.user).subscribe({
+    if (this.user && this.user.uuid) {
+      this.userService.updateUser(this.user).subscribe({
+        next: (errorMessage) => {
+          if (errorMessage != null && errorMessage.errorMessage != null
+            && errorMessage.errorMessage.trim().length !== 0) {
+            ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+            this.snckBar.open(errorMessage.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.snckBar.open("Benutzer erfolgreich aktualisiert", "", {
+              duration: 4000
+            });
+          }
+        },
+        error: (error) => {
+        }
+      });
+    }
+  }
+
+  changePassphrase() {
+    this.userService.updateUser(this.user, true).subscribe({
       next: (errorMessage) => {
-        if(errorMessage != null && errorMessage.errorMessage != null
-              && errorMessage.errorMessage.trim().length !== 0)
-        {
+        if (errorMessage != null && errorMessage.errorMessage != null
+          && errorMessage.errorMessage.trim().length !== 0) {
           ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
           this.snckBar.open(errorMessage.errorMessage, "", {
             duration: 4000
           });
         } else {
-          this.router.navigate(["/users"]);
+          this.snckBar.open("Passwort erfolgreich geändert", "", {
+            duration: 4000
+          });
         }
       },
       error: (error) => {
@@ -133,9 +170,8 @@ export class UserComponent implements OnInit {
   deleteUser() {
     this.userService.deleteUser(this.user.mailAddress).subscribe({
       next: (errorMessage) => {
-        if(errorMessage != null && errorMessage.errorMessage != null
-              && errorMessage.errorMessage.trim().length !== 0)
-        {
+        if (errorMessage != null && errorMessage.errorMessage != null
+          && errorMessage.errorMessage.trim().length !== 0) {
           ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
           this.snckBar.open(errorMessage.errorMessage, "", {
             duration: 4000
@@ -153,12 +189,13 @@ export class UserComponent implements OnInit {
     for (let roleType of this.availableUserRoleTypes) {
       if (roleType.code === this.userRoleFormControl.value) {
         this.user.role = roleType;
-        if(this.userRoleFormControl.value === 'projectmanager'){
+        if (this.userRoleFormControl.value === 'projectmanager') {
           this.user.active = false;
         }
         continue;
       }
     }
+    this.updateUser();
   }
 
   onUserOrgChange() {
@@ -168,6 +205,7 @@ export class UserComponent implements OnInit {
         continue;
       }
     }
+    this.updateUser();
   }
 
 }
