@@ -68,6 +68,7 @@ import { EventAttributesComponent } from './event-attributes/event-attributes.co
 import { EditEventMapComponent } from './edit-event-map/edit-event-map.component';
 import { EventsAtActivityComponent } from './events-at-activity/events-at-activity.component';
 import { OrganisationsComponent } from './organisations/organisations.component';
+import { StatusChipComponent } from './status-chip/status-chip.component';
  
  
  export function getToken(){
@@ -106,7 +107,8 @@ import { OrganisationsComponent } from './organisations/organisations.component'
      EventAttributesComponent,
      EditEventMapComponent,
      EventsAtActivityComponent,
-     OrganisationsComponent
+     OrganisationsComponent,
+     StatusChipComponent
    ],
    imports: [
      BrowserModule,

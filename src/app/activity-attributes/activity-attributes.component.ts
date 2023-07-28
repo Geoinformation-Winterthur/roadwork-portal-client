@@ -35,6 +35,9 @@ export class ActivityAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
 
+  projectManagerControl: FormControl = new FormControl();
+  availableUsers: User[] = [];
+
   userService: UserService;
 
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
@@ -63,6 +66,13 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.availableUsers = users;
+      },
+      error: (error) => {
+      }
+    });
 
     this.needsOfActivityService.assignedRoadWorkNeeds = [];
     this.needsOfActivityService.nonAssignedRoadWorkNeeds = [];
@@ -74,7 +84,7 @@ export class ActivityAttributesComponent implements OnInit {
 
         if (idParamString == "new") {
 
-          this.roadWorkActivityFeature = new RoadWorkActivityFeature();
+          this.roadWorkActivityFeature = new RoadWorkActivityFeature();          
           this.roadWorkActivityFeature.properties.status.code = "inwork";
           this.roadWorkActivityFeature.properties.finishFrom = new Date();
           let plus50Years: Date = new Date();

@@ -45,20 +45,14 @@
       <mat-card-header style="margin: 0.5em;">
         <div style="width: 80%; margin-right: 1em;">
           <mat-card-title>
-            {{ roadWorkNeed.properties.name.slice(0, 20) }}<span *ngIf="roadWorkNeed.properties.name.length > 20">...</span>
+            {{ roadWorkNeed.properties.name.slice(0, 20) }}<span
+              *ngIf="roadWorkNeed.properties.name.length > 20">...</span>
           </mat-card-title>
           <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
         </div>
-        <div>
-          <mat-chip-list>
-            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'notcoord'"
-              class="chip-not-coordinated">nicht&nbsp;koord.</mat-chip>
-            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'coordinated'"
-              class="chip-coordinated">koordiniert</mat-chip>
-            <mat-chip *ngIf="roadWorkNeed.properties.status.code === 'inconsult'"
-              style="background-color: rgb(221, 213, 226)">Vernehmlassung</mat-chip>
-          </mat-chip-list>
-        </div>
+        <app-status-chip [statusCode]="roadWorkNeed.properties.status.code"
+            [short]="true">
+        </app-status-chip>
       </mat-card-header>
       <div class="crosshair-frame">
         <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
@@ -94,7 +88,7 @@
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
           [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
         <button *ngIf="roadWorkNeed.properties.isEditingAllowed" (click)="delete(roadWorkNeed.properties.uuid)"
-              style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
+          style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
           L&Ouml;SCHEN</button>
       </mat-card-actions>
     </mat-card>

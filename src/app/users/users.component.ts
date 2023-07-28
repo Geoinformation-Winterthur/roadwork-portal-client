@@ -14,7 +14,7 @@ import { User } from '../../model/user';
 })
 export class UsersComponent {
 
-  displayedColumns: string[] = ['editAction', 'lastName', 'firstName', 'mailAddress', 'role', 'organisation'];
+  displayedColumns: string[] = ['editAction', 'firstName', 'lastName', 'mailAddress', 'role', 'organisation'];
   dataSource: User[] = [];  
 
   responseMessage: string = "";

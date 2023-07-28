@@ -54,14 +54,8 @@
             <span *ngIf="roadWorkActivity.properties.costsType.code !== 'valuation'">(exakt)</span>
           </mat-card-subtitle>
         </div>
-        <div>
-          <mat-chip-list>
-            <mat-chip *ngIf="roadWorkActivity.properties.status.code === 'inwork'"
-              class="chip-coordinated">In&nbsp;Bearbeitung</mat-chip>
-            <mat-chip *ngIf="roadWorkActivity.properties.status.code === 'inconsult'"
-              style="background-color: rgb(221, 213, 226)">Vernehmlassung</mat-chip>
-          </mat-chip-list>
-        </div>
+        <app-status-chip [statusCode]="roadWorkActivity.properties.status.code"
+            [short]="true"></app-status-chip>
       </mat-card-header>
       <div class="crosshair-frame">
         <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
@@ -81,7 +75,7 @@
         <br />
         <br />
         <mat-chip-list>
-          <mat-chip class="chip-done">Bis: {{ roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}
+          <mat-chip style="background-color: lightgreen;">Bis: {{ roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}
           </mat-chip>
         </mat-chip-list>
         <br />
