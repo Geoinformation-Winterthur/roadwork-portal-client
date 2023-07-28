@@ -174,7 +174,9 @@
                                     </b>
                                 </p>
                                 <div>
-                                    <button mat-button
+                                    <button mat-button (click)="registerTrefficManager()"
+                                        *ngIf="userService.getLocalUser().role.code=='trafficmanager' ||
+                                                        userService.getLocalUser().role.code=='administrator'"
                                         style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
                                         MASSNAHME &Uuml;BERNEHMEN
                                     </button>

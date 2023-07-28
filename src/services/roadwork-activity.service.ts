@@ -65,6 +65,13 @@ export class RoadWorkActivityService {
     return result;
   }
 
+  registerTrafficManager(roadworkActivity?: RoadWorkActivityFeature): Observable<RoadWorkActivityFeature> {
+    let result: Observable<RoadWorkActivityFeature> = this.http
+        .put(environment.apiUrl + "/roadworkactivity/registertrafficmanager/",
+                roadworkActivity) as Observable<RoadWorkActivityFeature>;
+    return result;
+  }
+
   deleteRoadWorkActivity(uuid: string): Observable<ErrorMessage> {
     let result: Observable<ErrorMessage> =
       this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" + uuid) as Observable<ErrorMessage>;

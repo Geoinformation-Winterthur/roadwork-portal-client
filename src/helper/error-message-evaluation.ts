@@ -6,7 +6,7 @@ export class ErrorMessageEvaluation {
     if (errorMessage !== null && errorMessage.errorMessage !== null
             && errorMessage.errorMessage.trim() !== "") {
       let errorMessageString: string = errorMessage.errorMessage;
-      if (errorMessageString.startsWith("KOPAL-")) {
+      if (errorMessageString.startsWith("SSP-")) {
         let messageCode: number = Number(errorMessageString.split('-')[1]);
         errorMessageString = ErrorMessageDictionary.messages[messageCode]
           + " (" + errorMessageString + ")";

@@ -178,7 +178,6 @@ export class ActivityAttributesComponent implements OnInit {
 
   update() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
           next: (managementAreas) => {
@@ -216,6 +215,31 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
       this.update();
+    }
+  }
+
+  registerTrefficManager(){
+    if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
+      this.roadWorkActivityService.registerTrafficManager(this.roadWorkActivityFeature)
+        .subscribe({
+          next: (roadWorkActivityFeature) => {
+            if (roadWorkActivityFeature) {
+              ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+              if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+                this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
+                  duration: 4000
+                });
+              } else {
+                this.roadWorkActivityFeature = roadWorkActivityFeature;
+                this.snckBar.open("Massnahme ist gespeichert", "", {
+                  duration: 4000,
+                });
+              }
+            }
+          },
+          error: (error) => {
+          }
+        });
     }
   }
 
