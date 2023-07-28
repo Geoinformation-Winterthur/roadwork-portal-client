@@ -18,6 +18,7 @@ import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { CostType } from 'src/model/cost-type';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -35,11 +36,14 @@ export class ActivityAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
 
-  projectManagerControl: FormControl = new FormControl();
   availableUsers: User[] = [];
+
+  availableCostTypes: CostType[] = [];
 
   userService: UserService;
 
+  projectManagerControl: FormControl = new FormControl();
+  costTypesControl: FormControl = new FormControl();
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
 
   needsOfActivityService: NeedsOfActivityService;
@@ -69,6 +73,14 @@ export class ActivityAttributesComponent implements OnInit {
     this.userService.getAllUsers().subscribe({
       next: (users) => {
         this.availableUsers = users;
+      },
+      error: (error) => {
+      }
+    });
+
+    this.roadWorkActivityService.getCostTypes().subscribe({
+      next: (costTypes) => {
+        this.availableCostTypes = costTypes;
       },
       error: (error) => {
       }

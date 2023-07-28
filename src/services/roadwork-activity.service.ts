@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessage } from 'src/model/error-message';
+import { CostType } from 'src/model/cost-type';
 
 
 @Injectable({
@@ -21,46 +22,52 @@ export class RoadWorkActivityService {
     this.http = http;
   }
 
-   getRoadWorkActivities(id: string = "", status: string = "", summary: boolean = false):
-            Observable<RoadWorkActivityFeature[]> {
+  getRoadWorkActivities(id: string = "", status: string = "", summary: boolean = false):
+    Observable<RoadWorkActivityFeature[]> {
     let queryString = "/roadworkactivity/";
-    if((id !== null && id !== "") || (status !== null && status !== "") || summary) {
+    if ((id !== null && id !== "") || (status !== null && status !== "") || summary) {
       queryString += "?";
     }
-    if(id !== null && id !== ""){
-      queryString += "uuid="+ id;
-      if(summary) {
+    if (id !== null && id !== "") {
+      queryString += "uuid=" + id;
+      if (summary) {
         queryString += "&";
       }
-    } else if(status !== null && status !== ""){
-      queryString += "status="+ status;
-      if(summary) {
+    } else if (status !== null && status !== "") {
+      queryString += "status=" + status;
+      if (summary) {
         queryString += "&";
       }
     }
-    if(summary){
+    if (summary) {
       queryString += "summary=true";
     }
-     let result: Observable<RoadWorkActivityFeature[]> =
-           this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkActivityFeature[]>;
-     return result;
-   }
-
-  addRoadworkActivity(roadworkActivity? : RoadWorkActivityFeature): Observable<any> {
-    let result: Observable<any> = 
-          this.http.post<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+    let result: Observable<RoadWorkActivityFeature[]> =
+      this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkActivityFeature[]>;
     return result;
   }
 
-  updateRoadWorkActivity(roadworkActivity? : RoadWorkActivityFeature): Observable<any> {
-    let result: Observable<any> = 
-          this.http.put(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+  getCostTypes(): Observable<CostType[]> {
+    let result: Observable<CostType[]> =
+      this.http.get(environment.apiUrl + "/roadworkactivity/costtypes/") as Observable<CostType[]>;
+    return result;
+  }
+
+  addRoadworkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<any> {
+    let result: Observable<any> =
+      this.http.post<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+    return result;
+  }
+
+  updateRoadWorkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<any> {
+    let result: Observable<any> =
+      this.http.put(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
     return result;
   }
 
   deleteRoadWorkActivity(uuid: string): Observable<ErrorMessage> {
-    let result: Observable<ErrorMessage> = 
-        this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" + uuid) as Observable<ErrorMessage>;
+    let result: Observable<ErrorMessage> =
+      this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" + uuid) as Observable<ErrorMessage>;
     return result;
   }
 

@@ -23,15 +23,18 @@
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
                             <p>UUID:
-                                <b *ngIf="roadWorkActivityFeature.properties.uuid">{{roadWorkActivityFeature.properties.uuid}}</b>
+                                <b
+                                    *ngIf="roadWorkActivityFeature.properties.uuid">{{roadWorkActivityFeature.properties.uuid}}</b>
                                 <b *ngIf="!roadWorkActivityFeature.properties.uuid">keine (nicht er&ouml;ffnet)</b>
                             </p>
                             <p>PDB-FID:
-                                <b *ngIf="roadWorkActivityFeature.properties.pdbFid !== 0">{{roadWorkActivityFeature.properties.pdbFid}}</b>
+                                <b
+                                    *ngIf="roadWorkActivityFeature.properties.pdbFid !== 0">{{roadWorkActivityFeature.properties.pdbFid}}</b>
                                 <b *ngIf="roadWorkActivityFeature.properties.pdbFid == 0">keine FID</b>
                             </p>
                             <p>Strabako-Nummer:
-                                <b *ngIf="roadWorkActivityFeature.properties.strabakoNo">{{roadWorkActivityFeature.properties.strabakoNo}}</b>
+                                <b
+                                    *ngIf="roadWorkActivityFeature.properties.strabakoNo">{{roadWorkActivityFeature.properties.strabakoNo}}</b>
                                 <b *ngIf="!roadWorkActivityFeature.properties.strabakoNo">keine Nummer</b>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
@@ -52,10 +55,10 @@
                                     <mat-form-field appearance="fill">
                                         <mat-label>Projektleiter</mat-label>
                                         <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectManager.uuid"
-                                            [formControl]="projectManagerControl"
-                                            (selectionChange)='update()'
+                                            [formControl]="projectManagerControl" (selectionChange)='update()'
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-option *ngFor="let availableUser of availableUsers" [value]="availableUser.uuid">
+                                            <mat-option *ngFor="let availableUser of availableUsers"
+                                                [value]="availableUser.uuid">
                                                 {{availableUser.firstName}} {{availableUser.lastName}}
                                             </mat-option>
                                         </mat-select>
@@ -69,15 +72,25 @@
                         <mat-card-title>Kosten</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <div>
-                                    <mat-form-field>
-                                        <input matInput type="number" min="0"
-                                            [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                            placeholder="Kosten (CHF)" (focusout)="update()"
-                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
+                                <mat-form-field>
+                                    <input matInput type="number" min="0"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.costs"
+                                        placeholder="Kosten (CHF)" (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
+                                </mat-form-field>
+                                <form class="cost_type_form">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Kostenart</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.costsType.code"
+                                            [formControl]="costTypesControl" (selectionChange)='update()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option *ngFor="let availableCostType of availableCostTypes"
+                                                [value]="availableCostType.code">
+                                                {{availableCostType.name}}
+                                            </mat-option>
+                                        </mat-select>
                                     </mat-form-field>
-                                </div>
-                                <p>Kostenart: <b>{{roadWorkActivityFeature.properties.costsType.name}}</b></p>
+                                </form>
                                 <div>
                                     <mat-form-field>
                                         <input matInput type="number" min="0"

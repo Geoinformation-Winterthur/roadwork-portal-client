@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { CostTypes } from "./cost-types";
+import { CostType } from "./cost-type";
 import { Status } from "./status";
 import { User } from "./user";
 
@@ -17,7 +17,7 @@ export class RoadWorkActivityProperties {
     finishFrom: Date = new Date(1, 0, 1);
     finishTo: Date = new Date(1, 0, 1);
     costs: number = 0;
-    costsType: CostTypes = new CostTypes();
+    costsType: CostType = new CostType();
     roadWorkNeedsUuids: string[] = [];
     status: Status = new Status();
     isEditingAllowed: boolean = false;
