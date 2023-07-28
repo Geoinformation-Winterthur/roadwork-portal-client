@@ -59,7 +59,7 @@ export class UserComponent implements OnInit {
                   if(userArray[0].errorMessage.trim().length === 0){
                     this.user = userArray[0];
                     this.userExists = true;
-                    this.userRoleFormControl.setValue(this.user.role.name);
+                    this.userRoleFormControl.setValue(this.user.role.code);
                     this.userOrgFormControl.setValue(this.user.organisationalUnit.name);    
                   }
                 } else {
@@ -147,8 +147,11 @@ export class UserComponent implements OnInit {
 
   onUserRoleChange() {
     for (let roleType of this.availableUserRoleTypes) {
-      if (roleType.name === this.userRoleFormControl.value) {
+      if (roleType.code === this.userRoleFormControl.value) {
         this.user.role = roleType;
+        if(this.userRoleFormControl.value === 'projectmanager'){
+          this.user.active = false;
+        }
         continue;
       }
     }
