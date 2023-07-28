@@ -20,6 +20,8 @@ export class ErrorMessageDictionary {
              "Der zugewiesene Benutzer ist kein Gebietsmanager. Zuweisung abgebrochen.",
              "Der Gebietsmanager kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist.",
              "Das Startdatum darf nicht nach dem Enddatum liegen.",
-             "Es wurde kein Statuscode empfangen."
+             "Es wurde kein Statuscode empfangen.",
+             "Es wurden keine Organisationsdaten empfangen.",
+             "."
             ];
 }

@@ -12,6 +12,7 @@ import { UserService } from 'src/services/user.service';
 import { User } from '../../model/user';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { OrganisationService } from 'src/services/organisation.service';
 
 @Component({
   selector: 'app-user',
@@ -34,12 +35,15 @@ export class UserComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private router: Router;
   private userService: UserService;
+  private organisationService: OrganisationService;
   private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, userService: UserService,
-    router: Router, snckBar: MatSnackBar) {
+    organisationService: OrganisationService, router: Router,
+        snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.userService = userService;
+    this.organisationService = organisationService;
     this.router = router;
     this.snckBar = snckBar;
   }
@@ -85,7 +89,7 @@ export class UserComponent implements OnInit {
       }
     });
 
-    this.userService.getAllOrgTypes().subscribe({
+    this.organisationService.getAllOrgTypes().subscribe({
       next: (organisations) => {
         for (let organisation of organisations) {
           this.availableUserOrgTypes.push(organisation);
@@ -104,7 +108,7 @@ export class UserComponent implements OnInit {
       },
       error: (error) => {
       }
-    })
+    });
   }
 
   updateUser() {

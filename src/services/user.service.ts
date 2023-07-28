@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
 import { User } from 'src/model/user';
 import { environment } from 'src/environments/environment';
 import { Role } from 'src/model/role';
-import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { ErrorMessage } from 'src/model/error-message';
 
 @Injectable({
@@ -156,12 +155,6 @@ export class UserService implements CanActivate {
   public getAllRoleTypes(): Observable<Role[]> {
     let result: Observable<Role[]> =
       this.http.get(environment.apiUrl + "/account/userroles/") as Observable<Role[]>;
-    return result;
-  }
-
-  public getAllOrgTypes(): Observable<OrganisationalUnit[]> {
-    let result: Observable<OrganisationalUnit[]> =
-      this.http.get(environment.apiUrl + "/account/organisations/") as Observable<OrganisationalUnit[]>;
     return result;
   }
 
