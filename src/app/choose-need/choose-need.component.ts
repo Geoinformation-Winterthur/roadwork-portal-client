@@ -74,11 +74,23 @@ export class ChooseNeedComponent implements OnInit {
     roadWorkActivity.geometry = roadWorkNeed.geometry;
     roadWorkActivity.properties.name = roadWorkNeed.properties.name;
     roadWorkActivity.properties.roadWorkNeedsUuids.push(roadWorkNeed.properties.uuid);
+    roadWorkActivity.properties.costsType.code = "valuation";
+    roadWorkActivity.properties.costs = roadWorkNeed.properties.costs;
 
     this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
       .subscribe({
         next: (roadWorkActivityFeature) => {
-          this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
+          ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+          if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+            this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
+            this.snckBar.open("Massnahme wurde erstellt", "", {
+              duration: 4000,
+            });
+          }
         },
         error: (error) => {
         }

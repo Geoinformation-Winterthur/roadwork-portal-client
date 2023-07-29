@@ -169,15 +169,24 @@
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
                                 <p>Management Baustellenverkehr:
-                                    <b>{{roadWorkActivityFeature.properties.trafficAgent.firstName}}
+                                    <b *ngIf="!roadWorkActivityFeature.properties.trafficAgent.uuid">Noch nicht
+                                        zugewiesen</b>
+                                    <b *ngIf="roadWorkActivityFeature.properties.trafficAgent.uuid">
+                                        {{roadWorkActivityFeature.properties.trafficAgent.firstName}}
                                         {{roadWorkActivityFeature.properties.trafficAgent.lastName}}
                                     </b>
                                 </p>
-                                <div>
-                                    <button mat-button (click)="registerTrefficManager()"
-                                        *ngIf="userService.getLocalUser().role.code=='trafficmanager' ||
-                                                        userService.getLocalUser().role.code=='administrator'"
-                                        style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                                <div *ngIf="userService.getLocalUser().role.code=='trafficmanager' ||
+                                                userService.getLocalUser().role.code=='administrator'">
+                                    <button mat-button *ngIf="userService.getLocalUser().uuid != roadWorkActivityFeature.properties.trafficAgent.uuid"
+                                            (click)="registerTrefficManager()" 
+                                            style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
+                                            disabled="false">
+                                        MASSNAHME &Uuml;BERNEHMEN
+                                    </button>
+                                    <button mat-button *ngIf="userService.getLocalUser().uuid == roadWorkActivityFeature.properties.trafficAgent.uuid" (click)="registerTrefficManager()"
+                                        style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(179, 128, 226);"
+                                        disabled="true">
                                         MASSNAHME &Uuml;BERNEHMEN
                                     </button>
                                 </div>

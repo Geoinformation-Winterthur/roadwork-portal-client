@@ -234,6 +234,7 @@ export class UserService implements CanActivate {
     if (userToken !== null && "" !== userToken) {
       resultUser = new User();
       let tokenDecoded = this.jwtHelperService.decodeToken(userToken);
+      resultUser.uuid = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
       resultUser.mailAddress = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
       resultUser.firstName = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"];
       resultUser.lastName = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
