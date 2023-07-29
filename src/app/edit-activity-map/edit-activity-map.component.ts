@@ -45,7 +45,7 @@ export class EditActivityMapComponent implements OnInit {
   map: Map = new Map();
 
   userDrawSource: VectorSource = new VectorSource();
-  loadSource: VectorSource = new VectorSource();
+  roadWorkActivitySource: VectorSource = new VectorSource();
   roadWorkNeedSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
 
@@ -90,34 +90,40 @@ export class EditActivityMapComponent implements OnInit {
 
   initializeMap() {
 
-    let loadLayerStyle: Style = new Style({
+    let roadWorkActivityLayerStyle: Style = new Style({
       fill: new Fill({
-        color: 'rgba(160, 10, 10,0.4)'
+        color: 'rgba(138, 43, 226,0.4)'
       }),
       stroke: new Stroke({
-        color: 'rgba(160, 10, 10,1.0)'
-      })
+        color: 'rgba(138, 43, 226,1.0)',
+        width: 2,
+        lineDash: [6,6]
+    })
     });
 
-    this.loadSource = new VectorSource({ wrapX: false });
-    let loadLayer = new VectorLayer({
-      source: this.loadSource,
-      style: loadLayerStyle
+    this.roadWorkActivitySource = new VectorSource({ wrapX: false });
+    let roadWorkActivityLayer = new VectorLayer({
+      source: this.roadWorkActivitySource,
+      style: roadWorkActivityLayerStyle
     });
 
-    let roadWorkNeedLayerStyle: Style = new Style({
-      fill: new Fill({
-        color: 'rgba(123, 90, 172,0.4)'
-      }),
-      stroke: new Stroke({
-        color: 'rgba(123, 90, 172,1.0)'
-      })
-    });
+    function roadWorkNeedLayerStyleFunc(feature: any, resolution: any) {
+      let roadWorkNeedLayerStyle: Style = new Style({
+        fill: new Fill({
+          color: feature.get('assignedneed') ? "rgba(128, 255, 155,0.4)" : "rgba(160, 10, 10,0.4)"
+        }),
+        stroke: new Stroke({
+          color: feature.get('assignedneed') ? "rgba(128, 255, 155,1.0)" : "rgba(160, 10, 10,1.0)",
+          width: 2,
+        })
+      });
+      return [roadWorkNeedLayerStyle];
+    }
 
     this.roadWorkNeedSource = new VectorSource({ wrapX: false });
     let roadWorkNeedLayer = new VectorLayer({
       source: this.roadWorkNeedSource,
-      style: roadWorkNeedLayerStyle
+      style: roadWorkNeedLayerStyleFunc
     });
 
     let userDrawLayerStyle: Style = new Style({
@@ -154,9 +160,9 @@ export class EditActivityMapComponent implements OnInit {
             serverType: 'geoserver',
           })
         }),
-        roadWorkNeedLayer,
-        loadLayer,
-        userDrawLayer
+        roadWorkActivityLayer,
+        userDrawLayer,
+        roadWorkNeedLayer
       ],
       view: new View({
         center: [972000.5, 6023000.72],
@@ -183,7 +189,7 @@ export class EditActivityMapComponent implements OnInit {
       .subscribe({
         next: (roadWorkNeeds) => {
           this.needsOnMap = roadWorkNeeds;
-          this._putGeometriesOnMap(true);
+          this._putRoadworksOnMap(true);
         },
         error: (error) => {
         }
@@ -198,7 +204,7 @@ export class EditActivityMapComponent implements OnInit {
       let geom2: Polygon = geom1.clone();
       geom2.transform('EPSG:3857', "EPSG:2056");
       this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
-      this._putGeometriesOnMap(false);
+      this._putRoadworksOnMap(false);
       if (this.roadWorkActivityFeat.properties.uuid) {
 
         this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeat.geometry)
@@ -278,7 +284,7 @@ export class EditActivityMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
-  private _putGeometriesOnMap(refreshExtent: boolean) {
+  private _putRoadworksOnMap(refreshExtent: boolean) {
 
     this.roadWorkNeedSource.clear();
     let i: number = 0;
@@ -288,14 +294,19 @@ export class EditActivityMapComponent implements OnInit {
 
       let needFeature: Feature = new Feature({
         type: "Feature",
-        name: "Roadworkneed Feature",
+        name: "Roadwork need",
         id: i++,
         geometry: needPoly
       });
-
+      
+      if(roadWorkNeedFeature.properties.activityRelationType === 'assignedneed'){
+        needFeature.set("assignedneed", true);
+      } else {
+        needFeature.set("assignedneed", false);
+      }
       this.roadWorkNeedSource.addFeature(needFeature);
-      this.roadWorkNeedSource.changed();
     }
+    this.roadWorkNeedSource.changed();
 
     if (this.roadWorkActivityFeat !== undefined) {
       let activityPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkActivityFeat.geometry);
@@ -304,14 +315,14 @@ export class EditActivityMapComponent implements OnInit {
 
       let activityFeature: Feature = new Feature({
         type: "Feature",
-        name: "testFeature",
-        id: 231243,
+        name: "Roadwork activity",
+        id: 1,
         geometry: activityPoly
       });
 
-      this.loadSource.clear();
-      this.loadSource.addFeature(activityFeature);
-      this.loadSource.changed();
+      this.roadWorkActivitySource.clear();
+      this.roadWorkActivitySource.addFeature(activityFeature);
+      this.roadWorkActivitySource.changed();
 
       if (refreshExtent) {
         let polyExtent: Extent = activityPoly.getExtent();
