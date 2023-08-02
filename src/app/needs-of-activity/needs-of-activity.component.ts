@@ -51,12 +51,23 @@ export class NeedsOfActivityComponent {
     this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
       next: (roadWorkNeeds) => {
         this.allRoadWorkNeedFeatures = roadWorkNeeds;
+        if (this.needsOfActivityService.assignedRoadWorkNeeds.length != 0) {
+          this.allRoadWorkNeedFeatures =
+            this.allRoadWorkNeedFeatures
+              .filter((roadWorkNeed) => this.needsOfActivityService.assignedRoadWorkNeeds.some(assignedNeed => assignedNeed.properties.uuid !== roadWorkNeed.properties.uuid));
+        }
+        if (this.needsOfActivityService.registeredRoadWorkNeeds.length != 0) {
+          this.allRoadWorkNeedFeatures =
+            this.allRoadWorkNeedFeatures
+              .filter((roadWorkNeed) => this.needsOfActivityService.registeredRoadWorkNeeds.some(registeredNeed => registeredNeed.properties.uuid !== roadWorkNeed.properties.uuid));
+        }
+
       },
       error: (error) => {
       }
     });
-    if(this.roadWorkActivityUuid){
-      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+    if (this.roadWorkActivityUuid) {
+      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid, this.allRoadWorkNeedFeatures);
     }
   }
 
@@ -113,6 +124,7 @@ export class NeedsOfActivityComponent {
             this.needsOfActivityService.assignedRoadWorkNeeds =
               this.needsOfActivityService.assignedRoadWorkNeeds
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
+            this.allRoadWorkNeedFeatures.push(roadWorkNeed);
             if (this.roadWorkActivityUuid) {
               this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
             }
@@ -139,6 +151,7 @@ export class NeedsOfActivityComponent {
               duration: 4000
             });
           } else {
+            this.searchResultRoadWorkNeedFeatures = [];
             let registeredRoadWorkNeedsCopy: RoadWorkNeedFeature[]
               = this.needsOfActivityService.registeredRoadWorkNeeds.filter(() => true);
             this.allRoadWorkNeedFeatures =
@@ -146,6 +159,40 @@ export class NeedsOfActivityComponent {
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             registeredRoadWorkNeedsCopy.push(roadWorkNeed);
             this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeedsCopy;
+            if (this.roadWorkActivityUuid) {
+              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+            }
+          }
+        },
+        error: (error) => {
+        }
+      });
+  }
+
+  deRegisterRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
+    let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
+    roadWorkNeed.properties.activityRelationType = "";
+    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
+    this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
+      .subscribe({
+        next: (errorMessage) => {
+          if (errorMessage != null && errorMessage.errorMessage != null &&
+            errorMessage.errorMessage.trim().length !== 0) {
+            roadWorkNeed.properties.activityRelationType = originalActivityRelationType;
+            roadWorkNeed.properties.roadWorkActivityUuid = "";
+            ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+            this.snckBar.open(errorMessage.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.searchResultRoadWorkNeedFeatures = [];
+            this.needsOfActivityService.registeredRoadWorkNeeds =
+              this.needsOfActivityService.registeredRoadWorkNeeds
+                .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
+            this.allRoadWorkNeedFeatures.push(roadWorkNeed);
+            if (this.roadWorkActivityUuid) {
+              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+            }
           }
         },
         error: (error) => {

@@ -18,22 +18,23 @@ export class NeedsOfActivityService {
     this.roadWorkNeedService = roadWorkNeedService;
   }
 
-  updateIntersectingRoadWorkNeeds(roadWorkActivityUuid: string) {
+  updateIntersectingRoadWorkNeeds(roadWorkActivityUuid: string,
+          allRoadWorkNeedFeatures: RoadWorkNeedFeature[] = []) {
     this.roadWorkNeedService.getIntersectingRoadWorkNeeds(roadWorkActivityUuid)
       .subscribe({
         next: (roadWorkNeeds) => {
           this.nonAssignedRoadWorkNeeds = [];
           for (let roadWorkNeed of roadWorkNeeds) {
             if (!this.assignedRoadWorkNeeds
-              .find(assignedRoadWorkNeed => assignedRoadWorkNeed.properties.uuid == roadWorkNeed.properties.uuid)) {
+              .find(assignedRoadWorkNeed => assignedRoadWorkNeed.properties.uuid == roadWorkNeed.properties.uuid) &&
+                  !this.registeredRoadWorkNeeds
+                    .find(registeredRoadWorkNeed => registeredRoadWorkNeed.properties.uuid == roadWorkNeed.properties.uuid)) {
               this.nonAssignedRoadWorkNeeds.push(roadWorkNeed);
-            }
-          }
-          for (let regRoadWorkNeed of this.registeredRoadWorkNeeds) {
-            if (!this.nonAssignedRoadWorkNeeds
-              .find(nonAssignedRoadWorkNeed => nonAssignedRoadWorkNeed.properties.uuid == regRoadWorkNeed.properties.uuid)) {
-              this.nonAssignedRoadWorkNeeds.push(regRoadWorkNeed);
-              this.registeredRoadWorkNeeds.filter(regRoadWorkNeedTemp => regRoadWorkNeed.properties.uuid !== regRoadWorkNeedTemp.properties.uuid)
+              if(allRoadWorkNeedFeatures.length != 0){
+                allRoadWorkNeedFeatures =
+                  allRoadWorkNeedFeatures
+                    .filter((roadWorkNeed) => this.nonAssignedRoadWorkNeeds.some(nonAssignedNeed => nonAssignedNeed.properties.uuid !== roadWorkNeed.properties.uuid));
+              }
             }
           }
         },
