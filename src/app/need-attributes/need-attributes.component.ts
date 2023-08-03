@@ -120,25 +120,41 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   add() {
-    this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
-      .subscribe({
-        next: (roadWorkNeedFeature) => {
-          if (this.roadWorkNeedFeature) {
-            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
-            if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
-              this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
-                duration: 4000
-              });
+    if (this.roadWorkNeedFeature) {
+      this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
+        .subscribe({
+          next: (managementAreas) => {
+            if (managementAreas && managementAreas.length !== 0) {
+              this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
+                .subscribe({
+                  next: (roadWorkNeedFeature) => {
+                    if (this.roadWorkNeedFeature) {
+                      ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+                      if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
+                        this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
+                          duration: 4000
+                        });
+                      } else {
+                        if(roadWorkNeedFeature.properties.costs == 0){
+                          roadWorkNeedFeature.properties.costs = null;
+                        }
+                        this.roadWorkNeedFeature = roadWorkNeedFeature;
+                        this.managementArea = managementAreas[0];
+                        this.snckBar.open("Bedürfnis wurde erfolgreich erstellt", "", {
+                          duration: 4000,
+                        });
+                      }
+                    }
+                  },
+                  error: (error) => {
+                  }
+                });
             }
-            this.roadWorkNeedFeature.properties.uuid = roadWorkNeedFeature.properties.uuid;
-            this.roadWorkNeedFeature.properties.name = roadWorkNeedFeature.properties.name;
-            this.roadWorkNeedFeature.properties.orderer = roadWorkNeedFeature.properties.orderer;
-            this.roadWorkNeedFeature.properties.relevance = roadWorkNeedFeature.properties.relevance;
+          },
+          error: (error) => {
           }
-        },
-        error: (error) => {
-        }
-      });
+        });
+    }
   }
 
   update() {
@@ -157,6 +173,9 @@ export class NeedAttributesComponent implements OnInit {
                           duration: 4000
                         });
                       } else {
+                        if(roadWorkNeedFeature.properties.costs == 0){
+                          roadWorkNeedFeature.properties.costs = null;
+                        }
                         this.roadWorkNeedFeature = roadWorkNeedFeature;
                         this.managementArea = managementAreas[0];
                         this.snckBar.open("Bedürfnis ist gespeichert", "", {

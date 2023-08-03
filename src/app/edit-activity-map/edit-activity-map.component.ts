@@ -187,11 +187,11 @@ export class EditActivityMapComponent implements OnInit {
 
     this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
-    this._reloadRoadworkNeeds();
+    this._reloadRoadworkNeeds(true);
   }
 
   onChangeYear(){
-    this._reloadRoadworkNeeds();
+    this._reloadRoadworkNeeds(false);
   }
 
   sendGeometry() {
@@ -282,12 +282,12 @@ export class EditActivityMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
-  private _reloadRoadworkNeeds() {
+  private _reloadRoadworkNeeds(refreshExtent: boolean) {
     this.roadWorkNeedService.getRoadWorkNeeds([], this.chosenYear)
       .subscribe({
         next: (roadWorkNeeds) => {
           this.needsOnMap = roadWorkNeeds;
-          this._putRoadworksOnMap(true);
+          this._putRoadworksOnMap(refreshExtent);
         },
         error: (error) => {
         }

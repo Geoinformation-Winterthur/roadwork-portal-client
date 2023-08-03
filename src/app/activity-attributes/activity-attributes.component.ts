@@ -120,6 +120,10 @@ export class ActivityAttributesComponent implements OnInit {
                   this.roadWorkActivityFeature = roadWorkActivity;
 
                   let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
+                  if(roadWorkActivityFeature.properties.costs == 0)
+                    roadWorkActivityFeature.properties.costs = undefined;
+                  if(roadWorkActivityFeature.properties.investmentNo == 0)
+                    roadWorkActivityFeature.properties.investmentNo = undefined;
 
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkActivityFeature.geometry)
                     .subscribe({
@@ -169,6 +173,10 @@ export class ActivityAttributesComponent implements OnInit {
       .subscribe({
         next: (roadWorkActivityFeature) => {
           if (this.roadWorkActivityFeature) {
+            if(roadWorkActivityFeature.properties.costs == 0)
+              roadWorkActivityFeature.properties.costs = undefined;
+            if(roadWorkActivityFeature.properties.investmentNo == 0)
+              roadWorkActivityFeature.properties.investmentNo = undefined;
             this.roadWorkActivityFeature = roadWorkActivityFeature;
           }
         },
@@ -193,6 +201,10 @@ export class ActivityAttributesComponent implements OnInit {
                           duration: 4000
                         });
                       } else {
+                        if(roadWorkActivityFeature.properties.costs == 0)
+                          roadWorkActivityFeature.properties.costs = undefined;
+                        if(roadWorkActivityFeature.properties.investmentNo == 0)
+                          roadWorkActivityFeature.properties.investmentNo = undefined;
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementAreas[0];
                         this.snckBar.open("Massnahme ist gespeichert", "", {
