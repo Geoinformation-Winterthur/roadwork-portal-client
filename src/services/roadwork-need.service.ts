@@ -22,11 +22,12 @@ export class RoadWorkNeedService {
     this.http = http;
   }
 
-  getRoadWorkNeeds(ids: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
+  getRoadWorkNeeds(ids: string[] = [], year: number = 0, summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
-    let hasIds = false;
+    let hasParameters = false;
+
     if (ids !== null && ids.length !== 0 && ids[0].trim() !== "") {
-      hasIds = true;
+      hasParameters = true;
       queryString += "?uuids=";
     }
 
@@ -36,9 +37,19 @@ export class RoadWorkNeedService {
       }
     }
 
+    if (year != 0) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "year=" + year;
+    }
+
     if (summary) {
-      if(hasIds){
-          queryString += "&";
+      if (hasParameters) {
+        queryString += "&";
       } else {
         queryString += "?";
       }
@@ -73,8 +84,8 @@ export class RoadWorkNeedService {
 
   public deleteRoadWorkNeed(uuid: string, releaseOnly: boolean = false): Observable<ErrorMessage> {
     let result: Observable<ErrorMessage> =
-      this.http.delete(environment.apiUrl + "/roadworkneed?uuid=" + uuid + 
-                "&releaseonly="+releaseOnly) as Observable<ErrorMessage>;
+      this.http.delete(environment.apiUrl + "/roadworkneed?uuid=" + uuid +
+        "&releaseonly=" + releaseOnly) as Observable<ErrorMessage>;
     return result;
   }
 

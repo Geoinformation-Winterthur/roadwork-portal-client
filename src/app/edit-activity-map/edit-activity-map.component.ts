@@ -40,6 +40,8 @@ export class EditActivityMapComponent implements OnInit {
   @Input()
   roadWorkActivityFeat?: RoadWorkActivityFeature;
 
+  chosenYear: number = new Date().getFullYear();
+
   isInEditingMode: boolean = false;
 
   map: Map = new Map();
@@ -97,8 +99,8 @@ export class EditActivityMapComponent implements OnInit {
       stroke: new Stroke({
         color: 'rgba(138, 43, 226,1.0)',
         width: 2,
-        lineDash: [6,6]
-    })
+        lineDash: [6, 6]
+      })
     });
 
     this.roadWorkActivitySource = new VectorSource({ wrapX: false });
@@ -185,15 +187,11 @@ export class EditActivityMapComponent implements OnInit {
 
     this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
-    this.roadWorkNeedService.getRoadWorkNeeds()
-      .subscribe({
-        next: (roadWorkNeeds) => {
-          this.needsOnMap = roadWorkNeeds;
-          this._putRoadworksOnMap(true);
-        },
-        error: (error) => {
-        }
-      });
+    this._reloadRoadworkNeeds();
+  }
+
+  onChangeYear(){
+    this._reloadRoadworkNeeds();
   }
 
   sendGeometry() {
@@ -284,6 +282,18 @@ export class EditActivityMapComponent implements OnInit {
       "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
+  private _reloadRoadworkNeeds() {
+    this.roadWorkNeedService.getRoadWorkNeeds([], this.chosenYear)
+      .subscribe({
+        next: (roadWorkNeeds) => {
+          this.needsOnMap = roadWorkNeeds;
+          this._putRoadworksOnMap(true);
+        },
+        error: (error) => {
+        }
+      });
+  }
+
   private _putRoadworksOnMap(refreshExtent: boolean) {
 
     this.roadWorkNeedSource.clear();
@@ -298,8 +308,8 @@ export class EditActivityMapComponent implements OnInit {
         id: i++,
         geometry: needPoly
       });
-      
-      if(roadWorkNeedFeature.properties.activityRelationType === 'assignedneed'){
+
+      if (roadWorkNeedFeature.properties.activityRelationType === 'assignedneed') {
         needFeature.set("assignedneed", true);
       } else {
         needFeature.set("assignedneed", false);
@@ -322,6 +332,7 @@ export class EditActivityMapComponent implements OnInit {
 
       this.roadWorkActivitySource.clear();
       this.roadWorkActivitySource.addFeature(activityFeature);
+
       this.roadWorkActivitySource.changed();
 
       if (refreshExtent) {

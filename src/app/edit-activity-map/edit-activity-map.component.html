@@ -11,5 +11,9 @@
         style="margin: 1em;border-style: solid;border-width: 1px;color:gray;">
         <mat-icon aria-label="Hilfe">question_mark</mat-icon>
     </button>
+    <mat-form-field style="margin-left: 1em;margin-top: 0.5em;">
+        <input matInput maxlength="4" placeholder="Bed&uuml;rfnis opt. Real. von (Jahr)..." type="number"
+            [(ngModel)]="chosenYear" (change)="onChangeYear()" />
+    </mat-form-field>
 </div>
 <div id="edit_activity_map" class="edit-activity-map"></div>
