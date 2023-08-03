@@ -168,11 +168,12 @@
                             (click)="assignRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Zuweisen"
                             matTooltip="Dieses angemeldete Bed&uuml;rfnis der Massnahme zuweisen"
                             class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
-                        <mat-icon *ngIf="isInEditingMode"
+                        <mat-icon *ngIf="isInEditingMode || userService.getLocalUser().uuid == registeredRoadWorkNeed.properties.orderer.uuid"
                             (click)="deRegisterRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Entfernen"
                             matTooltip="Die Anmeldung dieses Bed&uuml;rfnisses entfernen"
                             class="arrow_button" style="color: rgb(138,71,200);">arrow_downward</mat-icon>
-                        <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht m&ouml;glich"
+                        <mat-icon *ngIf="!isInEditingMode && userService.getLocalUser().uuid != registeredRoadWorkNeed.properties.orderer.uuid"
+                                    aria-label="Zuweisung aufheben nicht m&ouml;glich"
                             style="color: rgb(155, 155, 155);">block</mat-icon>
                     </td>
                 </ng-container>

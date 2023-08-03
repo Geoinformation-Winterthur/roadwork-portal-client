@@ -7,6 +7,7 @@ import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { Status } from 'src/model/status';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
+import { UserService } from 'src/services/user.service';
 
 @Component({
   selector: 'app-needs-of-activity',
@@ -24,6 +25,7 @@ export class NeedsOfActivityComponent {
   isInEditingMode: boolean = false;
 
   needsOfActivityService: NeedsOfActivityService;
+  userService: UserService;
 
   allRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
   searchResultRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
@@ -41,10 +43,12 @@ export class NeedsOfActivityComponent {
 
   constructor(roadWorkNeedService: RoadWorkNeedService,
     needsOfActivityService: NeedsOfActivityService,
+    userService: UserService,
     snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.snckBar = snckBar;
+    this.userService = userService;    
   }
 
   ngOnInit(): void {
