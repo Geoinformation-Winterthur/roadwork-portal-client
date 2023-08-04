@@ -3,7 +3,7 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
@@ -45,6 +45,8 @@ export class ActivityAttributesComponent implements OnInit {
   projectManagerControl: FormControl = new FormControl();
   costTypesControl: FormControl = new FormControl();
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
+  finishFromControl: FormControl = new FormControl();
+  finishToControl: FormControl = new FormControl();
 
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
@@ -53,19 +55,22 @@ export class ActivityAttributesComponent implements OnInit {
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
   private activatedRoute: ActivatedRoute;
+  private router: Router;
   private activatedRouteSubscription: Subscription = new Subscription();
 
   private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
-    roadWorkNeedService: RoadWorkNeedService, userService: UserService, snckBar: MatSnackBar) {
+    roadWorkNeedService: RoadWorkNeedService, userService: UserService, router: Router,
+    snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
     this.managementAreaService = managementAreaService;
+    this.router = router;
     this.snckBar = snckBar;
   }
 
@@ -173,11 +178,17 @@ export class ActivityAttributesComponent implements OnInit {
       .subscribe({
         next: (roadWorkActivityFeature) => {
           if (this.roadWorkActivityFeature) {
-            if(roadWorkActivityFeature.properties.costs == 0)
-              roadWorkActivityFeature.properties.costs = undefined;
-            if(roadWorkActivityFeature.properties.investmentNo == 0)
-              roadWorkActivityFeature.properties.investmentNo = undefined;
-            this.roadWorkActivityFeature = roadWorkActivityFeature;
+            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+            if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+              this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.snckBar.open("Massnahme wurde erfolgreich erstellt", "", {
+                duration: 4000,
+              });
+              this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
+            }
           }
         },
         error: (error) => {
@@ -187,6 +198,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   update() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
+      this.roadWorkActivityFeature.properties.finishFrom = this.finishFromControl.value;
+      this.roadWorkActivityFeature.properties.finishTo = this.finishToControl.value;
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
           next: (managementAreas) => {

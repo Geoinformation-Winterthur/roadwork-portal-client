@@ -147,18 +147,20 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
-                                        [matDatepicker]="finishLateFrom" (dateChange)="update()"
+                                        [formControl]="finishFromControl"
+                                        [matDatepicker]="finishFrom" (dateChange)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishLateFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
+                                    <mat-datepicker #finishFrom></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="finishFrom"></mat-datepicker-toggle>
                                 </mat-form-field>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
-                                        [matDatepicker]="finishLateTo" (dateChange)="update()"
+                                        [formControl]="finishToControl"
+                                        [matDatepicker]="finishTo" (dateChange)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishLateTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>
+                                    <mat-datepicker #finishTo></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="finishTo"></mat-datepicker-toggle>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
