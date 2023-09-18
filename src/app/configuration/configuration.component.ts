@@ -4,7 +4,6 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { environment } from 'src/environments/environment';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { AppConfigService } from 'src/services/app-config.service';
@@ -17,8 +16,6 @@ import { AppConfigService } from 'src/services/app-config.service';
 export class ConfigurationComponent implements OnInit {
 
   configurationData: ConfigurationData = new ConfigurationData();
-
-  hrefToOpenApi = environment.apiUrl + "/swagger";
 
   private appConfigService: AppConfigService;
   private snackBar: MatSnackBar;

@@ -19,6 +19,7 @@ import { ChooseEventsComponent } from './choose-events/choose-events.component';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { TestopenidComponent } from './testopenid/testopenid.component';
 import { EventAttributesComponent } from './event-attributes/event-attributes.component';
+import { DataexportComponent } from './dataexport/dataexport.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -34,6 +35,7 @@ import { EventAttributesComponent } from './event-attributes/event-attributes.co
    {path: 'events', component: ChooseEventsComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'events/:id', component: EventAttributesComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'configuration', component: ConfigurationComponent, pathMatch: 'full', canActivate: [UserService]},
+   {path: 'dataexport', component: DataexportComponent, pathMatch: 'full', canActivate: [UserService]},
    {path: 'openid', component: TestopenidComponent, pathMatch: 'full'},
  ];
  

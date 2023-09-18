@@ -5,21 +5,21 @@
 <div id="mainbox">
     <mat-toolbar>
         <mat-toolbar-row>
-            <button mat-icon-button (click)="toggleSideNav($event)" class="burger_button"
+            <button mat-icon-button (click)="sideNavOpened = !sideNavOpened" class="burger_button"
                 aria-label="Button to toggle side navigartion menu">
                 <mat-icon aria-hidden="true">menu</mat-icon>
             </button>&nbsp;&nbsp;&nbsp;
             <span>
-                <span *ngIf="isSideNavDisableClose" class="logo_title">{{title}}</span>
-                <span *ngIf="!isSideNavDisableClose" class="logo_title">{{shorttitle}}</span>
+                <span *ngIf="isMobilePlatform" class="logo_title">{{title}}</span>
+                <span *ngIf="!isMobilePlatform" class="logo_title">{{shorttitle}}</span>
             </span>&nbsp;&nbsp;
-            <span *ngIf="isSideNavDisableClose" class="logo_subtitle">{{subtitle}}</span>
+            <span *ngIf="isMobilePlatform" class="logo_subtitle">{{subtitle}}</span>
             <span class="align-right-spacer"></span>
-            <img *ngIf="isSideNavDisableClose" alt="Logo Stadt Winterthur" src="assets/win_logo.svg" width="147"
+            <img *ngIf="isMobilePlatform" alt="Logo Stadt Winterthur" src="assets/win_logo.svg" width="147"
                 height="72" class="main_logo">&nbsp;&nbsp;&nbsp;&nbsp;
             <span *ngIf="!isUserLoggedIn()">
                 <button mat-button class="login_button" routerLink='/login'>
-                    <mat-icon aria-hidden="true">login</mat-icon><span *ngIf="isSideNavDisableClose"
+                    <mat-icon aria-hidden="true">login</mat-icon><span *ngIf="isMobilePlatform"
                         i18n>&nbsp;Login</span>
                 </button>
             </span>
@@ -75,6 +75,10 @@
                     <a mat-list-item routerLink='/configuration' (click)="toggleSideNav($event)"
                             *ngIf="userService.hasUserAccess('administrator')">
                         <mat-icon aria-label="Konfiguration">settings</mat-icon>&nbsp;<span i18n>Konfiguration</span>
+                    </a>
+                    <a mat-list-item routerLink='/dataexport' (click)="toggleSideNav($event)"
+                            *ngIf="userService.hasUserAccess('administrator')">
+                        <mat-icon aria-label="Datenexport">system_update_alt</mat-icon>&nbsp;<span i18n>Datenexport</span>
                     </a>
                 </div>
                 <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="toggleSideNav($event)">

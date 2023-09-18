@@ -20,11 +20,11 @@ import { Title } from '@angular/platform-browser';
 })
 export class AppComponent {
 
-  @Input() isSideNavDisableClose: boolean = true;
   @Output() disableCloseChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   public sideNavOpened: boolean = false;
   public sideNavMode: MatDrawerMode = 'side';
+  public isMobilePlatform: boolean = true;
 
   title: string = environment.title;
   shorttitle: string = environment.shorttitle;
@@ -49,14 +49,14 @@ export class AppComponent {
     this.mediaWatcher = oMedia.asObservable().subscribe((mChange: MediaChange[]) => {
       if (mChange[0].mqAlias === 'xs') {
         this.sideNavMode = "over";
-        this.isSideNavDisableClose = false;
+        this.isMobilePlatform = false;
         this.sideNavOpened = false;
       } else {
         this.sideNavMode = "side";
-        this.isSideNavDisableClose = true;
+        this.isMobilePlatform = true;
         this.sideNavOpened = true;
       }
-      this.disableCloseChange.emit(this.isSideNavDisableClose)
+      this.disableCloseChange.emit(this.isMobilePlatform)
     });
     this.showCookieNotification();
   }
@@ -73,7 +73,7 @@ export class AppComponent {
   }
 
   public toggleSideNav(event: Event) {
-    if (!this.isSideNavDisableClose) {
+    if (!this.isMobilePlatform) {
       this.sideNavOpened = !this.sideNavOpened;
     }
   }
