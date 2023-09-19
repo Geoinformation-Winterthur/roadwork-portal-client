@@ -21,7 +21,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ChooseNeedComponent implements OnInit {
 
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
-  roadWorkNeedFeaturesFiltered: RoadWorkNeedFeature[] = [];
 
   filterPanelOpen: boolean = false;
 
@@ -46,12 +45,15 @@ export class ChooseNeedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAllNeeds();
+    this.getNeedsWithFilter();
   }
 
-  getAllNeeds() {
+  getNeedsWithFilter() {
+    let roadWorkNeedName: string = this.chosenNeedName.trim().toLowerCase();
 
-    this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
+    this.roadWorkNeedService
+          .getRoadWorkNeeds([], this.chosenNeedYearOptFrom, roadWorkNeedName)
+              .subscribe({
       next: (roadWorkNeeds) => {
 
         for (let roadWorkNeed of roadWorkNeeds) {
@@ -61,7 +63,6 @@ export class ChooseNeedComponent implements OnInit {
         }
 
         this.roadWorkNeedFeatures = roadWorkNeeds;
-        this.filterNeeds();
       },
       error: (error) => {
       }
@@ -97,23 +98,6 @@ export class ChooseNeedComponent implements OnInit {
       });
   }
 
-  filterNeeds() {
-    this.roadWorkNeedFeaturesFiltered =
-      this.roadWorkNeedFeatures
-        .filter(roadWorkNeedFeature => {
-          if (roadWorkNeedFeature.properties && roadWorkNeedFeature.properties.name
-            && roadWorkNeedFeature.properties.finishOptimumFrom) {
-            let roadWorkNeedName: string = this.chosenNeedName.trim().toLowerCase();
-            let finishOptimumFrom: Date = new Date(roadWorkNeedFeature.properties.finishOptimumFrom);
-            return (roadWorkNeedName === ''
-              || roadWorkNeedFeature.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
-              && finishOptimumFrom.getFullYear() === this.chosenNeedYearOptFrom;
-          } else {
-            return false;
-          }
-        });
-  }
-
   delete(uuid: string) {
     this.roadWorkNeedService.deleteRoadWorkNeed(uuid)
       .subscribe({
@@ -126,8 +110,6 @@ export class ChooseNeedComponent implements OnInit {
             });
           } else {
             this.roadWorkNeedFeatures = this.roadWorkNeedFeatures
-              .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);
-            this.roadWorkNeedFeaturesFiltered = this.roadWorkNeedFeaturesFiltered
               .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);
           }
         },

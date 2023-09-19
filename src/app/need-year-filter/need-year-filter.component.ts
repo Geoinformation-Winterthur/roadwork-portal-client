@@ -12,11 +12,6 @@ import { ChooseNeedComponent } from '../choose-need/choose-need.component';
 })
 export class NeedYearFilterComponent implements OnInit {
 
-  sliderMin: number = new Date().getFullYear() - 10;
-  sliderMax: number = new Date().getFullYear() + 30;
-  sliderStep: number = 1;
-  sliderThumbLabel: boolean = true;
-
   // parent component of this component:
   chooseNeedComponent: ChooseNeedComponent;
 
@@ -28,7 +23,11 @@ export class NeedYearFilterComponent implements OnInit {
   }
 
   filterYears() {
-    this.chooseNeedComponent.filterNeeds();
+    if(this.chooseNeedComponent.chosenNeedYearOptFrom === null ||
+      this.chooseNeedComponent.chosenNeedYearOptFrom == undefined) {
+        this.chooseNeedComponent.chosenNeedYearOptFrom = 0;
+      }
+    this.chooseNeedComponent.getNeedsWithFilter();
   }
 
 }

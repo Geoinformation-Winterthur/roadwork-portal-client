@@ -28,7 +28,7 @@ export class NeedNameFilterComponent implements OnInit {
 
   filterNeedName() {
     this.chooseNeedComponent.chosenNeedName = this.needSearchControl.value;
-    this.chooseNeedComponent.filterNeeds();
+    this.chooseNeedComponent.getNeedsWithFilter();
   }
 
 }
