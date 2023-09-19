@@ -106,4 +106,13 @@ export class RoadWorkNeedService {
     return result;
   }
 
+  downloadRoadWorkNeeds() : Observable<string>{
+    let queryString = "/exportdata/";
+    let result: Observable<string> =
+      this.http.get(environment.apiUrl + queryString, {
+        responseType: "text"
+      }) as Observable<string>;
+    return result;
+  }
+
 }
