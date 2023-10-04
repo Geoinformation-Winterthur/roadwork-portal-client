@@ -17,6 +17,7 @@
  import { MatSnackBarModule } from '@angular/material/snack-bar';
  import { MatSliderModule } from '@angular/material/slider';
  import { MatTooltipModule } from '@angular/material/tooltip';
+ import { MatDialogModule } from '@angular/material/dialog';
  import { MatMenuModule } from '@angular/material/menu';
  import { MatChipsModule } from '@angular/material/chips';
  import { MatFormFieldModule } from '@angular/material/form-field';
@@ -70,6 +71,7 @@ import { EventsAtActivityComponent } from './events-at-activity/events-at-activi
 import { OrganisationsComponent } from './organisations/organisations.component';
 import { StatusChipComponent } from './status-chip/status-chip.component';
 import { DataexportComponent } from './dataexport/dataexport.component';
+import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dialog.component';
  
  
  export function getToken(){
@@ -110,7 +112,8 @@ import { DataexportComponent } from './dataexport/dataexport.component';
      EventsAtActivityComponent,
      OrganisationsComponent,
      StatusChipComponent,
-     DataexportComponent
+     DataexportComponent,
+     DeleteNeedDialogComponent
    ],
    imports: [
      BrowserModule,
@@ -139,6 +142,7 @@ import { DataexportComponent } from './dataexport/dataexport.component';
      MatSelectModule,
      MatGridListModule,
      MatAutocompleteModule,
+     MatDialogModule,
      MatProgressBarModule,
      MatExpansionModule,
      MatSidenavModule,
