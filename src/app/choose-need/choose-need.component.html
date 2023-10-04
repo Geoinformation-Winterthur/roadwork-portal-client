@@ -87,7 +87,7 @@
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
           [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
-        <button *ngIf="roadWorkNeed.properties.isEditingAllowed" (click)="delete(roadWorkNeed.properties.uuid)"
+        <button *ngIf="roadWorkNeed.properties.isEditingAllowed" (click)="openDeleteDialog(roadWorkNeed.properties.uuid)"
           style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
           L&Ouml;SCHEN</button>
       </mat-card-actions>

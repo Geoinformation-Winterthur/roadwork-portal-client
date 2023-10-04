@@ -12,6 +12,8 @@ import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-choose-need',
@@ -32,16 +34,18 @@ export class ChooseNeedComponent implements OnInit {
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
   private snckBar: MatSnackBar;
+  private dialog: MatDialog;
   private router: Router;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     roadWorkActivityService: RoadWorkActivityService, router: Router,
-      snckBar: MatSnackBar) {
+      snckBar: MatSnackBar, dialog: MatDialog) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
     this.router = router;
     this.snckBar = snckBar;
+    this.dialog = dialog;
   }
 
   ngOnInit(): void {
@@ -68,6 +72,15 @@ export class ChooseNeedComponent implements OnInit {
       }
     });
 
+  }
+
+  openDeleteDialog(uuid: string) {
+    const deleteDialog = this.dialog.open(DeleteNeedDialogComponent);
+    deleteDialog.afterClosed().subscribe(isDeleteYes => {
+      if(isDeleteYes){
+        this.deleteNeed(uuid);
+      }
+    });
   }
 
   createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature) {
@@ -98,7 +111,7 @@ export class ChooseNeedComponent implements OnInit {
       });
   }
 
-  delete(uuid: string) {
+  deleteNeed(uuid: string) {
     this.roadWorkNeedService.deleteRoadWorkNeed(uuid)
       .subscribe({
         next: (errorMessage) => {
@@ -110,7 +123,7 @@ export class ChooseNeedComponent implements OnInit {
             });
           } else {
             this.roadWorkNeedFeatures = this.roadWorkNeedFeatures
-              .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);
+            .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);    
           }
         },
         error: (error) => {
