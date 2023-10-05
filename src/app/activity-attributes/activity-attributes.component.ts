@@ -109,6 +109,8 @@ export class ActivityAttributesComponent implements OnInit {
           this.roadWorkActivityFeature.properties.finishTo = plus50Years;
           this.roadWorkActivityFeature.properties.costsType.code = "valuation";
           this.roadWorkActivityFeature.properties.isEditingAllowed = true;
+          this.roadWorkActivityFeature.properties.created = new Date();
+          this.roadWorkActivityFeature.properties.lastModified = new Date();
 
         } else {
 
