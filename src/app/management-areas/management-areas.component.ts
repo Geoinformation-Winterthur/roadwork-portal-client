@@ -54,7 +54,7 @@ export class ManagementAreasComponent implements OnInit {
 
   reloadAreaMap(event: any){
     if(event.index === 0){
-      document.location.href = "/managementareas"
+      document.location.href = "/civil-engineering/roadworks-portal/managementareas/"
     }
   }
 
