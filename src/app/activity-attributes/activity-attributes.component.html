@@ -147,8 +147,8 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung von</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
-                                        [formControl]="finishFromControl"
-                                        [matDatepicker]="finishFrom" (dateChange)="update()"
+                                        [formControl]="finishFromControl" [matDatepicker]="finishFrom"
+                                        (dateChange)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishFrom></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishFrom"></mat-datepicker-toggle>
@@ -156,8 +156,8 @@
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Realisierung bis</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
-                                        [formControl]="finishToControl"
-                                        [matDatepicker]="finishTo" (dateChange)="update()"
+                                        [formControl]="finishToControl" [matDatepicker]="finishTo"
+                                        (dateChange)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #finishTo></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="finishTo"></mat-datepicker-toggle>
@@ -180,13 +180,16 @@
                                 </p>
                                 <div *ngIf="userService.getLocalUser().role.code=='trafficmanager' ||
                                                 userService.getLocalUser().role.code=='administrator'">
-                                    <button mat-button *ngIf="userService.getLocalUser().uuid != roadWorkActivityFeature.properties.trafficAgent.uuid"
-                                            (click)="registerTrefficManager()" 
-                                            style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
-                                            disabled="false">
+                                    <button mat-button
+                                        *ngIf="userService.getLocalUser().uuid != roadWorkActivityFeature.properties.trafficAgent.uuid"
+                                        (click)="registerTrefficManager()"
+                                        style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
+                                        disabled="false">
                                         MASSNAHME &Uuml;BERNEHMEN
                                     </button>
-                                    <button mat-button *ngIf="userService.getLocalUser().uuid == roadWorkActivityFeature.properties.trafficAgent.uuid" (click)="registerTrefficManager()"
+                                    <button mat-button
+                                        *ngIf="userService.getLocalUser().uuid == roadWorkActivityFeature.properties.trafficAgent.uuid"
+                                        (click)="registerTrefficManager()"
                                         style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(179, 128, 226);"
                                         disabled="true">
                                         MASSNAHME &Uuml;BERNEHMEN
@@ -214,6 +217,18 @@
                         </mat-card-content>
                     </mat-card>
                 </div>
+            </mat-tab>
+            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!=='' &&
+                            roadWorkActivityFeature.properties.status.code!=='notcoord' &&
+                            roadWorkActivityFeature.properties.status.code!=='coordinated' &&
+                            roadWorkActivityFeature.properties.status.code!=='inwork'" label="Vernehmlassung">
+                <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
+                        [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
+                </app-consultation-items>
+            </mat-tab>
+            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Historie">
+                <app-activity-history
+                    [dataSource]="roadWorkActivityFeature.properties.activityHistory"></app-activity-history>
             </mat-tab>
             <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Bed&uuml;rfnisse">
                 <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"

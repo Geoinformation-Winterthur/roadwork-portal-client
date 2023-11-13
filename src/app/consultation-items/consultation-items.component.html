@@ -1,0 +1,49 @@
+<div *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager') &&
+            consultationInputs && consultationInputs.length !== 0">
+    <h2>Bisherige Eingaben</h2>
+    <div *ngFor="let consultationInput of consultationInputs" style="margin: 2em;">
+        <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
+        ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
+        <i>{{consultationInput.inputText}}</i>
+    </div>
+</div>
+<h2>Eigene Eingaben zur Baumassnahme</h2>
+<div *ngIf="roadworkActivityStatus ==='provfixed' || roadworkActivityStatus ==='deffixed' ||
+            roadworkActivityStatus ==='executed' || roadworkActivityStatus ==='inconsult'"
+    style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
+    <p>
+        <mat-checkbox [(ngModel)]="needInput.decline" [disabled]="roadworkActivityStatus !=='inconsult'"
+            style="margin:10px;">
+            Kein Bedarf
+        </mat-checkbox>
+    </p>
+    <mat-form-field style="width: 100%; margin-top: 2em;">
+        <mat-label>Bedarf</mat-label>
+        <textarea matInput [(ngModel)]="needInput.inputText" maxlength="40000" placeholder="Bedarf..."
+            [disabled]="needInput.decline || roadworkActivityStatus !=='inconsult'">
+            {{needInput.inputText}}
+        </textarea>
+    </mat-form-field>
+    <button mat-button (click)="update()" [disabled]="roadworkActivityStatus !=='inconsult'"
+        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+        SENDEN
+    </button>
+</div>
+<div *ngIf="roadworkActivityStatus ==='provfixed' || roadworkActivityStatus ==='deffixed' ||
+            roadworkActivityStatus ==='executed'" style="border: 2px solid;border-color: lightgrey;padding: 1em;">
+    <p>
+        <mat-checkbox [(ngModel)]="feedbackInput.decline" [disabled]="roadworkActivityStatus !=='provfixed'"
+            style="margin:10px;">
+            Keine aktive R&uuml;ckmeldung
+        </mat-checkbox>
+    </p>
+    <mat-form-field style="width: 100%; margin-top: 2em;">
+        <mat-label>R&uuml;ckmeldung</mat-label>
+        <textarea matInput maxlength="40000" placeholder="R&uuml;ckmeldung..."
+            [disabled]="feedbackInput.decline || roadworkActivityStatus !=='provfixed'"></textarea>
+    </mat-form-field>
+    <button mat-button (click)="update()" [disabled]="roadworkActivityStatus !=='provfixed'"
+        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+        SENDEN
+    </button>
+</div>

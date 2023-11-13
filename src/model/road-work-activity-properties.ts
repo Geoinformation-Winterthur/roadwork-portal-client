@@ -2,6 +2,8 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
+import { ActivityHistoryItem } from "./activity-history-item";
+import { ConsultationInput } from "./consultation-input";
 import { CostType } from "./cost-type";
 import { Status } from "./status";
 import { User } from "./user";
@@ -27,4 +29,5 @@ export class RoadWorkActivityProperties {
     investmentNo?: number;
     pdbFid: number = 0;
     strabakoNo: string = "";
+    activityHistory: ActivityHistoryItem[] = [];
 }

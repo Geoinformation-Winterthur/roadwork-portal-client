@@ -72,6 +72,8 @@ import { OrganisationsComponent } from './organisations/organisations.component'
 import { StatusChipComponent } from './status-chip/status-chip.component';
 import { DataexportComponent } from './dataexport/dataexport.component';
 import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dialog.component';
+import { ActivityHistoryComponent } from './activity-history/activity-history.component';
+import { ConsultationItemsComponent } from './consultation-items/consultation-items.component';
  
  
  export function getToken(){
@@ -113,7 +115,9 @@ import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dial
      OrganisationsComponent,
      StatusChipComponent,
      DataexportComponent,
-     DeleteNeedDialogComponent
+     DeleteNeedDialogComponent,
+     ActivityHistoryComponent,
+     ConsultationItemsComponent
    ],
    imports: [
      BrowserModule,
