@@ -63,9 +63,12 @@
         <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span>
         <div style="margin-top: 2em;margin-bottom: 2em;">
           <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan">
-            Im Stadtplan</a> <a
             href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+            target="_blank">
+            Im Stadtplan</a>
+          <a
+            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+            target="_blank"
             style="margin: 1em;">Im WinWebGIS</a> <span *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
           </span>
         </div>
