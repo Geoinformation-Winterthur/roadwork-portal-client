@@ -11,8 +11,9 @@ import { User } from "./user";
 export class RoadWorkActivityProperties {
     uuid: string = "";
     name: string = "";
-    projectManager: User  = new User();
-    trafficAgent: User  = new User();
+    projectManager: User = new User();
+    trafficAgent: User = new User();
+    areaManager: User = new User();
     description: string = "";
     created: Date = new Date(1,0,1);
     lastModified: Date = new Date(1, 0, 1);
