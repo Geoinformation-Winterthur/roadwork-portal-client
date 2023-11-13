@@ -1,11 +1,11 @@
 <div style="margin:2em;">
     <div *ngIf="roadWorkActivityFeature === undefined">
-        <p style="color: red;">Die Baumassnahme konnte nicht geladen werden.</p>
+        <p style="color: red;">Das Bauvorhaben konnte nicht geladen werden.</p>
     </div>
     <div *ngIf="roadWorkActivityFeature !== undefined">
-        <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Baumassnahme <span style="font-weight: normal;"> / {{
+        <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Bauvorhaben <span style="font-weight: normal;"> / {{
                 roadWorkActivityFeature.properties.name }}</span></h1>
-        <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neue Baumassnahme</h1>
+        <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neues Bauvorhaben</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
                 <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"></app-edit-activity-map>
@@ -15,7 +15,7 @@
                     <button mat-button
                         style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
                         *ngIf="!roadWorkActivityFeature.properties.uuid" (click)="add()">
-                        BAUMASSNAHME ER&Ouml;FFNEN
+                        BAUVORHABEN ER&Ouml;FFNEN
                     </button>
                 </div>
                 <div fxLayout="row wrap padding">

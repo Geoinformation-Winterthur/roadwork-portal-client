@@ -1,11 +1,11 @@
 <div style="margin:2em;">
     <div *ngIf="roadWorkNeedFeature === undefined">
-        <p style="color: red;">Das Baubed&uuml;rfnis konnte nicht geladen werden.</p>
+        <p style="color: red;">Das Baubedarf-Objekt konnte nicht geladen werden.</p>
     </div>
     <div *ngIf="roadWorkNeedFeature !== undefined">
-        <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Baubed&uuml;rfnis <span style="font-weight: normal;"> / {{
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Baubedarf <span style="font-weight: normal;"> / {{
                 roadWorkNeedFeature.properties.name }}</span></h1>
-        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neues Baubed&uuml;rfnis</h1>
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Baubedarf</h1>
         <mat-tab-group>
             <mat-tab label="Lage">
                 <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
@@ -15,7 +15,7 @@
                 <button mat-button
                     style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
                     *ngIf="!roadWorkNeedFeature.properties.uuid" (click)="add()">
-                    BAUBED&Uuml;RFNIS ER&Ouml;FFNEN
+                    BAUBEDARF ER&Ouml;FFNEN
                 </button>
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
