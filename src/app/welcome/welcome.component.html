@@ -9,7 +9,7 @@
 <div style="margin: 2em;color: rgb(90, 90, 90);">
     <h3 i18n style="font-weight: lighter;text-transform: uppercase;color: black;">Willkommen <span
             *ngIf="userService.isUserLoggedIn()">{{userService.getLocalUser().firstName}}
-            {{userService.getLocalUser().lastName}} </span>im Tool zur Planung und Koordination der Baumassnahmen der
+            {{userService.getLocalUser().lastName}} </span>im Tool zur Planung und Koordination der Bauvorhaben der
         Stadt Winterthur</h3>
     <div i18n *ngIf="!userService.isUserLoggedIn()">Das <i>Koordinationstool Strategische Strassenplanung</i> (SSP) des
         Tiefbauamts der Stadtverwaltung Winterthur
@@ -37,8 +37,8 @@
         </p>
         <div *ngIf="roadWorkActivityFeaturesInCoordination.length === 0"><span
                 style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
-                sind zurzeit keine Baumassnahmen in der Vernehmlassung.</span></div>
-        <div *ngIf="roadWorkActivityFeaturesInCoordination.length !== 0">Folgende Baumassnahmen sind zurzeit in der
+                sind zurzeit keine Bauvorhaben in der Vernehmlassung.</span></div>
+        <div *ngIf="roadWorkActivityFeaturesInCoordination.length !== 0">Folgende Bauvorhaben sind zurzeit in der
             <b>Vernehmlassung</b>:
             <table mat-table [dataSource]="roadWorkActivityFeaturesInCoordination" class="mat-elevation-z2"
                 style="width: 100%; margin-top:1em;">

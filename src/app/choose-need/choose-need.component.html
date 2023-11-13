@@ -3,7 +3,7 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-  <h1>Baubed&uuml;rfnisse<span *ngIf="chosenNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
+  <h1>Baubedarfe<span *ngIf="chosenNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenNeedYearOptFrom}}</span></h1>
   <div class="add-need-button-container">
     <button mat-fab [routerLink]="['/needs', 'new']" style="background-color: rgb(133, 99, 212);" class="fab-button">
@@ -75,15 +75,15 @@
         <mat-divider></mat-divider>
         <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" style="padding-top: 1em;padding-bottom: 1em;">
           <mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp;<a
-            routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zur
-            Baumassnahme</a>
+            routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zum
+            Bauvorhaben</a>
         </div>
         <div
           *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
           style="margin: 1em;">
           <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
             (click)="createNewActivityFromNeed(roadWorkNeed)"><mat-icon
-              aria-label="Neue Baumassnahme">handyman</mat-icon>&nbsp; NEUE BAUMASSNAHME</button>
+              aria-label="Neues Bauvorhaben">handyman</mat-icon>&nbsp; NEUES BAUVORHABEN</button>
         </div>
       </mat-card-content>
       <mat-divider></mat-divider>

@@ -3,7 +3,7 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-  <h1>Baumassnahmen<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
+  <h1>Bauvorhaben<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenActivityYearFrom}}</span></h1>
   <div class="add-project-button-container" *ngIf="userService.hasUserAccess('territorymanager')">
     <button mat-fab [routerLink]="['/activities', 'new']" style="background-color: rgb(133, 99, 212);"
