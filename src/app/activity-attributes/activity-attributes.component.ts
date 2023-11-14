@@ -19,6 +19,7 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { CostType } from 'src/model/cost-type';
+import { OrganisationService } from 'src/services/organisation.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -35,6 +36,7 @@ export class ActivityAttributesComponent implements OnInit {
   areaManagerName: string = "";
   statusCode: string = "";
   priorityCode: string = "";
+  allOrgUnitNames: string[] = [];
 
   availableUsers: User[] = [];
 
@@ -54,6 +56,7 @@ export class ActivityAttributesComponent implements OnInit {
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
+  private organisationService: OrganisationService;
   private activatedRoute: ActivatedRoute;
   private router: Router;
   private activatedRouteSubscription: Subscription = new Subscription();
@@ -62,14 +65,15 @@ export class ActivityAttributesComponent implements OnInit {
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
-    roadWorkNeedService: RoadWorkNeedService, userService: UserService, router: Router,
-    snckBar: MatSnackBar) {
+    roadWorkNeedService: RoadWorkNeedService, userService: UserService,
+    organisationService: OrganisationService, router: Router, snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
     this.managementAreaService = managementAreaService;
+    this.organisationService = organisationService;
     this.router = router;
     this.snckBar = snckBar;
   }
@@ -172,6 +176,21 @@ export class ActivityAttributesComponent implements OnInit {
 
         }
 
+      });
+
+      this.organisationService.getAllOrgTypes(true).subscribe({
+        next: (organisations) => {
+          let orgAndContactName: string = "";
+          for (let organisation of organisations) {
+            orgAndContactName = organisation.name;
+            if(organisation.contactPerson){
+                orgAndContactName += " (" + organisation.contactPerson + ")";
+            }
+            this.allOrgUnitNames.push(orgAndContactName);
+          }
+        },
+        error: (error) => {
+        }
       });
   }
 

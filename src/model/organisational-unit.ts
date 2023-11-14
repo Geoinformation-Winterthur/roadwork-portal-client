@@ -7,5 +7,6 @@ export class OrganisationalUnit
     public uuid: string = "";
     public name: string = "";
     public errorMessage: string = "";
+    public contactPerson: string = "";
 }
 

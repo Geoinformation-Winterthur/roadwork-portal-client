@@ -216,6 +216,17 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-title>Beteiligte</mat-card-title>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-selection-list>
+                                    <mat-list-option *ngFor="let orgUnitName of allOrgUnitNames">{{orgUnitName}}</mat-list-option>
+                                </mat-selection-list>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
                 </div>
             </mat-tab>
             <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!=='' &&
@@ -223,7 +234,7 @@
                             roadWorkActivityFeature.properties.status.code!=='coordinated' &&
                             roadWorkActivityFeature.properties.status.code!=='inwork'" label="Vernehmlassung">
                 <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
-                        [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
+                    [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
                 </app-consultation-items>
             </mat-tab>
             <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Historie">
