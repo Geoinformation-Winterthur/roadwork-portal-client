@@ -16,9 +16,12 @@ export class OrganisationService {
     this.http = http;
   }
 
-  public getAllOrgTypes(): Observable<OrganisationalUnit[]> {
+  public getAllOrgTypes(withContactPerson: boolean = false): Observable<OrganisationalUnit[]> {
+    let requestUrl = environment.apiUrl + "/account/organisations/";
+    if(withContactPerson)
+      requestUrl += "?withcontactperson=true"
     let result: Observable<OrganisationalUnit[]> =
-      this.http.get(environment.apiUrl + "/account/organisations/") as Observable<OrganisationalUnit[]>;
+      this.http.get(requestUrl) as Observable<OrganisationalUnit[]>;
     return result;
   }
 
