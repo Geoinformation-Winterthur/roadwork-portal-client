@@ -208,7 +208,7 @@ export class NeedAttributesComponent implements OnInit {
   private static _createNewRoadWorkNeedFeature(localUser: User): RoadWorkNeedFeature {
 
     let roadWorkNeedFeature: RoadWorkNeedFeature = new RoadWorkNeedFeature();
-    roadWorkNeedFeature.properties.status.code = "notcoord";
+    roadWorkNeedFeature.properties.status.code = "requirement";
     roadWorkNeedFeature.properties.priority.code = "middle";
     roadWorkNeedFeature.properties.isEditingAllowed = true;
     roadWorkNeedFeature.properties.created = new Date();

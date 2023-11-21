@@ -79,7 +79,7 @@ export class NeedsOfActivityComponent {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "assignedneed";
     let status: Status = new Status();
-    status.code = "coordinated";
+    status.code = "verified";
     roadWorkNeed.properties.status = status;
     roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)

@@ -1,28 +1,22 @@
 <div>
-    <mat-chip-list>
-      <mat-chip *ngIf="statusCode === 'notcoord'" class="chip-notcoord">
-        <span *ngIf="short">nicht&nbsp;koord.</span>
-        <span *ngIf="!short">nicht koordiniert</span>
+  <mat-chip-list>
+      <mat-chip *ngIf="statusCode === 'requirement'" class="chip-notcoord">
+        Bedarf
       </mat-chip>
-      <mat-chip *ngIf="statusCode === 'inwork'" class="chip-inwork">
-        <span *ngIf="short">Bearbeitung</span>
-        <span *ngIf="!short">In Bearbeitung</span>
+      <mat-chip *ngIf="statusCode === 'review'" class="chip-inwork">
+        <span *ngIf="short">Pr&uuml;fung</span>
+        <span *ngIf="!short">in Pr&uuml;fung</span>
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'verified'" class="chip-inwork">
+        verifiziert
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'inconsult'" class="chip-inconsult">
         <span *ngIf="short">Vernehmlassung</span>
-        <span *ngIf="!short">In Vernehmlassung</span>
+        <span *ngIf="!short">in Vernehmlassung</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'coordinated'"
-        class="chip-coordinated">koordiniert</mat-chip>
-      <mat-chip *ngIf="statusCode === 'provfixed'" class="chip-provfixed">
-        <span *ngIf="short">prov.&nbsp;festg.</span>
-        <span *ngIf="!short">provisorisch festgesetzt</span>
+        class="chip-coordinated">
+        koordiniert
       </mat-chip>
-      <mat-chip *ngIf="statusCode === 'deffixed'" class="chip-deffixed">
-        <span *ngIf="short">def.&nbsp;festg.</span>
-        <span *ngIf="!short">defenitiv festgesetzt</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'executed'"
-        class="chip-executed">ausgef&uuml;hrt</mat-chip>
     </mat-chip-list>
   </div>
