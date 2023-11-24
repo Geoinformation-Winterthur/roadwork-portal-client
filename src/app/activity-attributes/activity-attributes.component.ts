@@ -205,7 +205,7 @@ export class ActivityAttributesComponent implements OnInit {
                 duration: 4000
               });
             } else {
-              this.snckBar.open("Massnahme wurde erfolgreich erstellt", "", {
+              this.snckBar.open("Vorhaben wurde erfolgreich erstellt", "", {
                 duration: 4000,
               });
               this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
@@ -241,7 +241,7 @@ export class ActivityAttributesComponent implements OnInit {
                           roadWorkActivityFeature.properties.investmentNo = undefined;
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementAreas[0];
-                        this.snckBar.open("Massnahme ist gespeichert", "", {
+                        this.snckBar.open("Vorhaben ist gespeichert", "", {
                           duration: 4000,
                         });
                       }
@@ -278,7 +278,7 @@ export class ActivityAttributesComponent implements OnInit {
                 });
               } else {
                 this.roadWorkActivityFeature = roadWorkActivityFeature;
-                this.snckBar.open("Massnahme ist gespeichert", "", {
+                this.snckBar.open("Vorhaben ist gespeichert", "", {
                   duration: 4000,
                 });
               }

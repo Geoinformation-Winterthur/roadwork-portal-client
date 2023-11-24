@@ -29,4 +29,7 @@ export class RoadWorkNeedProperties {
     description: string = "";
     roadWorkActivityUuid: string = "";
     isEditingAllowed: boolean = false;
+    noteOfAreaManager: string = "";
+    areaManagerNoteDate: Date = new Date(1, 0, 1);;
+    areaManagerOfNote: User  = new User();
 }

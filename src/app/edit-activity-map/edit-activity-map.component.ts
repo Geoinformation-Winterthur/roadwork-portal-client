@@ -243,7 +243,7 @@ export class EditActivityMapComponent implements OnInit {
                                 });
                             }
                             this.needsOfActivityService.updateIntersectingRoadWorkNeeds(roadWorkActivityFeature.properties.uuid);
-                            this.snackBar.open("Massnahmengeometrie ist gespeichert", "", {
+                            this.snackBar.open("Vorhabengeometrie ist gespeichert", "", {
                               duration: 4000,
                             });
                           }

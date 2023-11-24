@@ -4,6 +4,7 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { ConsultationInput } from 'src/model/consultation-input';
 import { User } from 'src/model/user';
 import { ConsultationService } from 'src/services/consultation.service';
+import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { UserService } from 'src/services/user.service';
 
 @Component({
@@ -26,12 +27,16 @@ export class ConsultationItemsComponent implements OnInit {
 
   consultationInputs: ConsultationInput[] = [];
 
+  needsOfActivityService: NeedsOfActivityService;
+
   private consultationService: ConsultationService;
   private snckBar: MatSnackBar;
 
   constructor(consultationService: ConsultationService,
+    needsOfActivityService: NeedsOfActivityService,
     userService: UserService, snckBar: MatSnackBar) {
     this.consultationService = consultationService;
+    this.needsOfActivityService = needsOfActivityService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
   }
@@ -56,7 +61,6 @@ export class ConsultationItemsComponent implements OnInit {
 
   update() {
     if (this.needInput.uuid === "") {
-      this.needInput.typeOfInput = "need";
       this.consultationService.addConsultationInput(this.roadworkActivityUuid,
         this.needInput)
         .subscribe({

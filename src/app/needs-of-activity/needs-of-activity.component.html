@@ -1,12 +1,12 @@
 <div>
     <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
         <mat-icon aria-label="Zugewiesen">link</mat-icon>
-        ZUGEWIESENE BED&Uuml;RFNISSE
+        ZUGEWIESENE BEDARFE
     </h2>
-    <div>Hier werden die Bed&uuml;rfnisse gelistet, die dieser Massnahme zugewiesen wurden.</div>
+    <div>Hier werden die Bedarfe gelistet, die diesem Vorhaben zugewiesen wurden.</div>
     <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length === 0"
         style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-        Diese Massnahme sind keine Bed&uuml;rfnisse zugewiesen.
+        Diesem Vorhaben sind keine Bedarfe zugewiesen.
     </div>
     <div *ngIf="needsOfActivityService.assignedRoadWorkNeeds.length !== 0">
         <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds" class="mat-elevation-z2"
@@ -58,15 +58,15 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Nicht zugewiesen">link_off</mat-icon>
-            NICHT ZUGEWIESENE BED&Uuml;RFNISSE IN MASSNAHMENFL&Auml;CHE
+            NICHT ZUGEWIESENE BEDARFE IN VORHABENFL&Auml;CHE
         </h2>
         <div>
-            Hier werden alle Bed&uuml;rfnisse gelistet, die zwar r&auml;umlich in dieser Massnahme liegen,
-            jedoch der Massnahme nicht explizit zugeordnet sind.
+            Hier werden alle Bedarfe gelistet, die zwar r&auml;umlich in dieser Vorhaben liegen,
+            jedoch dem Vorhaben nicht explizit zugeordnet sind.
         </div>
         <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Bei dieser Massnahme liegen keine Bed&uuml;rfnisse in der Massnahmenfl&auml;che
+            Bei diesem Vorhaben liegen keine Bedarfe in der Vorhabenfl&auml;che
             vor (die nicht bereits zugewiesen sind).
         </div>
         <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
@@ -105,7 +105,7 @@
                     <th mat-header-cell *matHeaderCellDef> Zuweisen </th>
                     <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
                         <mat-icon *ngIf="isInEditingMode"
-                            matTooltip="Dieses Bed&uuml;rfnis der Massnahme zuweisen"
+                            matTooltip="Diesen Bedarf dem Vorhaben zuweisen"
                             (click)="assignRoadWorkNeed(nonAssignedRoadWorkNeed)" aria-label="Zuweisung entfernen"
                             class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
                         <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht m&ouml;glich"
@@ -121,13 +121,13 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Angemeldet">app_registration</mat-icon>
-            MANUELL ANGEMELDETE BED&Uuml;RFNISSE
+            MANUELL ANGEMELDETE BEDARFE
         </h2>
-        <div>Diese Bed&uuml;rfnisse liegen r&auml;umlich ausserhalb der Massnahmenfl&auml;che, wurden
-            jedoch trotzdem f&uuml;r diese Massnahme angemeldet.</div>
+        <div>Diese Bedarfe liegen r&auml;umlich ausserhalb der Vorhabenfl&auml;che, wurden
+            jedoch trotzdem f&uuml;r dieses Vorhaben angemeldet.</div>
         <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Aktuell liegen keine weiteren angemeldeten Bed&uuml;rfnisse f&uuml;r diese Massnahme vor.
+            Aktuell liegen keine weiteren angemeldeten Bedarfe f&uuml;r dieses Vorhaben vor.
         </div>
         <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length !== 0">
             <table mat-table [dataSource]="needsOfActivityService.registeredRoadWorkNeeds" class="mat-elevation-z2"
@@ -166,11 +166,11 @@
                     <td mat-cell *matCellDef="let registeredRoadWorkNeed">
                         <mat-icon *ngIf="isInEditingMode"
                             (click)="assignRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Zuweisen"
-                            matTooltip="Dieses angemeldete Bed&uuml;rfnis der Massnahme zuweisen"
+                            matTooltip="Diesen angemeldeten Bedarf dem Vorhaben zuweisen"
                             class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
                         <mat-icon *ngIf="isInEditingMode || userService.getLocalUser().uuid == registeredRoadWorkNeed.properties.orderer.uuid"
                             (click)="deRegisterRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Entfernen"
-                            matTooltip="Die Anmeldung dieses Bed&uuml;rfnisses entfernen"
+                            matTooltip="Die Anmeldung dieses Bedarfs entfernen"
                             class="arrow_button" style="color: rgb(138,71,200);">arrow_downward</mat-icon>
                         <mat-icon *ngIf="!isInEditingMode && userService.getLocalUser().uuid != registeredRoadWorkNeed.properties.orderer.uuid"
                                     aria-label="Zuweisung aufheben nicht m&ouml;glich"
@@ -186,7 +186,7 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Angemeldet">add_task</mat-icon>
-            BED&Uuml;RFNIS F&Uuml;R DIESE MASSNAHME ANMELDEN
+            BEDARF F&Uuml;R DIESES VORHABEN ANMELDEN
         </h2>
         <mat-accordion>
             <mat-expansion-panel style="margin-bottom:2em;" expanded>

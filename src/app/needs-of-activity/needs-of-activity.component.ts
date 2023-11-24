@@ -1,8 +1,7 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
-import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { Status } from 'src/model/status';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';

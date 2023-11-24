@@ -101,7 +101,7 @@ export class ChooseNeedComponent implements OnInit {
             });
           } else {
             this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
-            this.snckBar.open("Massnahme wurde erstellt", "", {
+            this.snckBar.open("Vorhaben wurde erstellt", "", {
               duration: 4000,
             });
           }

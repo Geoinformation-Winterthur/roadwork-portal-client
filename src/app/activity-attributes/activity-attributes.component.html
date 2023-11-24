@@ -183,20 +183,20 @@
                                         (click)="registerTrefficManager()"
                                         style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
                                         disabled="false">
-                                        MASSNAHME &Uuml;BERNEHMEN
+                                        VORHABEN &Uuml;BERNEHMEN
                                     </button>
                                     <button mat-button
                                         *ngIf="userService.getLocalUser().uuid == roadWorkActivityFeature.properties.trafficAgent.uuid"
                                         (click)="registerTrefficManager()"
                                         style="border: 1px solid;color: rgb(237,240,255);background-color: rgb(179, 128, 226);"
                                         disabled="true">
-                                        MASSNAHME &Uuml;BERNEHMEN
+                                        VORHABEN &Uuml;BERNEHMEN
                                     </button>
                                 </div>
                                 <p><mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isInInternet"
                                         (change)="update()" style="margin:10px;"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                        Massnahme im Internet publizieren
+                                        Vorhaben im Internet publizieren
                                     </mat-checkbox>
                                 </p>
                                 <mat-form-field>
@@ -227,8 +227,10 @@
                     </mat-card>
                 </div>
             </mat-tab>
-            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid=='inconsult' ||
-                            roadWorkActivityFeature.properties.status.code!=='coordinated'"
+            <mat-tab *ngIf="(userService.getLocalUser().role.code === 'administrator' || 
+                                userService.getLocalUser().role.code === 'territorymanager') && 
+                            (roadWorkActivityFeature.properties.status.code=='inconsult' ||
+                            roadWorkActivityFeature.properties.status.code=='coordinated')"
                             label="Vernehmlassung">
                 <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                     [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
@@ -238,7 +240,7 @@
                 <app-activity-history
                     [dataSource]="roadWorkActivityFeature.properties.activityHistory"></app-activity-history>
             </mat-tab>
-            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Bed&uuml;rfnisse">
+            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Bedarfe">
                 <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                     [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
