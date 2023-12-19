@@ -23,7 +23,6 @@ export class RoadWorkNeedProperties {
     priority: Priority = new Priority();
     status: Status = new Status();
     costs?: number;
-    longer6Month: boolean = false;
     relevance: number = 0;
     activityRelationType: string = "";
     description: string = "";
