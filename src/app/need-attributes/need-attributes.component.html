@@ -114,12 +114,6 @@
                                     Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
-                                <p><mat-checkbox [(ngModel)]="roadWorkNeedFeature.properties.longer6Month"
-                                        (change)="update()" style="margin:10px;"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        Dauer l&auml;nger als 6 Monate
-                                    </mat-checkbox>
-                                </p>
                                 <p>Bewertung:<br>
                                     <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
                                         (change)="update()" name="relevance" aria-label="Bewertung"
