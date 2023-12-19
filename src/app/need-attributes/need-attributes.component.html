@@ -124,10 +124,12 @@
                                     <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
                                         (change)="update()" name="relevance" aria-label="Bewertung"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 0"
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.uuid
+                                                                && roadWorkNeedFeature.properties.relevance == 0"
                                             value="0"
                                             style="background-color: rgb(173, 255, 197); font-weight: bold;">0</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 0"
+                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.uuid
+                                                                && roadWorkNeedFeature.properties.relevance != 0"
                                             value="0"
                                             style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 1"
@@ -157,9 +159,6 @@
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 5"
                                             value="5"
                                             style="background-color: rgb(255, 226, 226); font-weight: bold;">5</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 5"
-                                            value="5"
-                                            style="background-color: rgb(255, 226, 226);">5</mat-button-toggle>
                                     </mat-button-toggle-group>
                                 </p>
                             </div>
