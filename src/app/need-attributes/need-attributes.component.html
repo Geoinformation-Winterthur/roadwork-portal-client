@@ -116,9 +116,9 @@
                                         Dauer l&auml;nger als 6 Monate
                                     </mat-checkbox>
                                 </p>
-                                <p>Priorit&auml;t:<br>
+                                <p>Bewertung:<br>
                                     <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
-                                        (change)="update()" name="relevance" aria-label="Priorit&auml;t"
+                                        (change)="update()" name="relevance" aria-label="Bewertung"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 0"
                                             value="0"
