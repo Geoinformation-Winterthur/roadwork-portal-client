@@ -10,5 +10,6 @@ export class ConsultationInput {
     lastEdit: Date = new Date(1, 0, 1);
     inputBy: User = new User();
     decline: boolean = false;
+    inputText: string = "";
     errorMessage: string = "";
 }
