@@ -34,14 +34,40 @@
               </div>
             </mat-card-content>
           </mat-card>
+          <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+            fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+            <mat-card-content>
+              <div style="display:flex;flex-direction:column;">
+                <form>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Status</mat-label>
+                    <mat-select multiple required>
+                      <mat-option value="1">
+                        Bedarf
+                      </mat-option>
+                      <mat-option value="2">
+                        verfiziert
+                      </mat-option>
+                      <mat-option value="3">
+                        In Vernehmlassung
+                      </mat-option>
+                      <mat-option value="3">
+                        In Pr&uuml;fung
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </form>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
     <mat-divider></mat-divider>
   </div>
   <div fxLayout="row wrap padding">
-    <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkNeed of roadWorkNeedFeatures"
-      fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
+    <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkNeed of roadWorkNeedFeatures" fxFlex.xs="100"
+      fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
       <mat-card-header style="margin: 0.5em;">
         <div style="width: 80%; margin-right: 1em;">
           <mat-card-title>
@@ -50,8 +76,7 @@
           </mat-card-title>
           <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
         </div>
-        <app-status-chip [statusCode]="roadWorkNeed.properties.status.code"
-            [short]="true">
+        <app-status-chip [statusCode]="roadWorkNeed.properties.status.code" [short]="true">
         </app-status-chip>
       </mat-card-header>
       <div class="crosshair-frame">
@@ -62,14 +87,12 @@
       <mat-card-content style="margin: 0.5em;">
         <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span>
         <div style="margin-top: 2em;margin-bottom: 2em;">
-          <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
             target="_blank">
             Im Stadtplan</a>
-          <a
-            href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
-            target="_blank"
-            style="margin: 1em;">Im WinWebGIS</a> <span *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
+          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+            target="_blank" style="margin: 1em;">Im WinWebGIS</a> <span
+            *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
           </span>
         </div>
         <mat-divider></mat-divider>
@@ -90,7 +113,8 @@
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
           [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
-        <button *ngIf="roadWorkNeed.properties.isEditingAllowed" (click)="openDeleteDialog(roadWorkNeed.properties.uuid)"
+        <button *ngIf="roadWorkNeed.properties.isEditingAllowed"
+          (click)="openDeleteDialog(roadWorkNeed.properties.uuid)"
           style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
           L&Ouml;SCHEN</button>
       </mat-card-actions>
