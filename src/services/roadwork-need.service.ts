@@ -23,7 +23,7 @@ export class RoadWorkNeedService {
   }
 
   getRoadWorkNeeds(ids: string[] = [], year: number = 0, name: string = "",
-          summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
+          status: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
 
@@ -56,6 +56,21 @@ export class RoadWorkNeedService {
       }
       hasParameters = true;
       queryString += "name=" + name;
+    }
+    
+    if (status !== null && status.length !== 0
+          && status[0].trim() !== "") {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "status=";
+      for(let i = 0; i < status.length; i++){
+        queryString += status[i];
+        if(status.length > i + 1) queryString += ",";
+      }
     }
 
     if (summary) {
