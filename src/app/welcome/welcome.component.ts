@@ -23,7 +23,7 @@ export class WelcomeComponent implements OnInit {
 
   userService: UserService;
   roadWorkActivityService: RoadWorkActivityService;
-  appVersion: string = "2023.11.24";
+  appVersion: string = "2024.1.19";
 
   displayedColumns: string[] = ['name', 'manager', 'created', 'period'];
 
