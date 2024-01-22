@@ -11,12 +11,16 @@
         verifiziert
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'inconsult'" class="chip-inconsult">
-        <span *ngIf="short">Vernehmlassung</span>
+        <span *ngIf="short">Bedarfskl&auml;rung</span>
         <span *ngIf="!short">in Bedarfskl&auml;rung</span>
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'reporting'"
+        class="chip-reporting">
+        Stellungnahme
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'coordinated'"
         class="chip-coordinated">
-        In Stellungnahme
+        koordiniert
       </mat-chip>
     </mat-chip-list>
   </div>
