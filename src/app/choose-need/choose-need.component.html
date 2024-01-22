@@ -43,10 +43,11 @@
                     <mat-select [(ngModel)]="statusFilterCodes"
                           (ngModelChange)="getNeedsWithFilter()" multiple required>
                       <mat-option value="requirement">Bedarf</mat-option>
-                      <mat-option value="coordinated">In Stellungnahme</mat-option>
-                      <mat-option value="inconsult">In Bedarfskl&auml;rung</mat-option>
                       <mat-option value="review">In Pr&uuml;fung</mat-option>
+                      <mat-option value="inconsult">In Bedarfskl&auml;rung</mat-option>
                       <mat-option value="verified">verfiziert</mat-option>
+                      <mat-option value="reporting">In Stellungnahme</mat-option>
+                      <mat-option value="coordinated">koordiniert</mat-option>
                     </mat-select>
                   </mat-form-field>
               </div>

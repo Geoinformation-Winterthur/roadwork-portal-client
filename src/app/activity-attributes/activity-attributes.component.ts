@@ -106,7 +106,7 @@ export class ActivityAttributesComponent implements OnInit {
         if (idParamString == "new") {
 
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();          
-          this.roadWorkActivityFeature.properties.status.code = "verified";
+          this.roadWorkActivityFeature.properties.status.code = "review";
           this.roadWorkActivityFeature.properties.finishFrom = new Date();
           let plus50Years: Date = new Date();
           plus50Years.setFullYear(plus50Years.getFullYear() + 50);
