@@ -246,8 +246,7 @@
             <mat-tab *ngIf="(userService.getLocalUser().role.code === 'administrator' || 
                                 userService.getLocalUser().role.code === 'territorymanager' || 
                                 userService.getLocalUser().role.code === 'orderer') && 
-                            (roadWorkActivityFeature.properties.status.code=='inconsult' ||
-                            roadWorkActivityFeature.properties.status.code=='coordinated')"
+                            (roadWorkActivityFeature.properties.status.code !== 'review')"
                             label="Vernehmlassung">
                 <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                     [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
