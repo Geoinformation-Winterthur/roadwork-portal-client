@@ -5,16 +5,65 @@
         <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
         ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
         <i>{{consultationInput.inputText}}</i>
+        <p style="margin-left: 2em;">Bewertung des Bauvorhabens:<br>
+            <mat-button-toggle-group [(ngModel)]="consultationInput.valuation" aria-label="Bewertung des Bauvorhabens"
+                disabled>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 0" value="0"
+                    style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 0" value="0"
+                    style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 1" value="1"
+                    style="background-color: rgb(207, 255, 205); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 1" value="1"
+                    style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 2" value="2"
+                    style="background-color: rgb(224, 248, 196); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 2" value="2"
+                    style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 3" value="3"
+                    style="background-color: rgb(252, 253, 203); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 3" value="3"
+                    style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 4" value="4"
+                    style="background-color: rgb(255, 234, 217); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
+                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 4" value="4"
+                    style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
+            </mat-button-toggle-group>
+        </p>
     </div>
 </div>
-<h2>Eigene Eingaben zur Baumassnahme</h2>
+<h2>Eigene Eingaben zum Bauvorhaben</h2>
 <div *ngIf="roadworkActivityStatus ==='provfixed' || roadworkActivityStatus ==='deffixed' ||
             roadworkActivityStatus ==='executed' || roadworkActivityStatus ==='inconsult'"
     style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
+    <p>Bewertung des Bauvorhabens:<br>
+        <mat-button-toggle-group [(ngModel)]="needInput.valuation" aria-label="Bewertung">
+            <mat-button-toggle *ngIf="needInput && needInput.valuation == 0" value="0"
+            style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation != 0" value="0"
+            style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation == 1" value="1"
+            style="background-color: rgb(207, 255, 205); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation != 1" value="1"
+            style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation == 2" value="2"
+            style="background-color: rgb(224, 248, 196); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation != 2" value="2"
+            style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation == 3" value="3"
+            style="background-color: rgb(252, 253, 203); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation != 3" value="3"
+            style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation == 4" value="4"
+            style="background-color: rgb(255, 234, 217); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
+        <mat-button-toggle *ngIf="needInput && needInput.valuation != 4" value="4"
+            style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
+        </mat-button-toggle-group>
+    </p>
     <p>
         <mat-checkbox [(ngModel)]="needInput.decline" [disabled]="roadworkActivityStatus !=='inconsult'"
             style="margin:10px;">
-            Kein Bedarf
+            Kein Bedarf f&uuml;r uns
         </mat-checkbox>
     </p>
     <mat-form-field style="width: 100%; margin-top: 2em;">
@@ -47,25 +96,3 @@
         SENDEN
     </button>
 </div>
-<p>Bewertung:<br>
-    <mat-button-toggle-group name="relevance" aria-label="Bewertung">
-        <mat-button-toggle 
-            value="0"
-            style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
-        <mat-button-toggle
-            value="1"
-            style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
-        <mat-button-toggle
-            value="2"
-            style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
-        <mat-button-toggle
-            value="3"
-            style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
-        <mat-button-toggle
-            value="4"
-            style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
-        <mat-button-toggle
-            value="5"
-            style="background-color: rgb(255, 226, 226);">5</mat-button-toggle>
-    </mat-button-toggle-group>
-</p>
