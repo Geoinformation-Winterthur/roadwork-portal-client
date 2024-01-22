@@ -49,8 +49,15 @@ export class ConsultationItemsComponent implements OnInit {
           this.consultationInputs = consultationInputs;
 
           for (let consultationInput of consultationInputs) {
-            if (consultationInput.inputBy.mailAddress === this.user.mailAddress)
-              this.needInput = consultationInputs[0];
+            if (consultationInput.inputBy.mailAddress === this.user.mailAddress){
+              this.needInput = new ConsultationInput();
+              this.needInput.uuid = "" + consultationInput.uuid;
+              this.needInput.inputText = "" + consultationInput.inputText;
+              this.needInput.inputBy = consultationInput.inputBy;
+              this.needInput.lastEdit = consultationInput.lastEdit;
+              this.needInput.decline = consultationInput.decline;
+              this.needInput.valuation = consultationInput.valuation;
+            }
           }
 
         },
@@ -72,7 +79,13 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.needInput = consultationInput;
+              this.needInput = new ConsultationInput();
+              this.needInput.uuid = "" + consultationInput.uuid;
+              this.needInput.inputText = "" + consultationInput.inputText;
+              this.needInput.inputBy = consultationInput.inputBy;
+              this.needInput.lastEdit = consultationInput.lastEdit;
+              this.needInput.decline = consultationInput.decline;
+              this.needInput.valuation = consultationInput.valuation;
             }
           },
           error: (error) => {
@@ -90,7 +103,13 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.needInput = consultationInput;
+              this.needInput = new ConsultationInput();
+              this.needInput.uuid = "" + consultationInput.uuid;
+              this.needInput.inputText = "" + consultationInput.inputText;
+              this.needInput.inputBy = consultationInput.inputBy;
+              this.needInput.lastEdit = consultationInput.lastEdit;
+              this.needInput.decline = consultationInput.decline;
+              this.needInput.valuation = consultationInput.valuation;
             }
           },
           error: (error) => {

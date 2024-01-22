@@ -11,5 +11,6 @@ export class ConsultationInput {
     inputBy: User = new User();
     decline: boolean = false;
     inputText: string = "";
+    valuation: number = 0;
     errorMessage: string = "";
 }
