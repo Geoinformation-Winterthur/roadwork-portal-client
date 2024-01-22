@@ -1,6 +1,6 @@
 <div *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager') &&
             consultationInputs && consultationInputs.length !== 0">
-    <h2>Bisherige Eingaben</h2>
+    <h2>Bisherige Eingaben aus der Bedarfskl&auml;rung</h2>
     <div *ngFor="let consultationInput of consultationInputs" style="margin: 2em;">
         <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
         ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
@@ -18,7 +18,7 @@
         </mat-checkbox>
     </p>
     <mat-form-field style="width: 100%; margin-top: 2em;">
-        <mat-label>Bedarf</mat-label>
+        <mat-label>R&uuml;ckmeldung</mat-label>
         <textarea matInput [(ngModel)]="needInput.inputText" maxlength="40000" placeholder="Bedarf..."
             [disabled]="needInput.decline || roadworkActivityStatus !=='inconsult'">
             {{needInput.inputText}}
