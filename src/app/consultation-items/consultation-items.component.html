@@ -32,67 +32,68 @@
         </p>
     </div>
 </div>
-<h2>Eigene Eingaben zum Bauvorhaben</h2>
-<div *ngIf="roadworkActivityStatus ==='provfixed' || roadworkActivityStatus ==='deffixed' ||
-            roadworkActivityStatus ==='executed' || roadworkActivityStatus ==='inconsult'"
-    style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
-    <p>Bewertung des Bauvorhabens:<br>
-        <mat-button-toggle-group [(ngModel)]="needInput.valuation" aria-label="Bewertung">
-            <mat-button-toggle *ngIf="needInput && needInput.valuation == 0" value="0"
-            style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation != 0" value="0"
-            style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation == 1" value="1"
-            style="background-color: rgb(207, 255, 205); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation != 1" value="1"
-            style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation == 2" value="2"
-            style="background-color: rgb(224, 248, 196); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation != 2" value="2"
-            style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation == 3" value="3"
-            style="background-color: rgb(252, 253, 203); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation != 3" value="3"
-            style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation == 4" value="4"
-            style="background-color: rgb(255, 234, 217); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
-        <mat-button-toggle *ngIf="needInput && needInput.valuation != 4" value="4"
-            style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
-        </mat-button-toggle-group>
-    </p>
-    <p>
-        <mat-checkbox [(ngModel)]="needInput.decline" [disabled]="roadworkActivityStatus !=='inconsult'"
-            style="margin:10px;">
-            Kein Bedarf f&uuml;r uns
-        </mat-checkbox>
-    </p>
-    <mat-form-field style="width: 100%; margin-top: 2em;">
-        <mat-label>R&uuml;ckmeldung</mat-label>
-        <textarea matInput [(ngModel)]="needInput.inputText" maxlength="40000" placeholder="Bedarf..."
-            [disabled]="needInput.decline || roadworkActivityStatus !=='inconsult'">
+<div *ngIf="roadworkActivityStatus ==='inconsult'">
+    <h2><span *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager')">Eigene </span>Eingaben zur Bedarfskl&auml;rung</h2>
+    <div style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
+        <p>Bewertung des Bauvorhabens:<br>
+            <mat-button-toggle-group [(ngModel)]="needInput.valuation" aria-label="Bewertung">
+                <mat-button-toggle *ngIf="needInput && needInput.valuation == 0" value="0"
+                    style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation != 0" value="0"
+                    style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation == 1" value="1"
+                    style="background-color: rgb(207, 255, 205); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation != 1" value="1"
+                    style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation == 2" value="2"
+                    style="background-color: rgb(224, 248, 196); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation != 2" value="2"
+                    style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation == 3" value="3"
+                    style="background-color: rgb(252, 253, 203); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation != 3" value="3"
+                    style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation == 4" value="4"
+                    style="background-color: rgb(255, 234, 217); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
+                <mat-button-toggle *ngIf="needInput && needInput.valuation != 4" value="4"
+                    style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
+            </mat-button-toggle-group>
+        </p>
+        <p>
+            <mat-checkbox [(ngModel)]="needInput.decline" [disabled]="roadworkActivityStatus !=='inconsult'"
+                style="margin:10px;">
+                Kein Bedarf f&uuml;r uns
+            </mat-checkbox>
+        </p>
+        <mat-form-field style="width: 100%; margin-top: 2em;">
+            <mat-label>R&uuml;ckmeldung</mat-label>
+            <textarea matInput [(ngModel)]="needInput.inputText" maxlength="40000" placeholder="Bedarf..."
+                [disabled]="needInput.decline || roadworkActivityStatus !=='inconsult'">
             {{needInput.inputText}}
         </textarea>
-    </mat-form-field>
-    <button mat-button (click)="update()" [disabled]="roadworkActivityStatus !=='inconsult'"
-        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
-        SENDEN
-    </button>
+        </mat-form-field>
+        <button mat-button (click)="update()" [disabled]="roadworkActivityStatus !=='inconsult'"
+            style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+            SENDEN
+        </button>
+    </div>
 </div>
-<div *ngIf="roadworkActivityStatus ==='provfixed' || roadworkActivityStatus ==='deffixed' ||
-            roadworkActivityStatus ==='executed'" style="border: 2px solid;border-color: lightgrey;padding: 1em;">
-    <p>
-        <mat-checkbox [(ngModel)]="feedbackInput.decline" [disabled]="roadworkActivityStatus !=='provfixed'"
-            style="margin:10px;">
-            Keine aktive R&uuml;ckmeldung
-        </mat-checkbox>
-    </p>
-    <mat-form-field style="width: 100%; margin-top: 2em;">
-        <mat-label>R&uuml;ckmeldung</mat-label>
-        <textarea matInput maxlength="40000" placeholder="R&uuml;ckmeldung..."
-            [disabled]="feedbackInput.decline || roadworkActivityStatus !=='provfixed'"></textarea>
-    </mat-form-field>
-    <button mat-button (click)="update()" [disabled]="roadworkActivityStatus !=='provfixed'"
-        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
-        SENDEN
-    </button>
+<div *ngIf="roadworkActivityStatus ==='reporting'">
+    <h2><span *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager')">Eigene </span>Eingaben zur Stellungnahme</h2>
+    <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
+        <p>
+            <mat-checkbox [(ngModel)]="feedbackInput.decline" style="margin:10px;">
+                Keine aktive R&uuml;ckmeldung
+            </mat-checkbox>
+        </p>
+        <mat-form-field style="width: 100%; margin-top: 2em;">
+            <mat-label>R&uuml;ckmeldung</mat-label>
+            <textarea matInput maxlength="40000" placeholder="R&uuml;ckmeldung..."
+                [disabled]="feedbackInput.decline"></textarea>
+        </mat-form-field>
+        <button mat-button (click)="update()"
+            style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+            SENDEN
+        </button>
+    </div>
 </div>
