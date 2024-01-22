@@ -126,11 +126,21 @@
                                             [formControl]="roadWorkActivityStatusEnumControl"
                                             (selectionChange)='onRoadWorkActivityStatusEnumChange()'
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
-                                            <mat-option value="review">In Pr&uuml;fung</mat-option>
-                                            <mat-option value="inconsult">in Bedarfskl&auml;rung</mat-option>
-                                            <mat-option value="verified">verifiziert</mat-option>
-                                            <mat-option value="reporting">In Stellungnahme</mat-option>
-                                            <mat-option value="coordinated">koordiniert</mat-option>
+                                            <mat-option value="review" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'review')">
+                                                In Pr&uuml;fung
+                                            </mat-option>
+                                            <mat-option value="inconsult" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'inconsult')">
+                                                in Bedarfskl&auml;rung
+                                            </mat-option>
+                                            <mat-option value="verified" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'verified')">
+                                                verifiziert
+                                            </mat-option>
+                                            <mat-option value="reporting" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'reporting')">
+                                                In Stellungnahme
+                                            </mat-option>
+                                            <mat-option value="coordinated" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'coordinated')">
+                                                koordiniert
+                                            </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>

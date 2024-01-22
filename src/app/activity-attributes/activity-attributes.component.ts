@@ -105,7 +105,7 @@ export class ActivityAttributesComponent implements OnInit {
 
         if (idParamString == "new") {
 
-          this.roadWorkActivityFeature = new RoadWorkActivityFeature();          
+          this.roadWorkActivityFeature = new RoadWorkActivityFeature();
           this.roadWorkActivityFeature.properties.status.code = "review";
           this.roadWorkActivityFeature.properties.finishFrom = new Date();
           let plus50Years: Date = new Date();
@@ -131,9 +131,9 @@ export class ActivityAttributesComponent implements OnInit {
                   this.roadWorkActivityFeature = roadWorkActivity;
 
                   let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
-                  if(roadWorkActivityFeature.properties.costs == 0)
+                  if (roadWorkActivityFeature.properties.costs == 0)
                     roadWorkActivityFeature.properties.costs = undefined;
-                  if(roadWorkActivityFeature.properties.investmentNo == 0)
+                  if (roadWorkActivityFeature.properties.investmentNo == 0)
                     roadWorkActivityFeature.properties.investmentNo = undefined;
 
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkActivityFeature.geometry)
@@ -146,6 +146,8 @@ export class ActivityAttributesComponent implements OnInit {
                       error: (error) => {
                       }
                     });
+
+                  // this.roadWorkActivityStatusEnumControl.
 
                   this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
@@ -178,20 +180,20 @@ export class ActivityAttributesComponent implements OnInit {
 
       });
 
-      this.organisationService.getAllOrgTypes(true).subscribe({
-        next: (organisations) => {
-          let orgAndContactName: string = "";
-          for (let organisation of organisations) {
-            orgAndContactName = organisation.name;
-            if(organisation.contactPerson){
-                orgAndContactName += " (" + organisation.contactPerson + ")";
-            }
-            this.allOrgUnitNames.push(orgAndContactName);
+    this.organisationService.getAllOrgTypes(true).subscribe({
+      next: (organisations) => {
+        let orgAndContactName: string = "";
+        for (let organisation of organisations) {
+          orgAndContactName = organisation.name;
+          if (organisation.contactPerson) {
+            orgAndContactName += " (" + organisation.contactPerson + ")";
           }
-        },
-        error: (error) => {
+          this.allOrgUnitNames.push(orgAndContactName);
         }
-      });
+      },
+      error: (error) => {
+      }
+    });
   }
 
   add() {
@@ -235,9 +237,9 @@ export class ActivityAttributesComponent implements OnInit {
                           duration: 4000
                         });
                       } else {
-                        if(roadWorkActivityFeature.properties.costs == 0)
+                        if (roadWorkActivityFeature.properties.costs == 0)
                           roadWorkActivityFeature.properties.costs = undefined;
-                        if(roadWorkActivityFeature.properties.investmentNo == 0)
+                        if (roadWorkActivityFeature.properties.investmentNo == 0)
                           roadWorkActivityFeature.properties.investmentNo = undefined;
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementAreas[0];
@@ -265,7 +267,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  registerTrefficManager(){
+  registerTrefficManager() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityService.registerTrafficManager(this.roadWorkActivityFeature)
         .subscribe({
@@ -288,6 +290,56 @@ export class ActivityAttributesComponent implements OnInit {
           }
         });
     }
+  }
+
+  checkStatusDisabled(currValue: string, valueToCheck: string): boolean {
+    if (currValue === 'review') {
+      if (valueToCheck === 'review')
+        return true;
+      else
+        return false;
+    } else if (currValue === 'inconsult') {
+      if (valueToCheck === 'review')
+        return true;
+      else if (valueToCheck === 'inconsult')
+        return true;
+      else
+        return false;
+    } else if (currValue === 'verified') {
+      if (valueToCheck === 'review')
+        return true;
+      else if (valueToCheck === 'inconsult')
+        return true;
+      else if (valueToCheck === 'verified')
+        return true;
+      else
+        return false;
+    } else if (currValue === 'reporting') {
+      if (valueToCheck === 'review')
+        return true;
+      else if (valueToCheck === 'inconsult')
+        return true;
+      else if (valueToCheck === 'verified')
+        return true;
+      else if (valueToCheck === 'reporting')
+        return true;
+      else
+        return false;
+    } else if (currValue === 'coordinated') {
+      if (valueToCheck === 'review')
+        return true;
+      else if (valueToCheck === 'inconsult')
+        return true;
+      else if (valueToCheck === 'verified')
+        return true;
+      else if (valueToCheck === 'reporting')
+        return true;
+      else if (valueToCheck === 'coordinated')
+        return true;
+      else
+        return false;
+    }
+    return true;
   }
 
   ngOnDestroy() {
