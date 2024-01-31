@@ -7,14 +7,14 @@
                 <mat-form-field>
                     <mat-label>Minimale Fl&auml;chengr&ouml;sse (m&#178;)</mat-label>
                     <input matInput maxlength="3" placeholder="Minimale Fl&auml;chengr&ouml;sse..."
-                            [(ngModel)]="configurationData.minAreaSize" (focusout)="update()" />
+                        [(ngModel)]="configurationData.minAreaSize" (focusout)="update()" />
                 </mat-form-field>
             </div>
             <div style="margin: 1em;">
                 <mat-form-field>
                     <mat-label>Maximale Fl&auml;chengr&ouml;sse (m&#178;)</mat-label>
-                    <input matInput maxlength="10" placeholder="Maximale Fl&auml;chengr&ouml;sse..." 
-                            [(ngModel)]="configurationData.maxAreaSize" (focusout)="update()" />
+                    <input matInput maxlength="10" placeholder="Maximale Fl&auml;chengr&ouml;sse..."
+                        [(ngModel)]="configurationData.maxAreaSize" (focusout)="update()" />
                 </mat-form-field>
             </div>
         </mat-tab>
@@ -23,6 +23,162 @@
         </mat-tab>
         <mat-tab label="Organisationen">
             <app-organisations></app-organisations>
+        </mat-tab>
+        <mat-tab label="Termine">
+            <div fxLayout="row wrap padding">
+                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                    fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                    <mat-card-title>Termine SKS</mat-card-title>
+                    <mat-card-subtitle>Strategische Koordinationssitzung</mat-card-subtitle>
+                    <mat-card-content>
+                        <div style="display: flex;flex-direction: column;">
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Erster Termin im Jahr</mat-label>
+                                <input matInput [ngModel]="configurationData.dateSks1" [formControl]="dateSks1Control"
+                                    [matDatepicker]="dateSks1" (dateChange)="update()">
+                                <mat-datepicker #dateSks1></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateSks1"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Zweiter Termin im Jahr</mat-label>
+                                <input matInput [ngModel]="configurationData.dateSks2" [formControl]="dateSks2Control"
+                                    [matDatepicker]="dateSks2" (dateChange)="update()">
+                                <mat-datepicker #dateSks2></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateSks2"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Dritter Termin im Jahr</mat-label>
+                                <input matInput [ngModel]="configurationData.dateSks3" [formControl]="dateSks3Control"
+                                    [matDatepicker]="dateSks3" (dateChange)="update()">
+                                <mat-datepicker #dateSks3></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateSks3"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Vierter Termin im Jahr</mat-label>
+                                <input matInput [ngModel]="configurationData.dateSks4" [formControl]="dateSks4Control"
+                                    [matDatepicker]="dateSks4" (dateChange)="update()">
+                                <mat-datepicker #dateSks4></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateSks4"></mat-datepicker-toggle>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+                <mat-card style="padding: 40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                    fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                    <mat-card-title>Termine KAP</mat-card-title>
+                    <mat-card-subtitle>Koordinationsausschuss Projekte</mat-card-subtitle>
+                    <mat-card-content>
+                        <div style="display:flex;flex-direction:column;">
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Erster Termin im Jahr</mat-label>
+                                <input matInput [ngModel]="configurationData.dateKap1" [formControl]="dateKap1Control"
+                                    [matDatepicker]="dateKap1" (dateChange)="update()">
+                                <mat-datepicker #dateKap1></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateKap1"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Zweiter Termin im Jahr</mat-label>
+                                <input matInput [ngModel]="configurationData.dateKap2" [formControl]="dateKap2Control"
+                                    [matDatepicker]="dateKap2" (dateChange)="update()">
+                                <mat-datepicker #dateKap2></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateKap2"></mat-datepicker-toggle>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                    fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                    <mat-card-title>Termine OKS</mat-card-title>
+                    <mat-card-subtitle>Operative Koordinationssitzung</mat-card-subtitle>
+                    <mat-card-content>
+                        <div style="display:flex;flex-direction:column;">
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 1</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks1" [formControl]="dateOks1Control"
+                                    [matDatepicker]="dateOks1" (dateChange)="update()">
+                                <mat-datepicker #dateOks1></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks1"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 2</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks2" [formControl]="dateOks2Control"
+                                    [matDatepicker]="dateOks2" (dateChange)="update()">
+                                <mat-datepicker #dateOks2></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks2"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 3</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks3" [formControl]="dateOks3Control"
+                                    [matDatepicker]="dateOks3" (dateChange)="update()">
+                                <mat-datepicker #dateOks3></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks3"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 4</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks4" [formControl]="dateOks4Control"
+                                    [matDatepicker]="dateOks4" (dateChange)="update()">
+                                <mat-datepicker #dateOks4></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks4"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 5</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks5" [formControl]="dateOks5Control"
+                                    [matDatepicker]="dateOks5" (dateChange)="update()">
+                                <mat-datepicker #dateOks5></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks5"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 6</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks6"
+                                [formControl]="dateOks6Control" [matDatepicker]="dateOks6"
+                                (dateChange)="update()">
+                                <mat-datepicker #dateOks6></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks6"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 7</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks7"
+                                [formControl]="dateOks7Control" [matDatepicker]="dateOks7"
+                                (dateChange)="update()">
+                                <mat-datepicker #dateOks7></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks7"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 8</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks8"
+                                [formControl]="dateOks8Control" [matDatepicker]="dateOks8"
+                                (dateChange)="update()">
+                                <mat-datepicker #dateOks8></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks8"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 9</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks9"
+                                [formControl]="dateOks9Control" [matDatepicker]="dateOks9"
+                                (dateChange)="update()">
+                                <mat-datepicker #dateOks9></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks9"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 10</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks10"
+                                [formControl]="dateOks10Control" [matDatepicker]="dateOks10"
+                                (dateChange)="update()">
+                                <mat-datepicker #dateOks10></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks10"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 11</mat-label>
+                                <input matInput [ngModel]="configurationData.dateOks11"
+                                [formControl]="dateOks11Control" [matDatepicker]="dateOks11"
+                                (dateChange)="update()">
+                                <mat-datepicker #dateOks11></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateOks11"></mat-datepicker-toggle>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
         </mat-tab>
     </mat-tab-group>
 </div>

@@ -205,7 +205,7 @@ export class EditNeedMapComponent implements OnInit {
                         if (this.roadWorkNeedFeat) {
                           this.roadWorkNeedFeat = roadWorkNeedFeature;
                           this.managementArea = managementAreas[0];
-                          this.snackBar.open("Bedürfnisgeometrie ist gespeichert", "", {
+                          this.snackBar.open("Bedarfsgeometrie ist gespeichert", "", {
                             duration: 4000,
                           });
                         }

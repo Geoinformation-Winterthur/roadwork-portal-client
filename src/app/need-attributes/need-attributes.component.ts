@@ -134,7 +134,7 @@ export class NeedAttributesComponent implements OnInit {
                   duration: 4000
                 });
               } else {
-                this.snckBar.open("Bedürfnis wurde erfolgreich erstellt", "", {
+                this.snckBar.open("Bedarf wurde erfolgreich erstellt", "", {
                   duration: 4000,
                 });
                 this.router.navigate(["/needs/" + roadWorkNeedFeature.properties.uuid]);
@@ -169,7 +169,7 @@ export class NeedAttributesComponent implements OnInit {
                         }
                         this.roadWorkNeedFeature = roadWorkNeedFeature;
                         this.managementArea = managementAreas[0];
-                        this.snckBar.open("Bedürfnis ist gespeichert", "", {
+                        this.snckBar.open("Bedarf ist gespeichert", "", {
                           duration: 4000,
                         });
                       }

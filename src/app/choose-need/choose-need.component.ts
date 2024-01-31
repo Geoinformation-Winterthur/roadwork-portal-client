@@ -14,6 +14,7 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-choose-need',
@@ -30,6 +31,8 @@ export class ChooseNeedComponent implements OnInit {
   chosenNeedYearOptFrom: number = new Date().getFullYear();
 
   userService: UserService;
+
+  statusFilterCodes: string[] = ["requirement"];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
@@ -56,7 +59,8 @@ export class ChooseNeedComponent implements OnInit {
     let roadWorkNeedName: string = this.chosenNeedName.trim().toLowerCase();
 
     this.roadWorkNeedService
-          .getRoadWorkNeeds([], this.chosenNeedYearOptFrom, roadWorkNeedName)
+          .getRoadWorkNeeds([], this.chosenNeedYearOptFrom,
+              roadWorkNeedName, this.statusFilterCodes)
               .subscribe({
       next: (roadWorkNeeds) => {
 
