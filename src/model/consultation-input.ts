@@ -12,5 +12,6 @@ export class ConsultationInput {
     decline: boolean = false;
     inputText: string = "";
     valuation: number = 0;
+    feedbackPhase: string = "";
     errorMessage: string = "";
 }

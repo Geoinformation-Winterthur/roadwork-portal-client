@@ -20,12 +20,12 @@ export class ConsultationItemsComponent implements OnInit {
   @Input()
   roadworkActivityStatus: string = "";
 
-  needInput: ConsultationInput = new ConsultationInput();
-  feedbackInput: ConsultationInput = new ConsultationInput();
+  consultationInput: ConsultationInput = new ConsultationInput();
+
+  consultationInputsFromInConsult: ConsultationInput[] = [];
+  consultationInputsFromReporting: ConsultationInput[] = [];
 
   user: User;
-
-  consultationInputs: ConsultationInput[] = [];
 
   needsOfActivityService: NeedsOfActivityService;
 
@@ -43,20 +43,32 @@ export class ConsultationItemsComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.consultationInput.feedbackPhase = this.roadworkActivityStatus;
+
     this.consultationService.getConsultationInputs(this.roadworkActivityUuid)
       .subscribe({
         next: (consultationInputs) => {
-          this.consultationInputs = consultationInputs;
+          for (let consultationInput of consultationInputs) {
+            if(consultationInput.feedbackPhase === 'inconsult'){
+              this.consultationInputsFromInConsult.push(consultationInput);
+            }
+            if(consultationInput.feedbackPhase === 'reporting'){
+              this.consultationInputsFromReporting.push(consultationInput);
+            }
+          }
 
           for (let consultationInput of consultationInputs) {
-            if (consultationInput.inputBy.mailAddress === this.user.mailAddress){
-              this.needInput = new ConsultationInput();
-              this.needInput.uuid = "" + consultationInput.uuid;
-              this.needInput.inputText = "" + consultationInput.inputText;
-              this.needInput.inputBy = consultationInput.inputBy;
-              this.needInput.lastEdit = consultationInput.lastEdit;
-              this.needInput.decline = consultationInput.decline;
-              this.needInput.valuation = consultationInput.valuation;
+            if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
+                  consultationInput.feedbackPhase === this.roadworkActivityStatus){
+              this.consultationInput = new ConsultationInput();
+              this.consultationInput.uuid = "" + consultationInput.uuid;
+              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.inputBy = consultationInput.inputBy;
+              this.consultationInput.lastEdit = consultationInput.lastEdit;
+              this.consultationInput.decline = consultationInput.decline;
+              this.consultationInput.valuation = consultationInput.valuation;
+              this.consultationInput.feedbackPhase = consultationInput.feedbackPhase;
+              break;
             }
           }
 
@@ -66,10 +78,10 @@ export class ConsultationItemsComponent implements OnInit {
       });
   }
 
-  update() {
-    if (this.needInput.uuid === "") {
+  sendInConsult() {
+    if (this.consultationInput.uuid === "") {
       this.consultationService.addConsultationInput(this.roadworkActivityUuid,
-        this.needInput)
+        this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
             if (consultationInput) {
@@ -79,13 +91,13 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.needInput = new ConsultationInput();
-              this.needInput.uuid = "" + consultationInput.uuid;
-              this.needInput.inputText = "" + consultationInput.inputText;
-              this.needInput.inputBy = consultationInput.inputBy;
-              this.needInput.lastEdit = consultationInput.lastEdit;
-              this.needInput.decline = consultationInput.decline;
-              this.needInput.valuation = consultationInput.valuation;
+              this.consultationInput = new ConsultationInput();
+              this.consultationInput.uuid = "" + consultationInput.uuid;
+              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.inputBy = consultationInput.inputBy;
+              this.consultationInput.lastEdit = consultationInput.lastEdit;
+              this.consultationInput.decline = consultationInput.decline;
+              this.consultationInput.valuation = consultationInput.valuation;
             }
           },
           error: (error) => {
@@ -93,7 +105,7 @@ export class ConsultationItemsComponent implements OnInit {
         });
     } else {
       this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
-            this.needInput)
+            this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
             if (consultationInput) {
@@ -103,13 +115,65 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.needInput = new ConsultationInput();
-              this.needInput.uuid = "" + consultationInput.uuid;
-              this.needInput.inputText = "" + consultationInput.inputText;
-              this.needInput.inputBy = consultationInput.inputBy;
-              this.needInput.lastEdit = consultationInput.lastEdit;
-              this.needInput.decline = consultationInput.decline;
-              this.needInput.valuation = consultationInput.valuation;
+              this.consultationInput = new ConsultationInput();
+              this.consultationInput.uuid = "" + consultationInput.uuid;
+              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.inputBy = consultationInput.inputBy;
+              this.consultationInput.lastEdit = consultationInput.lastEdit;
+              this.consultationInput.decline = consultationInput.decline;
+              this.consultationInput.valuation = consultationInput.valuation;
+            }
+          },
+          error: (error) => {
+          }
+        });
+    }
+  }
+
+  sendReporting() {
+    if (this.consultationInput.uuid === "") {
+      this.consultationService.addConsultationInput(this.roadworkActivityUuid,
+        this.consultationInput)
+        .subscribe({
+          next: (consultationInput) => {
+            if (consultationInput) {
+              ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
+              if (consultationInput.errorMessage.trim().length !== 0) {
+                this.snckBar.open(consultationInput.errorMessage, "", {
+                  duration: 4000
+                });
+              }
+              this.consultationInput = new ConsultationInput();
+              this.consultationInput.uuid = "" + consultationInput.uuid;
+              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.inputBy = consultationInput.inputBy;
+              this.consultationInput.lastEdit = consultationInput.lastEdit;
+              this.consultationInput.decline = consultationInput.decline;
+              this.consultationInput.valuation = consultationInput.valuation;
+            }
+          },
+          error: (error) => {
+          }
+        });
+    } else {
+      this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
+            this.consultationInput)
+        .subscribe({
+          next: (consultationInput) => {
+            if (consultationInput) {
+              ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
+              if (consultationInput.errorMessage.trim().length !== 0) {
+                this.snckBar.open(consultationInput.errorMessage, "", {
+                  duration: 4000
+                });
+              }
+              this.consultationInput = new ConsultationInput();
+              this.consultationInput.uuid = "" + consultationInput.uuid;
+              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.inputBy = consultationInput.inputBy;
+              this.consultationInput.lastEdit = consultationInput.lastEdit;
+              this.consultationInput.decline = consultationInput.decline;
+              this.consultationInput.valuation = consultationInput.valuation;
             }
           },
           error: (error) => {
