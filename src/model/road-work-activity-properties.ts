@@ -30,5 +30,9 @@ export class RoadWorkActivityProperties {
     investmentNo?: number;
     pdbFid: number = 0;
     strabakoNo: string = "";
+    dateSks: string = "";
+    dateKap: string = "";
+    dateOks: string = "";
+    dateGlTba: Date = new Date(1, 0, 1);
     activityHistory: ActivityHistoryItem[] = [];
 }
