@@ -20,6 +20,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { CostType } from 'src/model/cost-type';
 import { OrganisationService } from 'src/services/organisation.service';
+import { AppConfigService } from 'src/services/app-config.service';
+import { ConfigurationData } from 'src/model/configuration-data';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -49,9 +51,14 @@ export class ActivityAttributesComponent implements OnInit {
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
   finishFromControl: FormControl = new FormControl();
   finishToControl: FormControl = new FormControl();
+  dateSksControl: FormControl = new FormControl();
+  dateKapControl: FormControl = new FormControl();
+  dateOksControl: FormControl = new FormControl();
 
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
+
+  configurationData: ConfigurationData = new ConfigurationData();
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
@@ -60,13 +67,15 @@ export class ActivityAttributesComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private router: Router;
   private activatedRouteSubscription: Subscription = new Subscription();
+  private appConfigService: AppConfigService;
 
   private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    organisationService: OrganisationService, router: Router, snckBar: MatSnackBar) {
+    organisationService: OrganisationService, appConfigService: AppConfigService, router: Router,
+    snckBar: MatSnackBar) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
@@ -74,6 +83,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.userService = userService;
     this.managementAreaService = managementAreaService;
     this.organisationService = organisationService;
+    this.appConfigService = appConfigService;
     this.router = router;
     this.snckBar = snckBar;
   }
@@ -82,6 +92,24 @@ export class ActivityAttributesComponent implements OnInit {
     this.userService.getAllUsers().subscribe({
       next: (users) => {
         this.availableUsers = users;
+      },
+      error: (error) => {
+      }
+    });
+
+    this.appConfigService.getConfigurationData()
+    .subscribe({
+      next: (configData) => {
+        if (configData) {
+          ErrorMessageEvaluation._evaluateErrorMessage(configData);
+          if (configData.errorMessage !== "") {
+            this.snckBar.open(configData.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.configurationData = configData;
+          }
+        }
       },
       error: (error) => {
       }
