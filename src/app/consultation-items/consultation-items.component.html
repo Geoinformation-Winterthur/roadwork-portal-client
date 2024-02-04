@@ -1,5 +1,8 @@
 <div *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager')">
     <h2>Bisherige Eingaben aus der Bedarfskl&auml;rung</h2>
+    <div *ngIf="!consultationInputsFromInConsult || consultationInputsFromInConsult.length == 0">
+        Bisher keine Eingaben aus der Bedarfskl&auml;rung
+    </div>
     <div *ngFor="let consultationInput of consultationInputsFromInConsult" style="margin: 2em;">
         <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
         ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
@@ -31,6 +34,9 @@
         </p>
     </div>
     <h2>Bisherige Eingaben aus der Stellungnahme</h2>
+    <div *ngIf="!consultationInputsFromReporting || consultationInputsFromReporting.length == 0">
+        Bisher keine Eingaben aus der Stellungnahme
+    </div>
     <div *ngFor="let consultationInput of consultationInputsFromReporting" style="margin: 2em;">
         <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
         ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
