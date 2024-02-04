@@ -35,7 +35,7 @@ export class NeedsOfActivityComponent {
   searchSliderMax: number = new Date().getFullYear() + 30;
   searchSliderStep: number = 1;
   searchSliderThumbLabel: boolean = true;
-  searchNeedYearOptTo: number = new Date().getFullYear();
+  searchNeedYearOptFrom: number = new Date().getFullYear();
 
   private roadWorkNeedService: RoadWorkNeedService;
   private snckBar: MatSnackBar;
@@ -77,9 +77,6 @@ export class NeedsOfActivityComponent {
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "assignedneed";
-    let status: Status = new Status();
-    status.code = "verified";
-    roadWorkNeed.properties.status = status;
     roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
@@ -213,7 +210,7 @@ export class NeedsOfActivityComponent {
             let finishFrom: Date = new Date(roadWorkNeedFeature.properties.finishOptimumFrom);
             return (roadWorkNeedName === ''
               || roadWorkNeedFeature.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
-              && finishFrom.getFullYear() === this.searchNeedYearOptTo;
+              && finishFrom.getFullYear() === this.searchNeedYearOptFrom;
           } else {
             return false;
           }
