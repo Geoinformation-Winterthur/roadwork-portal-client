@@ -26,6 +26,7 @@ export class ChooseNeedComponent implements OnInit {
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
 
   filterPanelOpen: boolean = false;
+  showAsList: boolean = false;
 
   chosenNeedName: string = "";
   chosenNeedYearOptFrom: number = new Date().getFullYear();
@@ -33,6 +34,8 @@ export class ChooseNeedComponent implements OnInit {
   userService: UserService;
 
   statusFilterCodes: string[] = ["requirement"];
+
+  tableDisplayedColumns: string[] = ['title', 'kind', 'status', 'link_cityplan', 'link_wwg', 'link_roadworkactivity', 'actions'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;

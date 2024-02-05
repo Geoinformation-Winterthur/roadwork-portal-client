@@ -27,6 +27,7 @@
  import { MatDatepickerModule } from '@angular/material/datepicker';
  import { MatNativeDateModule } from '@angular/material/core';
  import { MatSelectModule } from '@angular/material/select';
+ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
  import { MatExpansionModule } from '@angular/material/expansion';
  import { FormsModule, ReactiveFormsModule } from '@angular/forms';
  import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -134,6 +135,7 @@ import { ConsultationItemsComponent } from './consultation-items/consultation-it
      MatChipsModule,
      MatSliderModule,
      MatFormFieldModule,
+     MatSlideToggleModule,
      MatInputModule,
      MatCheckboxModule,
      MatButtonToggleModule,
