@@ -49,17 +49,17 @@ export class ConsultationItemsComponent implements OnInit {
       .subscribe({
         next: (consultationInputs) => {
           for (let consultationInput of consultationInputs) {
-            if(consultationInput.feedbackPhase === 'inconsult'){
+            if (consultationInput.feedbackPhase === 'inconsult') {
               this.consultationInputsFromInConsult.push(consultationInput);
             }
-            if(consultationInput.feedbackPhase === 'reporting'){
+            if (consultationInput.feedbackPhase === 'reporting') {
               this.consultationInputsFromReporting.push(consultationInput);
             }
           }
 
           for (let consultationInput of consultationInputs) {
             if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
-                  consultationInput.feedbackPhase === this.roadworkActivityStatus){
+              consultationInput.feedbackPhase === this.roadworkActivityStatus) {
               this.consultationInput = new ConsultationInput();
               this.consultationInput.uuid = "" + consultationInput.uuid;
               this.consultationInput.inputText = "" + consultationInput.inputText;
@@ -91,13 +91,16 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.consultationInput = new ConsultationInput();
-              this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.inputText = "" + consultationInput.inputText;
-              this.consultationInput.inputBy = consultationInput.inputBy;
-              this.consultationInput.lastEdit = consultationInput.lastEdit;
-              this.consultationInput.decline = consultationInput.decline;
-              this.consultationInput.valuation = consultationInput.valuation;
+              let consultationInputObj: ConsultationInput = new ConsultationInput();
+              consultationInputObj.uuid = "" + consultationInput.uuid;
+              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.inputBy = consultationInput.inputBy;
+              consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
+              consultationInputObj.lastEdit = consultationInput.lastEdit;
+              consultationInputObj.decline = consultationInput.decline;
+              consultationInputObj.valuation = consultationInput.valuation;
+
+              this.consultationInputsFromReporting.push(consultationInputObj);
             }
           },
           error: (error) => {
@@ -105,7 +108,7 @@ export class ConsultationItemsComponent implements OnInit {
         });
     } else {
       this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
-            this.consultationInput)
+        this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
             if (consultationInput) {
@@ -115,13 +118,26 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.consultationInput = new ConsultationInput();
-              this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.inputText = "" + consultationInput.inputText;
-              this.consultationInput.inputBy = consultationInput.inputBy;
-              this.consultationInput.lastEdit = consultationInput.lastEdit;
-              this.consultationInput.decline = consultationInput.decline;
-              this.consultationInput.valuation = consultationInput.valuation;
+              let consultationInputObj: ConsultationInput  = new ConsultationInput();
+              consultationInputObj.uuid = "" + consultationInput.uuid;
+              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.inputBy = consultationInput.inputBy;
+              consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
+              consultationInputObj.lastEdit = consultationInput.lastEdit;
+              consultationInputObj.decline = consultationInput.decline;
+              consultationInputObj.valuation = consultationInput.valuation;
+
+              let count: number = 0;
+              for(let consultationInputElt of this.consultationInputsFromInConsult){
+                if(consultationInputElt.uuid === consultationInputObj.uuid){
+                  break;
+                }
+                count++;
+              }
+              let consultationInputsFromInConsultCopy = this.consultationInputsFromInConsult.slice();
+              consultationInputsFromInConsultCopy.splice(count, 1);
+              consultationInputsFromInConsultCopy.push(consultationInputObj);
+              this.consultationInputsFromInConsult = consultationInputsFromInConsultCopy;
             }
           },
           error: (error) => {
@@ -143,13 +159,16 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.consultationInput = new ConsultationInput();
-              this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.inputText = "" + consultationInput.inputText;
-              this.consultationInput.inputBy = consultationInput.inputBy;
-              this.consultationInput.lastEdit = consultationInput.lastEdit;
-              this.consultationInput.decline = consultationInput.decline;
-              this.consultationInput.valuation = consultationInput.valuation;
+              let consultationInputObj: ConsultationInput = new ConsultationInput();
+              consultationInputObj.uuid = "" + consultationInput.uuid;
+              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.inputBy = consultationInput.inputBy;
+              consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
+              consultationInputObj.lastEdit = consultationInput.lastEdit;
+              consultationInputObj.decline = consultationInput.decline;
+              consultationInputObj.valuation = consultationInput.valuation;
+
+              this.consultationInputsFromReporting.push(consultationInputObj);
             }
           },
           error: (error) => {
@@ -157,7 +176,7 @@ export class ConsultationItemsComponent implements OnInit {
         });
     } else {
       this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
-            this.consultationInput)
+        this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
             if (consultationInput) {
@@ -167,13 +186,26 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              this.consultationInput = new ConsultationInput();
-              this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.inputText = "" + consultationInput.inputText;
-              this.consultationInput.inputBy = consultationInput.inputBy;
-              this.consultationInput.lastEdit = consultationInput.lastEdit;
-              this.consultationInput.decline = consultationInput.decline;
-              this.consultationInput.valuation = consultationInput.valuation;
+              let consultationInputObj: ConsultationInput = new ConsultationInput();
+              consultationInputObj.uuid = "" + consultationInput.uuid;
+              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.inputBy = consultationInput.inputBy;
+              consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
+              consultationInputObj.lastEdit = consultationInput.lastEdit;
+              consultationInputObj.decline = consultationInput.decline;
+              consultationInputObj.valuation = consultationInput.valuation;
+
+              let count: number = 0;
+              for (let consultationInputElt of this.consultationInputsFromReporting) {
+                if (consultationInputElt.uuid === consultationInputObj.uuid) {
+                  break;
+                }
+                count++;
+              }
+              let consultationInputsFromReportingCopy = this.consultationInputsFromReporting.slice();
+              consultationInputsFromReportingCopy.splice(count, 1);
+              consultationInputsFromReportingCopy.push(consultationInputObj);
+              this.consultationInputsFromReporting = consultationInputsFromReportingCopy;
             }
           },
           error: (error) => {
