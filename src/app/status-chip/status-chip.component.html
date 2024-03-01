@@ -1,26 +1,30 @@
 <div>
   <mat-chip-list>
       <mat-chip *ngIf="statusCode === 'requirement'" class="chip-notcoord">
-        Bedarf
+        <span *ngIf="short">Bedarf</span>
+        <span *ngIf="!short">Bedarf (Phase 11)</span>        
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'review'" class="chip-inwork">
         <span *ngIf="short">Pr&uuml;fung</span>
-        <span *ngIf="!short">in Pr&uuml;fung</span>
+        <span *ngIf="!short">in Pr&uuml;fung (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'verified'" class="chip-inwork">
-        verifiziert
+        <span *ngIf="short">verifiziert</span>
+        <span *ngIf="!short">verifiziert (Phase 12)</span>        
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'inconsult'" class="chip-inconsult">
         <span *ngIf="short">Bedarfskl&auml;rung</span>
-        <span *ngIf="!short">in Bedarfskl&auml;rung</span>
+        <span *ngIf="!short">in Bedarfskl&auml;rung (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'reporting'"
         class="chip-reporting">
-        Stellungnahme
+        <span *ngIf="short">Stellungnahme</span>
+        <span *ngIf="!short">Stellungnahme (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'coordinated'"
         class="chip-coordinated">
-        koordiniert
+        <span *ngIf="short">koordiniert</span>
+        <span *ngIf="!short">koordiniert (Phase 12)</span>
       </mat-chip>
     </mat-chip-list>
   </div>
