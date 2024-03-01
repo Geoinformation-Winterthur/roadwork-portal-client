@@ -8,7 +8,7 @@
                 auch zeitlich</i> mit diesem Bauvorhaben <i>im Konflikt</i> stehen.</div>
         <div *ngIf="eventsWithSpatioTemporalConflict.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Es sind zurzeit <i>keine</i> Events registriert, die sowohl <i>r&auml;mlich als
+            Es sind zurzeit <i>keine</i> Events registriert, die sowohl <i>r&auml;umlich als
                 auch zeitlich im Konflikt</i> stehen zu diesem Bauvorhaben.
         </div>
         <div *ngIf="eventsWithSpatioTemporalConflict.length !== 0">
@@ -56,7 +56,7 @@
         <div>Hier werden Events gelistet, die zwar <i>im gleichen Raum</i> liegen, wie dieses Bauvorhaben,
             jedoch <i>zu einem anderen Zeitpunkt</i> stattfinden.</div>
         <div *ngIf="eventsWithSpatialConflict.length === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Es sind zurzeit <i>keine Events</i> registriert, die <i>nur r&auml;mlich</i>,
+            Es sind zurzeit <i>keine Events</i> registriert, die <i>nur r&auml;umlich</i>,
             jedoch <i>nicht zeitlich im Konflikt</i> stehen zu diesem Bauvorhaben.
         </div>
         <div *ngIf="eventsWithSpatialConflict.length !== 0">
