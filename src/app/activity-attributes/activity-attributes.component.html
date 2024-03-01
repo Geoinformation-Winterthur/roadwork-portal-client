@@ -147,6 +147,10 @@
                                                 [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'coordinated')">
                                                 koordiniert (Phase 12)
                                             </mat-option>
+                                            <mat-option value="suspended"
+                                                [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'suspended')">
+                                                sistiert
+                                            </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
