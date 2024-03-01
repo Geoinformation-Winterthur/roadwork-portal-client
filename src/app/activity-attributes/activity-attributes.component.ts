@@ -353,7 +353,8 @@ export class ActivityAttributesComponent implements OnInit {
         return true;
       else
         return false;
-    } else if (currValue === 'coordinated') {
+    } else if (currValue === 'coordinated' || 
+         currValue === 'suspended') {
       if (valueToCheck === 'review')
         return true;
       else if (valueToCheck === 'inconsult')

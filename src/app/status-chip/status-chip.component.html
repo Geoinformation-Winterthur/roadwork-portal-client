@@ -26,5 +26,9 @@
         <span *ngIf="short">koordiniert</span>
         <span *ngIf="!short">koordiniert (Phase 12)</span>
       </mat-chip>
+      <mat-chip *ngIf="statusCode === 'suspended'"
+        class="chip-suspended">
+        sistiert
+      </mat-chip>
     </mat-chip-list>
   </div>
