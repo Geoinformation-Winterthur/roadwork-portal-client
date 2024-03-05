@@ -28,12 +28,12 @@
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkNeedFeature.properties.name"
-                                        placeholder="Bezeichnung" (focusout)="update()"
+                                        placeholder="Titel/Strasse" (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                         style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                    Wenn Sie das Feld "Bezeichnung" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs eine Bezeichnung automatisch aus der Lage ermittelt.
+                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs ein Titel automatisch aus der Lage ermittelt.
                                 </div>
                                 <mat-form-field>
                                     <mat-label>Kurzbeschrieb</mat-label>
