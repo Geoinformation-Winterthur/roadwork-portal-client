@@ -70,51 +70,11 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
-                            <mat-card-title>Beteiligte</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <p>Besteller: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
-                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
-                                </p>
-                                <p>Bedarfsstelle:
-                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
-                                </p>
-                                <p>Gebietsmanager:
-                                    <b>{{managementArea?.manager?.firstName}}
-                                        {{managementArea?.manager?.lastName}}
-                                    </b>
-                                </p>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
                             <mat-card-title>Status</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status.code"
-                                    [short]="false"></app-status-chip>
-                                <div style="margin: 1em;">
-                                    <mat-chip-list>
-                                        <mat-chip *ngIf="priorityCode === 'high'" style="background-color: red;">Hohe
-                                            Priorit&auml;t</mat-chip>
-                                        <mat-chip *ngIf="priorityCode === 'low'"
-                                            style="background-color: green;">Nierige
-                                            Priorit&auml;t</mat-chip>
-                                    </mat-chip-list>
-                                </div>
-                                <mat-form-field *ngIf="userService.getLocalUser().role.code === 'territorymanager'">
-                                    <input matInput type="text" placeholder="Status">
-                                </mat-form-field>
-                                <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
-                                <p>
-                                    Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
-                                        date:'dd.MM.yyyy'}}</b>
-                                </p>
-                                <p>Bewertung:<br>
+                                <p style="margin-bottom: 3em;">Bewertung:<br>
                                     <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
                                         (change)="update()" name="relevance" aria-label="Bewertung"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
@@ -154,6 +114,46 @@
                                             value="5"
                                             style="background-color: rgb(255, 226, 226); font-weight: bold;border: 1px solid;">5</mat-button-toggle>
                                     </mat-button-toggle-group>
+                                </p>
+                                <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status.code"
+                                    [short]="false"></app-status-chip>
+                                <div style="margin: 1em;">
+                                    <mat-chip-list>
+                                        <mat-chip *ngIf="priorityCode === 'high'" style="background-color: red;">Hohe
+                                            Priorit&auml;t</mat-chip>
+                                        <mat-chip *ngIf="priorityCode === 'low'"
+                                            style="background-color: green;">Nierige
+                                            Priorit&auml;t</mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                                <mat-form-field *ngIf="userService.getLocalUser().role.code === 'territorymanager'">
+                                    <input matInput type="text" placeholder="Status">
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Beteiligte</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <p>Besteller: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
+                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
+                                </p>
+                                <p>Bedarfsstelle:
+                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
+                                </p>
+                                <p>Gebietsmanager:
+                                    <b>{{managementArea?.manager?.firstName}}
+                                        {{managementArea?.manager?.lastName}}
+                                    </b>
+                                </p>
+                                <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
+                                <p>
+                                    Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
+                                        date:'dd.MM.yyyy'}}</b>
                                 </p>
                             </div>
                         </mat-card-content>
