@@ -10,7 +10,7 @@
             <mat-tab label="Lage">
                 <app-edit-event-map [eventFeat]="eventFeature"></app-edit-event-map>
             </mat-tab>
-            <mat-tab label="Attribute">
+            <mat-tab label="Stammdaten">
                 <button mat-button
                     style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
                     *ngIf="!eventFeature.properties.uuid" (click)="add()">
