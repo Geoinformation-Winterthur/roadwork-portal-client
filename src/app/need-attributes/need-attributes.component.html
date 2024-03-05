@@ -36,10 +36,10 @@
                                     Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs ein Titel automatisch aus der Lage ermittelt.
                                 </div>
                                 <mat-form-field>
-                                    <mat-label>Kurzbeschrieb</mat-label>
+                                    <mat-label>Ausl&ouml;segrund</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkNeedFeature.properties.description" (focusout)="update()"
-                                        placeholder="Kurzbeschrieb..." required
+                                        placeholder="Ausl&ouml;segrund..." required
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
