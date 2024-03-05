@@ -122,8 +122,9 @@ export class NeedAttributesComponent implements OnInit {
 
   }
 
-  add() {
+  add(isPrivate: boolean) {
     if (this.roadWorkNeedFeature) {
+      this.roadWorkNeedFeature.properties.isPrivate = isPrivate;
       this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
         .subscribe({
           next: (roadWorkNeedFeature) => {
@@ -211,6 +212,7 @@ export class NeedAttributesComponent implements OnInit {
     roadWorkNeedFeature.properties.status.code = "requirement";
     roadWorkNeedFeature.properties.priority.code = "middle";
     roadWorkNeedFeature.properties.isEditingAllowed = true;
+    roadWorkNeedFeature.properties.isPrivate = true;
     roadWorkNeedFeature.properties.created = new Date();
     roadWorkNeedFeature.properties.lastModified = new Date();
 
