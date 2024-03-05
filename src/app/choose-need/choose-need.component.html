@@ -86,7 +86,7 @@
         <img mat-card-image class="map-img"
           src="http://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan?LAYERS=Landeskarte200%2CLandeskarte100%2CLandeskarte50%2CLandeskarte25%2CWald%2CGewaesser%2CAVSituationsplanZH_mask%2CZH_AvSituationsplan_winterthur&VERSION=1.1.1&DPI=96&TRANSPARENT=TRUE&FORMAT=image%2Fpng&SERVICE=WMS&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2056&BBOX={{ roadWorkNeed.geometry.coordinates[0].x - 160 }},{{ roadWorkNeed.geometry.coordinates[0].y - 80 }},{{ roadWorkNeed.geometry.coordinates[0].x + 160 }},{{ roadWorkNeed.geometry.coordinates[0].y + 80 }}&WIDTH=800&HEIGHT=400">
       </div>
-      <mat-card-content style="margin: 0.5em;">
+      <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
         <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span>
         <div style="margin-top: 2em;margin-bottom: 2em;">
           <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
@@ -97,19 +97,8 @@
             *ngIf="roadWorkNeed.properties.roadWorkActivityUuid">
           </span>
         </div>
-        <mat-divider></mat-divider>
-        <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" style="padding-top: 1em;padding-bottom: 1em;">
-          <mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp;<a
-            routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zum
-            Bauvorhaben</a>
-        </div>
-        <div
-          *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid && (userService.getLocalUser().role.code === 'administrator' || userService.getLocalUser().role.code === 'territorymanager')"
-          style="margin: 1em;">
-          <button style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
-            (click)="createNewActivityFromNeed(roadWorkNeed)"><mat-icon
-              aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; BEDARF &Uuml;BERNEHMEN</button>
-        </div>
+        <span *ngIf="roadWorkNeed.properties.isPrivate"
+            style="color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin-top: 0.5em;">ENTWURF</span>
       </mat-card-content>
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
@@ -119,6 +108,18 @@
           (click)="openDeleteDialog(roadWorkNeed.properties.uuid)"
           style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
           L&Ouml;SCHEN</button>
+        <button *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid &&
+          (userService.getLocalUser().role.code === 'administrator' ||
+          userService.getLocalUser().role.code === 'territorymanager')
+          && !roadWorkNeed.properties.isPrivate"
+          style="background-color: rgb(74,90,210); color: white;margin-top: 1em;" mat-button
+          (click)="createNewActivityFromNeed(roadWorkNeed)"><mat-icon
+            aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; BEDARF &Uuml;BERNEHMEN</button>
+        <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" style="padding-top: 1em;padding-bottom: 1em;">
+          <mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp;<a
+            routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zum
+            Bauvorhaben</a>
+        </div>
       </mat-card-actions>
     </mat-card>
   </div>

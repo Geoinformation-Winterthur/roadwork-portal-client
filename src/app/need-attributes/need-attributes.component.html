@@ -4,8 +4,10 @@
     </div>
     <div *ngIf="roadWorkNeedFeature !== undefined">
         <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Baubedarf <span style="font-weight: normal;"> / {{
-                roadWorkNeedFeature.properties.name }}</span></h1>
-        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Baubedarf</h1>
+                roadWorkNeedFeature.properties.name }}</span><span *ngIf="roadWorkNeedFeature.properties.isPrivate"
+            style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span></h1>
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Baubedarf<span *ngIf="roadWorkNeedFeature.properties.isPrivate"
+            style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span></h1>
         <mat-tab-group>
             <mat-tab label="Lage">
                 <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
@@ -13,9 +15,9 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <button mat-button
-                    style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);"
-                    *ngIf="!roadWorkNeedFeature.properties.uuid" (click)="add()">
-                    BAUBEDARF ER&Ouml;FFNEN
+                    style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);float: right;"
+                    *ngIf="!roadWorkNeedFeature.properties.uuid" (click)="add(true)">
+                    F&Uuml;R MICH SPEICHERN
                 </button>
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
