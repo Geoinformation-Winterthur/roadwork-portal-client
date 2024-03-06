@@ -53,11 +53,6 @@
                             </p>
                             <p *ngIf="!roadWorkNeedFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
                             <div style="display:flex;flex-direction:column;">
-                                <mat-form-field>
-                                    <input matInput type="text" [(ngModel)]="roadWorkNeedFeature.properties.name"
-                                        placeholder="Titel/Strasse" (focusout)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
                                     Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs
@@ -70,6 +65,11 @@
                                         placeholder="Ausl&ouml;segrund..." required
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </textarea>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="text" maxlength="80"  [(ngModel)]="roadWorkNeedFeature.properties.section"
+                                        placeholder="Abschnitt" (focusout)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <form class="choose_user_role_form">
                                     <mat-form-field appearance="fill">

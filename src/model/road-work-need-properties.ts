@@ -29,4 +29,5 @@ export class RoadWorkNeedProperties {
     areaManagerNoteDate: Date = new Date(1, 0, 1);;
     areaManagerOfNote: User  = new User();
     isPrivate: boolean = false;
+    section: string = "";
 }
