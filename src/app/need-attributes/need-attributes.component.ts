@@ -17,6 +17,7 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
+import { DateHelper } from 'src/helper/date-helper';
 
 @Component({
   selector: 'app-need-attributes',
@@ -24,6 +25,10 @@ import { ManagementAreaService } from 'src/services/management-area.service';
   styleUrls: ['./need-attributes.component.css']
 })
 export class NeedAttributesComponent implements OnInit {
+
+  finishOptimumTertial: number = 0;
+  finishEarlyTertial: number = 0;
+  finishLateTertial: number = 0;
 
   roadWorkNeedFeature?: RoadWorkNeedFeature;
   managementArea?: ManagementArea;
@@ -82,6 +87,12 @@ export class NeedAttributesComponent implements OnInit {
                   roadWorkNeed.geometry = rwPoly;
                   this.roadWorkNeedFeature = roadWorkNeed;
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
+
+                  if(this.roadWorkNeedFeature){
+                    this.finishOptimumTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishOptimumTo);
+                    this.finishEarlyTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishEarlyTo);
+                    this.finishLateTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishLateTo);
+                  }
 
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
                     .subscribe({
@@ -155,6 +166,19 @@ export class NeedAttributesComponent implements OnInit {
         .subscribe({
           next: (managementAreas) => {
             if (managementAreas && managementAreas.length !== 0) {
+
+              if(this.finishEarlyTertial > this.finishOptimumTertial)
+                this.finishOptimumTertial = this.finishEarlyTertial;
+
+              if(this.finishOptimumTertial > this.finishLateTertial)
+                this.finishLateTertial = this.finishOptimumTertial;
+
+              this.roadWorkNeedFeature!.properties.finishOptimumTo =
+                    this._convertTertialToDate(this.finishOptimumTertial);
+              this.roadWorkNeedFeature!.properties.finishEarlyTo =
+                    this._convertTertialToDate(this.finishEarlyTertial);
+              this.roadWorkNeedFeature!.properties.finishLateTo =
+                    this._convertTertialToDate(this.finishLateTertial);
               this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
                 .subscribe({
                   next: (roadWorkNeedFeature) => {
@@ -193,8 +217,73 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
+  writeOutTertial(tertialCount: number): string {
+    let result: string = "";
+    let currentDate: Date = new Date();
+
+    let currentMonth: number = currentDate.getMonth() + 1;
+    let currentTertial: number = Math.ceil(currentMonth / 4);
+    let tertialModulo: number = (currentTertial + tertialCount) % 3;
+
+    if (tertialModulo === 1) {
+      result += "1. Tertial ";
+    } else if (tertialModulo === 2) {
+      result += "2. Tertial ";
+    } else {
+      result += "3. Tertial ";
+    }
+
+    let currentYear: number = currentDate.getFullYear();
+
+    let addYears = 0;
+    if (tertialCount) {
+      addYears = Math.floor(tertialCount / 3);
+    }
+
+    result += " " + (currentYear + addYears);
+
+    return result;
+  }
+
   ngOnDestroy() {
     this.activatedRouteSubscription.unsubscribe();
+  }
+
+  private _convertTertialToDate(tertialCount: number): Date {
+    let result: Date = new Date();
+    let currentDate: Date = new Date();
+
+    let currentMonth: number = currentDate.getMonth() + 1;
+    let currentTertial: number = Math.ceil(currentMonth / 4);
+    let tertialModulo: number = (currentTertial + tertialCount) % 3;
+
+    if (tertialModulo === 1) {
+      result.setMonth(1);
+    } else if (tertialModulo === 2) {
+      result.setMonth(4);
+    } else {
+      result.setMonth(8);
+    }
+
+    let currentYear: number = currentDate.getFullYear();
+
+    let addYears = 0;
+    if (tertialCount) {
+      addYears = Math.floor(tertialCount / 3);
+    }
+
+    result.setFullYear(currentYear + addYears);
+
+    result.setDate(1);
+
+    return result;
+  }
+
+  private _convertDateToTertialCount(realizationDate: Date): number {
+    let currentDate: Date = new Date();
+    realizationDate = new Date(realizationDate);
+    let monthDiff = DateHelper.calcMonthDiff(currentDate, realizationDate);
+    return Math.ceil(monthDiff / 4);
   }
 
   private _hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedEnum: RoadWorkNeedEnum): boolean {
@@ -228,13 +317,8 @@ export class NeedAttributesComponent implements OnInit {
     let plus50Years: Date = new Date();
     plus50Years.setFullYear(plus50Years.getFullYear() + 50);
 
-    roadWorkNeedFeature.properties.finishEarlyFrom = new Date();
     roadWorkNeedFeature.properties.finishEarlyTo = plus50Years;
-
-    roadWorkNeedFeature.properties.finishOptimumFrom = new Date();
     roadWorkNeedFeature.properties.finishOptimumTo = plus50Years;
-
-    roadWorkNeedFeature.properties.finishLateFrom = new Date();
     roadWorkNeedFeature.properties.finishLateTo = plus50Years;
 
     return roadWorkNeedFeature;

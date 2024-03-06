@@ -14,11 +14,8 @@ export class RoadWorkNeedProperties {
     orderer: User  = new User();
     created: Date = new Date(1, 0, 1);
     lastModified: Date = new Date(1, 0, 1);
-    finishEarlyFrom: Date = new Date(1, 0, 1);
     finishEarlyTo: Date = new Date(1, 0, 1);
-    finishOptimumFrom: Date = new Date(1, 0, 1);
     finishOptimumTo: Date = new Date(1, 0, 1);
-    finishLateFrom: Date = new Date(1, 0, 1);
     finishLateTo: Date = new Date(1, 0, 1);
     priority: Priority = new Priority();
     status: Status = new Status();
