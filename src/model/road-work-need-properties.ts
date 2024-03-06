@@ -31,4 +31,5 @@ export class RoadWorkNeedProperties {
     isPrivate: boolean = false;
     section: string = "";
     comment: string = "";
+    url: string = "";
 }
