@@ -24,24 +24,24 @@
                 </button>
                 <h2 style="font-weight: normal;">Realisierungstermine</h2>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
-                    Fr&uuml;hest: <span style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishEarlyTertial)}}</span>
-                    <mat-slider min="0" max="21" tickInterval="1"
-                            [(ngModel)]="finishEarlyTertial" (change)="update()"
-                            showTickMarks style="width: 100%;">
+                    Fr&uuml;hest: <span
+                        style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishEarlyTertial)}}</span>
+                    <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishEarlyTertial" (change)="update()"
+                        showTickMarks style="width: 100%;">
                     </mat-slider>
                 </div>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
-                    Wunsch: <span style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishOptimumTertial)}}</span>
-                    <mat-slider min="0" max="21" tickInterval="1"
-                            [(ngModel)]="finishOptimumTertial" (change)="update()"
-                            showTickMarks style="width: 100%;">
+                    Wunsch: <span
+                        style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishOptimumTertial)}}</span>
+                    <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishOptimumTertial" (change)="update()"
+                        showTickMarks style="width: 100%;">
                     </mat-slider>
                 </div>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
-                    Sp&auml;test: <span style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishLateTertial)}}</span>
-                    <mat-slider min="0" max="21" tickInterval="1"
-                            [(ngModel)]="finishLateTertial" (change)="update()"
-                            showTickMarks style="width: 100%;">
+                    Sp&auml;test: <span
+                        style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishLateTertial)}}</span>
+                    <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishLateTertial" (change)="update()"
+                        showTickMarks style="width: 100%;">
                     </mat-slider>
                 </div>
                 <div fxLayout="row wrap padding" style="width:100%;">
@@ -67,31 +67,36 @@
                                     </textarea>
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput type="text" maxlength="80"  [(ngModel)]="roadWorkNeedFeature.properties.section"
-                                        placeholder="Abschnitt" (focusout)="update()"
+                                    <input matInput type="text" maxlength="80"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.section" placeholder="Abschnitt"
+                                        (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
-                                <form class="choose_user_role_form">
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Art</mat-label>
-                                        <mat-select [formControl]="roadWorkNeedEnumControl" (focusout)="update()"
-                                            (selectionChange)='onRoadWorkNeedEnumChange()' required
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                            <mat-option *ngFor="let roadWorkNeedEnum of availableRoadWorkNeedEnums"
-                                                [value]="roadWorkNeedEnum.code">
-                                                {{roadWorkNeedEnum.name}}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </form>
-                                <div>
-                                    <mat-form-field>
-                                        <input matInput type="number" min="0"
-                                            [(ngModel)]="roadWorkNeedFeature.properties.costs"
-                                            placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    </mat-form-field>
-                                </div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Art</mat-label>
+                                    <mat-select [formControl]="roadWorkNeedEnumControl" (focusout)="update()"
+                                        (selectionChange)='onRoadWorkNeedEnumChange()' required
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        <mat-option *ngFor="let roadWorkNeedEnum of availableRoadWorkNeedEnums"
+                                            [value]="roadWorkNeedEnum.code">
+                                            {{roadWorkNeedEnum.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="number" min="0"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.costs"
+                                        placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Bemerkung</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
+                                        placeholder="Bemerkung..."
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        </textarea>
+                                </mat-form-field>
                             </div>
                         </mat-card-content>
                     </mat-card>

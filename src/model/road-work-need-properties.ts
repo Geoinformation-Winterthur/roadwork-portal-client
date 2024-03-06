@@ -30,4 +30,5 @@ export class RoadWorkNeedProperties {
     areaManagerOfNote: User  = new User();
     isPrivate: boolean = false;
     section: string = "";
+    comment: string = "";
 }
