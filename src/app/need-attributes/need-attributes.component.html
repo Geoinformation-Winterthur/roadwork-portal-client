@@ -5,9 +5,12 @@
     <div *ngIf="roadWorkNeedFeature !== undefined">
         <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Baubedarf <span style="font-weight: normal;"> / {{
                 roadWorkNeedFeature.properties.name }}</span><span *ngIf="roadWorkNeedFeature.properties.isPrivate"
-            style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span></h1>
-        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Baubedarf<span *ngIf="roadWorkNeedFeature.properties.isPrivate"
-            style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span></h1>
+                style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
+        </h1>
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Baubedarf<span
+                *ngIf="roadWorkNeedFeature.properties.isPrivate"
+                style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
+        </h1>
         <mat-tab-group>
             <mat-tab label="Lage">
                 <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
@@ -19,7 +22,29 @@
                     *ngIf="!roadWorkNeedFeature.properties.uuid" (click)="add(true)">
                     F&Uuml;R MICH SPEICHERN
                 </button>
-                <div fxLayout="row wrap padding">
+                <h2 style="font-weight: normal;">Realisierungstermine</h2>
+                <div style="margin: 0.5em;margin-bottom: 1em;">
+                    Fr&uuml;hest: <span style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishEarlyTertial)}}</span>
+                    <mat-slider min="0" max="21" tickInterval="1"
+                            [(ngModel)]="finishEarlyTertial" (change)="update()"
+                            showTickMarks style="width: 100%;">
+                    </mat-slider>
+                </div>
+                <div style="margin: 0.5em;margin-bottom: 1em;">
+                    Wunsch: <span style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishOptimumTertial)}}</span>
+                    <mat-slider min="0" max="21" tickInterval="1"
+                            [(ngModel)]="finishOptimumTertial" (change)="update()"
+                            showTickMarks style="width: 100%;">
+                    </mat-slider>
+                </div>
+                <div style="margin: 0.5em;margin-bottom: 1em;">
+                    Sp&auml;test: <span style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishLateTertial)}}</span>
+                    <mat-slider min="0" max="21" tickInterval="1"
+                            [(ngModel)]="finishLateTertial" (change)="update()"
+                            showTickMarks style="width: 100%;">
+                    </mat-slider>
+                </div>
+                <div fxLayout="row wrap padding" style="width:100%;">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
@@ -34,8 +59,9 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
-                                        style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs ein Titel automatisch aus der Lage ermittelt.
+                                    style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
+                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs
+                                    ein Titel automatisch aus der Lage ermittelt.
                                 </div>
                                 <mat-form-field>
                                     <mat-label>Ausl&ouml;segrund</mat-label>
@@ -157,84 +183,6 @@
                                     Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
-                            <mat-card-title>Fr&uuml;heste Realisierung</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung von</mat-label>
-                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyFrom"
-                                        [matDatepicker]="finishEarlyFrom" (dateChange)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishEarlyFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyFrom"></mat-datepicker-toggle>
-                                </mat-form-field>
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung bis</mat-label>
-                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishEarlyTo"
-                                        [matDatepicker]="finishEarlyTo" (dateChange)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishEarlyTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishEarlyTo"></mat-datepicker-toggle>
-                                </mat-form-field>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
-                            <mat-card-title>Optimale Realisierung</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung von</mat-label>
-                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumFrom"
-                                        [matDatepicker]="finishOptimumFrom" (dateChange)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishOptimumFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishOptimumFrom"></mat-datepicker-toggle>
-                                </mat-form-field>
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung bis</mat-label>
-                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishOptimumTo"
-                                        [matDatepicker]="finishOptimumTo" (dateChange)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishOptimumTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishOptimumTo"></mat-datepicker-toggle>
-                                </mat-form-field>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
-                            <mat-card-title>Sp&auml;teste Realisierung</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung von</mat-label>
-                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateFrom"
-                                        [matDatepicker]="finishLateFrom" (dateChange)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishLateFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishLateFrom"></mat-datepicker-toggle>
-                                </mat-form-field>
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung bis</mat-label>
-                                    <input matInput [ngModel]="roadWorkNeedFeature.properties.finishLateTo"
-                                        [matDatepicker]="finishLateTo" (dateChange)="update()"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishLateTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishLateTo"></mat-datepicker-toggle>
-                                </mat-form-field>
                             </div>
                         </mat-card-content>
                     </mat-card>

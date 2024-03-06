@@ -97,7 +97,6 @@ export class ChooseNeedComponent implements OnInit {
     roadWorkActivity.properties.roadWorkNeedsUuids.push(roadWorkNeed.properties.uuid);
     roadWorkActivity.properties.costsType.code = "valuation";
     roadWorkActivity.properties.costs = roadWorkNeed.properties.costs;
-    roadWorkActivity.properties.finishFrom = roadWorkNeed.properties.finishOptimumFrom;
     roadWorkActivity.properties.finishTo = roadWorkNeed.properties.finishOptimumTo;
 
     this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)

@@ -205,9 +205,9 @@ export class NeedsOfActivityComponent {
       this.allRoadWorkNeedFeatures
         .filter(roadWorkNeedFeature => {
           if (roadWorkNeedFeature.properties && roadWorkNeedFeature.properties.name
-            && roadWorkNeedFeature.properties.finishOptimumFrom) {
+            && roadWorkNeedFeature.properties.finishOptimumTo) {
             let roadWorkNeedName: string = this.roadWorkNeedSearchControl.value.trim().toLowerCase();
-            let finishFrom: Date = new Date(roadWorkNeedFeature.properties.finishOptimumFrom);
+            let finishFrom: Date = new Date(roadWorkNeedFeature.properties.finishOptimumTo);
             return (roadWorkNeedName === ''
               || roadWorkNeedFeature.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
               && finishFrom.getFullYear() === this.searchNeedYearOptFrom;
