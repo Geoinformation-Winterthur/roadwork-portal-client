@@ -90,6 +90,12 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
+                                    <input matInput type="text" maxlength="2048"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.url" placeholder="Link (URL)"
+                                        (focusout)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <mat-form-field>
                                     <mat-label>Bemerkung</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
