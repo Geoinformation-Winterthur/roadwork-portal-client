@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
@@ -12,9 +11,7 @@ import { OrganisationService } from 'src/services/organisation.service';
 })
 export class OrganisationsComponent implements OnInit {
 
-  organisationName: string = "";
-
-  userOrgFormControl: FormControl = new FormControl();
+  chosenOrganisation: OrganisationalUnit;
   existingOrganisations: OrganisationalUnit[] = [];
 
   private organisationService: OrganisationService;
@@ -22,6 +19,8 @@ export class OrganisationsComponent implements OnInit {
 
   constructor(organisationService: OrganisationService,
           snckBar: MatSnackBar) {
+    this.chosenOrganisation = new OrganisationalUnit();
+    this.chosenOrganisation.isNew = true;
     this.organisationService = organisationService;
     this.snckBar = snckBar;
    }
@@ -30,23 +29,8 @@ export class OrganisationsComponent implements OnInit {
     this._reloadTypes();
   }
 
-  onOrgChange() {
-    if(this.userOrgFormControl.value !== 'nouuid'){
-      for (let existingOrg of this.existingOrganisations) {
-        if (existingOrg.uuid === this.userOrgFormControl.value) {
-          this.organisationName = existingOrg.name;
-          continue;
-        }
-      }  
-    } else {
-      this.organisationName = "";
-    }
-  }
-
   addOrganisation() {
-    let newOrg: OrganisationalUnit = new OrganisationalUnit();
-    newOrg.name = this.organisationName;
-    this.organisationService.addOrganisation(newOrg).subscribe({
+    this.organisationService.addOrganisation(this.chosenOrganisation).subscribe({
       next: (org) => {
         if (org !== null) {
           ErrorMessageEvaluation._evaluateErrorMessage(org);
@@ -68,10 +52,7 @@ export class OrganisationsComponent implements OnInit {
   }
 
   updateOrganisation() {
-    let updateOrg: OrganisationalUnit = new OrganisationalUnit();
-    updateOrg.uuid = this.userOrgFormControl.value;
-    updateOrg.name = this.organisationName;
-    this.organisationService.updateOrganisation(updateOrg).subscribe({
+    this.organisationService.updateOrganisation(this.chosenOrganisation).subscribe({
       next: (org) => {
         if (org !== null) {
           ErrorMessageEvaluation._evaluateErrorMessage(org);
@@ -95,8 +76,8 @@ export class OrganisationsComponent implements OnInit {
   private _reloadTypes(){
     this.existingOrganisations = [];
     let noOrg: OrganisationalUnit = new OrganisationalUnit();
-    noOrg.uuid = "nouuid";
-    noOrg.name = "NEU ANLEGEN";
+    noOrg.name = "";
+    noOrg.isNew = true;
     this.existingOrganisations.push(noOrg);
     this.organisationService.getAllOrgTypes().subscribe({
       next: (organisations) => {

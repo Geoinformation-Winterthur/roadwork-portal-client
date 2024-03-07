@@ -8,5 +8,7 @@ export class OrganisationalUnit
     public name: string = "";
     public errorMessage: string = "";
     public contactPerson: string = "";
+    public isCivilEngineering: boolean = false;
+    public isNew: boolean = false;
 }
 
