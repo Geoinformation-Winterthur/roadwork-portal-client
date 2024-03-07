@@ -17,11 +17,18 @@
                     [managementArea]="managementArea"></app-edit-need-map>
             </mat-tab>
             <mat-tab label="Stammdaten">
-                <button mat-button
-                    style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);float: right;"
-                    *ngIf="!roadWorkNeedFeature.properties.uuid" (click)="add(true)">
-                    F&Uuml;R MICH SPEICHERN
-                </button>
+                <div style="float: right;">
+                    <button mat-button *ngIf="!roadWorkNeedFeature.properties.uuid && roadWorkNeedFeature.properties.isPrivate"
+                        (click)="add(true)"
+                        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                        F&Uuml;R MICH SPEICHERN
+                    </button>
+                    <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate"
+                        (click)="add(false)"
+                        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                        BEDARF PUBLIZIEREN
+                    </button>
+                </div>
                 <h2 style="font-weight: normal;">Realisierungstermine</h2>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
                     Fr&uuml;hest: <span
@@ -53,6 +60,12 @@
                             </p>
                             <p *ngIf="!roadWorkNeedFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
                             <div style="display:flex;flex-direction:column;">
+                                <mat-form-field>
+                                    <input matInput type="text" maxlength="80"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.name" placeholder="Titel/Strasse"
+                                        (focusout)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
                                     Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs

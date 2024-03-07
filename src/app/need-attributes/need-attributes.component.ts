@@ -88,7 +88,7 @@ export class NeedAttributesComponent implements OnInit {
                   this.roadWorkNeedFeature = roadWorkNeed;
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
 
-                  if(this.roadWorkNeedFeature){
+                  if (this.roadWorkNeedFeature) {
                     this.finishOptimumTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishOptimumTo);
                     this.finishEarlyTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishEarlyTo);
                     this.finishLateTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishLateTo);
@@ -161,24 +161,23 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   update() {
+    if (this.finishEarlyTertial > this.finishOptimumTertial)
+      this.finishOptimumTertial = this.finishEarlyTertial;
+    if (this.finishOptimumTertial > this.finishLateTertial)
+      this.finishLateTertial = this.finishOptimumTertial;
+
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
         .subscribe({
           next: (managementAreas) => {
             if (managementAreas && managementAreas.length !== 0) {
 
-              if(this.finishEarlyTertial > this.finishOptimumTertial)
-                this.finishOptimumTertial = this.finishEarlyTertial;
-
-              if(this.finishOptimumTertial > this.finishLateTertial)
-                this.finishLateTertial = this.finishOptimumTertial;
-
               this.roadWorkNeedFeature!.properties.finishOptimumTo =
-                    this._convertTertialToDate(this.finishOptimumTertial);
+                this._convertTertialToDate(this.finishOptimumTertial);
               this.roadWorkNeedFeature!.properties.finishEarlyTo =
-                    this._convertTertialToDate(this.finishEarlyTertial);
+                this._convertTertialToDate(this.finishEarlyTertial);
               this.roadWorkNeedFeature!.properties.finishLateTo =
-                    this._convertTertialToDate(this.finishLateTertial);
+                this._convertTertialToDate(this.finishLateTertial);
               this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
                 .subscribe({
                   next: (roadWorkNeedFeature) => {
