@@ -18,7 +18,7 @@ export class DataexportComponent implements OnInit {
   private roadWorkActivityService: RoadWorkActivityService;
 
   constructor(roadWorkNeedService: RoadWorkNeedService,
-        roadWorkActivityService: RoadWorkActivityService) {
+    roadWorkActivityService: RoadWorkActivityService) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
   }
@@ -26,37 +26,22 @@ export class DataexportComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  startDownload(type: string){
+  startDownload() {
     let today: Date = new Date();
-    if(type === "needs"){
-      this.roadWorkNeedService.downloadRoadWorkNeeds(type).subscribe({
-        next: (roadWorkNeedsCsv) => {
-          let csvData: Blob = new Blob([roadWorkNeedsCsv],
-            {
-              type: "text/csv;charset=utf-8"
-            });
-          saveAs(csvData, "Baubedarfe_Export" + 
-                  today.getFullYear() + "" + (today.getMonth() + 1) + "" + today.getDate() +
-                  ".csv");
-        },
-        error: (error) => {
-        }
-      });
-    } else if(type === "activities"){
-      this.roadWorkNeedService.downloadRoadWorkNeeds(type).subscribe({
-        next: (roadWorkNeedsCsv) => {
-          let csvData: Blob = new Blob([roadWorkNeedsCsv],
-            {
-              type: "text/csv;charset=utf-8"
-            });
-          saveAs(csvData, "Bauvorhaben_Export" +
-            today.getFullYear() + "" + (today.getMonth() + 1) + "" + today.getDate() +
-            ".csv");
-        },
-        error: (error) => {
-        }
-      });
-    }
+    this.roadWorkNeedService.downloadRoadWorkNeeds().subscribe({
+      next: (roadWorkNeedsCsv) => {
+        let csvData: Blob = new Blob([roadWorkNeedsCsv],
+          {
+            type: "text/csv;charset=utf-8"
+          });
+        saveAs(csvData, "Bauvorhaben_Export" +
+          today.getFullYear() + "" + (today.getMonth() + 1) + "" + today.getDate() +
+          ".csv");
+      },
+      error: (error) => {
+      }
+    });
+
   }
 
 }

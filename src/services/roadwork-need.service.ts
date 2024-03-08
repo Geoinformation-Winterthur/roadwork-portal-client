@@ -121,8 +121,8 @@ export class RoadWorkNeedService {
     return result;
   }
 
-  downloadRoadWorkNeeds(type: string = "") : Observable<string>{
-    let queryString = "/exportdata/?type=" + type;
+  downloadRoadWorkNeeds() : Observable<string>{
+    let queryString = "/exportdata/";
     let result: Observable<string> =
       this.http.get(environment.apiUrl + queryString, {
         responseType: "text"
