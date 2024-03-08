@@ -26,7 +26,8 @@
                     </button>
                     <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate" (click)="add(false)"
                         style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
-                        <mat-icon aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BEDARF PUBLIZIEREN
+                        <mat-icon aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BEDARF
+                        PUBLIZIEREN
                     </button>
                 </div>
                 <h2 style="font-weight: normal;">Realisierungstermine</h2>
@@ -127,7 +128,7 @@
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p style="margin-bottom: 3em;">Bewertung:<br>
+                                <p>Bewertung:<br>
                                     <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
                                         (change)="update()" name="relevance" aria-label="Bewertung"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
@@ -137,37 +138,67 @@
                                             style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.uuid
                                                                 && roadWorkNeedFeature.properties.relevance != 0"
-                                            value="0"
+                                            matTooltip="Keine Beteiligung vorgesehen" value="0"
                                             style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 1"
                                             value="1"
                                             style="background-color: rgb(207, 255, 205);font-weight: bold;border: 1px solid;">1</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 1"
-                                            value="1"
+                                            value="1" matTooltip="Vorausschauendes Bedürfnis"
                                             style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 2"
                                             value="2"
                                             style="background-color: rgb(224, 248, 196); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 2"
-                                            value="2"
+                                            value="2" matTooltip="Normales Bedürfnis (Standard)"
                                             style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 3"
                                             value="3"
                                             style="background-color: rgb(252, 253, 203); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 3"
-                                            value="3"
+                                            value="3" matTooltip="Wichtiges Bedürfnis"
                                             style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 4"
                                             value="4"
                                             style="background-color: rgb(255, 234, 217); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 4"
-                                            value="4"
+                                            value="4" matTooltip="Wichtiges + dringendes Bedürfnis"
                                             style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 5"
-                                            value="5"
-                                            style="background-color: rgb(255, 226, 226); font-weight: bold;border: 1px solid;">5</mat-button-toggle>
                                     </mat-button-toggle-group>
                                 </p>
+                                <div *ngIf="roadWorkNeedFeature && roadWorkNeedFeature.properties.relevance >= 0"
+                                    style="margin-bottom: 3em;background-color: rgb(235, 232, 255);padding: 1em;">
+                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 0">
+                                        <b>Keine Beteiligung vorgesehen</b><br>
+                                        Wir bauen nicht mit und sind nicht projektbeteiligt. Sollte im System eine
+                                        Projektbeteiligung erfasst sein, muss diese durch APK gel&ouml;scht werden
+                                        (Bitte
+                                        unter Bemerkungen erfassen).
+                                    </div>
+                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 1">
+                                        <b>Vorausschauendes Bed&uuml;rfnis</b><br>
+                                        Es besteht auf l&auml;ngere Sicht kein zwingendes Bed&uuml;rfnis. Im Sinn des
+                                        koordinierten
+                                        Bauens beteiligen wir uns jedoch am Projekt unabh&auml;ngig vom
+                                        Ausf&uuml;hrungstermin.
+                                    </div>
+                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 2">
+                                        <b>Normales Bed&uuml;rfnis (Standard)</b><br>
+                                        Es besteht ein Bed&uuml;rfnis mit einer mittleren Dringlichkeit und Wichtigkeit
+                                    </div>
+                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 3">
+                                        <b>Wichtiges Bed&uuml;rfnis</b><br>
+                                        Es besteht ein wichtiges Bed&uuml;rfnis mit einer relativen Dringlichkeit.
+                                        Es bestehen m&ouml;glicherweise inhaltliche und/oder zeitliche
+                                        Abh&auml;ngigkeiten
+                                    </div>
+                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 4">
+                                        <b>Wichtiges + dringendes Bed&uuml;rfnis</b><br>
+                                        Es besteht ein wichtiges Bed&uuml;rfnis mit einer hohen Dringlichkeit.
+                                        Rechtliche und / oder politische Vorgaben k&ouml;nnen dem Bed&uuml;rfnis
+                                        zus&auml;tzliche Bedeutung verleihen.
+                                    </div>
+                                </div>
                                 <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status.code"
                                     [short]="false"></app-status-chip>
                                 <div style="margin: 1em;">
@@ -218,8 +249,7 @@
                         </mat-card-header>
                         <mat-card-content>
                             <p>Angeh&auml;ngtes PDF-Dokument herunterladen:</p>
-                            <button (click)="downloadPdf()" mat-button
-                                style="background-color: rgb(233, 196, 192);">
+                            <button (click)="downloadPdf()" mat-button style="background-color: rgb(233, 196, 192);">
                                 Herunterladen
                             </button><br><br>
                             <p>PDF-Dokument &uuml;berschreiben:</p>

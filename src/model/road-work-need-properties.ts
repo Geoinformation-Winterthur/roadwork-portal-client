@@ -20,7 +20,7 @@ export class RoadWorkNeedProperties {
     priority: Priority = new Priority();
     status: Status = new Status();
     costs?: number;
-    relevance: number = 0;
+    relevance: number = -1;
     activityRelationType: string = "";
     description: string = "";
     roadWorkActivityUuid: string = "";
