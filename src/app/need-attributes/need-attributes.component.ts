@@ -18,6 +18,8 @@ import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { DateHelper } from 'src/helper/date-helper';
+import { DocumentService } from 'src/services/document.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-need-attributes',
@@ -38,6 +40,8 @@ export class NeedAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
 
+  environment = environment;
+
   userService: UserService;
 
   roadWorkNeedEnumControl: FormControl = new FormControl();
@@ -45,18 +49,22 @@ export class NeedAttributesComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
+  private documentService: DocumentService;
   private activatedRoute: ActivatedRoute;
   private router: Router;
   private activatedRouteSubscription: Subscription = new Subscription();
 
   private snckBar: MatSnackBar;
 
-  constructor(activatedRoute: ActivatedRoute, roadWorkNeedService: RoadWorkNeedService,
+  constructor(activatedRoute: ActivatedRoute,
+    roadWorkNeedService: RoadWorkNeedService,
+    documentService: DocumentService,
     userService: UserService, snckBar: MatSnackBar,
     managementAreaService: ManagementAreaService,
     router: Router) {
     this.activatedRoute = activatedRoute;
     this.roadWorkNeedService = roadWorkNeedService;
+    this.documentService = documentService;
     this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.router = router;
@@ -242,6 +250,58 @@ export class NeedAttributesComponent implements OnInit {
     result += " " + (currentYear + addYears);
 
     return result;
+  }
+
+  uploadPdf(event: any) {
+    if (this.roadWorkNeedFeature && event && event.target &&
+          event.target.files && event.target.files.length > 0) {
+      let file: File = event.target.files[0]
+      let formData: FormData = new FormData();
+      formData.append("pdfFile", file, file.name);
+      this.documentService.uploadDocument(this.roadWorkNeedFeature.properties.uuid, formData).subscribe({
+        next: (errorObj) => {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorObj);
+          if (errorObj.errorMessage.trim().length !== 0) {
+            this.snckBar.open(errorObj.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.snckBar.open("PDF-Dokument wurde erfolgreich hochgeladen", "", {
+              duration: 4000,
+            });
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Fehler beim Upload des PDF-Dokuments.", "", {
+            duration: 4000
+          });
+        }
+      });
+    }
+  }
+
+  downloadPdf() {
+    if (this.roadWorkNeedFeature) {
+      this.documentService.getDocument(this.roadWorkNeedFeature.properties.uuid).subscribe({
+        next: (documentData) => {
+          if (documentData === null || documentData.size === 0) {
+            this.snckBar.open("Dieser Bedarf hat kein angehängtes PDF-Dokument.", "", {
+              duration: 4000
+            });
+          } else {
+            let objUrl = window.URL.createObjectURL(documentData);
+            let newBrowserTab = window.open();
+            if (newBrowserTab)
+              newBrowserTab.location.href = objUrl;
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
+            duration: 4000
+          });
+        }
+      });
+    }
   }
 
   ngOnDestroy() {

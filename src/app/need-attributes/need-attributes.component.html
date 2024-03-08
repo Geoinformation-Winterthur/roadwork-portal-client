@@ -18,13 +18,13 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="float: right;">
-                    <button mat-button *ngIf="!roadWorkNeedFeature.properties.uuid && roadWorkNeedFeature.properties.isPrivate"
+                    <button mat-button
+                        *ngIf="!roadWorkNeedFeature.properties.uuid && roadWorkNeedFeature.properties.isPrivate"
                         (click)="add(true)"
                         style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
                         F&Uuml;R MICH SPEICHERN
                     </button>
-                    <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate"
-                        (click)="add(false)"
+                    <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate" (click)="add(false)"
                         style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
                         BEDARF PUBLIZIEREN
                     </button>
@@ -96,7 +96,8 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
+                                <mat-form-field
+                                    *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
                                     <input matInput type="number" min="0"
                                         [(ngModel)]="roadWorkNeedFeature.properties.costs"
                                         placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
@@ -208,6 +209,24 @@
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
                             </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Dokumente</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <p>Angeh&auml;ngtes PDF-Dokument herunterladen:</p>
+                            <button (click)="downloadPdf()" mat-button
+                                style="background-color: rgb(233, 196, 192);">
+                                Herunterladen
+                            </button><br><br>
+                            <p>PDF-Dokument &uuml;berschreiben:</p>
+                            <form method="post" enctype="multipart/form-data">
+                                <input type="file" name="pdfFile" accept="application/pdf"
+                                    (change)="uploadPdf($event)"><br>
+                            </form>
                         </mat-card-content>
                     </mat-card>
                 </div>
