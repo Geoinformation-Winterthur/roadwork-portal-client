@@ -96,7 +96,7 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field>
+                                <mat-form-field *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
                                     <input matInput type="number" min="0"
                                         [(ngModel)]="roadWorkNeedFeature.properties.costs"
                                         placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
