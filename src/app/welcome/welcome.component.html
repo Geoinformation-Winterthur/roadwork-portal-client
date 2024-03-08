@@ -7,27 +7,28 @@
     <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Departement Bau und Mobilit&auml;t</h2>
 </div>
 <div style="margin: 2em;color: rgb(90, 90, 90);">
-    <h3 i18n style="font-weight: lighter;text-transform: uppercase;color: black;">Willkommen <span
-            *ngIf="userService.isUserLoggedIn()">{{userService.getLocalUser().firstName}}
-            {{userService.getLocalUser().lastName}} </span>im Tool zur Planung und Koordination der Bauvorhaben der
-        Stadt Winterthur</h3>
-    <div i18n *ngIf="!userService.isUserLoggedIn()">Das <i>Koordinationstool Strategische Strassenplanung</i> (SSP) des
-        Tiefbauamts der Stadtverwaltung Winterthur
-        unterst&uuml;tzt bei der Planung und Koordination der st&auml;dtischen Bauprojekte. Sie m&uuml;ssen sich
-        <b>einloggen</b>, um die Funktionen verwenden
-        zu k&ouml;nnen. Falls Sie <b>Zugriff auf diese Applikation</b> ben&ouml;tigen, wenden Sie sich bitte an Ihren
-        Applikationsverantwortlichen. Sie erhalten
-        dann ein Abbonement auf diese Applikation. Folgende Rollen sind in dieser Applikation m&ouml;glich:
-        <ul>
-            <li>Eventmanager</li>
-            <li>Besteller</li>
-            <li>Verkehrsmanager</li>
-            <li>Gebietsmanager</li>
-            <li>Administrator</li>
-        </ul>
-        Zum einloggen verwenden Sie bitte den <b>Login-Button</b> in der <b>oberen rechten Ecke</b>.
+    <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
+        Willkommen im Koordinationstool des Tiefbauamts Winterthur.
+    </h3>
+    <div i18n *ngIf="!userService.isUserLoggedIn()"><p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
+        im &ouml;ffentlichen Strassenraum der Stadt Winterthur (Baukoordinationsverordnung) sind alle st&auml;dtischen
+        Abteilungen, privatrechtliche und &ouml;ffentlich-rechtliche Unternehmen der Stadt, des Kantons und des Bundes
+        sowie sonstige Private im &ouml;ffentlichen Strassenraum (Eigentum der Stadt Winterthur) zum koordinierten Bauen
+        verpflichtet.</p>
+        <p>
+        Die Abteilung Planung & Koordination des Tiefbauamts der Stadt Winterthur nimmt diese Aufgabe im Rahmen der dazu
+        vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe des Koordinationstool soll die Eingabe von W&uuml;nschen
+        (Bedarf) vereinfacht und die Koordination der Bauvorhaben zentralisiert werden.</p>
+        <p>
+        Der Zugriff auf das Koordinationstool ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der rechten oberen Ecke. 
+        Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an die applikationsverantwortliche Person Ihres
+        Bereichs oder an <a href="mailto:planung.koordination@win.ch">planung.koordination@win.ch</a></p>
     </div>
+    <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
+        Willkommen {{userService.getLocalUser().firstName}} {{userService.getLocalUser().lastName}} im Koordinationstool
+        der Abteilung Planung & Koordination des Tiefbauamts Winterthur.</h3>
     <div *ngIf="userService.isUserLoggedIn()">
+        <p>Unter Ihrem Login sind folgende Informationen erfasst:</p>
         <p>
             Sie sind in der Rolle <b>
                 <span *ngIf="userService.getLocalUser().role.code === 'eventmanager'">Eventmanager</span>
