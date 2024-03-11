@@ -150,6 +150,7 @@ export class NeedAttributesComponent implements OnInit {
             if (this.roadWorkNeedFeature) {
               ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
               if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
+                this.roadWorkNeedFeature.properties.isPrivate = true;
                 this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
                   duration: 4000
                 });
@@ -162,6 +163,8 @@ export class NeedAttributesComponent implements OnInit {
             }
           },
           error: (error) => {
+            if (this.roadWorkNeedFeature)
+              this.roadWorkNeedFeature.properties.isPrivate = true;
           }
         });
 
@@ -174,18 +177,19 @@ export class NeedAttributesComponent implements OnInit {
     if (this.finishOptimumTertial > this.finishLateTertial)
       this.finishLateTertial = this.finishOptimumTertial;
 
+    this.roadWorkNeedFeature!.properties.finishOptimumTo =
+      this._convertTertialToDate(this.finishOptimumTertial);
+    this.roadWorkNeedFeature!.properties.finishEarlyTo =
+      this._convertTertialToDate(this.finishEarlyTertial);
+    this.roadWorkNeedFeature!.properties.finishLateTo =
+      this._convertTertialToDate(this.finishLateTertial);
+
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
         .subscribe({
           next: (managementAreas) => {
             if (managementAreas && managementAreas.length !== 0) {
 
-              this.roadWorkNeedFeature!.properties.finishOptimumTo =
-                this._convertTertialToDate(this.finishOptimumTertial);
-              this.roadWorkNeedFeature!.properties.finishEarlyTo =
-                this._convertTertialToDate(this.finishEarlyTertial);
-              this.roadWorkNeedFeature!.properties.finishLateTo =
-                this._convertTertialToDate(this.finishLateTertial);
               this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
                 .subscribe({
                   next: (roadWorkNeedFeature) => {
@@ -254,7 +258,7 @@ export class NeedAttributesComponent implements OnInit {
 
   uploadPdf(event: any) {
     if (this.roadWorkNeedFeature && event && event.target &&
-          event.target.files && event.target.files.length > 0) {
+      event.target.files && event.target.files.length > 0) {
       let file: File = event.target.files[0]
       let formData: FormData = new FormData();
       formData.append("pdfFile", file, file.name);
@@ -373,12 +377,11 @@ export class NeedAttributesComponent implements OnInit {
 
     roadWorkNeedFeature.properties.orderer = userForRoadWorkNeed;
 
-    let plus50Years: Date = new Date();
-    plus50Years.setFullYear(plus50Years.getFullYear() + 50);
+    let today: Date = new Date();
 
-    roadWorkNeedFeature.properties.finishEarlyTo = plus50Years;
-    roadWorkNeedFeature.properties.finishOptimumTo = plus50Years;
-    roadWorkNeedFeature.properties.finishLateTo = plus50Years;
+    roadWorkNeedFeature.properties.finishEarlyTo = today;
+    roadWorkNeedFeature.properties.finishOptimumTo = today;
+    roadWorkNeedFeature.properties.finishLateTo = today;
 
     return roadWorkNeedFeature;
 
