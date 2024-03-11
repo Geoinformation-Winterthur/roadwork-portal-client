@@ -10,7 +10,7 @@ import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { FormControl } from '@angular/forms';
+import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
@@ -20,6 +20,7 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { DateHelper } from 'src/helper/date-helper';
 import { DocumentService } from 'src/services/document.service';
 import { environment } from 'src/environments/environment';
+import { ValidationHandler } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-need-attributes',
@@ -46,6 +47,26 @@ export class NeedAttributesComponent implements OnInit {
 
   roadWorkNeedEnumControl: FormControl = new FormControl();
   availableRoadWorkNeedEnums: RoadWorkNeedEnum[] = [];
+
+  urlControl: FormControl = new FormControl('',
+    [
+      this._isUrlValidator()
+    ]);
+
+  private _isUrlValidator(): ValidatorFn {
+    return (control: AbstractControl) : ValidationErrors | null => {
+      let urlToCheck = control.value;
+      if(!urlToCheck)
+        return null;
+      try {
+        let urlObj = new URL(urlToCheck);
+        return null;
+      }catch(_){
+        return {noUrl: true};
+      }
+    }
+  }
+
 
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -97,6 +118,8 @@ export class NeedAttributesComponent implements OnInit {
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
 
                   if (this.roadWorkNeedFeature) {
+                    this.urlControl.setValue(this.roadWorkNeedFeature.properties.url);
+
                     this.finishOptimumTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishOptimumTo);
                     this.finishEarlyTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishEarlyTo);
                     this.finishLateTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishLateTo);
@@ -183,6 +206,8 @@ export class NeedAttributesComponent implements OnInit {
       this._convertTertialToDate(this.finishEarlyTertial);
     this.roadWorkNeedFeature!.properties.finishLateTo =
       this._convertTertialToDate(this.finishLateTertial);
+
+    this.roadWorkNeedFeature!.properties.url = this.urlControl.value;
 
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)

@@ -105,9 +105,8 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput type="text" maxlength="2048"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.url" placeholder="Link (URL)"
-                                        (focusout)="update()"
+                                    <input matInput type="url" maxlength="2048" [formControl]="urlControl"
+                                        placeholder="Link (URL)" (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
