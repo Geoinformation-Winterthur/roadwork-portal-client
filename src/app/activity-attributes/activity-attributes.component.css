@@ -2,3 +2,7 @@ mat-selection-list {
     overflow: auto;
     max-height: 15em;
 }
+
+.mat-tab-label.mat-tab-label-active {
+    background-color: rgb(236, 236, 234);
+}
