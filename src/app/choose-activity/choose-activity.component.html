@@ -6,9 +6,10 @@
   <h1>Bauvorhaben<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenActivityYearFrom}}</span></h1>
   <div class="add-project-button-container" *ngIf="userService.hasUserAccess('territorymanager')">
-    <button mat-fab [routerLink]="['/activities', 'new']" style="background-color: rgb(133, 99, 212);"
+    <button mat-fab [routerLink]="['/activities', 'new']" style="background-color: rgb(255, 25, 0);"
       class="fab-button">
-      <mat-icon aria-label="+">add</mat-icon>
+      <mat-icon aria-label="Icon shows a plus sign">add</mat-icon>
+      <mat-icon aria-label="Icon shows tools">handyman</mat-icon>
     </button>
   </div>
   <div style="margin-bottom: 2em;">
