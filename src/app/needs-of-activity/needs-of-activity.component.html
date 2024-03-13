@@ -46,7 +46,7 @@
                 <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                     <mat-icon *ngIf="isInEditingMode"
                         (click)="unAssignRoadWorkNeed(assignedRoadWorkNeed)" aria-label="Zuweisung aufheben"
-                        class="arrow_button" style="color: rgb(138,71,200);">arrow_downward</mat-icon>
+                        class="arrow_button">arrow_downward</mat-icon>
                     <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht m&ouml;glich"
                         style="color: rgb(155, 155, 155);">block</mat-icon>
                 </td>
@@ -107,7 +107,7 @@
                         <mat-icon *ngIf="isInEditingMode"
                             matTooltip="Diesen Bedarf dem Vorhaben zuweisen"
                             (click)="assignRoadWorkNeed(nonAssignedRoadWorkNeed)" aria-label="Zuweisung entfernen"
-                            class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
+                            class="arrow_button">arrow_upward</mat-icon>
                         <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht m&ouml;glich"
                             matTooltip="Keine Berechtigung f&uuml;r eine Aktion"
                             style="color: rgb(155, 155, 155);">block</mat-icon>
@@ -167,11 +167,11 @@
                         <mat-icon *ngIf="isInEditingMode"
                             (click)="assignRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Zuweisen"
                             matTooltip="Diesen angemeldeten Bedarf dem Vorhaben zuweisen"
-                            class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
+                            class="arrow_button">arrow_upward</mat-icon>
                         <mat-icon *ngIf="isInEditingMode || userService.getLocalUser().uuid == registeredRoadWorkNeed.properties.orderer.uuid"
                             (click)="deRegisterRoadWorkNeed(registeredRoadWorkNeed)" aria-label="Entfernen"
                             matTooltip="Die Anmeldung dieses Bedarfs entfernen"
-                            class="arrow_button" style="color: rgb(138,71,200);">arrow_downward</mat-icon>
+                            class="arrow_button">arrow_downward</mat-icon>
                         <mat-icon *ngIf="!isInEditingMode && userService.getLocalUser().uuid != registeredRoadWorkNeed.properties.orderer.uuid"
                                     aria-label="Zuweisung aufheben nicht m&ouml;glich"
                             style="color: rgb(155, 155, 155);">block</mat-icon>
@@ -228,7 +228,7 @@
                         <mat-card-content>
                             <button (click)="searchRoadWorkNeeds()" mat-button
                                 aria-label="Button to start search for roadwork needs"
-                                style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                                style="margin: 1em;background-color: rgb(236,236,234);">
                                 SUCHEN
                             </button>
                         </mat-card-content>
@@ -270,7 +270,7 @@
                     <th mat-header-cell *matHeaderCellDef> Bedarf anmelden </th>
                     <td mat-cell *matCellDef="let roadWorkNeed">
                         <mat-icon (click)="registerRoadWorkNeed(roadWorkNeed)" aria-label="Bedarf anmelden"
-                            class="arrow_button" style="color: rgb(138,71,200);">arrow_upward</mat-icon>
+                            class="arrow_button">arrow_upward</mat-icon>
                     </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

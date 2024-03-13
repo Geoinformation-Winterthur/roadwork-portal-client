@@ -1,3 +1,15 @@
 .mat-tab-label.mat-tab-label-active {
     background-color: rgb(236, 236, 234);
 }
+
+.mat-accent .mat-slider-track-fill {
+    background-color: rgb(255, 25, 0) !important;
+}
+
+.mat-slider-thumb-label {
+    background-color: rgb(255, 25, 0) !important;
+}
+
+.mat-slider-thumb {
+    background-color: rgb(255, 25, 0) !important;
+}
