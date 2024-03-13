@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
@@ -25,7 +25,8 @@ import { ValidationHandler } from 'angular-oauth2-oidc';
 @Component({
   selector: 'app-need-attributes',
   templateUrl: './need-attributes.component.html',
-  styleUrls: ['./need-attributes.component.css']
+  styleUrls: ['./need-attributes.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class NeedAttributesComponent implements OnInit {
 
