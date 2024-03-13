@@ -84,11 +84,11 @@
       </mat-card-content>
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
-        <button style="background-color: rgb(138,71,200); color: white;margin-top: 1em;" mat-button
+        <button style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
           [routerLink]="['/activities', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
         <button *ngIf="roadWorkActivity.properties.isEditingAllowed"
             (click)="deleteRoadworkActivity(roadWorkActivity.properties.uuid)"
-            style="background-color: rgb(71, 174, 200); color: white;margin-top: 1em;" mat-button>
+            style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button>
           L&Ouml;SCHEN
         </button>
       </mat-card-actions>

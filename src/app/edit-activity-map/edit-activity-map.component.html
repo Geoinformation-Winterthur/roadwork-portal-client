@@ -1,10 +1,10 @@
 <div *ngIf="roadWorkActivityFeat?.properties?.isEditingAllowed">
     <button *ngIf="!isInEditingMode" mat-button class="edit_geom_button" (click)="startEditing()"
-        style="margin: 1em;color:aliceblue;background-color: blueviolet;">
+        style="margin: 1em;background-color: rgb(236,236,234);">
         VORHABENFL&Auml;CHE NEU ZEICHNEN
     </button>
     <button *ngIf="isInEditingMode" mat-button class="edit_geom_button" (click)="endEditing()"
-        style="margin: 1em;color:rgb(255, 255, 255);background-color: rgb(43, 226, 208);">
+        style="margin: 1em;background-color: rgb(236,236,234);">
         BEARBEITUNGSMODUS SCHLIESSEN
     </button>
     <button mat-button class="edit_geom_button" (click)="showEditHelp()"

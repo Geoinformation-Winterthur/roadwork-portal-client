@@ -22,11 +22,11 @@
     </mat-checkbox>
     <p>
         <button mat-button *ngIf="!chosenOrganisation.isNew" (click)="updateOrganisation()"
-            style="background-color: rgb(217, 230, 255);margin: 1em;">
+            style="background-color: rgb(236,236,234);margin: 1em;">
             &Auml;NDERN
         </button>
         <button mat-button *ngIf="chosenOrganisation.isNew" (click)="addOrganisation()"
-            style="background-color: rgb(217, 230, 255);margin: 1em;"
+            style="background-color: rgb(236,236,234);margin: 1em;"
             [disabled]="chosenOrganisation.name.trim() === ''">
             HINZUF&Uuml;GEN
         </button>
