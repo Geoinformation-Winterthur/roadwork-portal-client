@@ -51,15 +51,15 @@ export class NeedAttributesComponent implements OnInit {
     ]);
 
   private _isUrlValidator(): ValidatorFn {
-    return (control: AbstractControl) : ValidationErrors | null => {
+    return (control: AbstractControl): ValidationErrors | null => {
       let urlToCheck = control.value;
-      if(!urlToCheck)
+      if (!urlToCheck)
         return null;
       try {
         let urlObj = new URL(urlToCheck);
         return null;
-      }catch(_){
-        return {noUrl: true};
+      } catch (_) {
+        return { noUrl: true };
       }
     }
   }
@@ -144,9 +144,28 @@ export class NeedAttributesComponent implements OnInit {
 
   }
 
-  add(isPrivate: boolean) {
+  publish() {
     if (this.roadWorkNeedFeature) {
-      this.roadWorkNeedFeature.properties.isPrivate = isPrivate;
+      this.roadWorkNeedFeature.properties.isPrivate = false;
+      if (this.roadWorkNeedFeature.properties.uuid)
+        this.update();
+      else
+        this.add();
+    }
+  }
+
+  savePrivate() {
+    if (this.roadWorkNeedFeature) {
+      this.roadWorkNeedFeature.properties.isPrivate = true;
+      if (this.roadWorkNeedFeature.properties.uuid)
+        this.update();
+      else
+        this.add();
+    }
+  }
+
+  add() {
+    if (this.roadWorkNeedFeature) {
       this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
         .subscribe({
           next: (roadWorkNeedFeature) => {
@@ -166,6 +185,9 @@ export class NeedAttributesComponent implements OnInit {
             }
           },
           error: (error) => {
+            this.snckBar.open("Unbekannter Fehler beim Senden des Bedarfs", "", {
+              duration: 4000,
+            });
             if (this.roadWorkNeedFeature)
               this.roadWorkNeedFeature.properties.isPrivate = true;
           }
