@@ -21,11 +21,11 @@
                     <button mat-button
                         *ngIf="!roadWorkNeedFeature.properties.uuid && roadWorkNeedFeature.properties.isPrivate"
                         (click)="add(true)"
-                        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                        style="margin: 1em;background-color: rgb(236,236,234);">
                         F&Uuml;R MICH SPEICHERN
                     </button>
                     <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate" (click)="add(false)"
-                        style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+                        style="margin: 1em;background-color: rgb(236,236,234);">
                         <mat-icon aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BEDARF
                         PUBLIZIEREN
                     </button>
