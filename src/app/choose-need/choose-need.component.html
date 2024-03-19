@@ -77,7 +77,7 @@
             {{ roadWorkNeed.properties.name.slice(0, 20) }}<span
               *ngIf="roadWorkNeed.properties.name.length > 20">...</span>
           </mat-card-title>
-          <mat-card-subtitle>{{ roadWorkNeed.properties.kind.name }}</mat-card-subtitle>
+          <mat-card-subtitle>{{ roadWorkNeed.properties.orderer.organisationalUnit.name }}</mat-card-subtitle>
         </div>
         <app-status-chip [statusCode]="roadWorkNeed.properties.status.code" [short]="true">
         </app-status-chip>
