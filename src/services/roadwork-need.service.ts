@@ -7,7 +7,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoadWorkNeedFeature } from '../model/road-work-need-feature';
 import { environment } from 'src/environments/environment';
-import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { ErrorMessage } from 'src/model/error-message';
 
 
@@ -112,12 +111,6 @@ export class RoadWorkNeedService {
     let result: Observable<ErrorMessage> =
       this.http.delete(environment.apiUrl + "/roadworkneed?uuid=" + uuid +
         "&releaseonly=" + releaseOnly) as Observable<ErrorMessage>;
-    return result;
-  }
-
-  getAllTypes(): Observable<RoadWorkNeedEnum[]> {
-    let result: Observable<RoadWorkNeedEnum[]> =
-      this.http.get(environment.apiUrl + "/roadworkneedtypes/") as Observable<RoadWorkNeedEnum[]>;
     return result;
   }
 

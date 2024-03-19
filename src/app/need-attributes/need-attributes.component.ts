@@ -11,7 +11,6 @@ import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { RoadWorkNeedEnum } from 'src/model/road-work-need-enum';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
@@ -45,9 +44,6 @@ export class NeedAttributesComponent implements OnInit {
   environment = environment;
 
   userService: UserService;
-
-  roadWorkNeedEnumControl: FormControl = new FormControl();
-  availableRoadWorkNeedEnums: RoadWorkNeedEnum[] = [];
 
   urlControl: FormControl = new FormControl('',
     [
@@ -136,11 +132,6 @@ export class NeedAttributesComponent implements OnInit {
                       error: (error) => {
                       }
                     });
-
-                  if (!this._hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedFeature.properties.kind)) {
-                    this.availableRoadWorkNeedEnums.push(roadWorkNeedFeature.properties.kind);
-                  }
-                  this.roadWorkNeedEnumControl.setValue(roadWorkNeedFeature.properties.kind.code);
                 }
               },
               error: (error) => {
@@ -150,18 +141,6 @@ export class NeedAttributesComponent implements OnInit {
         }
 
       });
-
-    this.roadWorkNeedService.getAllTypes().subscribe({
-      next: (roadWorkNeedTypes) => {
-        for (let roadWorkNeedType of roadWorkNeedTypes) {
-          if (!this._hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedType)) {
-            this.availableRoadWorkNeedEnums.push(roadWorkNeedType);
-          }
-        }
-      },
-      error: (error) => {
-      }
-    });
 
   }
 
@@ -245,12 +224,6 @@ export class NeedAttributesComponent implements OnInit {
           error: (error) => {
           }
         });
-    }
-  }
-
-  onRoadWorkNeedEnumChange() {
-    if (this.roadWorkNeedFeature) {
-      this.roadWorkNeedFeature.properties.kind.code = this.roadWorkNeedEnumControl.value;
     }
   }
 
@@ -373,15 +346,6 @@ export class NeedAttributesComponent implements OnInit {
     realizationDate = new Date(realizationDate);
     let monthDiff = DateHelper.calcMonthDiff(currentDate, realizationDate);
     return Math.ceil(monthDiff / 4);
-  }
-
-  private _hasRoadWorkNeedKindEnumElementAlready(roadWorkNeedEnum: RoadWorkNeedEnum): boolean {
-    for (let availableRoadWorkNeedEnum of this.availableRoadWorkNeedEnums) {
-      if (availableRoadWorkNeedEnum.code === roadWorkNeedEnum.code) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private static _createNewRoadWorkNeedFeature(localUser: User): RoadWorkNeedFeature {
