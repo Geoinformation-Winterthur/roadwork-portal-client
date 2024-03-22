@@ -20,6 +20,8 @@ import { DateHelper } from 'src/helper/date-helper';
 import { DocumentService } from 'src/services/document.service';
 import { environment } from 'src/environments/environment';
 import { ValidationHandler } from 'angular-oauth2-oidc';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 
 @Component({
   selector: 'app-need-attributes',
@@ -66,6 +68,7 @@ export class NeedAttributesComponent implements OnInit {
 
 
   private roadWorkNeedService: RoadWorkNeedService;
+  private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
   private documentService: DocumentService;
   private activatedRoute: ActivatedRoute;
@@ -76,12 +79,14 @@ export class NeedAttributesComponent implements OnInit {
 
   constructor(activatedRoute: ActivatedRoute,
     roadWorkNeedService: RoadWorkNeedService,
+    roadWorkActivityService: RoadWorkActivityService,
     documentService: DocumentService,
     userService: UserService, snckBar: MatSnackBar,
     managementAreaService: ManagementAreaService,
     router: Router) {
     this.activatedRoute = activatedRoute;
     this.roadWorkNeedService = roadWorkNeedService;
+    this.roadWorkActivityService = roadWorkActivityService;
     this.documentService = documentService;
     this.managementAreaService = managementAreaService;
     this.userService = userService;
@@ -241,6 +246,37 @@ export class NeedAttributesComponent implements OnInit {
                   error: (error) => {
                   }
                 });
+            }
+          },
+          error: (error) => {
+          }
+        });
+    }
+  }
+
+  createNewActivityFromNeed() {
+    if(this.roadWorkNeedFeature){
+      let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
+      roadWorkActivity.geometry = this.roadWorkNeedFeature.geometry;
+      roadWorkActivity.properties.name = this.roadWorkNeedFeature.properties.name;
+      roadWorkActivity.properties.roadWorkNeedsUuids.push(this.roadWorkNeedFeature.properties.uuid);
+      roadWorkActivity.properties.costsType.code = "valuation";
+      roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
+      roadWorkActivity.properties.finishTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
+  
+      this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
+        .subscribe({
+          next: (roadWorkActivityFeature) => {
+            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+            if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+              this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
+              this.snckBar.open("Vorhaben wurde erstellt", "", {
+                duration: 4000,
+              });
             }
           },
           error: (error) => {
