@@ -7,7 +7,7 @@
                 eventFeature.properties.name }}</span></h1>
         <h1 *ngIf="eventFeature.properties.uuid===''">Neues Event</h1>
         <mat-tab-group>
-            <mat-tab label="Lage">
+            <mat-tab label="Perimeter">
                 <app-edit-event-map [eventFeat]="eventFeature"></app-edit-event-map>
             </mat-tab>
             <mat-tab label="Stammdaten">
