@@ -12,7 +12,7 @@
                 style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
         </h1>
         <mat-tab-group>
-            <mat-tab label="Lage">
+            <mat-tab label="Perimeter">
                 <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
                     [managementArea]="managementArea"></app-edit-need-map>
             </mat-tab>
@@ -70,7 +70,7 @@
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
                                     Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs
-                                    ein Titel automatisch aus der Lage ermittelt.
+                                    ein Titel automatisch aus der geographischen Lage ermittelt.
                                 </div>
                                 <mat-form-field>
                                     <mat-label>Ausl&ouml;segrund</mat-label>

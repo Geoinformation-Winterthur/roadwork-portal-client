@@ -7,7 +7,7 @@
                 roadWorkActivityFeature.properties.name }}</span></h1>
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neues Bauvorhaben</h1>
         <mat-tab-group>
-            <mat-tab label="Lage">
+            <mat-tab label="Perimeter">
                 <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"></app-edit-activity-map>
             </mat-tab>
             <mat-tab label="Stammdaten">
@@ -45,7 +45,7 @@
                                 <div *ngIf="!roadWorkActivityFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
                                     Wenn Sie das Feld "Bezeichnung" leerlassen, wird beim Er&ouml;ffnen des Bauvorhabens
-                                    eine Bezeichnung automatisch aus der Lage ermittelt.
+                                    eine Bezeichnung automatisch aus der geographischen Lage ermittelt.
                                 </div>
                                 <p>Gebietsmanager:
                                     <b *ngIf="managementArea && managementArea.manager">
