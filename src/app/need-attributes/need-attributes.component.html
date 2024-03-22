@@ -73,6 +73,12 @@
                                     ein Titel automatisch aus der geographischen Lage ermittelt.
                                 </div>
                                 <mat-form-field>
+                                    <input matInput type="text" maxlength="80"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.section" placeholder="Abschnitt"
+                                        (focusout)="update()"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <mat-form-field>
                                     <mat-label>Ausl&ouml;segrund</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkNeedFeature.properties.description" (focusout)="update()"
@@ -81,10 +87,12 @@
                                     </textarea>
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input matInput type="text" maxlength="80"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.section" placeholder="Abschnitt"
-                                        (focusout)="update()"
+                                    <mat-label>Bemerkung</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
+                                        placeholder="Bemerkung..."
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        </textarea>
                                 </mat-form-field>
                                 <mat-form-field
                                     *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
@@ -97,14 +105,6 @@
                                     <input matInput type="url" maxlength="2048" [formControl]="urlControl"
                                         placeholder="Link (URL)" (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                </mat-form-field>
-                                <mat-form-field>
-                                    <mat-label>Bemerkung</mat-label>
-                                    <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
-                                        placeholder="Bemerkung..."
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        </textarea>
                                 </mat-form-field>
                             </div>
                         </mat-card-content>
