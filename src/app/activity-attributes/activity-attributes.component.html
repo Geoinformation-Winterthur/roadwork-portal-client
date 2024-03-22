@@ -191,57 +191,6 @@
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-title>Verkehrsmanagement</mat-card-title>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <p>Management Baustellenverkehr:
-                                    <b *ngIf="!roadWorkActivityFeature.properties.trafficAgent.uuid">Noch nicht
-                                        zugewiesen</b>
-                                    <b *ngIf="roadWorkActivityFeature.properties.trafficAgent.uuid">
-                                        {{roadWorkActivityFeature.properties.trafficAgent.firstName}}
-                                        {{roadWorkActivityFeature.properties.trafficAgent.lastName}}
-                                    </b>
-                                </p>
-                                <div *ngIf="userService.getLocalUser().role.code=='trafficmanager' ||
-                                                userService.getLocalUser().role.code=='administrator'">
-                                    <button mat-button
-                                        *ngIf="userService.getLocalUser().uuid != roadWorkActivityFeature.properties.trafficAgent.uuid"
-                                        (click)="registerTrefficManager()"
-                                        style="background-color: rgb(236,236,234);"
-                                        disabled="false">
-                                        VORHABEN &Uuml;BERNEHMEN
-                                    </button>
-                                    <button mat-button
-                                        *ngIf="userService.getLocalUser().uuid == roadWorkActivityFeature.properties.trafficAgent.uuid"
-                                        (click)="registerTrefficManager()"
-                                        style="background-color: rgb(236,236,234);"
-                                        disabled="true">
-                                        VORHABEN &Uuml;BERNEHMEN
-                                    </button>
-                                </div>
-                                <p><mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isInInternet"
-                                        (change)="update()" style="margin:10px;"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                        Vorhaben im Internet publizieren
-                                    </mat-checkbox>
-                                </p>
-                                <mat-form-field>
-                                    <input matInput type="text"
-                                        [(ngModel)]="roadWorkActivityFeature.properties.billingAddress1"
-                                        placeholder="Rechnungsadresse 1" (focusout)="update()"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                </mat-form-field>
-                                <mat-form-field>
-                                    <input matInput type="text"
-                                        [(ngModel)]="roadWorkActivityFeature.properties.billingAddress2"
-                                        placeholder="Rechnungsadresse 2" (focusout)="update()"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                </mat-form-field>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-title>Beteiligte</mat-card-title>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
