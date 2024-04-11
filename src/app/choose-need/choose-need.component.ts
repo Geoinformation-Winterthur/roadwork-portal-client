@@ -29,7 +29,7 @@ export class ChooseNeedComponent implements OnInit {
   showAsList: boolean = false;
 
   chosenNeedName: string = "";
-  chosenNeedYearOptFrom: number = new Date().getFullYear();
+  chosenNeedYearOptFrom?: number;
 
   userService: UserService;
 

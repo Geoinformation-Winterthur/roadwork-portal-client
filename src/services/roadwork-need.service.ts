@@ -37,7 +37,7 @@ export class RoadWorkNeedService {
       }
     }
 
-    if (year != 0) {
+    if (year) {
       if (hasParameters) {
         queryString += "&";
       } else {
