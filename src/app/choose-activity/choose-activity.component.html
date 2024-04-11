@@ -87,9 +87,11 @@
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
           [routerLink]="['/activities', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
-        <button *ngIf="roadWorkActivity.properties.isEditingAllowed"
+        <button *ngIf="userService.getLocalUser().role.code === 'administrator'"
             (click)="deleteRoadworkActivity(roadWorkActivity.properties.uuid)"
-            style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button>
+            style="background-color: rgb(236,236,234);margin-top: 1em;"
+            [disabled]="!roadWorkActivity.properties.isEditingAllowed"
+            mat-button>
           L&Ouml;SCHEN
         </button>
       </mat-card-actions>
