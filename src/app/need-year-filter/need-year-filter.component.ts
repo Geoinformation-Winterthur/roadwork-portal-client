@@ -23,10 +23,6 @@ export class NeedYearFilterComponent implements OnInit {
   }
 
   filterYears() {
-    if(this.chooseNeedComponent.chosenNeedYearOptFrom === null ||
-      this.chooseNeedComponent.chosenNeedYearOptFrom == undefined) {
-        this.chooseNeedComponent.chosenNeedYearOptFrom = 0;
-      }
     this.chooseNeedComponent.getNeedsWithFilter();
   }
 
