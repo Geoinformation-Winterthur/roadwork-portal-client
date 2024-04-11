@@ -32,23 +32,23 @@
                 <h2 style="font-weight: normal;">Realisierungstermine</h2>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
                     Fr&uuml;hest: <span
-                        style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishEarlyTertial)}}</span>
+                        style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishEarlyTertial)}}</span>
                     <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishEarlyTertial" (change)="update()"
-                        showTickMarks style="width: 100%;">
+                        showTickMarks style="margin: 1em;width: 80%;">
                     </mat-slider>
                 </div>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
                     Wunsch: <span
-                        style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishOptimumTertial)}}</span>
+                        style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishOptimumTertial)}}</span>
                     <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishOptimumTertial" (change)="update()"
-                        showTickMarks style="width: 100%;">
+                        showTickMarks style="margin: 1em;width: 80%;">
                     </mat-slider>
                 </div>
                 <div style="margin: 0.5em;margin-bottom: 1em;">
                     Sp&auml;test: <span
-                        style="font-size: 1.5em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishLateTertial)}}</span>
+                        style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishLateTertial)}}</span>
                     <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishLateTertial" (change)="update()"
-                        showTickMarks style="width: 100%;">
+                        showTickMarks style="margin: 1em;width: 80%;">
                     </mat-slider>
                 </div>
                 <div fxLayout="row wrap padding" style="width:100%;">
