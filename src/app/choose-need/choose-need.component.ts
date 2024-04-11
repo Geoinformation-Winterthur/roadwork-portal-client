@@ -81,15 +81,6 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
-  openDeleteDialog(uuid: string) {
-    const deleteDialog = this.dialog.open(DeleteNeedDialogComponent);
-    deleteDialog.afterClosed().subscribe(isDeleteYes => {
-      if(isDeleteYes){
-        this.deleteNeed(uuid);
-      }
-    });
-  }
-
   createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
     roadWorkActivity.geometry = roadWorkNeed.geometry;
@@ -112,26 +103,6 @@ export class ChooseNeedComponent implements OnInit {
             this.snckBar.open("Vorhaben wurde erstellt", "", {
               duration: 4000,
             });
-          }
-        },
-        error: (error) => {
-        }
-      });
-  }
-
-  deleteNeed(uuid: string) {
-    this.roadWorkNeedService.deleteRoadWorkNeed(uuid)
-      .subscribe({
-        next: (errorMessage) => {
-          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
-          if (errorMessage && errorMessage.errorMessage &&
-                errorMessage.errorMessage.trim().length !== 0) {
-            this.snckBar.open(errorMessage.errorMessage, "", {
-              duration: 4000
-            });
-          } else {
-            this.roadWorkNeedFeatures = this.roadWorkNeedFeatures
-            .filter((roadWorkNeedFeature) => uuid !== roadWorkNeedFeature.properties.uuid);    
           }
         },
         error: (error) => {
