@@ -22,6 +22,8 @@ import { environment } from 'src/environments/environment';
 import { ValidationHandler } from 'angular-oauth2-oidc';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
+import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-need-attributes',
@@ -75,6 +77,7 @@ export class NeedAttributesComponent implements OnInit {
   private router: Router;
   private activatedRouteSubscription: Subscription = new Subscription();
 
+  private dialog: MatDialog;
   private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute,
@@ -83,7 +86,7 @@ export class NeedAttributesComponent implements OnInit {
     documentService: DocumentService,
     userService: UserService, snckBar: MatSnackBar,
     managementAreaService: ManagementAreaService,
-    router: Router) {
+    router: Router, dialog: MatDialog) {
     this.activatedRoute = activatedRoute;
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
@@ -92,6 +95,7 @@ export class NeedAttributesComponent implements OnInit {
     this.userService = userService;
     this.router = router;
     this.snckBar = snckBar;
+    this.dialog = dialog;
   }
 
   ngOnInit() {
@@ -255,7 +259,7 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   createNewActivityFromNeed() {
-    if(this.roadWorkNeedFeature){
+    if (this.roadWorkNeedFeature) {
       let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
       roadWorkActivity.geometry = this.roadWorkNeedFeature.geometry;
       roadWorkActivity.properties.name = this.roadWorkNeedFeature.properties.name;
@@ -263,7 +267,7 @@ export class NeedAttributesComponent implements OnInit {
       roadWorkActivity.properties.costsType.code = "valuation";
       roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
       roadWorkActivity.properties.finishTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
-  
+
       this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
         .subscribe({
           next: (roadWorkActivityFeature) => {
@@ -363,6 +367,40 @@ export class NeedAttributesComponent implements OnInit {
         }
       });
     }
+  }
+
+  openDeleteDialog(uuid: string) {
+    const deleteDialog = this.dialog.open(DeleteNeedDialogComponent);
+    deleteDialog.afterClosed().subscribe(isDeleteYes => {
+      if (isDeleteYes) {
+        this.deleteNeed(uuid);
+      }
+    });
+  }
+
+  deleteNeed(uuid: string) {
+    this.roadWorkNeedService.deleteRoadWorkNeed(uuid)
+      .subscribe({
+        next: (errorMessage) => {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+          if (errorMessage && errorMessage.errorMessage &&
+            errorMessage.errorMessage.trim().length !== 0) {
+            this.snckBar.open(errorMessage.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.router.navigate(["/needs/"]);
+            this.snckBar.open("Bedarf wurde gelöscht", "", {
+              duration: 4000,
+            });
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Ein Systemfehler ist aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+            duration: 4000
+          });
+      }
+      });
   }
 
   ngOnDestroy() {
