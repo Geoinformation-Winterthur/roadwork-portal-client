@@ -21,66 +21,68 @@
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Stammdaten</mat-card-title>
+                        </mat-card-header>
                         <mat-card-content>
-                            <p>UUID:
+                            <p>UUID (Universelle ID):
                                 <b
                                     *ngIf="roadWorkActivityFeature.properties.uuid">{{roadWorkActivityFeature.properties.uuid}}</b>
                                 <b *ngIf="!roadWorkActivityFeature.properties.uuid">keine (nicht er&ouml;ffnet)</b>
-                            </p>
-                            <p>PDB-FID:
-                                <b
-                                    *ngIf="roadWorkActivityFeature.properties.pdbFid !== 0">{{roadWorkActivityFeature.properties.pdbFid}}</b>
-                                <b *ngIf="roadWorkActivityFeature.properties.pdbFid == 0">keine FID</b>
                             </p>
                             <p>Strabako-Nummer:
                                 <b
                                     *ngIf="roadWorkActivityFeature.properties.strabakoNo">{{roadWorkActivityFeature.properties.strabakoNo}}</b>
                                 <b *ngIf="!roadWorkActivityFeature.properties.strabakoNo">keine Nummer</b>
+                            </p>
+                            <p>Projektnummer:
+                                <b
+                                *ngIf="roadWorkActivityFeature.properties.projectNo">{{roadWorkActivityFeature.properties.projectNo}}</b>
+                                <b *ngIf="!roadWorkActivityFeature.properties.projectNo">keine Nummer</b>
+                            </p>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.name"
-                                        placeholder="Bezeichnung" (focusout)="update()"
+                                        placeholder="Titel/Strasse" (focusout)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <div *ngIf="!roadWorkActivityFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                    Wenn Sie das Feld "Bezeichnung" leerlassen, wird beim Er&ouml;ffnen des Bauvorhabens
-                                    eine Bezeichnung automatisch aus der geographischen Lage ermittelt.
+                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des
+                                    Bauvorhabens eine Bezeichnung automatisch aus der geographischen Lage ermittelt.
                                 </div>
-                                <p>Gebietsmanager:
-                                    <b *ngIf="managementArea && managementArea.manager">
-                                        {{managementArea.manager.firstName}}
-                                        {{managementArea.manager.lastName}}
-                                    </b>
-                                    <b *ngIf="!(managementArea && managementArea.manager)">
-                                        Noch nicht ermittelt
-                                    </b>
-                                </p>
-                                <form class="choose_user_role_form" style="margin-top: 1em;">
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Projektleiter</mat-label>
-                                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectManager.uuid"
-                                            [formControl]="projectManagerControl" (selectionChange)='update()'
-                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-option *ngFor="let availableUser of availableUsers"
-                                                [value]="availableUser.uuid">
-                                                {{availableUser.firstName}} {{availableUser.lastName}}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </form>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-title>Kosten</mat-card-title>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field>
+                                    <input [(ngModel)]="roadWorkActivityFeature.properties.section"
+                                        matInput type="text" maxlength="80" placeholder="Abschnitt"
+                                        (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input [(ngModel)]="roadWorkActivityFeature.properties.type"
+                                        matInput type="text" maxlength="80" placeholder="Art"
+                                        (focusout)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Ausl&ouml;segrund</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.description"
+                                        (focusout)="update()" placeholder="Kurzbeschrieb..."
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed" required>
+                                    </textarea>
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Bemerkung</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.comment"
+                                        (focusout)="update()" placeholder="Bemerkung..."
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                                </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="number" min="0"
                                         [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                        placeholder="Kosten (CHF)" (focusout)="update()"
+                                        placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <form class="cost_type_form">
@@ -96,28 +98,14 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
-                                <div>
-                                    <mat-form-field>
-                                        <input matInput type="number" min="0"
-                                            [(ngModel)]="roadWorkActivityFeature.properties.investmentNo"
-                                            placeholder="Investitionsnummer" (focusout)="update()"
-                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    </mat-form-field>
-                                </div>
-                                <mat-form-field>
-                                    <mat-label>Kurzbeschrieb</mat-label>
-                                    <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkActivityFeature.properties.description"
-                                        (focusout)="update()" placeholder="Kurzbeschrieb..."
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    </textarea>
-                                </mat-form-field>
                             </div>
                         </mat-card-content>
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-title>Status</mat-card-title>
+                        <mat-card-header>
+                            <mat-card-title>Termine und Status</mat-card-title>
+                        </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
                                 <form class="choose_user_role_form">
@@ -125,7 +113,7 @@
                                         <mat-label>Status</mat-label>
                                         <mat-select [(ngModel)]="roadWorkActivityFeature.properties.status.code"
                                             [formControl]="roadWorkActivityStatusEnumControl"
-                                            (selectionChange)='onRoadWorkActivityStatusEnumChange()'
+                                            (selectionChange)='onRoadWorkActivityEnumChange()'
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
                                             <mat-option value="review"
                                                 [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'review')">
@@ -154,6 +142,132 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
+                                <form class="choose_user_role_form">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Projekttyp</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectType"
+                                            [formControl]="roadWorkActivityProjectTypeEnumControl"
+                                            (selectionChange)='onRoadWorkActivityEnumChange()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
+                                            <mat-option value="type_a">
+                                                Typ A
+                                            </mat-option>
+                                            <mat-option value="type_b">
+                                                Typ B
+                                            </mat-option>
+                                            <mat-option value="type_c">
+                                                Typ C
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </form>
+                                <mat-checkbox style="margin:10px;" disabled>
+                                    &Uuml;bergeordnete Massnahme
+                                </mat-checkbox>
+                                <p>Wunschjahr:
+                                    <b>2030</b>
+                                </p>
+                                <mat-checkbox style="margin:10px;" disabled>
+                                    Vorstudie
+                                </mat-checkbox>
+                                <h4>Geplante Ausf&uuml;hrung:</h4>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>von</mat-label>
+                                    <input matInput
+                                        [ngModel]="roadWorkActivityFeature.properties.finishFrom | date: 'dd.MM.yyyy'"
+                                        disabled>
+                                </mat-form-field>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>bis</mat-label>
+                                    <input matInput
+                                        [ngModel]="roadWorkActivityFeature.properties.finishTo | date: 'dd.MM.yyyy'"
+                                        disabled>
+                                </mat-form-field>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Baubeginn</mat-label>
+                                    <input matInput
+                                        [ngModel]="roadWorkActivityFeature.properties.startOfConstruction | date: 'dd.MM.yyyy'"
+                                        disabled>
+                                </mat-form-field>
+                                <mat-form-field style="margin:10px;">
+                                    <mat-label>Bauende</mat-label>
+                                    <input matInput
+                                        [ngModel]="roadWorkActivityFeature.properties.endOfConstruction | date: 'dd.MM.yyyy'"
+                                        disabled>
+                                </mat-form-field>
+                                <div>
+                                    <h4>Vernehmlassungen:</h4>
+                                    <div style="margin-top: 1em;">
+                                        F&auml;lligkeit:
+                                            <mat-chip
+                                                style="background-color: rgb(255, 109, 109);">{{roadWorkActivityFeature.properties.consultDue | date: 'dd.MM.yyyy'}}</mat-chip>
+                                    </div>
+                                    <button
+                                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                        disabled mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
+                                    <button
+                                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                        disabled mat-button>Stellungnahme durchführen</button>
+                                    <button
+                                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                        disabled mat-button>Infoversand durchführen</button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Zusatz-Stammdaten</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <p>Ausl&ouml;sendes Werk:
+                                    <b *ngIf="involvedUsers && involvedUsers.length > 0">
+                                        {{involvedUsers[0].organisationalUnit.abbreviation}}
+                                    </b>
+                                    <b *ngIf="!(involvedUsers && involvedUsers.length > 0)">
+                                        Noch nicht ermittelt
+                                    </b>
+                                </p>
+                                <p>Ausl&ouml;ser:
+                                    <b *ngIf="involvedUsers && involvedUsers.length > 0">
+                                        {{involvedUsers[0].firstName}}
+                                        {{involvedUsers[0].lastName}}
+                                    </b>
+                                    <b *ngIf="!(involvedUsers && involvedUsers.length > 0)">
+                                        Noch nicht ermittelt
+                                    </b>
+                                </p>
+                                <p>Gebietsmanager:
+                                    <b *ngIf="managementArea && managementArea.manager">
+                                        {{managementArea.manager.firstName}}
+                                        {{managementArea.manager.lastName}}
+                                    </b>
+                                    <b *ngIf="!(managementArea && managementArea.manager)">
+                                        Noch nicht ermittelt
+                                    </b>
+                                </p>
+                                <p>Beteiligte:
+                                    <b>
+                                        <span *ngFor="let involvedUser of involvedUsers">
+                                            {{involvedUser.organisationalUnit.abbreviation}},
+                                        </span>
+                                    </b>
+                                </p>
+                                <form class="choose_user_role_form" style="margin-top: 1em;">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Projektleiter</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectManager.uuid"
+                                            [formControl]="projectManagerControl" (selectionChange)='update()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option *ngFor="let availableUser of availableUsers"
+                                                [value]="availableUser.uuid">
+                                                {{availableUser.firstName}} {{availableUser.lastName}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </form>
                                 <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created | date:'dd.MM.yyyy'}}</b>
                                 </p>
                                 <p>
@@ -165,57 +279,25 @@
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-title>Realisierung</mat-card-title>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung von</mat-label>
-                                    <input matInput [ngModel]="roadWorkActivityFeature.properties.finishFrom"
-                                        [formControl]="finishFromControl" [matDatepicker]="finishFrom"
-                                        (dateChange)="update()"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishFrom></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishFrom"></mat-datepicker-toggle>
-                                </mat-form-field>
-                                <mat-form-field style="margin:10px;">
-                                    <mat-label>Realisierung bis</mat-label>
-                                    <input matInput [ngModel]="roadWorkActivityFeature.properties.finishTo"
-                                        [formControl]="finishToControl" [matDatepicker]="finishTo"
-                                        (dateChange)="update()"
-                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    <mat-datepicker #finishTo></mat-datepicker>
-                                    <mat-datepicker-toggle matSuffix [for]="finishTo"></mat-datepicker-toggle>
-                                </mat-form-field>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-title>Beteiligte</mat-card-title>
-                        <mat-card-content>
-                            <div style="display:flex;flex-direction:column;">
-                                <mat-selection-list>
-                                    <mat-list-option
-                                        *ngFor="let orgUnitName of allOrgUnitNames">{{orgUnitName}}</mat-list-option>
-                                </mat-selection-list>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-title>Termine</mat-card-title>
+                        <mat-card-header>
+                            <mat-card-title>Termine</mat-card-title>
+                        </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
                                 <form>
                                     <mat-form-field appearance="fill">
                                         <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
                                         <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateSks"
-                                                    [formControl]="dateSksControl" (selectionChange)='update()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-option value="dateSks1">{{configurationData.dateSks1 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateSks2">{{configurationData.dateSks2 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateSks3">{{configurationData.dateSks3 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateSks4">{{configurationData.dateSks4 | date:'dd.MM.yyyy'}}</mat-option>
+                                            [formControl]="dateSksControl" (selectionChange)='update()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option value="dateSks1">{{configurationData.dateSks1 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateSks2">{{configurationData.dateSks2 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateSks3">{{configurationData.dateSks3 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateSks4">{{configurationData.dateSks4 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
@@ -223,10 +305,12 @@
                                     <mat-form-field appearance="fill">
                                         <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
                                         <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateKap"
-                                                    [formControl]="dateKapControl" (selectionChange)='update()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-option value="dateKap1">{{configurationData.dateKap1 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateKap2">{{configurationData.dateKap2 | date:'dd.MM.yyyy'}}</mat-option>
+                                            [formControl]="dateKapControl" (selectionChange)='update()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option value="dateKap1">{{configurationData.dateKap1 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateKap2">{{configurationData.dateKap2 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
@@ -234,28 +318,38 @@
                                     <mat-form-field appearance="fill">
                                         <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
                                         <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateOks"
-                                                    [formControl]="dateOksControl" (selectionChange)='update()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-option value="dateOks1">{{configurationData.dateOks1 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks2">{{configurationData.dateOks2 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks3">{{configurationData.dateOks3 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks4">{{configurationData.dateOks4 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks5">{{configurationData.dateOks5 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks6">{{configurationData.dateOks6 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks7">{{configurationData.dateOks7 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks8">{{configurationData.dateOks8 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks9">{{configurationData.dateOks9 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks10">{{configurationData.dateOks10 | date:'dd.MM.yyyy'}}</mat-option>
-                                            <mat-option value="dateOks11">{{configurationData.dateOks11 | date:'dd.MM.yyyy'}}</mat-option>
+                                            [formControl]="dateOksControl" (selectionChange)='update()'
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-option value="dateOks1">{{configurationData.dateOks1 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks2">{{configurationData.dateOks2 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks3">{{configurationData.dateOks3 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks4">{{configurationData.dateOks4 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks5">{{configurationData.dateOks5 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks6">{{configurationData.dateOks6 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks7">{{configurationData.dateOks7 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks8">{{configurationData.dateOks8 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks9">{{configurationData.dateOks9 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks10">{{configurationData.dateOks10 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
+                                            <mat-option value="dateOks11">{{configurationData.dateOks11 |
+                                                date:'dd.MM.yyyy'}}</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </form>
                                 <mat-form-field style="margin:10px;">
                                     <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
                                     <input matInput [ngModel]="roadWorkActivityFeature.properties.dateGlTba"
-                                            [matDatepicker]="dateGlTba"
-                                            (dateChange)="update()"
-                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        [matDatepicker]="dateGlTba" (dateChange)="update()"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-datepicker #dateGlTba></mat-datepicker>
                                     <mat-datepicker-toggle matSuffix [for]="dateGlTba"></mat-datepicker-toggle>
                                 </mat-form-field>

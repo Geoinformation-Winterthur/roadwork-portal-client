@@ -3,7 +3,6 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { ActivityHistoryItem } from "./activity-history-item";
-import { ConsultationInput } from "./consultation-input";
 import { CostType } from "./cost-type";
 import { Status } from "./status";
 import { User } from "./user";
@@ -15,10 +14,20 @@ export class RoadWorkActivityProperties {
     trafficAgent: User = new User();
     areaManager: User = new User();
     description: string = "";
+    comment: string = "";
+    section: string = "";
+    type: string = "";
+    projectType: string = "";
+    overarchingMeasure: boolean = false;
+    diseredYear: number = -1;
+    prestudy: boolean = false;
     created: Date = new Date(1,0,1);
     lastModified: Date = new Date(1, 0, 1);
     finishFrom: Date = new Date(1, 0, 1);
     finishTo: Date = new Date(1, 0, 1);
+    startOfConstruction: Date = new Date(1, 0, 1);
+    endOfConstruction: Date = new Date(1, 0, 1);
+    consultDue: Date = new Date(1, 0, 1);
     costs?: number;
     costsType: CostType = new CostType();
     roadWorkNeedsUuids: string[] = [];
@@ -30,6 +39,7 @@ export class RoadWorkActivityProperties {
     investmentNo?: number;
     pdbFid: number = 0;
     strabakoNo: string = "";
+    projectNo: string = "";
     dateSks: string = "";
     dateKap: string = "";
     dateOks: string = "";
