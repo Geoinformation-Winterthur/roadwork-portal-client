@@ -16,6 +16,10 @@
         <input matInput [(ngModel)]="chosenOrganisation.name" name="organisationName" type="text"
             placeholder="Organisationsbezeichnung" required>
     </mat-form-field>
+    <mat-form-field style="margin: 1em;">
+        <input matInput [(ngModel)]="chosenOrganisation.abbreviation" name="organisationAbbreviation" type="text"
+            placeholder="Organisationsk&uuml;rzel" required>
+    </mat-form-field>
     <mat-checkbox [(ngModel)]="chosenOrganisation.isCivilEngineering" *ngIf="chosenOrganisation.uuid || chosenOrganisation.isNew"
         style="margin:10px;">
         Tiefbauamt
