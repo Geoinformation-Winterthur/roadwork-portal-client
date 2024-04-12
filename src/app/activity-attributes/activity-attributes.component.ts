@@ -22,6 +22,7 @@ import { CostType } from 'src/model/cost-type';
 import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
+import { OrganisationalUnit } from 'src/model/organisational-unit';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -38,7 +39,7 @@ export class ActivityAttributesComponent implements OnInit {
   areaManagerName: string = "";
   statusCode: string = "";
   priorityCode: string = "";
-  allOrgUnitNames: string[] = [];
+  involvedUsers: User[] = [];
 
   availableUsers: User[] = [];
 
@@ -49,6 +50,7 @@ export class ActivityAttributesComponent implements OnInit {
   projectManagerControl: FormControl = new FormControl();
   costTypesControl: FormControl = new FormControl();
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
+  roadWorkActivityProjectTypeEnumControl: FormControl = new FormControl();
   finishFromControl: FormControl = new FormControl();
   finishToControl: FormControl = new FormControl();
   dateSksControl: FormControl = new FormControl();
@@ -98,22 +100,22 @@ export class ActivityAttributesComponent implements OnInit {
     });
 
     this.appConfigService.getConfigurationData()
-    .subscribe({
-      next: (configData) => {
-        if (configData) {
-          ErrorMessageEvaluation._evaluateErrorMessage(configData);
-          if (configData.errorMessage !== "") {
-            this.snckBar.open(configData.errorMessage, "", {
-              duration: 4000
-            });
-          } else {
-            this.configurationData = configData;
+      .subscribe({
+        next: (configData) => {
+          if (configData) {
+            ErrorMessageEvaluation._evaluateErrorMessage(configData);
+            if (configData.errorMessage !== "") {
+              this.snckBar.open(configData.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.configurationData = configData;
+            }
           }
+        },
+        error: (error) => {
         }
-      },
-      error: (error) => {
-      }
-    });
+      });
 
     this.roadWorkActivityService.getCostTypes().subscribe({
       next: (costTypes) => {
@@ -175,9 +177,9 @@ export class ActivityAttributesComponent implements OnInit {
                       }
                     });
 
-                  // this.roadWorkActivityStatusEnumControl.
-
                   this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
+                  this.roadWorkActivityProjectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
+
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
                       .subscribe({
@@ -198,6 +200,7 @@ export class ActivityAttributesComponent implements OnInit {
                         }
                       });
                   }
+                  this.getAllInvolvedOrgs();
                 }
               },
               error: (error) => {
@@ -208,20 +211,6 @@ export class ActivityAttributesComponent implements OnInit {
 
       });
 
-    this.organisationService.getAllOrgTypes(true).subscribe({
-      next: (organisations) => {
-        let orgAndContactName: string = "";
-        for (let organisation of organisations) {
-          orgAndContactName = organisation.name;
-          if (organisation.contactPerson) {
-            orgAndContactName += " (" + organisation.contactPerson + ")";
-          }
-          this.allOrgUnitNames.push(orgAndContactName);
-        }
-      },
-      error: (error) => {
-      }
-    });
   }
 
   add() {
@@ -288,9 +277,10 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  onRoadWorkActivityStatusEnumChange() {
+  onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
+      this.roadWorkActivityFeature.properties.projectType = this.roadWorkActivityProjectTypeEnumControl.value;
       this.update();
     }
   }
@@ -353,8 +343,8 @@ export class ActivityAttributesComponent implements OnInit {
         return true;
       else
         return false;
-    } else if (currValue === 'coordinated' || 
-         currValue === 'suspended') {
+    } else if (currValue === 'coordinated' ||
+      currValue === 'suspended') {
       if (valueToCheck === 'review')
         return true;
       else if (valueToCheck === 'inconsult')
@@ -369,6 +359,35 @@ export class ActivityAttributesComponent implements OnInit {
         return false;
     }
     return true;
+  }
+
+  getAllInvolvedOrgs() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
+        .subscribe({
+          next: (roadWorkNeeds) => {
+            if (roadWorkNeeds) {
+              if (roadWorkNeeds.length > 0 && roadWorkNeeds[0]) {
+                ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeeds[0]);
+                if (roadWorkNeeds[0].errorMessage.trim().length !== 0) {
+                  this.snckBar.open(roadWorkNeeds[0].errorMessage, "", {
+                    duration: 4000
+                  });
+                } else {
+                  for (let roadWorkNeed of roadWorkNeeds) {
+                    this.involvedUsers.push(roadWorkNeed.properties.orderer)
+                  }
+                }
+              }
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Organisationen konnten nicht geladen werden", "", {
+              duration: 4000,
+            });
+          }
+        });
+    }
   }
 
   ngOnDestroy() {

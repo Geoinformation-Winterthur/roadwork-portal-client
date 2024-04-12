@@ -6,9 +6,10 @@ export class OrganisationalUnit
 {
     public uuid: string = "";
     public name: string = "";
-    public errorMessage: string = "";
+    public abbreviation: string = "";
     public contactPerson: string = "";
     public isCivilEngineering: boolean = false;
     public isNew: boolean = false;
+    public errorMessage: string = "";
 }
 
