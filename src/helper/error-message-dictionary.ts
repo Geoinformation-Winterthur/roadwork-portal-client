@@ -26,6 +26,7 @@ export class ErrorMessageDictionary {
              "Der Kurzbeschrieb fehlt. Dieser ist jedoch verpflichtend.",
              "Die Angabe der Art fehlt. Dies ist jedoch verpflichtend.",
              "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.",
-             "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist."
+             "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
+             "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde."
             ];
 }

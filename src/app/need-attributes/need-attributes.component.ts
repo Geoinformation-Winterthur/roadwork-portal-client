@@ -49,6 +49,7 @@ export class NeedAttributesComponent implements OnInit {
 
   userService: UserService;
 
+  overarchingMeasureControl: FormControl = new FormControl();
   urlControl: FormControl = new FormControl('',
     [
       this._isUrlValidator()
@@ -227,7 +228,7 @@ export class NeedAttributesComponent implements OnInit {
       this._convertTertialToDate(this.finishLateTertial);
 
     this.roadWorkNeedFeature!.properties.url = this.urlControl.value;
-
+    
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
         .subscribe({
@@ -416,6 +417,10 @@ export class NeedAttributesComponent implements OnInit {
           });
         }
       });
+  }
+
+  getCurrentYear(): number {
+    return new Date().getFullYear();
   }
 
   ngOnDestroy() {
