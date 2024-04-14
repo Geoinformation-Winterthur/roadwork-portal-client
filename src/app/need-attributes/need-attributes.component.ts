@@ -178,7 +178,7 @@ export class NeedAttributesComponent implements OnInit {
       this.roadWorkNeedService.addRoadworkNeed(this.roadWorkNeedFeature)
         .subscribe({
           next: (roadWorkNeedFeature) => {
-            if (this.roadWorkNeedFeature) {
+            if (this.roadWorkNeedFeature && roadWorkNeedFeature) {
               ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
               if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
                 this.roadWorkNeedFeature.properties.isPrivate = true;
@@ -186,6 +186,15 @@ export class NeedAttributesComponent implements OnInit {
                   duration: 4000
                 });
               } else {
+                this.roadWorkNeedFeature = roadWorkNeedFeature;
+
+                if (this.userService.getLocalUser().role.code === 'administrator') {
+                  this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
+                } else if (this.roadWorkNeedFeature?.properties.isPrivate) {
+                  // editing for the orderer is only allowed as long as the need is not public (is private):
+                  this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
+                }
+
                 this.snckBar.open("Bedarf wurde erfolgreich erstellt", "", {
                   duration: 4000,
                 });
@@ -229,7 +238,7 @@ export class NeedAttributesComponent implements OnInit {
               this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
                 .subscribe({
                   next: (roadWorkNeedFeature) => {
-                    if (this.roadWorkNeedFeature) {
+                    if (this.roadWorkNeedFeature && roadWorkNeedFeature) {
                       ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
                       if (roadWorkNeedFeature.errorMessage.trim().length !== 0) {
                         this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
@@ -240,6 +249,14 @@ export class NeedAttributesComponent implements OnInit {
                           roadWorkNeedFeature.properties.costs = null;
                         }
                         this.roadWorkNeedFeature = roadWorkNeedFeature;
+
+                        if (this.userService.getLocalUser().role.code === 'administrator') {
+                          this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
+                        } else if (this.roadWorkNeedFeature?.properties.isPrivate) {
+                          // editing for the orderer is only allowed as long as the need is not public (is private):
+                          this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
+                        }
+
                         this.managementArea = managementAreas[0];
                         this.snckBar.open("Bedarf ist gespeichert", "", {
                           duration: 4000,
@@ -399,7 +416,7 @@ export class NeedAttributesComponent implements OnInit {
           this.snckBar.open("Ein Systemfehler ist aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
             duration: 4000
           });
-      }
+        }
       });
   }
 
