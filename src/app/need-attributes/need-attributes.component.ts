@@ -188,11 +188,10 @@ export class NeedAttributesComponent implements OnInit {
               } else {
                 this.roadWorkNeedFeature = roadWorkNeedFeature;
 
-                if (this.userService.getLocalUser().role.code === 'administrator') {
-                  this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
-                } else if (this.roadWorkNeedFeature?.properties.isPrivate) {
-                  // editing for the orderer is only allowed as long as the need is not public (is private):
-                  this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
+                // editing is not allowed anymore when the need goes public (is not private):
+                if (!this.roadWorkNeedFeature?.properties.isPrivate
+                  && !(this.userService.getLocalUser().role.code === 'administrator')) {
+                  this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                 }
 
                 this.snckBar.open("Bedarf wurde erfolgreich erstellt", "", {
@@ -250,11 +249,10 @@ export class NeedAttributesComponent implements OnInit {
                         }
                         this.roadWorkNeedFeature = roadWorkNeedFeature;
 
-                        if (this.userService.getLocalUser().role.code === 'administrator') {
-                          this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
-                        } else if (this.roadWorkNeedFeature?.properties.isPrivate) {
-                          // editing for the orderer is only allowed as long as the need is not public (is private):
-                          this.roadWorkNeedFeature!.properties.isEditingAllowed = true;
+                        // editing is not allowed anymore when the need goes public (is not private):
+                        if (!this.roadWorkNeedFeature?.properties.isPrivate
+                          && !(this.userService.getLocalUser().role.code === 'administrator')) {
+                          this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 
                         this.managementArea = managementAreas[0];
