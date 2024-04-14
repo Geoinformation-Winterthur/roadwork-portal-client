@@ -30,4 +30,6 @@ export class RoadWorkNeedProperties {
     section: string = "";
     comment: string = "";
     url: string = "";
+    overarchingMeasure: boolean = false;
+    desiredYear?: number;
 }
