@@ -22,7 +22,7 @@ export class ErrorMessageDictionary {
              "Das Startdatum darf nicht nach dem Enddatum liegen.",
              "Es wurde kein Statuscode empfangen.",
              "Es wurden keine Organisationsdaten empfangen.",
-             "Der Baubedarf konnte nicht empfangen werden.",
+             "Der Bedarf konnte nicht empfangen werden.",
              "Der Kurzbeschrieb fehlt. Dieser ist jedoch verpflichtend.",
              "Die Angabe der Art fehlt. Dies ist jedoch verpflichtend.",
              "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.",

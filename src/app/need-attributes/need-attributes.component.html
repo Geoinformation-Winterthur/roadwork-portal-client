@@ -1,13 +1,13 @@
 <div style="margin:2em;">
     <div *ngIf="roadWorkNeedFeature === undefined">
-        <p style="color: red;">Das Baubedarf-Objekt konnte nicht geladen werden.</p>
+        <p style="color: red;">Das Bedarfsobjekt konnte nicht geladen werden.</p>
     </div>
     <div *ngIf="roadWorkNeedFeature !== undefined">
-        <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Baubedarf <span style="font-weight: normal;"> / {{
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Bedarf <span style="font-weight: normal;"> / {{
                 roadWorkNeedFeature.properties.name }}</span><span *ngIf="roadWorkNeedFeature.properties.isPrivate"
                 style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
         </h1>
-        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Baubedarf<span
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neuer Bedarf<span
                 *ngIf="roadWorkNeedFeature.properties.isPrivate"
                 style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
         </h1>
@@ -73,7 +73,7 @@
                                 </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Baubedarfs
+                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Bedarfs
                                     ein Titel automatisch aus der geographischen Lage ermittelt.
                                 </div>
                                 <mat-form-field>

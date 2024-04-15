@@ -58,7 +58,7 @@
                     </a>
                     <a mat-list-item routerLink='/needs' (click)="toggleSideNav($event)"
                             *ngIf="userService.hasUserAccess('orderer')">
-                        <mat-icon aria-label="Baubedarfe">tips_and_updates</mat-icon>&nbsp;<span i18n>Bedarfe</span>
+                        <mat-icon aria-label="Bedarfe">tips_and_updates</mat-icon>&nbsp;<span i18n>Bedarfe</span>
                     </a>
                     <a mat-list-item routerLink='/activities' (click)="toggleSideNav($event)"
                             *ngIf="userService.hasUserAccess('trafficmanager')">

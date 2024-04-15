@@ -192,7 +192,7 @@
             <mat-expansion-panel style="margin-bottom:2em;" expanded>
                 <mat-expansion-panel-header>
                     <mat-panel-title><mat-icon aria-label="Suche">search</mat-icon>Globale
-                        Baubedarf-Suche</mat-panel-title>
+                        Bedarfssuche</mat-panel-title>
                 </mat-expansion-panel-header>
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
@@ -236,7 +236,7 @@
                 </div>
             </mat-expansion-panel>
         </mat-accordion>
-        <div *ngIf="searchResultRoadWorkNeedFeatures.length === 0">Keine Baubedarfe zum Suchkriterium gefunden
+        <div *ngIf="searchResultRoadWorkNeedFeatures.length === 0">Keine Bedarfe zum Suchkriterium gefunden
         </div>
         <div *ngIf="searchResultRoadWorkNeedFeatures.length !== 0">
             <table mat-table [dataSource]="searchResultRoadWorkNeedFeatures" class="mat-elevation-z2"
