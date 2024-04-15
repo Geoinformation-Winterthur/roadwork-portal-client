@@ -208,21 +208,21 @@
                                             Priorit&auml;t</mat-chip>
                                     </mat-chip-list>
                                 </div>
-                                <mat-form-field *ngIf="userService.getLocalUser().role.code === 'territorymanager'">
+                                <mat-form-field *ngIf="user.role.code === 'territorymanager'">
                                     <input matInput type="text" placeholder="Status">
                                 </mat-form-field>
                             </div>
-                            <button *ngIf="userService.getLocalUser().role.code === 'administrator' ||
-                                        userService.getLocalUser().role.code === 'territorymanager'"
+                            <button *ngIf="user.role.code === 'administrator' ||
+                                        user.role.code === 'territorymanager'"
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" mat-button
                                 (click)="createNewActivityFromNeed()"
                                 [disabled]="roadWorkNeedFeature.properties.isPrivate"><mat-icon
                                     aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; &Uuml;BERNEHMEN</button>
                             <button *ngIf="roadWorkNeedFeature.properties.isPrivate ||
-                                        userService.getLocalUser().role.code === 'administrator'"
+                                        user.role.code === 'administrator'"
                                 (click)="openDeleteDialog(roadWorkNeedFeature.properties.uuid)"
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkNeedFeature.properties.isPrivate && 
-                                                !(userService.getLocalUser().role.code === 'administrator')"
+                                                !(user.role.code === 'administrator')"
                                 mat-button>L&Ouml;SCHEN</button>
                             <div style="margin-top: 3em;">
                                 <h3>Dokumente</h3>

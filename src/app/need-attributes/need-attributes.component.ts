@@ -19,7 +19,6 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { DateHelper } from 'src/helper/date-helper';
 import { DocumentService } from 'src/services/document.service';
 import { environment } from 'src/environments/environment';
-import { ValidationHandler } from 'angular-oauth2-oidc';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
@@ -45,9 +44,9 @@ export class NeedAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
 
-  environment = environment;
+  user: User = new User();
 
-  userService: UserService;
+  environment = environment;
 
   overarchingMeasureControl: FormControl = new FormControl();
   urlControl: FormControl = new FormControl('',
@@ -73,6 +72,7 @@ export class NeedAttributesComponent implements OnInit {
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
+  private userService: UserService;
   private documentService: DocumentService;
   private activatedRoute: ActivatedRoute;
   private router: Router;
@@ -150,6 +150,33 @@ export class NeedAttributesComponent implements OnInit {
 
         }
 
+      });
+
+    this.userService.getUser(this.userService.getLocalUser().mailAddress)
+      .subscribe({
+        next: (users) => {
+          if (users && users.length > 0 && users[0]) {
+            let user: User = users[0];
+            ErrorMessageEvaluation._evaluateErrorMessage(user);
+            if (user && user.errorMessage &&
+              user.errorMessage.trim().length !== 0) {
+              this.snckBar.open(user.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.user = user;
+              if (this.roadWorkNeedFeature) {
+                this.roadWorkNeedFeature.properties.orderer.organisationalUnit =
+                  user.organisationalUnit;
+              }
+            }
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+            duration: 4000
+          });
+        }
       });
 
   }
@@ -464,7 +491,7 @@ export class NeedAttributesComponent implements OnInit {
     return Math.ceil(monthDiff / 4);
   }
 
-  private static _createNewRoadWorkNeedFeature(localUser: User): RoadWorkNeedFeature {
+  private static _createNewRoadWorkNeedFeature(user: User): RoadWorkNeedFeature {
 
     let roadWorkNeedFeature: RoadWorkNeedFeature = new RoadWorkNeedFeature();
     roadWorkNeedFeature.properties.status.code = "requirement";
@@ -473,15 +500,7 @@ export class NeedAttributesComponent implements OnInit {
     roadWorkNeedFeature.properties.isPrivate = true;
     roadWorkNeedFeature.properties.created = new Date();
     roadWorkNeedFeature.properties.lastModified = new Date();
-
-    let userForRoadWorkNeed: User = new User();
-    userForRoadWorkNeed.lastName = localUser.lastName;
-    userForRoadWorkNeed.firstName = localUser.firstName;
-    let organisation: OrganisationalUnit = new OrganisationalUnit();
-    organisation.name = "Noch nicht ermittelt";
-    userForRoadWorkNeed.organisationalUnit = organisation;
-
-    roadWorkNeedFeature.properties.orderer = userForRoadWorkNeed;
+    roadWorkNeedFeature.properties.orderer = user;
 
     let today: Date = new Date();
 
@@ -490,7 +509,6 @@ export class NeedAttributesComponent implements OnInit {
     roadWorkNeedFeature.properties.finishLateTo = today;
 
     return roadWorkNeedFeature;
-
   }
 
   private static _createNewManagementArea(): ManagementArea {
