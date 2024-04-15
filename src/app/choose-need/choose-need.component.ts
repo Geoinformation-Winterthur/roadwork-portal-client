@@ -12,9 +12,7 @@ import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
+import { User } from 'src/model/user';
 
 @Component({
   selector: 'app-choose-need',
@@ -26,12 +24,11 @@ export class ChooseNeedComponent implements OnInit {
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
 
   filterPanelOpen: boolean = false;
-  showAsList: boolean = false;
 
   chosenNeedName: string = "";
   chosenNeedYearOptFrom?: number;
 
-  userService: UserService;
+  user: User = new User();
 
   statusFilterCodes: string[] = ["requirement"];
 
@@ -40,22 +37,45 @@ export class ChooseNeedComponent implements OnInit {
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
   private snckBar: MatSnackBar;
-  private dialog: MatDialog;
   private router: Router;
+  private userService: UserService;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     roadWorkActivityService: RoadWorkActivityService, router: Router,
-      snckBar: MatSnackBar, dialog: MatDialog) {
+      snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
     this.router = router;
     this.snckBar = snckBar;
-    this.dialog = dialog;
   }
 
   ngOnInit(): void {
     this.getNeedsWithFilter();
+
+    this.userService.getUser(this.userService.getLocalUser().mailAddress)
+    .subscribe({
+      next: (users) => {
+        if (users && users.length > 0 && users[0]) {
+          let user: User = users[0];
+          ErrorMessageEvaluation._evaluateErrorMessage(user);
+          if (user && user.errorMessage &&
+            user.errorMessage.trim().length !== 0) {
+            this.snckBar.open(user.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.user = user;
+          }
+        }
+      },
+      error: (error) => {
+        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+          duration: 4000
+        });
+      }
+    });
+
   }
 
   getNeedsWithFilter() {

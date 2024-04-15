@@ -13,6 +13,7 @@ export class User {
     mailAddress: string = "";
     passPhrase: string = "";
     active: boolean = false;
+    prefTableView: boolean = false;
     role: Role = new Role();
     organisationalUnit: OrganisationalUnit
         = new OrganisationalUnit();
