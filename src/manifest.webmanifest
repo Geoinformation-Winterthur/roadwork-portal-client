@@ -1,6 +1,6 @@
 {
-  "name": "Koordinationstool SSP",
-  "short_name": "SSP",
+  "name": "Koordinationstool",
+  "short_name": "KDT",
   "theme_color": "#1976d2",
   "background_color": "#ffffff",
   "display": "standalone",
