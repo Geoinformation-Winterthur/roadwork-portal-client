@@ -10,74 +10,102 @@
     <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
         Willkommen im Koordinationstool des Tiefbauamts Winterthur.
     </h3>
-    <div i18n *ngIf="!userService.isUserLoggedIn()"><p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
-        im &ouml;ffentlichen Strassenraum der Stadt Winterthur (Baukoordinationsverordnung) sind alle st&auml;dtischen
-        Abteilungen, privatrechtliche und &ouml;ffentlich-rechtliche Unternehmen der Stadt, des Kantons und des Bundes
-        sowie sonstige Private im &ouml;ffentlichen Strassenraum (Eigentum der Stadt Winterthur) zum koordinierten Bauen
-        verpflichtet.</p>
+    <div i18n *ngIf="!userService.isUserLoggedIn()">
+        <p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
+            im &ouml;ffentlichen Strassenraum der Stadt Winterthur (Baukoordinationsverordnung) sind alle
+            st&auml;dtischen
+            Abteilungen, privatrechtliche und &ouml;ffentlich-rechtliche Unternehmen der Stadt, des Kantons und des
+            Bundes
+            sowie sonstige Private im &ouml;ffentlichen Strassenraum (Eigentum der Stadt Winterthur) zum koordinierten
+            Bauen
+            verpflichtet.</p>
         <p>
-        Die Abteilung Planung & Koordination des Tiefbauamts der Stadt Winterthur nimmt diese Aufgabe im Rahmen der dazu
-        vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe des Koordinationstool soll die Eingabe von W&uuml;nschen
-        (Bedarf) vereinfacht und die Koordination der Bauvorhaben zentralisiert werden.</p>
+            Die Abteilung Planung & Koordination des Tiefbauamts der Stadt Winterthur nimmt diese Aufgabe im Rahmen der
+            dazu
+            vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe des Koordinationstool soll die Eingabe von
+            W&uuml;nschen
+            (Bedarf) vereinfacht und die Koordination der Bauvorhaben zentralisiert werden.</p>
         <p>
-        Der Zugriff auf das Koordinationstool ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der rechten oberen Ecke. 
-        Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an die applikationsverantwortliche Person Ihres
-        Bereichs oder an <a href="mailto:planung.koordination@win.ch">planung.koordination@win.ch</a></p>
+            Der Zugriff auf das Koordinationstool ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
+            rechten oberen Ecke.
+            Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an die applikationsverantwortliche
+            Person Ihres
+            Bereichs oder an <a href="mailto:planung.koordination@win.ch">planung.koordination@win.ch</a></p>
+        <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
     </div>
     <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
-        Willkommen {{userService.getLocalUser().firstName}} {{userService.getLocalUser().lastName}} im Koordinationstool
+        Willkommen {{user.firstName}} {{user.lastName}} im Koordinationstool
         der Abteilung Planung & Koordination des Tiefbauamts Winterthur.</h3>
     <div *ngIf="userService.isUserLoggedIn()">
-        <p>Unter Ihrem Login sind folgende Informationen erfasst:</p>
-        <p>
-            Sie sind in der Rolle <b>
-                <span *ngIf="userService.getLocalUser().role.code === 'eventmanager'">Eventmanager</span>
-                <span *ngIf="userService.getLocalUser().role.code === 'orderer'">Besteller</span>
-                <span *ngIf="userService.getLocalUser().role.code === 'territorymanager'">Gebietsmanager</span>
-                <span *ngIf="userService.getLocalUser().role.code === 'administrator'">Administrator</span></b>.
-        </p>
-        <div *ngIf="roadWorkActivityFeaturesInCoordination.length === 0"><span
-                style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
-                sind zurzeit keine Bauvorhaben in der Vernehmlassung.</span></div>
-        <div *ngIf="roadWorkActivityFeaturesInCoordination.length !== 0">Folgende Bauvorhaben sind zurzeit in der
-            <b>Vernehmlassung</b>:
-            <table mat-table [dataSource]="roadWorkActivityFeaturesInCoordination" class="mat-elevation-z2"
-                style="width: 100%; margin-top:1em;">
+        <mat-tab-group>
+            <mat-tab label="Aktuelles">
+                <div style="margin: 2em;">
+                    <div *ngIf="roadWorkActivityFeaturesInCoordination.length === 0"><span
+                            style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
+                            sind zurzeit keine Bauvorhaben in der Vernehmlassung.</span></div>
+                    <div *ngIf="roadWorkActivityFeaturesInCoordination.length !== 0">Folgende Bauvorhaben sind zurzeit
+                        in
+                        der
+                        <b>Vernehmlassung</b>:
+                        <table mat-table [dataSource]="roadWorkActivityFeaturesInCoordination" class="mat-elevation-z2"
+                            style="width: 100%; margin-top:1em;">
 
-                <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
-                    <td mat-cell *matCellDef="let roadWorkActivity">
-                        <a routerLink="/activities/{{roadWorkActivity.properties.uuid}}">
-                            {{roadWorkActivity.properties.name}}
-                        </a>
-                    </td>
-                </ng-container>
+                            <ng-container matColumnDef="name">
+                                <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity">
+                                    <a routerLink="/activities/{{roadWorkActivity.properties.uuid}}">
+                                        {{roadWorkActivity.properties.name}}
+                                    </a>
+                                </td>
+                            </ng-container>
 
-                <ng-container matColumnDef="manager">
-                    <th mat-header-cell *matHeaderCellDef> Gebietsmanager </th>
-                    <td mat-cell *matCellDef="let roadWorkActivity">
-                        {{roadWorkActivity.properties.areaManager?.firstName}}
-                        {{roadWorkActivity.properties.areaManager?.lastName}} </td>
-                </ng-container>
+                            <ng-container matColumnDef="manager">
+                                <th mat-header-cell *matHeaderCellDef> Gebietsmanager </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity">
+                                    {{roadWorkActivity.properties.areaManager?.firstName}}
+                                    {{roadWorkActivity.properties.areaManager?.lastName}} </td>
+                            </ng-container>
 
-                <ng-container matColumnDef="created">
-                    <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
-                    <td mat-cell *matCellDef="let roadWorkActivity"> {{roadWorkActivity.properties.created |
-                        date:'dd.MM.yyyy'}} </td>
-                </ng-container>
+                            <ng-container matColumnDef="created">
+                                <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity"> {{roadWorkActivity.properties.created |
+                                    date:'dd.MM.yyyy'}} </td>
+                            </ng-container>
 
-                <ng-container matColumnDef="period">
-                    <th mat-header-cell *matHeaderCellDef> Realisierung </th>
-                    <td mat-cell *matCellDef="let roadWorkActivity">
-                        {{roadWorkActivity.properties.finishFrom
-                        |
-                        date:'dd.MM.yyyy'}} - {{roadWorkActivity.properties.finishTo | date:'dd.MM.yyyy'}} </td>
-                </ng-container>
+                            <ng-container matColumnDef="period">
+                                <th mat-header-cell *matHeaderCellDef> Realisierung </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity">
+                                    {{roadWorkActivity.properties.finishFrom
+                                    |
+                                    date:'dd.MM.yyyy'}} - {{roadWorkActivity.properties.finishTo | date:'dd.MM.yyyy'}}
+                                </td>
+                            </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
-        </div>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="Einstellungen">
+                <div style="margin: 2em;">
+                    <p>
+                        Sie sind in der Rolle <b>
+                            <span *ngIf="user.role.code === 'eventmanager'">Eventmanager</span>
+                            <span *ngIf="user.role.code === 'orderer'">Besteller</span>
+                            <span
+                                *ngIf="user.role.code === 'territorymanager'">Gebietsmanager</span>
+                            <span
+                                *ngIf="user.role.code === 'administrator'">Administrator</span></b>.
+                    </p>
+                    <p>Ansicht:</p>
+                    <div style="display:flex;flex-direction:column;">
+                        <mat-slide-toggle [(ngModel)]="user.prefTableView"
+                            (focusout)="update()">Tabellenansicht bevorzugen (nicht mobile-f&auml;hig)
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
     </div>
-    <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
 </div>

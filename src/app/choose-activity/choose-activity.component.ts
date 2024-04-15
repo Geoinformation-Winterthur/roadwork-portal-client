@@ -9,6 +9,7 @@ import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature'
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from 'src/services/user.service';
+import { User } from 'src/model/user';
 
 @Component({
   selector: 'app-choose-activity',
@@ -25,6 +26,9 @@ export class ChooseActivityComponent implements OnInit {
   chosenActivityName: string = "";
   chosenActivityYearFrom: number = new Date().getFullYear();
 
+  tableDisplayedColumns: string[] = ['title', 'kind', 'status', 'link_cityplan', 'link_wwg', 'link_roadworkactivity', 'actions'];
+
+  user: User = new User();
   userService: UserService;
 
   private roadWorkActivityService: RoadWorkActivityService;
@@ -40,6 +44,29 @@ export class ChooseActivityComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllActivities();
+
+    this.userService.getUser(this.userService.getLocalUser().mailAddress)
+      .subscribe({
+        next: (users) => {
+          if (users && users.length > 0 && users[0]) {
+            let user: User = users[0];
+            ErrorMessageEvaluation._evaluateErrorMessage(user);
+            if (user && user.errorMessage &&
+              user.errorMessage.trim().length !== 0) {
+              this.snckBar.open(user.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.user = user;
+            }
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+            duration: 4000
+          });
+        }
+      });
   }
 
   getAllActivities() {

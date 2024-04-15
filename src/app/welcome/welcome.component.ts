@@ -3,7 +3,10 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { UserService } from 'src/services/user.service';
@@ -21,43 +24,92 @@ export class WelcomeComponent implements OnInit {
 
   roadWorkActivityFeaturesInCoordination: RoadWorkActivityFeature[] = [];
 
+  user: User = new User();
   userService: UserService;
+
   roadWorkActivityService: RoadWorkActivityService;
   appVersion: string = "2024.9";
 
   displayedColumns: string[] = ['name', 'manager', 'created', 'period'];
 
   private managementAreaService: ManagementAreaService;
+  private snckBar: MatSnackBar;
 
   constructor(userService: UserService, roadWorkActivityService: RoadWorkActivityService,
-        managementAreaService: ManagementAreaService) {
+    managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
     this.userService = userService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.managementAreaService = managementAreaService;
+    this.snckBar = snckBar;
   }
 
   ngOnInit(): void {
     if (this.userService.isUserLoggedIn()) {
+
       this.roadWorkActivityService.getRoadWorkActivities("", "inconsult").subscribe({
         next: (roadWorkActivities) => {
-          for(let roadWorkActInCoordination of roadWorkActivities){
+          for (let roadWorkActInCoordination of roadWorkActivities) {
             this.managementAreaService.getIntersectingManagementAreas(roadWorkActInCoordination.geometry)
-            .subscribe({
-              next: (managementAreas) => {
-                if (managementAreas && managementAreas.length !== 0) {
-                  roadWorkActInCoordination.properties.areaManager = managementAreas[0].manager;
+              .subscribe({
+                next: (managementAreas) => {
+                  if (managementAreas && managementAreas.length !== 0) {
+                    roadWorkActInCoordination.properties.areaManager = managementAreas[0].manager;
+                  }
+                },
+                error: (error) => {
                 }
-              },
-              error: (error) => {
-              }
-            });
+              });
           }
           this.roadWorkActivityFeaturesInCoordination = roadWorkActivities;
         },
         error: (error) => {
         }
       });
+
+      this.userService.getUser(this.userService.getLocalUser().mailAddress)
+        .subscribe({
+          next: (users) => {
+            if (users && users.length > 0 && users[0]) {
+              let user: User = users[0];
+              ErrorMessageEvaluation._evaluateErrorMessage(user);
+              if (user && user.errorMessage &&
+                user.errorMessage.trim().length !== 0) {
+                this.snckBar.open(user.errorMessage, "", {
+                  duration: 4000
+                });
+              } else {
+                this.user = user;
+              }
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+              duration: 4000
+            });
+          }
+        });
     }
   }
+
+  update() {
+    this.userService.updateUser(this.user)
+      .subscribe({
+        next: (errorMessage) => {
+            ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+            if (errorMessage && errorMessage.errorMessage &&
+              errorMessage.errorMessage.trim().length !== 0) {
+              this.snckBar.open(errorMessage.errorMessage, "", {
+                duration: 4000
+              });
+            }          
+        },
+        error: (error) => {
+          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+            duration: 4000
+          });
+        }
+      });
+  }
+
 
 }
