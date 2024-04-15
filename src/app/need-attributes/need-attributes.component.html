@@ -217,8 +217,7 @@
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" mat-button
                                 (click)="createNewActivityFromNeed()"
                                 [disabled]="roadWorkNeedFeature.properties.isPrivate"><mat-icon
-                                    aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; BEDARF
-                                &Uuml;BERNEHMEN</button>
+                                    aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; &Uuml;BERNEHMEN</button>
                             <button *ngIf="roadWorkNeedFeature.properties.isPrivate ||
                                         userService.getLocalUser().role.code === 'administrator'"
                                 (click)="openDeleteDialog(roadWorkNeedFeature.properties.uuid)"
