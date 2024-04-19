@@ -35,6 +35,24 @@
               </div>
             </mat-card-content>
           </mat-card>
+          <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+          fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+          <mat-card-content>
+            <div style="display:flex;flex-direction:column;">
+              <mat-form-field appearance="fill">
+                <mat-label>Status</mat-label>
+                <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
+                  <mat-option value="review">In Pr&uuml;fung (Phase 12)</mat-option>
+                  <mat-option value="inconsult">In Bedarfskl&auml;rung (Phase 12)</mat-option>
+                  <mat-option value="verified">verfiziert (Phase 12)</mat-option>
+                  <mat-option value="reporting">In Stellungnahme (Phase 12)</mat-option>
+                  <mat-option value="coordinated">koordiniert (Phase 12)</mat-option>
+                  <mat-option value="suspended">sistiert</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-card-content>
+        </mat-card>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
