@@ -40,7 +40,7 @@ export class EditActivityMapComponent implements OnInit {
   @Input()
   roadWorkActivityFeat?: RoadWorkActivityFeature;
 
-  chosenYear: number = new Date().getFullYear();
+  chosenYear?: number;
 
   isInEditingMode: boolean = false;
 

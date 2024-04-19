@@ -21,7 +21,7 @@ export class RoadWorkNeedService {
     this.http = http;
   }
 
-  getRoadWorkNeeds(ids: string[] = [], year: number = 0, name: string = "",
+  getRoadWorkNeeds(ids: string[] = [], year?: number, name: string = "",
           status: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
