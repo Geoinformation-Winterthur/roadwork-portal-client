@@ -12,9 +12,7 @@ import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-choose-need',

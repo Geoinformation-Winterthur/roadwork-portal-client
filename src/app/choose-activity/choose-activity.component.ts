@@ -23,7 +23,9 @@ export class ChooseActivityComponent implements OnInit {
   filterPanelOpen: boolean = false;
 
   chosenActivityName: string = "";
-  chosenActivityYearFrom: number = new Date().getFullYear();
+  chosenActivityYearFrom?: number;
+
+  statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated"];
 
   userService: UserService;
 
@@ -87,13 +89,14 @@ export class ChooseActivityComponent implements OnInit {
     this.roadWorkActivityFeaturesFiltered =
       this.roadWorkActivityFeatures
         .filter(roadWorkActivityFeature => {
-          if (roadWorkActivityFeature.properties && roadWorkActivityFeature.properties.name
-            && roadWorkActivityFeature.properties.finishFrom) {
+          if (roadWorkActivityFeature && roadWorkActivityFeature.properties &&
+            roadWorkActivityFeature.properties.name && roadWorkActivityFeature.properties.finishFrom) {
             let roadWorkActivityName: string = this.chosenActivityName.trim().toLowerCase();
             let finishFrom: Date = new Date(roadWorkActivityFeature.properties.finishFrom);
             return (roadWorkActivityName === ''
               || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
-              && finishFrom.getFullYear() === this.chosenActivityYearFrom;
+              && (!this.chosenActivityYearFrom || finishFrom.getFullYear() === this.chosenActivityYearFrom) &&
+              this.statusFilterCodes.includes(roadWorkActivityFeature.properties.status.code);
           } else {
             return false;
           }

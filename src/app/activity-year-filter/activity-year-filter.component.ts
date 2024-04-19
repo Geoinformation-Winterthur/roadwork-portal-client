@@ -8,11 +8,6 @@ import { ChooseActivityComponent } from '../choose-activity/choose-activity.comp
 })
 export class ActivityYearFilterComponent implements OnInit {
 
-  sliderMin: number = new Date().getFullYear() - 10;
-  sliderMax: number = new Date().getFullYear() + 30;
-  sliderStep: number = 1;
-  sliderThumbLabel: boolean = true;
-
   // parent component of this component:
   chooseActivityComponent: ChooseActivityComponent;
 
