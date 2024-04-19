@@ -2,7 +2,7 @@
  Author: Edgar Butwilowski
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
-<div style="color: white;padding: 2em;background-color: rgb(196, 30, 30);">
+<div *ngIf="!userService.isUserLoggedIn()" style="color: white;padding: 2em;background-color: rgb(196, 30, 30);">
     <h1>Tiefbauamt Winterthur</h1><br />
     <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Departement Bau und Mobilit&auml;t</h2>
 </div>
