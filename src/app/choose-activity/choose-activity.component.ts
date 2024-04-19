@@ -10,6 +10,7 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
+import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
   selector: 'app-choose-activity',
@@ -26,19 +27,23 @@ export class ChooseActivityComponent implements OnInit {
   chosenActivityName: string = "";
   chosenActivityYearFrom: number = new Date().getFullYear();
 
-  tableDisplayedColumns: string[] = ['title', 'kind', 'status', 'link_cityplan', 'link_wwg', 'link_roadworkactivity', 'actions'];
+  tableDisplayedColumns: string[] = ['title', 'status', 'area_man', 'project_man', 'lead',
+    'realisation_date', 'due_date', 'actions', 'link_cityplan', 'link_wwg',
+    'relevance', 'relevance_sks'];
 
   user: User = new User();
   userService: UserService;
 
   private roadWorkActivityService: RoadWorkActivityService;
+  private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
 
   constructor(roadWorkActivityService: RoadWorkActivityService,
-    userService: UserService,
+    userService: UserService, managementAreaService: ManagementAreaService,
     snckBar: MatSnackBar) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
+    this.managementAreaService = managementAreaService;
     this.snckBar = snckBar;
   }
 
@@ -78,6 +83,18 @@ export class ChooseActivityComponent implements OnInit {
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
           blowUpPoly.coordinates = roadWorkActivity.geometry.coordinates;
           roadWorkActivity.geometry = blowUpPoly;
+          this.managementAreaService.getIntersectingManagementAreas(roadWorkActivity.geometry)
+            .subscribe({
+              next: (managementAreas) => {
+                if (roadWorkActivity && managementAreas && managementAreas.length !== 0) {
+                  roadWorkActivity.properties.areaManager = managementAreas[0].manager;
+                  roadWorkActivity.properties.evaluation = 0;
+                  roadWorkActivity.properties.evaluationSks = 0;
+                }
+              },
+              error: (error) => {
+              }
+            });
         }
 
         this.roadWorkActivityFeatures = roadWorkActivities;
