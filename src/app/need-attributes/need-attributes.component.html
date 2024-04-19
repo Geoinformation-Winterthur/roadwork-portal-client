@@ -14,7 +14,7 @@
         <mat-tab-group>
             <mat-tab label="Perimeter">
                 <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
-                    [managementArea]="managementArea"></app-edit-need-map>
+                    [managementArea]="roadWorkNeedFeature.properties.managementArea"></app-edit-need-map>
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="float: right;">
@@ -256,9 +256,9 @@
                                 <p>Bedarfsstelle:
                                     <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
                                 </p>
-                                <p>Gebietsmanager:
-                                    <b>{{managementArea?.manager?.firstName}}
-                                        {{managementArea?.manager?.lastName}}
+                                <p>Gebietsmanagment:
+                                    <b>{{roadWorkNeedFeature.properties.managementArea?.manager?.firstName}}
+                                        {{roadWorkNeedFeature.properties.managementArea?.manager?.lastName}}
                                     </b>
                                 </p>
                                 <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>

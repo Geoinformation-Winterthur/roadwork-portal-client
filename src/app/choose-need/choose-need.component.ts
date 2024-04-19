@@ -13,6 +13,7 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/model/user';
+import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
   selector: 'app-choose-need',
@@ -32,19 +33,21 @@ export class ChooseNeedComponent implements OnInit {
 
   statusFilterCodes: string[] = ["requirement"];
 
-  tableDisplayedColumns: string[] = ['title', 'kind', 'status', 'link_cityplan', 'link_wwg', 'link_roadworkactivity', 'actions'];
+  tableDisplayedColumns: string[] = ['title', 'status', 'areaman', 'create_date', 'due_date', 'actions', 'link_cityplan', 'link_wwg', 'priority'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
+  private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
   private router: Router;
   private userService: UserService;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    roadWorkActivityService: RoadWorkActivityService, router: Router,
-      snckBar: MatSnackBar) {
+      roadWorkActivityService: RoadWorkActivityService, router: Router,
+      managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
+    this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.router = router;
     this.snckBar = snckBar;
@@ -91,6 +94,16 @@ export class ChooseNeedComponent implements OnInit {
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
           blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
           roadWorkNeed.geometry = blowUpPoly;
+          this.managementAreaService.getIntersectingManagementAreas(roadWorkNeed.geometry)
+          .subscribe({
+            next: (managementAreas) => {
+              if (roadWorkNeed && managementAreas && managementAreas.length !== 0) {
+                roadWorkNeed.properties.managementArea = managementAreas[0];
+              }
+            },
+            error: (error) => {
+            }
+          });
         }
 
         this.roadWorkNeedFeatures = roadWorkNeeds;
