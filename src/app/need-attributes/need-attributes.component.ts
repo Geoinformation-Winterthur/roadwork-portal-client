@@ -37,7 +37,6 @@ export class NeedAttributesComponent implements OnInit {
   finishLateTertial: number = 0;
 
   roadWorkNeedFeature?: RoadWorkNeedFeature;
-  managementArea?: ManagementArea;
   orderer: User = new User();
   ordererOrgUnitName: string = "";
   areaManagerName: string = "";
@@ -107,7 +106,7 @@ export class NeedAttributesComponent implements OnInit {
         if (idParamString == "new") {
           this.roadWorkNeedFeature = NeedAttributesComponent.
             _createNewRoadWorkNeedFeature(this.userService.getLocalUser());
-          this.managementArea = NeedAttributesComponent.
+          this.roadWorkNeedFeature.properties.managementArea = NeedAttributesComponent.
             _createNewManagementArea();
         } else {
 
@@ -135,8 +134,8 @@ export class NeedAttributesComponent implements OnInit {
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
                     .subscribe({
                       next: (managementAreas) => {
-                        if (managementAreas && managementAreas.length !== 0) {
-                          this.managementArea = managementAreas[0];
+                        if (this.roadWorkNeedFeature && managementAreas && managementAreas.length !== 0) {
+                          this.roadWorkNeedFeature.properties.managementArea = managementAreas[0];
                         }
                       },
                       error: (error) => {
@@ -283,7 +282,8 @@ export class NeedAttributesComponent implements OnInit {
                           this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 
-                        this.managementArea = managementAreas[0];
+                        if(this.roadWorkNeedFeature)
+                          this.roadWorkNeedFeature.properties.managementArea = managementAreas[0];
                         this.snckBar.open("Bedarf ist gespeichert", "", {
                           duration: 4000,
                         });
