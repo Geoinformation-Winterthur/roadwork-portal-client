@@ -13,6 +13,8 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { User } from 'src/model/user';
+import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
   selector: 'app-choose-need',
@@ -24,36 +26,60 @@ export class ChooseNeedComponent implements OnInit {
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
 
   filterPanelOpen: boolean = false;
-  showAsList: boolean = false;
 
   chosenNeedName: string = "";
   chosenNeedYearOptFrom?: number;
 
-  userService: UserService;
+  user: User = new User();
 
   statusFilterCodes: string[] = ["requirement"];
 
-  tableDisplayedColumns: string[] = ['title', 'kind', 'status', 'link_cityplan', 'link_wwg', 'link_roadworkactivity', 'actions'];
+  tableDisplayedColumns: string[] = ['title', 'status', 'areaman', 'create_date', 'due_date', 'actions', 'link_cityplan', 'link_wwg', 'priority'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
+  private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
-  private dialog: MatDialog;
   private router: Router;
+  private userService: UserService;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    roadWorkActivityService: RoadWorkActivityService, router: Router,
-      snckBar: MatSnackBar, dialog: MatDialog) {
+      roadWorkActivityService: RoadWorkActivityService, router: Router,
+      managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
+    this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.router = router;
     this.snckBar = snckBar;
-    this.dialog = dialog;
   }
 
   ngOnInit(): void {
     this.getNeedsWithFilter();
+
+    this.userService.getUser(this.userService.getLocalUser().mailAddress)
+    .subscribe({
+      next: (users) => {
+        if (users && users.length > 0 && users[0]) {
+          let user: User = users[0];
+          ErrorMessageEvaluation._evaluateErrorMessage(user);
+          if (user && user.errorMessage &&
+            user.errorMessage.trim().length !== 0) {
+            this.snckBar.open(user.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.user = user;
+          }
+        }
+      },
+      error: (error) => {
+        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+          duration: 4000
+        });
+      }
+    });
+
   }
 
   getNeedsWithFilter() {
@@ -69,6 +95,16 @@ export class ChooseNeedComponent implements OnInit {
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
           blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
           roadWorkNeed.geometry = blowUpPoly;
+          this.managementAreaService.getIntersectingManagementAreas(roadWorkNeed.geometry)
+          .subscribe({
+            next: (managementAreas) => {
+              if (roadWorkNeed && managementAreas && managementAreas.length !== 0) {
+                roadWorkNeed.properties.managementArea = managementAreas[0];
+              }
+            },
+            error: (error) => {
+            }
+          });
         }
 
         this.roadWorkNeedFeatures = roadWorkNeeds;

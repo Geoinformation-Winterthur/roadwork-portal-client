@@ -45,4 +45,6 @@ export class RoadWorkActivityProperties {
     dateOks: string = "";
     dateGlTba: Date = new Date(1, 0, 1);
     activityHistory: ActivityHistoryItem[] = [];
+    evaluation: number = 0;
+    evaluationSks: number = 0;
 }

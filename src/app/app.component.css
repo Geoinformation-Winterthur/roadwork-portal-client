@@ -36,6 +36,10 @@ mat-toolbar {
     background-color: rgb(236,236,234);
 }
 
+.chosen-menu {
+    background-color: rgb(255,25,0) !important;
+}
+
 mat-sidenav-container {
     position: absolute;
     width: 100%;
@@ -48,11 +52,13 @@ mat-sidenav-content {
 
 mat-nav-list {
     background-color: rgb(55,62,68);
-    color: white;
     padding: 1.5em;
 }
 mat-nav-list a {
     color: white;
+}
+mat-nav-list a:hover {
+    background-color: rgb(255,25,0);
 }
 
 @media print {
