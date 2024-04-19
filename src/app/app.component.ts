@@ -2,14 +2,13 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { CookieService } from 'ngx-cookie-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from '../services/user.service';
 import { environment } from 'src/environments/environment';
-import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { MatDrawerMode } from '@angular/material/sidenav';
 import { Title } from '@angular/platform-browser';
 
@@ -29,6 +28,7 @@ export class AppComponent {
   title: string = environment.title;
   shorttitle: string = environment.shorttitle;
   subtitle: string = environment.subtitle;
+  chosenMenu: string = "";
 
   userService: UserService;
 
@@ -37,13 +37,11 @@ export class AppComponent {
   private cookieService: CookieService;
   private snckBar: MatSnackBar;
 
-  private roadWorkNeedService: RoadWorkNeedService;
 
   constructor(cookieService: CookieService, snckBar: MatSnackBar, oMedia: MediaObserver,
-    roadWorkNeedService: RoadWorkNeedService, userService: UserService, titleService: Title) {
+    userService: UserService, titleService: Title) {
     titleService.setTitle(this.title);
     this.cookieService = cookieService;
-    this.roadWorkNeedService = roadWorkNeedService;
     this.userService = userService;
     this.snckBar = snckBar;
     this.mediaWatcher = oMedia.asObservable().subscribe((mChange: MediaChange[]) => {
@@ -72,7 +70,8 @@ export class AppComponent {
     this.userService.logout();
   }
 
-  public toggleSideNav(event: Event) {
+  public toggleSideNav(linkName: string) {
+    this.chosenMenu = linkName;
     if (!this.isMobilePlatform) {
       this.sideNavOpened = !this.sideNavOpened;
     }
