@@ -48,40 +48,40 @@
     <mat-sidenav-container>
         <mat-sidenav [(opened)]="sideNavOpened" #drawer [mode]="sideNavMode" role="navigation">
             <mat-nav-list>
-                <a mat-list-item routerLink='/' (click)="toggleSideNav($event)">
+                <a mat-list-item routerLink='/' (click)="toggleSideNav('welcome')" [class.chosen-menu]="chosenMenu == 'welcome'">
                     <mat-icon aria-label="Willkommen">speaker_notes</mat-icon>&nbsp;<span i18n>Willkommen</span>
                 </a>
                 <div *ngIf="isUserLoggedIn()">
-                    <a mat-list-item routerLink='/report' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('administrator')">
+                    <a mat-list-item routerLink='/report' (click)="toggleSideNav('report')"
+                            *ngIf="userService.hasUserAccess('administrator')" [class.chosen-menu]="chosenMenu == 'report'">
                         <mat-icon aria-label="Dashboard">analytics</mat-icon>&nbsp;<span i18n>Dashboard</span>
                     </a>
-                    <a mat-list-item routerLink='/needs' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('orderer')">
+                    <a mat-list-item routerLink='/needs' (click)="toggleSideNav('needs')"
+                            *ngIf="userService.hasUserAccess('orderer')" [class.chosen-menu]="chosenMenu == 'needs'">
                         <mat-icon aria-label="Bedarfe">tips_and_updates</mat-icon>&nbsp;<span i18n>Bedarfe</span>
                     </a>
-                    <a mat-list-item routerLink='/activities' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('trafficmanager')">
+                    <a mat-list-item routerLink='/activities' (click)="toggleSideNav('activities')"
+                            *ngIf="userService.hasUserAccess('trafficmanager')" [class.chosen-menu]="chosenMenu == 'activities'">
                         <mat-icon aria-label="Bauvorhaben">handyman</mat-icon>&nbsp;<span i18n>Bauvorhaben</span>
                     </a>
-                    <a mat-list-item routerLink='/events' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('eventmanager')">
+                    <a mat-list-item routerLink='/events' (click)="toggleSideNav('events')"
+                            *ngIf="userService.hasUserAccess('eventmanager')" [class.chosen-menu]="chosenMenu == 'events'">
                         <mat-icon aria-label="Events">stadium</mat-icon>&nbsp;<span i18n>Events</span>
                     </a>
-                    <a mat-list-item routerLink='/managementareas' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('territorymanager')">
+                    <a mat-list-item routerLink='/managementareas' (click)="toggleSideNav('managementareas')"
+                            *ngIf="userService.hasUserAccess('territorymanager')" [class.chosen-menu]="chosenMenu == 'managementareas'">
                         <mat-icon aria-label="Gebiete">push_pin</mat-icon>&nbsp;<span i18n>Gebiete</span>
                     </a>
-                    <a mat-list-item routerLink='/configuration' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('administrator')">
+                    <a mat-list-item routerLink='/configuration' (click)="toggleSideNav('configuration')"
+                            *ngIf="userService.hasUserAccess('administrator')" [class.chosen-menu]="chosenMenu == 'configuration'">
                         <mat-icon aria-label="Konfiguration">settings</mat-icon>&nbsp;<span i18n>Konfiguration</span>
                     </a>
-                    <a mat-list-item routerLink='/dataexport' (click)="toggleSideNav($event)"
-                            *ngIf="userService.hasUserAccess('administrator')">
+                    <a mat-list-item routerLink='/dataexport' (click)="toggleSideNav('dataexport')"
+                            *ngIf="userService.hasUserAccess('administrator')" [class.chosen-menu]="chosenMenu == 'dataexport'">
                         <mat-icon aria-label="Datenexport">system_update_alt</mat-icon>&nbsp;<span i18n>Datenexport</span>
                     </a>
                 </div>
-                <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="toggleSideNav($event)">
+                <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="toggleSideNav('imprint')">
                     <mat-icon aria-label="Impressum">star_border</mat-icon>&nbsp;<span i18n>Impressum</span>
                 </a>
             </mat-nav-list>
