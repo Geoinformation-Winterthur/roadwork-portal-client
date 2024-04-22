@@ -27,6 +27,8 @@ export class ErrorMessageDictionary {
              "Die Angabe der Art fehlt. Dies ist jedoch verpflichtend.",
              "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.",
              "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
-             "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde."
+             "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
+             "Änderung wurde nicht gespeichert, da der Baumassnahme kein Bedarf zugeordnet ist.",
+             "Löschen des Bedarfs nicht möglich, da ansonsten einer Baumassnahme keine Bedarfe mehr zugeordnet wären."
             ];
 }
