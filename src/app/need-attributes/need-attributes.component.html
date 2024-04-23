@@ -193,8 +193,14 @@
                                 </mat-checkbox>
                                 <mat-form-field>
                                     <input matInput type="number" [min]="getCurrentYear()"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.desiredYear"
-                                        placeholder="Umsetzungsjahr" (focusout)="update()" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
+                                        [(ngModel)]="roadWorkNeedFeature.properties.desiredYearFrom"
+                                        placeholder="Umsetzungsjahr von" (focusout)="update()" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
+                                                        || !roadWorkNeedFeature.properties.overarchingMeasure">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <input matInput type="number" [min]="getCurrentYear()"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.desiredYearTo"
+                                        placeholder="Umsetzungsjahr bis" (focusout)="update()" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
                                                         || !roadWorkNeedFeature.properties.overarchingMeasure">
                                 </mat-form-field>
                                 <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status.code"
