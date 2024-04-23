@@ -208,9 +208,6 @@
                                             Priorit&auml;t</mat-chip>
                                     </mat-chip-list>
                                 </div>
-                                <mat-form-field *ngIf="user.role.code === 'territorymanager'">
-                                    <input matInput type="text" placeholder="Status">
-                                </mat-form-field>
                             </div>
                             <button *ngIf="user.role.code === 'administrator' ||
                                         user.role.code === 'territorymanager'"

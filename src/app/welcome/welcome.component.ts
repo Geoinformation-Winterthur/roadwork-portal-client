@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
@@ -14,7 +14,8 @@ import { UserService } from 'src/services/user.service';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.css']
+  styleUrls: ['./welcome.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 /**
  * The WelcomeComponent is the component for the start
