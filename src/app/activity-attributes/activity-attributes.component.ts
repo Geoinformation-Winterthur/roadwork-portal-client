@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -22,12 +22,12 @@ import { CostType } from 'src/model/cost-type';
 import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
-import { OrganisationalUnit } from 'src/model/organisational-unit';
 
 @Component({
   selector: 'app-activity-attributes',
   templateUrl: './activity-attributes.component.html',
-  styleUrls: ['./activity-attributes.component.css']
+  styleUrls: ['./activity-attributes.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ActivityAttributesComponent implements OnInit {
 

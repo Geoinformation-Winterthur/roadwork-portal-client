@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -17,7 +17,8 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-event-attributes',
   templateUrl: './event-attributes.component.html',
-  styleUrls: ['./event-attributes.component.css']
+  styleUrls: ['./event-attributes.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EventAttributesComponent implements OnInit {
 
