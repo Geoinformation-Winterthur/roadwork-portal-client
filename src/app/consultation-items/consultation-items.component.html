@@ -33,8 +33,8 @@
         </p>
     </div>
 </div>
-<div *ngIf="roadworkActivityStatus ==='inconsult'">
-    <h2><span *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager')">Eigene </span>Eingaben zur Bedarfskl&auml;rung</h2>
+<div *ngIf="roadworkActivityStatus ==='inconsult' && user.role.code === 'orderer'">
+    <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
         <p>Bewertung des Bauvorhabens:<br>
             <mat-button-toggle-group [(ngModel)]="consultationInput.valuation" aria-label="Bewertung">
