@@ -32,6 +32,7 @@ export class RoadWorkNeedProperties {
     comment: string = "";
     url: string = "";
     overarchingMeasure: boolean = false;
-    desiredYear?: number;
+    desiredYearFrom?: number;
+    desiredYearTo?: number;
     managementArea?: ManagementArea;
 }

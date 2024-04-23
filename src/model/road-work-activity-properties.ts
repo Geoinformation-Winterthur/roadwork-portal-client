@@ -19,7 +19,8 @@ export class RoadWorkActivityProperties {
     type: string = "";
     projectType: string = "";
     overarchingMeasure: boolean = false;
-    desiredYear: number = -1;
+    desiredYearFrom: number = -1;
+    desiredYearTo: number = -1;
     prestudy: boolean = false;
     created: Date = new Date(1,0,1);
     lastModified: Date = new Date(1, 0, 1);
