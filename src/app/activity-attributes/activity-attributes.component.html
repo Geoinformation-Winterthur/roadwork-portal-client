@@ -12,8 +12,7 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div>
-                    <button mat-button
-                        style="margin: 1em;color: rgb(54, 54, 54);background-color: rgb(236,236,234);"
+                    <button mat-button style="margin: 1em;color: rgb(54, 54, 54);background-color: rgb(236,236,234);"
                         *ngIf="!roadWorkActivityFeature.properties.uuid" (click)="add()">
                         BAUVORHABEN ER&Ouml;FFNEN
                     </button>
@@ -37,7 +36,7 @@
                             </p>
                             <p>Projektnummer:
                                 <b
-                                *ngIf="roadWorkActivityFeature.properties.projectNo">{{roadWorkActivityFeature.properties.projectNo}}</b>
+                                    *ngIf="roadWorkActivityFeature.properties.projectNo">{{roadWorkActivityFeature.properties.projectNo}}</b>
                                 <b *ngIf="!roadWorkActivityFeature.properties.projectNo">keine Nummer</b>
                             </p>
                             <div style="display:flex;flex-direction:column;">
@@ -52,15 +51,13 @@
                                     Bauvorhabens eine Bezeichnung automatisch aus der geographischen Lage ermittelt.
                                 </div>
                                 <mat-form-field>
-                                    <input [(ngModel)]="roadWorkActivityFeature.properties.section"
-                                        matInput type="text" maxlength="80" placeholder="Abschnitt"
-                                        (focusout)="update()"
+                                    <input [(ngModel)]="roadWorkActivityFeature.properties.section" matInput type="text"
+                                        maxlength="80" placeholder="Abschnitt" (focusout)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <input [(ngModel)]="roadWorkActivityFeature.properties.type"
-                                        matInput type="text" maxlength="80" placeholder="Art"
-                                        (focusout)="update()"
+                                    <input [(ngModel)]="roadWorkActivityFeature.properties.type" matInput type="text"
+                                        maxlength="80" placeholder="Art" (focusout)="update()"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
@@ -75,8 +72,8 @@
                                 <mat-form-field>
                                     <mat-label>Bemerkung</mat-label>
                                     <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkActivityFeature.properties.comment"
-                                        (focusout)="update()" placeholder="Bemerkung..."
+                                        [(ngModel)]="roadWorkActivityFeature.properties.comment" (focusout)="update()"
+                                        placeholder="Bemerkung..."
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                 </mat-form-field>
                                 <mat-form-field>
@@ -199,8 +196,9 @@
                                     <h4>Vernehmlassungen:</h4>
                                     <div style="margin-top: 1em;">
                                         F&auml;lligkeit:
-                                            <mat-chip
-                                                style="background-color: rgb(255, 109, 109);">{{roadWorkActivityFeature.properties.consultDue | date: 'dd.MM.yyyy'}}</mat-chip>
+                                        <mat-chip
+                                            style="background-color: rgb(255, 109, 109);">{{roadWorkActivityFeature.properties.consultDue
+                                            | date: 'dd.MM.yyyy'}}</mat-chip>
                                     </div>
                                     <button
                                         style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
@@ -362,9 +360,20 @@
                                 userService.getLocalUser().role.code === 'territorymanager' || 
                                 userService.getLocalUser().role.code === 'orderer') && 
                             (roadWorkActivityFeature.properties.status.code !== 'review')" label="Vernehmlassung">
-                <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
-                    [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
-                </app-consultation-items>
+                <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
+                    <mat-tab label="Bedarfskl&auml;rung">
+                        <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
+                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
+                        </app-consultation-items>
+                    </mat-tab>
+                    <mat-tab label="Stellungnahme">
+                        <app-reporting-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
+                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
+                        </app-reporting-items>
+                    </mat-tab>
+                    <mat-tab label="Infoversand">
+                    </mat-tab>
+                </mat-tab-group>
             </mat-tab>
             <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Historie">
                 <app-activity-history

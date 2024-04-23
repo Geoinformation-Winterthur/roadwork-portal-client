@@ -1,43 +1,8 @@
 <div *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager')">
-    <h2>Bisherige Eingaben aus der Bedarfskl&auml;rung</h2>
-    <div *ngIf="!consultationInputsFromInConsult || consultationInputsFromInConsult.length == 0">
+    <div *ngIf="!consultationInputsFromInConsult || consultationInputsFromInConsult.length == 0" style="margin: 2em;">
         Bisher keine Eingaben aus der Bedarfskl&auml;rung
     </div>
     <div *ngFor="let consultationInput of consultationInputsFromInConsult" style="margin: 2em;">
-        <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
-        ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
-        <i>{{consultationInput.inputText}}</i>
-        <p style="margin-left: 2em;">Bewertung des Bauvorhabens:<br>
-            <mat-button-toggle-group [(ngModel)]="consultationInput.valuation" aria-label="Bewertung des Bauvorhabens"
-                disabled>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 0" value="0"
-                    style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 0" value="0"
-                    style="background-color: rgb(173, 255, 197);">0</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 1" value="1"
-                    style="background-color: rgb(207, 255, 205); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 1" value="1"
-                    style="background-color: rgb(207, 255, 205);">1</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 2" value="2"
-                    style="background-color: rgb(224, 248, 196); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 2" value="2"
-                    style="background-color: rgb(224, 248, 196);">2</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 3" value="3"
-                    style="background-color: rgb(252, 253, 203); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 3" value="3"
-                    style="background-color: rgb(252, 253, 203);">3</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 4" value="4"
-                    style="background-color: rgb(255, 234, 217); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
-                <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 4" value="4"
-                    style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
-            </mat-button-toggle-group>
-        </p>
-    </div>
-    <h2>Bisherige Eingaben aus der Stellungnahme</h2>
-    <div *ngIf="!consultationInputsFromReporting || consultationInputsFromReporting.length == 0">
-        Bisher keine Eingaben aus der Stellungnahme
-    </div>
-    <div *ngFor="let consultationInput of consultationInputsFromReporting" style="margin: 2em;">
         <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
         ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
         <i>{{consultationInput.inputText}}</i>
@@ -110,25 +75,6 @@
         </mat-form-field>
         <button mat-button (click)="sendInConsult()" [disabled]="roadworkActivityStatus !=='inconsult'"
             style="margin: 1em;background-color: rgb(236,236,234);">
-            SENDEN
-        </button>
-    </div>
-</div>
-<div *ngIf="roadworkActivityStatus ==='reporting'">
-    <h2><span *ngIf="(user.role.code === 'administrator' || user.role.code === 'territorymanager')">Eigene </span>Eingaben zur Stellungnahme</h2>
-    <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
-        <p>
-            <mat-checkbox [(ngModel)]="consultationInput.decline" style="margin:10px;">
-                Keine aktive R&uuml;ckmeldung
-            </mat-checkbox>
-        </p>
-        <mat-form-field style="width: 100%; margin-top: 2em;">
-            <mat-label>R&uuml;ckmeldung</mat-label>
-            <textarea matInput [(ngModel)]="consultationInput.inputText" maxlength="40000" placeholder="R&uuml;ckmeldung..."
-                [disabled]="consultationInput.decline"></textarea>
-        </mat-form-field>
-        <button mat-button (click)="sendReporting()"
-            style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
             SENDEN
         </button>
     </div>

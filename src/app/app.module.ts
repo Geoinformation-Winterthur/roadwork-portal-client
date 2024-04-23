@@ -75,6 +75,7 @@ import { DataexportComponent } from './dataexport/dataexport.component';
 import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dialog.component';
 import { ActivityHistoryComponent } from './activity-history/activity-history.component';
 import { ConsultationItemsComponent } from './consultation-items/consultation-items.component';
+import { ReportingItemsComponent } from './reporting-items/reporting-items.component';
  
  
  export function getToken(){
@@ -118,7 +119,8 @@ import { ConsultationItemsComponent } from './consultation-items/consultation-it
      DataexportComponent,
      DeleteNeedDialogComponent,
      ActivityHistoryComponent,
-     ConsultationItemsComponent
+     ConsultationItemsComponent,
+     ReportingItemsComponent
    ],
    imports: [
      BrowserModule,

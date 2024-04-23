@@ -8,11 +8,11 @@ import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { UserService } from 'src/services/user.service';
 
 @Component({
-  selector: 'app-consultation-items',
-  templateUrl: './consultation-items.component.html',
-  styleUrls: ['./consultation-items.component.css']
+  selector: 'app-reporting-items',
+  templateUrl: './reporting-items.component.html',
+  styleUrls: ['./reporting-items.component.css']
 })
-export class ConsultationItemsComponent implements OnInit {
+export class ReportingItemsComponent implements OnInit {
 
   @Input()
   roadworkActivityUuid: string = "";
@@ -22,7 +22,7 @@ export class ConsultationItemsComponent implements OnInit {
 
   consultationInput: ConsultationInput = new ConsultationInput();
 
-  consultationInputsFromInConsult: ConsultationInput[] = [];
+  consultationInputsFromReporting: ConsultationInput[] = [];
 
   user: User;
 
@@ -48,8 +48,8 @@ export class ConsultationItemsComponent implements OnInit {
       .subscribe({
         next: (consultationInputs) => {
           for (let consultationInput of consultationInputs) {
-            if (consultationInput.feedbackPhase === 'inconsult') {
-              this.consultationInputsFromInConsult.push(consultationInput);
+            if (consultationInput.feedbackPhase === 'reporting') {
+              this.consultationInputsFromReporting.push(consultationInput);
             }
           }
 
@@ -74,7 +74,7 @@ export class ConsultationItemsComponent implements OnInit {
       });
   }
 
-  sendInConsult() {
+  sendReporting() {
     if (this.consultationInput.uuid === "") {
       this.consultationService.addConsultationInput(this.roadworkActivityUuid,
         this.consultationInput)
@@ -96,7 +96,7 @@ export class ConsultationItemsComponent implements OnInit {
               consultationInputObj.decline = consultationInput.decline;
               consultationInputObj.valuation = consultationInput.valuation;
 
-              this.consultationInputsFromInConsult.push(consultationInputObj);
+              this.consultationInputsFromReporting.push(consultationInputObj);
             }
           },
           error: (error) => {
@@ -114,7 +114,7 @@ export class ConsultationItemsComponent implements OnInit {
                   duration: 4000
                 });
               }
-              let consultationInputObj: ConsultationInput  = new ConsultationInput();
+              let consultationInputObj: ConsultationInput = new ConsultationInput();
               consultationInputObj.uuid = "" + consultationInput.uuid;
               consultationInputObj.inputText = "" + consultationInput.inputText;
               consultationInputObj.inputBy = consultationInput.inputBy;
@@ -124,16 +124,16 @@ export class ConsultationItemsComponent implements OnInit {
               consultationInputObj.valuation = consultationInput.valuation;
 
               let count: number = 0;
-              for(let consultationInputElt of this.consultationInputsFromInConsult){
-                if(consultationInputElt.uuid === consultationInputObj.uuid){
+              for (let consultationInputElt of this.consultationInputsFromReporting) {
+                if (consultationInputElt.uuid === consultationInputObj.uuid) {
                   break;
                 }
                 count++;
               }
-              let consultationInputsFromInConsultCopy = this.consultationInputsFromInConsult.slice();
-              consultationInputsFromInConsultCopy.splice(count, 1);
-              consultationInputsFromInConsultCopy.push(consultationInputObj);
-              this.consultationInputsFromInConsult = consultationInputsFromInConsultCopy;
+              let consultationInputsFromReportingCopy = this.consultationInputsFromReporting.slice();
+              consultationInputsFromReportingCopy.splice(count, 1);
+              consultationInputsFromReportingCopy.push(consultationInputObj);
+              this.consultationInputsFromReporting = consultationInputsFromReportingCopy;
             }
           },
           error: (error) => {
