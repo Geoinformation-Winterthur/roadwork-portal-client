@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { ConsultationInput } from 'src/model/consultation-input';
@@ -58,8 +59,9 @@ export class ConsultationItemsComponent implements OnInit {
               consultationInput.feedbackPhase === this.roadworkActivityStatus) {
               this.consultationInput = new ConsultationInput();
               this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
               this.consultationInput.inputBy = consultationInput.inputBy;
+              this.consultationInput.managerFeedback = "" + consultationInput.managerFeedback;
               this.consultationInput.lastEdit = consultationInput.lastEdit;
               this.consultationInput.decline = consultationInput.decline;
               this.consultationInput.valuation = consultationInput.valuation;
@@ -89,8 +91,9 @@ export class ConsultationItemsComponent implements OnInit {
               }
               let consultationInputObj: ConsultationInput = new ConsultationInput();
               consultationInputObj.uuid = "" + consultationInput.uuid;
-              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.ordererFeedback = "" + consultationInput.ordererFeedback;
               consultationInputObj.inputBy = consultationInput.inputBy;
+              consultationInputObj.managerFeedback = "" + consultationInput.managerFeedback;
               consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
               consultationInputObj.lastEdit = consultationInput.lastEdit;
               consultationInputObj.decline = consultationInput.decline;
@@ -113,33 +116,41 @@ export class ConsultationItemsComponent implements OnInit {
                 this.snckBar.open(consultationInput.errorMessage, "", {
                   duration: 4000
                 });
+              } else {
+                this.snckBar.open("Rückmeldung gespeichert", "", {
+                  duration: 4000
+                });
               }
-              let consultationInputObj: ConsultationInput  = new ConsultationInput();
-              consultationInputObj.uuid = "" + consultationInput.uuid;
-              consultationInputObj.inputText = "" + consultationInput.inputText;
-              consultationInputObj.inputBy = consultationInput.inputBy;
-              consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
-              consultationInputObj.lastEdit = consultationInput.lastEdit;
-              consultationInputObj.decline = consultationInput.decline;
-              consultationInputObj.valuation = consultationInput.valuation;
-
-              let count: number = 0;
-              for(let consultationInputElt of this.consultationInputsFromInConsult){
-                if(consultationInputElt.uuid === consultationInputObj.uuid){
-                  break;
-                }
-                count++;
-              }
-              let consultationInputsFromInConsultCopy = this.consultationInputsFromInConsult.slice();
-              consultationInputsFromInConsultCopy.splice(count, 1);
-              consultationInputsFromInConsultCopy.push(consultationInputObj);
-              this.consultationInputsFromInConsult = consultationInputsFromInConsultCopy;
             }
           },
           error: (error) => {
           }
         });
     }
+  }
+
+  updateComment(consultationInput: ConsultationInput) {
+    this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
+      consultationInput)
+      .subscribe({
+        next: (consultationInput) => {
+          if (consultationInput) {
+            ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
+            if (consultationInput.errorMessage.trim().length !== 0) {
+              this.snckBar.open(consultationInput.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.snckBar.open("Rückmeldung gespeichert", "", {
+                duration: 4000
+              });
+            }
+          }
+        },
+        error: (error) => {
+        }
+      });
+
   }
 
 }
