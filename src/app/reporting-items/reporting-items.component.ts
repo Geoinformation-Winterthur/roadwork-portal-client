@@ -58,7 +58,8 @@ export class ReportingItemsComponent implements OnInit {
               consultationInput.feedbackPhase === this.roadworkActivityStatus) {
               this.consultationInput = new ConsultationInput();
               this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.inputText = "" + consultationInput.inputText;
+              this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
+              this.consultationInput.managerFeedback = "" + consultationInput.managerFeedback;
               this.consultationInput.inputBy = consultationInput.inputBy;
               this.consultationInput.lastEdit = consultationInput.lastEdit;
               this.consultationInput.decline = consultationInput.decline;
@@ -89,7 +90,8 @@ export class ReportingItemsComponent implements OnInit {
               }
               let consultationInputObj: ConsultationInput = new ConsultationInput();
               consultationInputObj.uuid = "" + consultationInput.uuid;
-              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.ordererFeedback = "" + consultationInput.ordererFeedback;
+              consultationInputObj.managerFeedback = "" + consultationInput.managerFeedback;
               consultationInputObj.inputBy = consultationInput.inputBy;
               consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
               consultationInputObj.lastEdit = consultationInput.lastEdit;
@@ -116,7 +118,8 @@ export class ReportingItemsComponent implements OnInit {
               }
               let consultationInputObj: ConsultationInput = new ConsultationInput();
               consultationInputObj.uuid = "" + consultationInput.uuid;
-              consultationInputObj.inputText = "" + consultationInput.inputText;
+              consultationInputObj.ordererFeedback = "" + consultationInput.ordererFeedback;
+              consultationInputObj.managerFeedback = "" + consultationInput.managerFeedback;
               consultationInputObj.inputBy = consultationInput.inputBy;
               consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
               consultationInputObj.lastEdit = consultationInput.lastEdit;

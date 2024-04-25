@@ -5,7 +5,7 @@
     <div *ngFor="let consultationInput of consultationInputsFromReporting" style="margin: 2em;">
         <b>{{consultationInput.inputBy.firstName}} {{consultationInput.inputBy.lastName}}</b>
         ({{consultationInput.lastEdit | date:'dd.MM.yyyy'}}):
-        <i>{{consultationInput.inputText}}</i>
+        <i>{{consultationInput.ordererFeedback}}</i>
         <p style="margin-left: 2em;">Bewertung des Bauvorhabens:<br>
             <mat-button-toggle-group [(ngModel)]="consultationInput.valuation" aria-label="Bewertung des Bauvorhabens"
                 disabled>
@@ -44,7 +44,7 @@
         </p>
         <mat-form-field style="width: 100%; margin-top: 2em;">
             <mat-label>R&uuml;ckmeldung</mat-label>
-            <textarea matInput [(ngModel)]="consultationInput.inputText" maxlength="40000" placeholder="R&uuml;ckmeldung..."
+            <textarea matInput [(ngModel)]="consultationInput.ordererFeedback" maxlength="40000" placeholder="R&uuml;ckmeldung..."
                 [disabled]="consultationInput.decline"></textarea>
         </mat-form-field>
         <button mat-button (click)="sendReporting()"
