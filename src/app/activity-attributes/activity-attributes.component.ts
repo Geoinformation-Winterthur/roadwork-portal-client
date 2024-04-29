@@ -51,8 +51,6 @@ export class ActivityAttributesComponent implements OnInit {
   costTypesControl: FormControl = new FormControl();
   roadWorkActivityStatusEnumControl: FormControl = new FormControl();
   roadWorkActivityProjectTypeEnumControl: FormControl = new FormControl();
-  finishFromControl: FormControl = new FormControl();
-  finishToControl: FormControl = new FormControl();
   dateSksControl: FormControl = new FormControl();
   dateKapControl: FormControl = new FormControl();
   dateOksControl: FormControl = new FormControl();
@@ -138,6 +136,7 @@ export class ActivityAttributesComponent implements OnInit {
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
           this.roadWorkActivityFeature.properties.status.code = "review";
           this.roadWorkActivityFeature.properties.finishFrom = new Date();
+          this.roadWorkActivityFeature.properties.isPrivate = true;
           let plus50Years: Date = new Date();
           plus50Years.setFullYear(plus50Years.getFullYear() + 50);
           this.roadWorkActivityFeature.properties.finishTo = plus50Years;
@@ -213,6 +212,26 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  publish() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.isPrivate = false;
+      if (this.roadWorkActivityFeature.properties.uuid)
+        this.update();
+      else
+        this.add();
+    }
+  }
+
+  savePrivate() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.isPrivate = true;
+      if (this.roadWorkActivityFeature.properties.uuid)
+        this.update();
+      else
+        this.add();
+    }
+  }
+
   add() {
     this.roadWorkActivityService.addRoadworkActivity(this.roadWorkActivityFeature)
       .subscribe({
@@ -220,6 +239,7 @@ export class ActivityAttributesComponent implements OnInit {
           if (this.roadWorkActivityFeature) {
             ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
             if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+              this.roadWorkActivityFeature.properties.isPrivate = true;
               this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
                 duration: 4000
               });
@@ -232,14 +252,17 @@ export class ActivityAttributesComponent implements OnInit {
           }
         },
         error: (error) => {
+          this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
+            duration: 4000,
+          });
+          if (this.roadWorkActivityFeature)
+            this.roadWorkActivityFeature.properties.isPrivate = true;
         }
       });
   }
 
   update() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-      this.roadWorkActivityFeature.properties.finishFrom = this.finishFromControl.value;
-      this.roadWorkActivityFeature.properties.finishTo = this.finishToControl.value;
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
           next: (managementAreas) => {
@@ -267,6 +290,9 @@ export class ActivityAttributesComponent implements OnInit {
                     }
                   },
                   error: (error) => {
+                    this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
+                      duration: 4000
+                    });
                   }
                 });
             }

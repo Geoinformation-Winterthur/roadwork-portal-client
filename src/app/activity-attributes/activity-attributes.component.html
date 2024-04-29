@@ -4,22 +4,34 @@
     </div>
     <div *ngIf="roadWorkActivityFeature !== undefined">
         <h1 *ngIf="roadWorkActivityFeature.properties.uuid!==''">Bauvorhaben <span style="font-weight: normal;"> / {{
-                roadWorkActivityFeature.properties.name }}</span></h1>
-        <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neues Bauvorhaben</h1>
+                roadWorkActivityFeature.properties.name }}</span><span
+                *ngIf="roadWorkActivityFeature.properties.isPrivate"
+                style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
+        </h1>
+        <h1 *ngIf="roadWorkActivityFeature.properties.uuid===''">Neues Bauvorhaben<span
+                *ngIf="roadWorkActivityFeature.properties.isPrivate"
+                style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
+        </h1>
         <mat-tab-group>
             <mat-tab label="Perimeter">
                 <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"></app-edit-activity-map>
             </mat-tab>
             <mat-tab label="Stammdaten">
+                <div style="text-align: right;">
+                    <button mat-button
+                        *ngIf="!roadWorkActivityFeature.properties.uuid && roadWorkActivityFeature.properties.isPrivate"
+                        (click)="savePrivate()" style="margin: 1em;background-color: rgb(236,236,234);">
+                        F&Uuml;R MICH SPEICHERN
+                    </button>
+                    <button mat-button *ngIf="roadWorkActivityFeature.properties.isPrivate" (click)="publish()"
+                        style="margin: 1em;background-color: rgb(236,236,234);">
+                        <mat-icon
+                            aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BAUVORHABEN
+                        PUBLIZIEREN
+                    </button>
+                </div>
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="&Uuml;bersicht">
-                        <div>
-                            <button mat-button
-                                style="margin: 1em;color: rgb(54, 54, 54);background-color: rgb(236,236,234);"
-                                *ngIf="!roadWorkActivityFeature.properties.uuid" (click)="add()">
-                                BAUVORHABEN ER&Ouml;FFNEN
-                            </button>
-                        </div>
                         <div fxLayout="row wrap padding">
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
@@ -370,7 +382,7 @@
                             </mat-card>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Beteiligte">                        
+                    <mat-tab label="Beteiligte">
                     </mat-tab>
                 </mat-tab-group>
             </mat-tab>
