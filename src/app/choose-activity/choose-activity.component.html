@@ -36,23 +36,23 @@
             </mat-card-content>
           </mat-card>
           <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-          fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-          <mat-card-content>
-            <div style="display:flex;flex-direction:column;">
-              <mat-form-field appearance="fill">
-                <mat-label>Status</mat-label>
-                <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
-                  <mat-option value="review">In Pr&uuml;fung (Phase 12)</mat-option>
-                  <mat-option value="inconsult">In Bedarfskl&auml;rung (Phase 12)</mat-option>
-                  <mat-option value="verified">verfiziert (Phase 12)</mat-option>
-                  <mat-option value="reporting">In Stellungnahme (Phase 12)</mat-option>
-                  <mat-option value="coordinated">koordiniert (Phase 12)</mat-option>
-                  <mat-option value="suspended">sistiert</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </mat-card-content>
-        </mat-card>
+            fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+            <mat-card-content>
+              <div style="display:flex;flex-direction:column;">
+                <mat-form-field appearance="fill">
+                  <mat-label>Status</mat-label>
+                  <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
+                    <mat-option value="review">In Pr&uuml;fung (Phase 12)</mat-option>
+                    <mat-option value="inconsult">In Bedarfskl&auml;rung (Phase 12)</mat-option>
+                    <mat-option value="verified">verfiziert (Phase 12)</mat-option>
+                    <mat-option value="reporting">In Stellungnahme (Phase 12)</mat-option>
+                    <mat-option value="coordinated">koordiniert (Phase 12)</mat-option>
+                    <mat-option value="suspended">sistiert</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
       </mat-expansion-panel>
     </mat-accordion>
@@ -98,8 +98,10 @@
           </mat-chip>
         </mat-chip-list>
         <br />
+        <span *ngIf="roadWorkActivity.properties.isPrivate"
+          style="color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin-top: 0.5em;">ENTWURF</span>
       </mat-card-content>
-      <mat-divider></mat-divider>
+      <mat-divider style="margin-top: 1em;"></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
           [routerLink]="['/activities', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
@@ -134,14 +136,14 @@
         <th mat-header-cell *matHeaderCellDef> Gebietsmanagement </th>
         <td mat-cell *matCellDef="let roadWorkActivity"><span
             *ngIf="roadWorkActivity.properties.areaManager">{{roadWorkActivity.properties.areaManager.firstName}}
-              {{roadWorkActivity.properties.areaManager.lastName}}</span> </td>
+            {{roadWorkActivity.properties.areaManager.lastName}}</span> </td>
       </ng-container>
 
       <ng-container matColumnDef="project_man">
         <th mat-header-cell *matHeaderCellDef> Projektleitung </th>
         <td mat-cell *matCellDef="let roadWorkActivity"><span
             *ngIf="roadWorkActivity.properties.projectManager">{{roadWorkActivity.properties.projectManager.firstName}}
-              {{roadWorkActivity.properties.projectManager.lastName}}</span> </td>
+            {{roadWorkActivity.properties.projectManager.lastName}}</span> </td>
       </ng-container>
 
       <ng-container matColumnDef="lead">
@@ -152,14 +154,14 @@
 
       <ng-container matColumnDef="realisation_date">
         <th mat-header-cell *matHeaderCellDef> Realisierung (Grobplanung) </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"><span
-            *ngIf="roadWorkActivity.properties.finishTo">{{ roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}</span> </td>
+        <td mat-cell *matCellDef="let roadWorkActivity"><span *ngIf="roadWorkActivity.properties.finishTo">{{
+            roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}</span> </td>
       </ng-container>
 
       <ng-container matColumnDef="due_date">
         <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"><span
-            *ngIf="roadWorkActivity.properties.finishTo">{{ roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}</span> </td>
+        <td mat-cell *matCellDef="let roadWorkActivity"><span *ngIf="roadWorkActivity.properties.finishTo">{{
+            roadWorkActivity.properties.finishTo | date:"dd.MM.yyyy" }}</span> </td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
