@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  title: "Koordinationstool",
-  shorttitle: "KDT",
-  subtitle: "Winterthur",
+  title: "WiKiS",
+  shorttitle: "WiKis",
+  subtitle: "Koordination Infrastruktur Strasse",
   apiDomain: "stadtplan.winterthur.ch/civil-engineering/roadworks-services",
   apiUrl: "https://stadtplan.winterthur.ch/civil-engineering/roadworks-services",
   roadworksPortalToken: "roadworks.token",
