@@ -310,6 +310,7 @@ export class NeedAttributesComponent implements OnInit {
       roadWorkActivity.properties.costsType.code = "valuation";
       roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
       roadWorkActivity.properties.finishTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
+      roadWorkActivity.properties.isPrivate = true;
 
       this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
         .subscribe({

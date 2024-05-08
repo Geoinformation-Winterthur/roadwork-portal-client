@@ -115,33 +115,4 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
-  createNewActivityFromNeed(roadWorkNeed: RoadWorkNeedFeature) {
-    let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
-    roadWorkActivity.geometry = roadWorkNeed.geometry;
-    roadWorkActivity.properties.name = roadWorkNeed.properties.name;
-    roadWorkActivity.properties.roadWorkNeedsUuids.push(roadWorkNeed.properties.uuid);
-    roadWorkActivity.properties.costsType.code = "valuation";
-    roadWorkActivity.properties.costs = roadWorkNeed.properties.costs;
-    roadWorkActivity.properties.finishTo = roadWorkNeed.properties.finishOptimumTo;
-
-    this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
-      .subscribe({
-        next: (roadWorkActivityFeature) => {
-          ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
-          if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
-            this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
-              duration: 4000
-            });
-          } else {
-            this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
-            this.snckBar.open("Vorhaben wurde erstellt", "", {
-              duration: 4000,
-            });
-          }
-        },
-        error: (error) => {
-        }
-      });
-  }
-
 }
