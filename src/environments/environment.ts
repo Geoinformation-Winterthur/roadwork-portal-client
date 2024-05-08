@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  title: "Koordinationstool (DEV)",
-  shorttitle: "KDTDEV",
-  subtitle: "Winterthur",
+  title: "WiKiS (DEV)",
+  shorttitle: "WiKiS (DEV)",
+  subtitle: "Koordination Infrastruktur Strasse",
   apiDomain: "localhost:7295",
   apiUrl: "https://localhost:7295",
   roadworksPortalToken: "roadworks.token.test",
