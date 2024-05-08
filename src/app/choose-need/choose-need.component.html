@@ -96,11 +96,6 @@
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
           [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
-        <button *ngIf="!roadWorkNeed.properties.roadWorkActivityUuid &&
-          (user.role.code === 'administrator' || user.role.code === 'territorymanager')
-          && !roadWorkNeed.properties.isPrivate" style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
-          (click)="createNewActivityFromNeed(roadWorkNeed)"><mat-icon
-            aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; &Uuml;BERNEHMEN</button>
         <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" style="padding-top: 1em;padding-bottom: 1em;">
           <mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp;<a
             routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zum
