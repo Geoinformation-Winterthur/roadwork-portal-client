@@ -94,12 +94,11 @@ export class EditActivityMapComponent implements OnInit {
 
     let roadWorkActivityLayerStyle: Style = new Style({
       fill: new Fill({
-        color: 'rgba(138, 43, 226,0.4)'
+        color: 'rgba(149, 35, 210,0.4)'
       }),
       stroke: new Stroke({
-        color: 'rgba(138, 43, 226,1.0)',
-        width: 2,
-        lineDash: [6, 6]
+        color: 'rgba(149, 35, 210,1.0)',
+        width: 2
       })
     });
 
@@ -111,12 +110,10 @@ export class EditActivityMapComponent implements OnInit {
 
     function roadWorkNeedLayerStyleFunc(feature: any, resolution: any) {
       let roadWorkNeedLayerStyle: Style = new Style({
-        fill: new Fill({
-          color: feature.get('assignedneed') ? "rgba(128, 255, 155,0.4)" : "rgba(160, 10, 10,0.4)"
-        }),
         stroke: new Stroke({
-          color: feature.get('assignedneed') ? "rgba(128, 255, 155,1.0)" : "rgba(160, 10, 10,1.0)",
+          color: "rgba(61, 195, 244, 1.0)",
           width: 2,
+          lineDash: feature.get('status') === "requirement" ? [6, 6] : []
         })
       });
       return [roadWorkNeedLayerStyle];
@@ -310,11 +307,8 @@ export class EditActivityMapComponent implements OnInit {
         geometry: needPoly
       });
 
-      if (roadWorkNeedFeature.properties.activityRelationType === 'assignedneed') {
-        needFeature.set("assignedneed", true);
-      } else {
-        needFeature.set("assignedneed", false);
-      }
+      needFeature.set("status", roadWorkNeedFeature.properties.status.code);
+
       this.roadWorkNeedSource.addFeature(needFeature);
     }
     this.roadWorkNeedSource.changed();
