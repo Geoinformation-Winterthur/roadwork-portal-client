@@ -92,24 +92,35 @@ export class WelcomeComponent implements OnInit {
     }
   }
 
-  update() {
-    this.userService.updateUser(this.user)
-      .subscribe({
-        next: (errorMessage) => {
+  update(changePassphrase: boolean = false) {
+    this.user.passPhrase = this.user.passPhrase.trim();
+    if (changePassphrase && this.user.passPhrase.length == 0) {
+      this.snckBar.open("Bitte Passphrase eingeben", "", {
+        duration: 4000
+      });
+    } else {
+      this.userService.updateUser(this.user, changePassphrase)
+        .subscribe({
+          next: (errorMessage) => {
             ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
             if (errorMessage && errorMessage.errorMessage &&
               errorMessage.errorMessage.trim().length !== 0) {
               this.snckBar.open(errorMessage.errorMessage, "", {
                 duration: 4000
               });
-            }          
-        },
-        error: (error) => {
-          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
-            duration: 4000
-          });
-        }
-      });
+            } else {
+              this.snckBar.open("Einstellungen erfolgreich geändert", "", {
+                duration: 4000
+              });
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+              duration: 4000
+            });
+          }
+        });
+    }
   }
 
 
