@@ -271,8 +271,8 @@
                                         </p>
                                         <p>Beteiligte:
                                             <b>
-                                                <span *ngFor="let involvedUser of involvedUsers">
-                                                    {{involvedUser.organisationalUnit.abbreviation}},
+                                                <span *ngFor="let involvedOrg of involvedOrgs">
+                                                    {{involvedOrg.abbreviation}},
                                                 </span>
                                             </b>
                                         </p>
@@ -384,7 +384,34 @@
                     </mat-tab>
                     <mat-tab label="Beteiligte">
                         <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
+                            <div fxLayout="row wrap padding">
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="50" fxFlex.md="50" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-content style="min-width: 380px;">
+                                        Auswahl Organisationseinheit:
+                                        <mat-selection-list [(ngModel)]="chosenOrganisationUuid"
+                                                    (click)="selectUsersOfOrganisation()" [multiple]="false">
+                                            <mat-list-option *ngFor="let availableOrganisation of availableOrganisations"
+                                                [value]="availableOrganisation.uuid">
+                                                {{availableOrganisation.name}}
+                                            </mat-list-option>
+                                        </mat-selection-list>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="50" fxFlex.md="50" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-content style="min-width: 380px;">
+                                        Auswahl Beteiligte:
+                                        <mat-selection-list [(ngModel)]="selectedUsersOfChosenOrganisation"
+                                                (click)="changeInvolvedUsers()">
+                                            <mat-list-option *ngFor="let userOfChosenOrganisation of usersOfChosenOrganisation"
+                                                [value]="userOfChosenOrganisation" [selected]="isInvolvedUserSelected(userOfChosenOrganisation.uuid)">
+                                                {{userOfChosenOrganisation.firstName}} {{userOfChosenOrganisation.lastName}}
+                                            </mat-list-option>
+                                        </mat-selection-list>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
                         </div>
                     </mat-tab>
                     <mat-tab label="Termine">

@@ -49,4 +49,5 @@ export class RoadWorkActivityProperties {
     evaluation: number = 0;
     evaluationSks: number = 0;
     isPrivate: boolean = false;
+    involvedUsers: User[] = [];
 }
