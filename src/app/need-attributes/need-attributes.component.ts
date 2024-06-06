@@ -309,7 +309,10 @@ export class NeedAttributesComponent implements OnInit {
       roadWorkActivity.properties.description = this.roadWorkNeedFeature.properties.description;
       roadWorkActivity.properties.comment = this.roadWorkNeedFeature.properties.comment;
       roadWorkActivity.properties.costsType.code = "valuation";
-      roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
+      if(this.roadWorkNeedFeature.properties.costs)
+        roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
+      else
+        roadWorkActivity.properties.costs = -1;
       if(this.roadWorkNeedFeature.properties.desiredYearFrom)
         roadWorkActivity.properties.desiredYearFrom = this.roadWorkNeedFeature.properties.desiredYearFrom;
       if(this.roadWorkNeedFeature.properties.desiredYearTo)
