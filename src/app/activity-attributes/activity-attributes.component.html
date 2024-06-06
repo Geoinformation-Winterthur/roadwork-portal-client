@@ -178,43 +178,49 @@
                                                 </mat-select>
                                             </mat-form-field>
                                         </form>
-                                        <mat-checkbox style="margin:10px;" disabled>
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.overarchingMeasure"
+                                            style="margin:10px;" disabled>
                                             &Uuml;bergeordnete Massnahme
                                         </mat-checkbox>
-                                        <p>Wunschjahr von:
-                                            <b>{{roadWorkActivityFeature.properties.desiredYearFrom}}</b>
-                                        </p>
-                                        <p>Wunschjahr bis:
-                                            <b>{{roadWorkActivityFeature.properties.desiredYearTo}}</b>
-                                        </p>
+                                        <div *ngIf="roadWorkActivityFeature.properties.overarchingMeasure">
+                                            <p>Wunschjahr von:
+                                                <b>{{roadWorkActivityFeature.properties.desiredYearFrom}}</b>
+                                            </p>
+                                            <p>Wunschjahr bis:
+                                                <b>{{roadWorkActivityFeature.properties.desiredYearTo}}</b>
+                                            </p>
+                                        </div>
                                         <mat-checkbox style="margin:10px;" disabled>
                                             Vorstudie
                                         </mat-checkbox>
-                                        <h4>Geplante Ausf&uuml;hrung:</h4>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>von</mat-label>
-                                            <input matInput
-                                                [ngModel]="roadWorkActivityFeature.properties.finishFrom | date: 'dd.MM.yyyy'"
-                                                disabled>
-                                        </mat-form-field>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>bis</mat-label>
-                                            <input matInput
-                                                [ngModel]="roadWorkActivityFeature.properties.finishTo | date: 'dd.MM.yyyy'"
-                                                disabled>
-                                        </mat-form-field>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>Baubeginn</mat-label>
-                                            <input matInput
-                                                [ngModel]="roadWorkActivityFeature.properties.startOfConstruction | date: 'dd.MM.yyyy'"
-                                                disabled>
-                                        </mat-form-field>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>Bauende</mat-label>
-                                            <input matInput
-                                                [ngModel]="roadWorkActivityFeature.properties.endOfConstruction | date: 'dd.MM.yyyy'"
-                                                disabled>
-                                        </mat-form-field>
+                                        <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
+                                            <h4>Geplante Ausf&uuml;hrung:</h4>
+                                            <mat-form-field style="margin:10px;">
+                                                <mat-label>von</mat-label>
+                                                <input matInput
+                                                    [ngModel]="roadWorkActivityFeature.properties.finishFrom | date: 'dd.MM.yyyy'"
+                                                    disabled>
+                                            </mat-form-field>
+                                            <mat-form-field style="margin:10px;">
+                                                <mat-label>bis</mat-label>
+                                                <input matInput
+                                                    [ngModel]="roadWorkActivityFeature.properties.finishTo | date: 'dd.MM.yyyy'"
+                                                    disabled>
+                                            </mat-form-field>
+                                            <mat-form-field style="margin:10px;">
+                                                <mat-label>Baubeginn</mat-label>
+                                                <input matInput
+                                                    [ngModel]="roadWorkActivityFeature.properties.startOfConstruction | date: 'dd.MM.yyyy'"
+                                                    disabled>
+                                            </mat-form-field>
+                                            <mat-form-field style="margin:10px;">
+                                                <mat-label>Bauende</mat-label>
+                                                <input matInput
+                                                    [ngModel]="roadWorkActivityFeature.properties.endOfConstruction | date: 'dd.MM.yyyy'"
+                                                    disabled>
+                                            </mat-form-field>
+                                        </div>
                                         <div>
                                             <h4>Vernehmlassungen:</h4>
                                             <div style="margin-top: 1em;">
@@ -390,8 +396,9 @@
                                     <mat-card-content style="min-width: 380px;">
                                         Auswahl Organisationseinheit:
                                         <mat-selection-list [(ngModel)]="chosenOrganisationUuid"
-                                                    (click)="selectUsersOfOrganisation()" [multiple]="false">
-                                            <mat-list-option *ngFor="let availableOrganisation of availableOrganisations"
+                                            (click)="selectUsersOfOrganisation()" [multiple]="false">
+                                            <mat-list-option
+                                                *ngFor="let availableOrganisation of availableOrganisations"
                                                 [value]="availableOrganisation.uuid">
                                                 {{availableOrganisation.name}}
                                             </mat-list-option>
@@ -403,10 +410,13 @@
                                     <mat-card-content style="min-width: 380px;">
                                         Auswahl Beteiligte:
                                         <mat-selection-list [(ngModel)]="selectedUsersOfChosenOrganisation"
-                                                (click)="changeInvolvedUsers()">
-                                            <mat-list-option *ngFor="let userOfChosenOrganisation of usersOfChosenOrganisation"
-                                                [value]="userOfChosenOrganisation" [selected]="isInvolvedUserSelected(userOfChosenOrganisation.uuid)">
-                                                {{userOfChosenOrganisation.firstName}} {{userOfChosenOrganisation.lastName}}
+                                            (click)="changeInvolvedUsers()">
+                                            <mat-list-option
+                                                *ngFor="let userOfChosenOrganisation of usersOfChosenOrganisation"
+                                                [value]="userOfChosenOrganisation"
+                                                [selected]="isInvolvedUserSelected(userOfChosenOrganisation.uuid)">
+                                                {{userOfChosenOrganisation.firstName}}
+                                                {{userOfChosenOrganisation.lastName}}
                                             </mat-list-option>
                                         </mat-selection-list>
                                     </mat-card-content>
