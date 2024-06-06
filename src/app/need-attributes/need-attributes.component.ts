@@ -306,11 +306,21 @@ export class NeedAttributesComponent implements OnInit {
       let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
       roadWorkActivity.geometry = this.roadWorkNeedFeature.geometry;
       roadWorkActivity.properties.name = this.roadWorkNeedFeature.properties.name;
-      roadWorkActivity.properties.roadWorkNeedsUuids.push(this.roadWorkNeedFeature.properties.uuid);
+      roadWorkActivity.properties.description = this.roadWorkNeedFeature.properties.description;
+      roadWorkActivity.properties.comment = this.roadWorkNeedFeature.properties.comment;
       roadWorkActivity.properties.costsType.code = "valuation";
       roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
-      roadWorkActivity.properties.finishTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
+      if(this.roadWorkNeedFeature.properties.desiredYearFrom)
+        roadWorkActivity.properties.desiredYearFrom = this.roadWorkNeedFeature.properties.desiredYearFrom;
+      if(this.roadWorkNeedFeature.properties.desiredYearTo)
+        roadWorkActivity.properties.desiredYearTo = this.roadWorkNeedFeature.properties.desiredYearTo;
+      roadWorkActivity.properties.finishFrom = this.roadWorkNeedFeature.properties.finishEarlyTo;
+      roadWorkActivity.properties.finishTo = this.roadWorkNeedFeature.properties.finishLateTo;
       roadWorkActivity.properties.isPrivate = true;
+      roadWorkActivity.properties.overarchingMeasure = this.roadWorkNeedFeature.properties.overarchingMeasure;
+      roadWorkActivity.properties.section = this.roadWorkNeedFeature.properties.section;
+
+      roadWorkActivity.properties.roadWorkNeedsUuids.push(this.roadWorkNeedFeature.properties.uuid);
 
       this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
         .subscribe({
