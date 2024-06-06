@@ -22,6 +22,7 @@ import { CostType } from 'src/model/cost-type';
 import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
+import { OrganisationalUnit } from 'src/model/organisational-unit';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -40,8 +41,13 @@ export class ActivityAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
   involvedUsers: User[] = [];
+  involvedOrgs: OrganisationalUnit[] = [];
 
   availableUsers: User[] = [];
+  availableOrganisations: OrganisationalUnit[] = [];
+  chosenOrganisationUuid: string = "";
+  usersOfChosenOrganisation: User[] = [];
+  selectedUsersOfChosenOrganisation: User[] = [];
 
   availableCostTypes: CostType[] = [];
 
@@ -108,6 +114,24 @@ export class ActivityAttributesComponent implements OnInit {
               });
             } else {
               this.configurationData = configData;
+            }
+          }
+        },
+        error: (error) => {
+        }
+      });
+
+    this.organisationService.getAllOrgTypes()
+      .subscribe({
+        next: (orgs) => {
+          if (orgs && orgs[0]) {
+            ErrorMessageEvaluation._evaluateErrorMessage(orgs[0]);
+            if (orgs[0].errorMessage !== "") {
+              this.snckBar.open(orgs[0].errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.availableOrganisations = orgs;
             }
           }
         },
@@ -336,6 +360,15 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  selectUsersOfOrganisation() {
+    let usersOfChosenOrganisationTemp = [];
+    for (let availableUser of this.availableUsers) {
+      if (availableUser.organisationalUnit.uuid == this.chosenOrganisationUuid)
+        usersOfChosenOrganisationTemp.push(availableUser);
+    }
+    this.usersOfChosenOrganisation = usersOfChosenOrganisationTemp;
+  }
+
   checkStatusDisabled(currValue: string, valueToCheck: string): boolean {
     if (currValue === 'review') {
       if (valueToCheck === 'review')
@@ -389,6 +422,11 @@ export class ActivityAttributesComponent implements OnInit {
 
   getAllInvolvedOrgs() {
     if (this.roadWorkActivityFeature) {
+      let involvedOrgs: Map<string, OrganisationalUnit> = new Map();
+      for(let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers){
+        involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+      }
+      this.involvedOrgs = Array.from(involvedOrgs.values());
       this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
         .subscribe({
           next: (roadWorkNeeds) => {
@@ -414,6 +452,32 @@ export class ActivityAttributesComponent implements OnInit {
           }
         });
     }
+  }
+
+  changeInvolvedUsers() {
+    if (this.roadWorkActivityFeature) {
+      if(!this.roadWorkActivityFeature.properties.involvedUsers){
+        this.roadWorkActivityFeature.properties.involvedUsers = [];
+      }
+      if (this.selectedUsersOfChosenOrganisation.length != 0) {
+        this.roadWorkActivityFeature.properties.involvedUsers =
+          this.roadWorkActivityFeature.properties.involvedUsers.filter((user) => user.organisationalUnit.uuid != this.selectedUsersOfChosenOrganisation[0].organisationalUnit.uuid);
+      }
+      for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
+        this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
+      }
+      this.update()
+    }
+  }
+
+  isInvolvedUserSelected(userUuid: string): boolean {
+    if(this.roadWorkActivityFeature){
+      for(let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers){
+        if(involvedUser.uuid == userUuid)
+          return true;
+      }  
+    }
+    return false;
   }
 
   ngOnDestroy() {
