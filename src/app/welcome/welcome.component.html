@@ -8,7 +8,8 @@
 </div>
 <div style="margin: 2em;color: rgb(90, 90, 90);">
     <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
-        Willkommen im <b>WiKiS</b> (<b>Winterthurer Koordinationstool f&uuml;r Infrastrukturvorhaben im &ouml;ffentlichen Strassenraum</b>) des Tiefbauamts Winterthur.
+        Willkommen im <b>WiKiS</b> (<b>Winterthurer Koordinationstool f&uuml;r Infrastrukturvorhaben im
+            &ouml;ffentlichen Strassenraum</b>) des Tiefbauamts Winterthur.
     </h3>
     <div i18n *ngIf="!userService.isUserLoggedIn()">
         <p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
@@ -34,7 +35,8 @@
         <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
     </div>
     <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
-        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKiS</b> (<b>Winterthurer Koordinationstool f&uuml;r Infrastrukturvorhaben im &ouml;ffentlichen Strassenraum</b>)
+        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKiS</b> (<b>Winterthurer Koordinationstool f&uuml;r
+            Infrastrukturvorhaben im &ouml;ffentlichen Strassenraum</b>)
         der Abteilung Planung & Koordination des Tiefbauamts Winterthur.</h3>
     <div *ngIf="userService.isUserLoggedIn()">
         <mat-tab-group>
@@ -93,16 +95,22 @@
                         Sie sind in der Rolle <b>
                             <span *ngIf="user.role.code === 'eventmanager'">Eventmanager</span>
                             <span *ngIf="user.role.code === 'orderer'">Besteller</span>
-                            <span
-                                *ngIf="user.role.code === 'territorymanager'">Gebietsmanager</span>
-                            <span
-                                *ngIf="user.role.code === 'administrator'">Administrator</span></b>.
+                            <span *ngIf="user.role.code === 'territorymanager'">Gebietsmanager</span>
+                            <span *ngIf="user.role.code === 'administrator'">Administrator</span></b>.
                     </p>
-                    <p>Ansicht:</p>
-                    <div style="display:flex;flex-direction:column;">
-                        <mat-slide-toggle [(ngModel)]="user.prefTableView"
-                            (focusout)="update()">Tabellenansicht bevorzugen (nicht mobile-f&auml;hig)
+                    <div style="padding: 1em;margin-bottom: 1em;border: 1px solid lightgray;display:flex;flex-direction:column;">
+                        <p>Ansicht:</p>
+                        <mat-slide-toggle [(ngModel)]="user.prefTableView" (focusout)="update()">Tabellenansicht
+                            bevorzugen (nicht mobile-f&auml;hig)
                         </mat-slide-toggle>
+                    </div>
+                    <div style="padding: 1em;border: 1px solid lightgray;">
+                        <p>Passphrase neu setzen:</p>
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="user.passPhrase" type="text"
+                                placeholder="Neue Passphrase" type="password">
+                        </mat-form-field>
+                        <button mat-button (click)="update(true)" style="margin:1em;">&Auml;NDERN</button>
                     </div>
                 </div>
             </mat-tab>
