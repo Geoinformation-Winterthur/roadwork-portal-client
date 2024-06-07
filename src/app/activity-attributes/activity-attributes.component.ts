@@ -441,10 +441,39 @@ export class ActivityAttributesComponent implements OnInit {
     return true;
   }
 
+  changeStatus(newStatus: string) {
+
+    if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
+      this.roadWorkActivityFeature.properties.status.code = newStatus;
+      this.roadWorkActivityStatusEnumControl.setValue(newStatus);
+      this.update();
+    }
+
+    let mailText = "mailto:";
+
+    if (this.roadWorkActivityFeature)
+      for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
+        mailText += involvedUser.mailAddress + ";";
+      }
+
+    mailText += "?subject=Ihre Meinung ist gefragt.&";
+    mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
+    mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
+    mailText += "Bitte beurteilen Sie, ob in Ihrem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
+    mailText += "Sollte Bedarf vorhanden sein, so bitten wir Sie, den Bedarf genauer zu erläutern und eine Beurteilung aus Ihrer Sicht abzugeben. Sie können auch einen neuen Bedarf via Button erfassen (Hinweis: mit Wählen des Button öffnet sich die Eingabemaske und Sie können einen neuen Bedarf inkl. Perimeter eingeben).%0A%0A";
+    mailText += "Die Bedarfsklärung läuft bis XXX.%0A%0A";
+    mailText += "Mit «Speichern» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
+    mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
+    mailText += "Freundliche Grüsse.%0A%0A";
+    mailText += "Tiefbauamt, Abteilung Planung & Koordination%0A%0A";
+    window.open(mailText, "_blank");
+
+  }
+
   getAllInvolvedOrgs() {
     if (this.roadWorkActivityFeature) {
       let involvedOrgs: Map<string, OrganisationalUnit> = new Map();
-      for(let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers){
+      for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
         involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
       }
       this.involvedOrgs = Array.from(involvedOrgs.values());
@@ -477,7 +506,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   changeInvolvedUsers() {
     if (this.roadWorkActivityFeature) {
-      if(!this.roadWorkActivityFeature.properties.involvedUsers){
+      if (!this.roadWorkActivityFeature.properties.involvedUsers) {
         this.roadWorkActivityFeature.properties.involvedUsers = [];
       }
       if (this.selectedUsersOfChosenOrganisation.length != 0) {
@@ -492,11 +521,11 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   isInvolvedUserSelected(userUuid: string): boolean {
-    if(this.roadWorkActivityFeature){
-      for(let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers){
-        if(involvedUser.uuid == userUuid)
+    if (this.roadWorkActivityFeature) {
+      for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
+        if (involvedUser.uuid == userUuid)
           return true;
-      }  
+      }
     }
     return false;
   }
