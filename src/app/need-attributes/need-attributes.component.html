@@ -152,8 +152,11 @@
                                             value="4" matTooltip="Wichtiges + dringendes Bedürfnis"
                                             style="background-color: rgb(255, 234, 217);">4</mat-button-toggle>
                                     </mat-button-toggle-group>
+                                    <span (click)="switchShowRelevanceInfo()" style="margin: 1em;">
+                                        <mat-icon aria-label="Info zur Bewertung">info</mat-icon>
+                                    </span>
                                 </p>
-                                <div *ngIf="roadWorkNeedFeature && roadWorkNeedFeature.properties.relevance >= 0"
+                                <div *ngIf="showRelevanceInfo"
                                     style="margin-bottom: 3em;background-color: rgb(236,236,234);padding: 1em;">
                                     <div *ngIf="roadWorkNeedFeature.properties.relevance == 0">
                                         <b>Keine Beteiligung vorgesehen</b><br>
