@@ -205,9 +205,9 @@
                                                     style="background-color: rgb(255, 109, 109);">{{roadWorkActivityFeature.properties.consultDue
                                                     | date: 'dd.MM.yyyy'}}</mat-chip>
                                             </div>
-                                            <button
+                                            <button (click)="changeStatus('inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                disabled mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
+                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'review'" mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
                                             <button
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 disabled mat-button>Stellungnahme durchführen</button>
