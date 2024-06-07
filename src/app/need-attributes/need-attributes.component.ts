@@ -43,6 +43,8 @@ export class NeedAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
 
+  showRelevanceInfo: boolean = false;
+
   user: User = new User();
 
   environment = environment;
@@ -462,6 +464,12 @@ export class NeedAttributesComponent implements OnInit {
 
   getCurrentYear(): number {
     return new Date().getFullYear();
+  }
+
+  switchShowRelevanceInfo(){
+    this.showRelevanceInfo = !this.showRelevanceInfo;
+    if(!this.roadWorkNeedFeature || this.roadWorkNeedFeature.properties.relevance < 0)
+      this.showRelevanceInfo = false;
   }
 
   ngOnDestroy() {
