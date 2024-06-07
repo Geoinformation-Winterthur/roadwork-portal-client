@@ -327,6 +327,27 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  deleteRoadworkActivity(uuid: string) {
+    this.roadWorkActivityService.deleteRoadWorkActivity(uuid).subscribe({
+      next: (errorMessage) => {
+        if (errorMessage != null && errorMessage.errorMessage != null &&
+          errorMessage.errorMessage.trim().length !== 0) {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+          this.snckBar.open(errorMessage.errorMessage, "", {
+            duration: 4000
+          });
+        } else {
+          this.router.navigate(["/activities/"]);
+          this.snckBar.open("Bauvorhaben wurde gelöscht", "", {
+            duration: 4000,
+          });
+        }
+      },
+      error: (error) => {
+      }
+    });
+  }
+
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
