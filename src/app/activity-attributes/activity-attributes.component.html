@@ -159,25 +159,6 @@
                                                 </mat-select>
                                             </mat-form-field>
                                         </form>
-                                        <form class="choose_user_role_form">
-                                            <mat-form-field appearance="fill">
-                                                <mat-label>Projekttyp</mat-label>
-                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectType"
-                                                    [formControl]="roadWorkActivityProjectTypeEnumControl"
-                                                    (selectionChange)='onRoadWorkActivityEnumChange()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
-                                                    <mat-option value="type_a">
-                                                        Typ A
-                                                    </mat-option>
-                                                    <mat-option value="type_b">
-                                                        Typ B
-                                                    </mat-option>
-                                                    <mat-option value="type_c">
-                                                        Typ C
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </form>
                                         <mat-checkbox
                                             [(ngModel)]="roadWorkActivityFeature.properties.overarchingMeasure"
                                             style="margin:10px;" disabled>
@@ -292,6 +273,25 @@
                                                     <mat-option *ngFor="let availableUser of availableUsers"
                                                         [value]="availableUser.uuid">
                                                         {{availableUser.firstName}} {{availableUser.lastName}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </form>
+                                        <form class="choose_user_role_form">
+                                            <mat-form-field appearance="fill">
+                                                <mat-label>Projekttyp</mat-label>
+                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectType"
+                                                    [formControl]="roadWorkActivityProjectTypeEnumControl"
+                                                    (selectionChange)='onRoadWorkActivityEnumChange()'
+                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
+                                                    <mat-option value="type_a">
+                                                        Typ A
+                                                    </mat-option>
+                                                    <mat-option value="type_b">
+                                                        Typ B
+                                                    </mat-option>
+                                                    <mat-option value="type_c">
+                                                        Typ C
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
