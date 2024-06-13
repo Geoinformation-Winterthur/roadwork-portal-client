@@ -29,6 +29,7 @@ export class ErrorMessageDictionary {
              "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
              "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
              "Änderung wurde nicht gespeichert, da der Baumassnahme kein Bedarf zugeordnet ist.",
-             "Löschen des Bedarfs nicht möglich, da ansonsten einer Baumassnahme keine Bedarfe mehr zugeordnet wären."
+             "Löschen des Bedarfs nicht möglich, da ansonsten einer Baumassnahme keine Bedarfe mehr zugeordnet wären.",
+             "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde."
             ];
 }
