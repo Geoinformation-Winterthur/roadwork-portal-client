@@ -14,7 +14,7 @@ export class ErrorMessageDictionary {
              "Die Geometrie des Bedarfes ist nicht valide (z.B. hat Dangles).",
              "Benutzer mit Mail-Adresse 'new' ist nicht zulässig",
              "Benutzer kann nicht hinzugefügt werden.",
-             "Keine Berechtigung, dieses Bedarf zu editieren.",
+             "Keine Berechtigung, diesen Bedarf zu editieren.",
              "Es wurde keine gültige UUID empfangen.",
              "Die Fläche des Bedarfes ist grösser als die zulässige Maximalgrösse.",
              "Der zugewiesene Benutzer ist kein Gebietsmanager. Zuweisung abgebrochen.",
@@ -28,8 +28,9 @@ export class ErrorMessageDictionary {
              "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.",
              "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
              "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
-             "Änderung wurde nicht gespeichert, da der Baumassnahme kein Bedarf zugeordnet ist.",
-             "Löschen des Bedarfs nicht möglich, da ansonsten einer Baumassnahme keine Bedarfe mehr zugeordnet wären.",
-             "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde."
+             "Änderung wurde nicht gespeichert, da der Bauvorhaben kein Bedarf zugeordnet ist.",
+             "Löschen des Bedarfs nicht möglich, da ansonsten einer Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
+             "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde.",
+             "Keine Berechtigung, dieses Bauvorhaben zu editieren."
             ];
 }
