@@ -207,10 +207,12 @@
                                             </div>
                                             <button (click)="changeStatus('inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'review'" mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
+                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'review'"
+                                                mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
                                             <button (click)="changeStatus('reporting')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'verified'" mat-button>Stellungnahme durchf&uuml;hren</button>
+                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'verified'"
+                                                mat-button>Stellungnahme durchf&uuml;hren</button>
                                             <button
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 disabled mat-button>Infoversand durchführen</button>
@@ -313,85 +315,24 @@
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                 <mat-card-header>
-                                    <mat-card-title>Termine</mat-card-title>
+                                    <mat-card-title>Terminiert</mat-card-title>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
-                                        <form>
-                                            <mat-form-field appearance="fill">
-                                                <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
-                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateSks"
-                                                    [formControl]="dateSksControl" (selectionChange)='update()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-option value="dateSks1">{{configurationData.dateSks1 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateSks2">{{configurationData.dateSks2 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateSks3">{{configurationData.dateSks3 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateSks4">{{configurationData.dateSks4 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </form>
-                                        <form>
-                                            <mat-form-field appearance="fill">
-                                                <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
-                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateKap"
-                                                    [formControl]="dateKapControl" (selectionChange)='update()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-option value="dateKap1">{{configurationData.dateKap1 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateKap2">{{configurationData.dateKap2 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </form>
-                                        <form>
-                                            <mat-form-field appearance="fill">
-                                                <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
-                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateOks"
-                                                    [formControl]="dateOksControl" (selectionChange)='update()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-option value="dateOks1">{{configurationData.dateOks1 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks2">{{configurationData.dateOks2 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks3">{{configurationData.dateOks3 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks4">{{configurationData.dateOks4 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks5">{{configurationData.dateOks5 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks6">{{configurationData.dateOks6 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks7">{{configurationData.dateOks7 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks8">{{configurationData.dateOks8 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks9">{{configurationData.dateOks9 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks10">{{configurationData.dateOks10 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                    <mat-option value="dateOks11">{{configurationData.dateOks11 |
-                                                        date:'dd.MM.yyyy'}}</mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </form>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
-                                            <input matInput [ngModel]="roadWorkActivityFeature.properties.dateGlTba"
-                                                [matDatepicker]="dateGlTba" (dateChange)="update()"
-                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-datepicker #dateGlTba></mat-datepicker>
-                                            <mat-datepicker-toggle matSuffix [for]="dateGlTba"></mat-datepicker-toggle>
-                                        </mat-form-field>
+                                        <p>Strategische Koordinationssitzung (SKS):
+                                            {{roadWorkActivityFeature.properties.dateSks | date: 'dd.MM.yyyy'}}</p>
+                                        <p>Koordinationsausschuss Projekte (KAP):
+                                            {{roadWorkActivityFeature.properties.dateKap | date: 'dd.MM.yyyy'}}</p>
+                                        <p>Operative Koordinationssitzung (OKS):
+                                            {{roadWorkActivityFeature.properties.dateOks | date: 'dd.MM.yyyy'}}</p>
+                                        <p>Gesch&auml;ftsleitung Tiefbau (GL TBA):
+                                            {{roadWorkActivityFeature.properties.dateGlTba | date: 'dd.MM.yyyy'}}</p>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Beteiligte">
+                    <mat-tab label="Beteiligte" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;">
                             <div fxLayout="row wrap padding">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
@@ -427,22 +368,547 @@
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Termine">
+                    <mat-tab label="Termine" *ngIf="roadWorkActivityFeature.properties.uuid!==''" >
+                        <div style="margin: 1em;">
+                            <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isAggloprog"
+                                (change)='update()' style="margin:10px;">
+                                Aggloprogramm
+                            </mat-checkbox>
+                            <div fxLayout="row wrap padding">
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Sitzungen, terminiert</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
+                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateSks"
+                                                        [formControl]="dateSksControl" (selectionChange)='update()'
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option value="dateSks1">{{configurationData.dateSks1 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateSks2">{{configurationData.dateSks2 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateSks3">{{configurationData.dateSks3 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateSks4">{{configurationData.dateSks4 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </form>
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
+                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateKap"
+                                                        [formControl]="dateKapControl" (selectionChange)='update()'
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option value="dateKap1">{{configurationData.dateKap1 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateKap2">{{configurationData.dateKap2 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </form>
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
+                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateOks"
+                                                        [formControl]="dateOksControl" (selectionChange)='update()'
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option value="dateOks1">{{configurationData.dateOks1 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks2">{{configurationData.dateOks2 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks3">{{configurationData.dateOks3 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks4">{{configurationData.dateOks4 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks5">{{configurationData.dateOks5 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks6">{{configurationData.dateOks6 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks7">{{configurationData.dateOks7 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks8">{{configurationData.dateOks8 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks9">{{configurationData.dateOks9 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks10">{{configurationData.dateOks10 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks11">{{configurationData.dateOks11 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
+                                                        [matDatepicker]="dateGlTba" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateGlTba></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateGlTba"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </form>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Sitzungen, genehmigt</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
+                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateSksReal"
+                                                        [formControl]="dateSksControl" (selectionChange)='update()'
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option value="dateSks1">{{configurationData.dateSks1 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateSks2">{{configurationData.dateSks2 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateSks3">{{configurationData.dateSks3 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateSks4">{{configurationData.dateSks4 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </form>
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
+                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateKapReal"
+                                                        [formControl]="dateKapControl" (selectionChange)='update()'
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option value="dateKap1">{{configurationData.dateKap1 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateKap2">{{configurationData.dateKap2 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </form>
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
+                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateOksReal"
+                                                        [formControl]="dateOksControl" (selectionChange)='update()'
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option value="dateOks1">{{configurationData.dateOks1 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks2">{{configurationData.dateOks2 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks3">{{configurationData.dateOks3 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks4">{{configurationData.dateOks4 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks5">{{configurationData.dateOks5 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks6">{{configurationData.dateOks6 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks7">{{configurationData.dateOks7 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks8">{{configurationData.dateOks8 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks9">{{configurationData.dateOks9 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks10">{{configurationData.dateOks10 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option value="dateOks11">{{configurationData.dateOks11 |
+                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
+                                                        [matDatepicker]="dateGlTba" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateGlTba></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateGlTba"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </form>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Projekttermine</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Wunschjahr von</mat-label>
+                                                    <input matInput type="number" (change)="update()"
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.desiredYearFrom">
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Wunschjahr bis</mat-label>
+                                                    <input matInput type="number" (change)="update()"
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.desiredYearTo">
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Gepl. Ausf&uuml;hrung</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.finishFrom"
+                                                        [matDatepicker]="finishFrom" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #finishFrom></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="finishFrom"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Bautermine</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Baubeginn</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
+                                                        [matDatepicker]="startOfConstruction" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #startOfConstruction></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="startOfConstruction"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bauende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
+                                                        [matDatepicker]="endOfConstruction" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #endOfConstruction></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="endOfConstruction"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Abnahme</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.finishTo"
+                                                        [matDatepicker]="finishTo" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #finishTo></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="finishTo"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Garantie</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateGuarantee"
+                                                        [matDatepicker]="dateGuarantee" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateGuarantee></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateGuarantee"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Vorstudie</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isStudy"
+                                                    (change)="update()" style="margin:10px;">
+                                                    Vorstudie
+                                                </mat-checkbox>
+                                                <br>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Vorstudie Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateStudyStart"
+                                                        [matDatepicker]="dateStudyStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateStudyStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateStudyStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Vorstudie Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateStudyEnd"
+                                                        [matDatepicker]="dateStudyStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateStudyEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateStudyEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Begehrens&auml;usserung §&nbsp;45</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isDesire"
+                                                    (change)="update()" style="margin:10px;">
+                                                    Begehrens&auml;usserung §&nbsp;45
+                                                </mat-checkbox>
+                                                <br>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Begehrens&auml;usserung Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateDesireStart"
+                                                        [matDatepicker]="dateDesireStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateDesireStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateDesireStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Begehrens&auml;usserung Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateDesireEnd"
+                                                        [matDatepicker]="dateDesireEnd" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateDesireEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateDesireEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Mitwirkungsverfahren §&nbsp;13</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isParticip"
+                                                    (change)="update()" style="margin:10px;">
+                                                    Mitwirkungsverfahren §&nbsp;13
+                                                </mat-checkbox>
+                                                <br>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Mitwirkungsverfahren Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateParticipStart"
+                                                        [matDatepicker]="dateParticipStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateParticipStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateParticipStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Mitwirkungsverfahren Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateParticipEnd"
+                                                        [matDatepicker]="dateParticipEnd" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateParticipEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateParticipEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Planauflage §&nbsp;16</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isPlanCirc"
+                                                    (change)="update()" style="margin:10px;">
+                                                    Planauflage §&nbsp;16
+                                                </mat-checkbox>
+                                                <br>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Planauflage Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircStart"
+                                                        [matDatepicker]="datePlanCircStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #datePlanCircStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="datePlanCircStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Planauflage Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircEnd"
+                                                        [matDatepicker]="datePlanCircEnd" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #datePlanCircEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="datePlanCircEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Vernehmlassung: Bedarfskl&auml;rung</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bedarfskl&auml;rung Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart"
+                                                        [matDatepicker]="dateConsultStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateConsultStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateConsultStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bedarfskl&auml;rung Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd"
+                                                        [matDatepicker]="dateConsultEnd" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateConsultEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateConsultEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bedarfskl&auml;rung Abschluss</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
+                                                        [matDatepicker]="dateConsultClose" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateConsultClose></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateConsultClose"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Vernehmlassung: Stellungnahme</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Stellungnahme Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateReportStart"
+                                                        [matDatepicker]="dateReportStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateReportStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateReportStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Stellungnahme Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateReportEnd"
+                                                        [matDatepicker]="dateReportEnd" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateReportEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateReportEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Stellungnahme Abschluss</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateReportClose"
+                                                        [matDatepicker]="dateReportClose" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateReportClose></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateReportClose"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Vernehmlassung: Infoversand</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Infoversand Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateInfoStart"
+                                                        [matDatepicker]="dateInfoStart" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateInfoStart></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateInfoStart"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Infoversand Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateInfoEnd"
+                                                        [matDatepicker]="dateInfoEnd" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateInfoEnd></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateInfoEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Infoversand Abschluss</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateInfoClose"
+                                                        [matDatepicker]="dateInfoClose" (dateChange)="update()"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateInfoClose></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateInfoClose"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Kosten" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;">
                             Dieser Bereich ist in Plaunung.
                         </div>
                     </mat-tab>
-                    <mat-tab label="Kosten">
+                    <mat-tab label="Bewertung" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;">
                             Dieser Bereich ist in Plaunung.
                         </div>
                     </mat-tab>
-                    <mat-tab label="Bewertung">
-                        <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
-                        </div>
-                    </mat-tab>
-                    <mat-tab label="Journal">
+                    <mat-tab label="Journal" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;">
                             Dieser Bereich ist in Plaunung.
                         </div>
@@ -468,11 +934,11 @@
                     </mat-tab>
                 </mat-tab-group>
             </mat-tab>
-            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Historie">
+            <mat-tab label="Historie" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                 <app-activity-history
                     [dataSource]="roadWorkActivityFeature.properties.activityHistory"></app-activity-history>
             </mat-tab>
-            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!==''" label="Bedarfe">
+            <mat-tab label="Bedarfe" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                 <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                     [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
