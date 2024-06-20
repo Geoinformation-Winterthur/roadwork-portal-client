@@ -201,9 +201,9 @@
                                             <h4>Vernehmlassungen:</h4>
                                             <div style="margin-top: 1em;">
                                                 F&auml;lligkeit:
-                                                <mat-chip
-                                                    style="background-color: rgb(255, 109, 109);">{{roadWorkActivityFeature.properties.consultDue
-                                                    | date: 'dd.MM.yyyy'}}</mat-chip>
+                                                <mat-chip [style]="getColorDueDate()">
+                                                    {{roadWorkActivityFeature.properties.consultDue | date: 'dd.MM.yyyy'}}
+                                                </mat-chip>
                                             </div>
                                             <button (click)="changeStatus('inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
