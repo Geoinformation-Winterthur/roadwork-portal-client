@@ -33,7 +33,7 @@
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
                     <div style="margin: 0.5em;margin-bottom: 1em;">
                         Fr&uuml;hest: <span
-                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishEarlyTertial)}}</span>
+                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial("finishEarlyTo")}}</span>
                         <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishEarlyTertial"
                             (change)="update()" showTickMarks style="margin: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
@@ -41,7 +41,7 @@
                     </div>
                     <div style="margin: 0.5em;margin-bottom: 1em;">
                         Wunsch: <span
-                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishOptimumTertial)}}</span>
+                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial("finishOptimumTo")}}</span>
                         <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishOptimumTertial"
                             (change)="update()" showTickMarks style="margin: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
@@ -49,7 +49,7 @@
                     </div>
                     <div style="margin: 0.5em;margin-bottom: 1em;">
                         Sp&auml;test: <span
-                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial(finishLateTertial)}}</span>
+                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutTertial("finishLateTo")}}</span>
                         <mat-slider min="0" max="21" tickInterval="1" [(ngModel)]="finishLateTertial"
                             (change)="update()" showTickMarks style="margin: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
