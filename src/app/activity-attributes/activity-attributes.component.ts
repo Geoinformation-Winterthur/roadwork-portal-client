@@ -535,7 +535,8 @@ export class ActivityAttributesComponent implements OnInit {
       for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
         this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
       }
-      this.update()
+      this.update();
+      this.getAllInvolvedOrgs();
     }
   }
 
