@@ -13,7 +13,6 @@ import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
-import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { DateHelper } from 'src/helper/date-helper';
@@ -128,9 +127,9 @@ export class NeedAttributesComponent implements OnInit {
                   if (this.roadWorkNeedFeature) {
                     this.urlControl.setValue(this.roadWorkNeedFeature.properties.url);
 
-                    this.finishOptimumTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishOptimumTo);
-                    this.finishEarlyTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishEarlyTo);
-                    this.finishLateTertial = this._convertDateToTertialCount(this.roadWorkNeedFeature.properties.finishLateTo);
+                    this.finishOptimumTertial = this._convertDateToTertial(this.roadWorkNeedFeature.properties.finishOptimumTo);
+                    this.finishEarlyTertial = this._convertDateToTertial(this.roadWorkNeedFeature.properties.finishEarlyTo);
+                    this.finishLateTertial = this._convertDateToTertial(this.roadWorkNeedFeature.properties.finishLateTo);
                   }
 
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
@@ -348,30 +347,31 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  writeOutTertial(tertialCount: number): string {
+  writeOutTertial(finishDateType: string): string {
     let result: string = "";
-    let currentDate: Date = new Date();
 
-    let currentMonth: number = currentDate.getMonth() + 1;
-    let currentTertial: number = Math.ceil(currentMonth / 4);
-    let tertialModulo: number = (currentTertial + tertialCount) % 3;
-
-    if (tertialModulo === 1) {
-      result += "1. Tertial ";
-    } else if (tertialModulo === 2) {
-      result += "2. Tertial ";
-    } else {
-      result += "3. Tertial ";
+    if(this.roadWorkNeedFeature){
+      let finishDate: Date | undefined;
+      if(finishDateType == "finishEarlyTo"){
+        finishDate = new Date(this.roadWorkNeedFeature.properties.finishEarlyTo);
+      } else if(finishDateType == "finishOptimumTo"){
+        finishDate = new Date(this.roadWorkNeedFeature.properties.finishOptimumTo);    
+      } else if(finishDateType == "finishLateTo"){
+        finishDate = new Date(this.roadWorkNeedFeature.properties.finishLateTo);
+      }
+      if(finishDate){
+        let finishMonth: number = finishDate.getMonth() + 1;
+        let finishTertial: number = Math.ceil(finishMonth / 4);
+        if (finishTertial === 1) {
+          result += "1. Tertial ";
+        } else if (finishTertial === 2) {
+          result += "2. Tertial ";
+        } else {
+          result += "3. Tertial ";
+        }
+        result += finishDate.getFullYear();
+      }
     }
-
-    let currentYear: number = currentDate.getFullYear();
-
-    let addYears = 0;
-    if (tertialCount) {
-      addYears = Math.floor(tertialCount / 3);
-    }
-
-    result += " " + (currentYear + addYears);
 
     return result;
   }
@@ -495,9 +495,8 @@ export class NeedAttributesComponent implements OnInit {
     let currentYear: number = currentDate.getFullYear();
 
     let addYears = 0;
-    if (tertialCount) {
-      addYears = Math.floor(tertialCount / 3);
-    }
+    let averallTertial = (currentTertial + tertialCount - 1) / 3; 
+    addYears = Math.floor(averallTertial);
 
     result.setFullYear(currentYear + addYears);
 
@@ -506,7 +505,7 @@ export class NeedAttributesComponent implements OnInit {
     return result;
   }
 
-  private _convertDateToTertialCount(realizationDate: Date): number {
+  private _convertDateToTertial(realizationDate: Date): number {
     let currentDate: Date = new Date();
     realizationDate = new Date(realizationDate);
     let monthDiff = DateHelper.calcMonthDiff(currentDate, realizationDate);
