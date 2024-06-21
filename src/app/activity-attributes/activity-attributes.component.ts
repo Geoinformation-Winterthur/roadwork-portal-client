@@ -445,13 +445,13 @@ export class ActivityAttributesComponent implements OnInit {
     if(this.roadWorkActivityFeature){
       const today: Date = new Date();
       const consultDue: Date = new Date(this.roadWorkActivityFeature.properties.consultDue);
-      let oneWeekBeforeDue: Date = new Date(consultDue);
-      oneWeekBeforeDue.setDate(consultDue.getDate() - 7);
-      let oneMonthBeforeDue = new Date(consultDue);
-      oneMonthBeforeDue.setDate(consultDue.getDate() - 30);
-      if(today >= oneWeekBeforeDue)
+      let threeDaysBeforeDue: Date = new Date(consultDue);
+      threeDaysBeforeDue.setDate(consultDue.getDate() - 3);
+      let oneDayAfterDue = new Date(consultDue);
+      oneDayAfterDue.setDate(consultDue.getDate() + 1);
+      if(today >= threeDaysBeforeDue)
         return "background-color: rgb(255, 109, 109);";
-      else if(today >= oneMonthBeforeDue)
+      else if(today >= oneDayAfterDue)
         return "background-color: rgb(255, 194, 109);";
     }
     return "background-color: rgb(109, 255, 121);";
