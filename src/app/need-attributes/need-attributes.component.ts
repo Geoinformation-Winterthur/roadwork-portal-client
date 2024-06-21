@@ -31,9 +31,9 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class NeedAttributesComponent implements OnInit {
 
-  finishOptimumTertial: number = 0;
-  finishEarlyTertial: number = 0;
-  finishLateTertial: number = 0;
+  finishOptimumQuartal: number = 0;
+  finishEarlyQuartal: number = 0;
+  finishLateQuartal: number = 0;
 
   roadWorkNeedFeature?: RoadWorkNeedFeature;
   orderer: User = new User();
@@ -127,9 +127,9 @@ export class NeedAttributesComponent implements OnInit {
                   if (this.roadWorkNeedFeature) {
                     this.urlControl.setValue(this.roadWorkNeedFeature.properties.url);
 
-                    this.finishOptimumTertial = this._convertDateToTertial(this.roadWorkNeedFeature.properties.finishOptimumTo);
-                    this.finishEarlyTertial = this._convertDateToTertial(this.roadWorkNeedFeature.properties.finishEarlyTo);
-                    this.finishLateTertial = this._convertDateToTertial(this.roadWorkNeedFeature.properties.finishLateTo);
+                    this.finishOptimumQuartal = this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo);
+                    this.finishEarlyQuartal = this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishEarlyTo);
+                    this.finishLateQuartal = this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo);
                   }
 
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
@@ -242,17 +242,17 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   update() {
-    if (this.finishEarlyTertial > this.finishOptimumTertial)
-      this.finishOptimumTertial = this.finishEarlyTertial;
-    if (this.finishOptimumTertial > this.finishLateTertial)
-      this.finishLateTertial = this.finishOptimumTertial;
+    if (this.finishEarlyQuartal > this.finishOptimumQuartal)
+      this.finishOptimumQuartal = this.finishEarlyQuartal;
+    if (this.finishOptimumQuartal > this.finishLateQuartal)
+      this.finishLateQuartal = this.finishOptimumQuartal;
 
     this.roadWorkNeedFeature!.properties.finishOptimumTo =
-      this._convertTertialToDate(this.finishOptimumTertial);
+      this._convertQuartalToDate(this.finishOptimumQuartal);
     this.roadWorkNeedFeature!.properties.finishEarlyTo =
-      this._convertTertialToDate(this.finishEarlyTertial);
+      this._convertQuartalToDate(this.finishEarlyQuartal);
     this.roadWorkNeedFeature!.properties.finishLateTo =
-      this._convertTertialToDate(this.finishLateTertial);
+      this._convertQuartalToDate(this.finishLateQuartal);
 
     this.roadWorkNeedFeature!.properties.url = this.urlControl.value;
     
@@ -347,7 +347,7 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  writeOutTertial(finishDateType: string): string {
+  writeOutQuartal(finishDateType: string): string {
     let result: string = "";
 
     if(this.roadWorkNeedFeature){
@@ -361,13 +361,15 @@ export class NeedAttributesComponent implements OnInit {
       }
       if(finishDate){
         let finishMonth: number = finishDate.getMonth() + 1;
-        let finishTertial: number = Math.ceil(finishMonth / 4);
-        if (finishTertial === 1) {
-          result += "1. Tertial ";
-        } else if (finishTertial === 2) {
-          result += "2. Tertial ";
+        let finishQuartal: number = Math.ceil(finishMonth / 3);
+        if (finishQuartal === 1) {
+          result += "1. Quartal ";
+        } else if (finishQuartal === 2) {
+          result += "2. Quartal ";
+        } else if (finishQuartal === 3) {
+          result += "3. Quartal ";
         } else {
-          result += "3. Tertial ";
+          result += "4. Quartal ";
         }
         result += finishDate.getFullYear();
       }
@@ -476,27 +478,29 @@ export class NeedAttributesComponent implements OnInit {
     this.activatedRouteSubscription.unsubscribe();
   }
 
-  private _convertTertialToDate(tertialCount: number): Date {
+  private _convertQuartalToDate(quartalCount: number): Date {
     let result: Date = new Date();
     let currentDate: Date = new Date();
 
     let currentMonth: number = currentDate.getMonth() + 1;
-    let currentTertial: number = Math.ceil(currentMonth / 4);
-    let tertialModulo: number = (currentTertial + tertialCount) % 3;
+    let currentQuartal: number = Math.ceil(currentMonth / 3);
+    let quartalModulo: number = (currentQuartal + quartalCount) % 4;
 
-    if (tertialModulo === 1) {
+    if (quartalModulo === 1) {
       result.setMonth(1);
-    } else if (tertialModulo === 2) {
-      result.setMonth(4);
+    } else if (quartalModulo === 2) {
+      result.setMonth(3);
+    } else if (quartalModulo === 3) {
+      result.setMonth(6);
     } else {
-      result.setMonth(8);
+      result.setMonth(9);
     }
 
     let currentYear: number = currentDate.getFullYear();
 
     let addYears = 0;
-    let averallTertial = (currentTertial + tertialCount - 1) / 3; 
-    addYears = Math.floor(averallTertial);
+    let averallQuartal = (currentQuartal + quartalCount - 1) / 4; 
+    addYears = Math.floor(averallQuartal);
 
     result.setFullYear(currentYear + addYears);
 
@@ -505,11 +509,11 @@ export class NeedAttributesComponent implements OnInit {
     return result;
   }
 
-  private _convertDateToTertial(realizationDate: Date): number {
+  private _convertDateToQuartal(realizationDate: Date): number {
     let currentDate: Date = new Date();
     realizationDate = new Date(realizationDate);
     let monthDiff = DateHelper.calcMonthDiff(currentDate, realizationDate);
-    return Math.ceil(monthDiff / 4);
+    return Math.ceil(monthDiff / 3);
   }
 
   private static _createNewRoadWorkNeedFeature(user: User): RoadWorkNeedFeature {
