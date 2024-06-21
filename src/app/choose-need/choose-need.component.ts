@@ -9,10 +9,8 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
-import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
 
@@ -34,7 +32,7 @@ export class ChooseNeedComponent implements OnInit {
 
   statusFilterCodes: string[] = ["requirement"];
 
-  tableDisplayedColumns: string[] = ['title', 'status', 'areaman', 'create_date', 'due_date', 'actions', 'link_cityplan', 'link_wwg', 'priority'];
+  tableDisplayedColumns: string[] = ['title', 'areaman', 'create_date', 'status', 'link_cityplan', 'link_wwg', 'priority'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
