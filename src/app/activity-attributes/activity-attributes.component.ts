@@ -528,9 +528,9 @@ export class ActivityAttributesComponent implements OnInit {
       if (!this.roadWorkActivityFeature.properties.involvedUsers) {
         this.roadWorkActivityFeature.properties.involvedUsers = [];
       }
-      if (this.selectedUsersOfChosenOrganisation.length != 0) {
+      if (this.chosenOrganisationUuid) {
         this.roadWorkActivityFeature.properties.involvedUsers =
-          this.roadWorkActivityFeature.properties.involvedUsers.filter((user) => user.organisationalUnit.uuid != this.selectedUsersOfChosenOrganisation[0].organisationalUnit.uuid);
+          this.roadWorkActivityFeature.properties.involvedUsers.filter((user) => user.organisationalUnit.uuid != this.chosenOrganisationUuid);
       }
       for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
         this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
