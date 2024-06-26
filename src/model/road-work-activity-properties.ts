@@ -24,8 +24,9 @@ export class RoadWorkActivityProperties {
     prestudy: boolean = false;
     created: Date = new Date(1,0,1);
     lastModified: Date = new Date(1, 0, 1);
-    finishFrom: Date = new Date(1, 0, 1);
-    finishTo: Date = new Date(1, 0, 1);
+    finishEarlyTo: Date = new Date(1, 0, 1);
+    finishOptimumTo: Date = new Date(1, 0, 1);
+    finishLateTo: Date = new Date(1, 0, 1);
     startOfConstruction: Date = new Date(1, 0, 1);
     endOfConstruction: Date = new Date(1, 0, 1);
     consultDue: Date = new Date(1, 0, 1);

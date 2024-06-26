@@ -159,11 +159,11 @@ export class ActivityAttributesComponent implements OnInit {
 
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
           this.roadWorkActivityFeature.properties.status.code = "review";
-          this.roadWorkActivityFeature.properties.finishFrom = new Date();
+          this.roadWorkActivityFeature.properties.finishEarlyTo = new Date();
           this.roadWorkActivityFeature.properties.isPrivate = true;
           let plus50Years: Date = new Date();
           plus50Years.setFullYear(plus50Years.getFullYear() + 50);
-          this.roadWorkActivityFeature.properties.finishTo = plus50Years;
+          this.roadWorkActivityFeature.properties.finishLateTo = plus50Years;
           this.roadWorkActivityFeature.properties.costsType.code = "valuation";
           this.roadWorkActivityFeature.properties.isEditingAllowed = true;
           this.roadWorkActivityFeature.properties.created = new Date();

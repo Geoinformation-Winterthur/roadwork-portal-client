@@ -113,12 +113,12 @@ export class ChooseActivityComponent implements OnInit {
       this.roadWorkActivityFeatures
         .filter(roadWorkActivityFeature => {
           if (roadWorkActivityFeature && roadWorkActivityFeature.properties &&
-            roadWorkActivityFeature.properties.name && roadWorkActivityFeature.properties.finishFrom) {
+            roadWorkActivityFeature.properties.name && roadWorkActivityFeature.properties.finishEarlyTo) {
             let roadWorkActivityName: string = this.chosenActivityName.trim().toLowerCase();
-            let finishFrom: Date = new Date(roadWorkActivityFeature.properties.finishFrom);
+            let finishEarlyTo: Date = new Date(roadWorkActivityFeature.properties.finishEarlyTo);
             return (roadWorkActivityName === ''
               || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
-              && (!this.chosenActivityYearFrom || finishFrom.getFullYear() === this.chosenActivityYearFrom) &&
+              && (!this.chosenActivityYearFrom || finishEarlyTo.getFullYear() === this.chosenActivityYearFrom) &&
               this.statusFilterCodes.includes(roadWorkActivityFeature.properties.status.code);
           } else {
             return false;
