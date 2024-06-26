@@ -27,8 +27,9 @@ export class RoadWorkActivityProperties {
     finishEarlyTo: Date = new Date(1, 0, 1);
     finishOptimumTo: Date = new Date(1, 0, 1);
     finishLateTo: Date = new Date(1, 0, 1);
-    startOfConstruction: Date = new Date(1, 0, 1);
-    endOfConstruction: Date = new Date(1, 0, 1);
+    startOfConstruction?: Date;
+    endOfConstruction?: Date;
+    dateOfAcceptance?: Date;
     consultDue: Date = new Date(1, 0, 1);
     costs?: number;
     costsType: CostType = new CostType();
