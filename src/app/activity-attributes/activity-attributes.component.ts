@@ -66,6 +66,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   configurationData: ConfigurationData = new ConfigurationData();
 
+  dueDate?: Date;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -223,7 +225,8 @@ export class ActivityAttributesComponent implements OnInit {
                         }
                       });
                   }
-                  this.getAllInvolvedOrgs();
+                  this._getAllInvolvedOrgs();
+                  this._updateDueDate();
                 }
               },
               error: (error) => {
@@ -441,17 +444,17 @@ export class ActivityAttributesComponent implements OnInit {
     return true;
   }
 
-  getColorDueDate() : string {
-    if(this.roadWorkActivityFeature){
+  getColorDueDate(): string {
+    if (this.dueDate) {
       const today: Date = new Date();
-      const consultDue: Date = new Date(this.roadWorkActivityFeature.properties.consultDue);
-      let threeDaysBeforeDue: Date = new Date(consultDue);
-      threeDaysBeforeDue.setDate(consultDue.getDate() - 3);
-      let oneDayAfterDue = new Date(consultDue);
-      oneDayAfterDue.setDate(consultDue.getDate() + 1);
-      if(today >= threeDaysBeforeDue)
+      const dueDate: Date = new Date(this.dueDate);
+      let threeDaysBeforeDue: Date = new Date(dueDate);
+      threeDaysBeforeDue.setDate(dueDate.getDate() - 3);
+      let oneDayAfterDue = new Date(dueDate);
+      oneDayAfterDue.setDate(dueDate.getDate() + 1);
+      if (today >= threeDaysBeforeDue)
         return "background-color: rgb(255, 109, 109);";
-      else if(today >= oneDayAfterDue)
+      else if (today >= oneDayAfterDue)
         return "background-color: rgb(255, 194, 109);";
     }
     return "background-color: rgb(109, 255, 121);";
@@ -464,6 +467,8 @@ export class ActivityAttributesComponent implements OnInit {
       this.roadWorkActivityStatusEnumControl.setValue(newStatus);
       this.update();
     }
+
+    this._updateDueDate();
 
     let mailText = "mailto:";
 
@@ -489,7 +494,38 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
-  getAllInvolvedOrgs() {
+  changeInvolvedUsers() {
+    if (this.roadWorkActivityFeature) {
+      if (!this.roadWorkActivityFeature.properties.involvedUsers) {
+        this.roadWorkActivityFeature.properties.involvedUsers = [];
+      }
+      if (this.chosenOrganisationUuid) {
+        this.roadWorkActivityFeature.properties.involvedUsers =
+          this.roadWorkActivityFeature.properties.involvedUsers.filter((user) => user.organisationalUnit.uuid != this.chosenOrganisationUuid);
+      }
+      for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
+        this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
+      }
+      this.update();
+      this._getAllInvolvedOrgs();
+    }
+  }
+
+  isInvolvedUserSelected(userUuid: string): boolean {
+    if (this.roadWorkActivityFeature) {
+      for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
+        if (involvedUser.uuid == userUuid)
+          return true;
+      }
+    }
+    return false;
+  }
+
+  ngOnDestroy() {
+    this.activatedRouteSubscription.unsubscribe();
+  }
+
+  private _getAllInvolvedOrgs() {
     if (this.roadWorkActivityFeature) {
       let involvedOrgs: Map<string, OrganisationalUnit> = new Map();
       for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
@@ -523,35 +559,23 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  changeInvolvedUsers() {
+  private _updateDueDate() {
     if (this.roadWorkActivityFeature) {
-      if (!this.roadWorkActivityFeature.properties.involvedUsers) {
-        this.roadWorkActivityFeature.properties.involvedUsers = [];
-      }
-      if (this.chosenOrganisationUuid) {
-        this.roadWorkActivityFeature.properties.involvedUsers =
-          this.roadWorkActivityFeature.properties.involvedUsers.filter((user) => user.organisationalUnit.uuid != this.chosenOrganisationUuid);
-      }
-      for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
-        this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
-      }
-      this.update();
-      this.getAllInvolvedOrgs();
-    }
-  }
-
-  isInvolvedUserSelected(userUuid: string): boolean {
-    if (this.roadWorkActivityFeature) {
-      for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
-        if (involvedUser.uuid == userUuid)
-          return true;
+      if (this.roadWorkActivityFeature.properties.status.code == "inconsult" ||
+            this.roadWorkActivityFeature.properties.status.code == "verified") {
+        if (this.roadWorkActivityFeature.properties.dateConsultEnd)
+          this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd);
+      } else if (this.roadWorkActivityFeature.properties.status.code == "reporting") {
+        if (this.roadWorkActivityFeature.properties.dateReportEnd)
+          this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
+      } else if (this.roadWorkActivityFeature.properties.status.code == "coordinated") {
+        if (this.roadWorkActivityFeature.properties.dateInfoEnd)
+          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
+      } else {
+        this.dueDate = new Date();
+        this.dueDate.setDate(this.dueDate.getDate() + 7);
       }
     }
-    return false;
-  }
-
-  ngOnDestroy() {
-    this.activatedRouteSubscription.unsubscribe();
   }
 
 }
