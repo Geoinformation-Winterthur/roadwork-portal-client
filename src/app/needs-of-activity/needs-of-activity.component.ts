@@ -207,10 +207,10 @@ export class NeedsOfActivityComponent {
           if (roadWorkNeedFeature.properties && roadWorkNeedFeature.properties.name
             && roadWorkNeedFeature.properties.finishOptimumTo) {
             let roadWorkNeedName: string = this.roadWorkNeedSearchControl.value.trim().toLowerCase();
-            let finishFrom: Date = new Date(roadWorkNeedFeature.properties.finishOptimumTo);
+            let finishOptimumTo: Date = new Date(roadWorkNeedFeature.properties.finishOptimumTo);
             return (roadWorkNeedName === ''
               || roadWorkNeedFeature.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
-              && finishFrom.getFullYear() === this.searchNeedYearOptFrom;
+              && finishOptimumTo.getFullYear() === this.searchNeedYearOptFrom;
           } else {
             return false;
           }

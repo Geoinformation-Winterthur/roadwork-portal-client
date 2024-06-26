@@ -76,9 +76,9 @@
                             <ng-container matColumnDef="period">
                                 <th mat-header-cell *matHeaderCellDef> Realisierung </th>
                                 <td mat-cell *matCellDef="let roadWorkActivity">
-                                    {{roadWorkActivity.properties.finishFrom
+                                    {{roadWorkActivity.properties.finishEarlyTo
                                     |
-                                    date:'dd.MM.yyyy'}} - {{roadWorkActivity.properties.finishTo | date:'dd.MM.yyyy'}}
+                                    date:'dd.MM.yyyy'}} - {{roadWorkActivity.properties.finishLateTo | date:'dd.MM.yyyy'}}
                                 </td>
                             </ng-container>
 

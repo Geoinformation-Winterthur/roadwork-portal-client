@@ -318,8 +318,9 @@ export class NeedAttributesComponent implements OnInit {
         roadWorkActivity.properties.desiredYearFrom = this.roadWorkNeedFeature.properties.desiredYearFrom;
       if(this.roadWorkNeedFeature.properties.desiredYearTo)
         roadWorkActivity.properties.desiredYearTo = this.roadWorkNeedFeature.properties.desiredYearTo;
-      roadWorkActivity.properties.finishFrom = this.roadWorkNeedFeature.properties.finishEarlyTo;
-      roadWorkActivity.properties.finishTo = this.roadWorkNeedFeature.properties.finishLateTo;
+      roadWorkActivity.properties.finishEarlyTo = this.roadWorkNeedFeature.properties.finishEarlyTo;
+      roadWorkActivity.properties.finishOptimumTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
+      roadWorkActivity.properties.finishLateTo = this.roadWorkNeedFeature.properties.finishLateTo;
       roadWorkActivity.properties.isPrivate = true;
       roadWorkActivity.properties.overarchingMeasure = this.roadWorkNeedFeature.properties.overarchingMeasure;
       roadWorkActivity.properties.section = this.roadWorkNeedFeature.properties.section;
