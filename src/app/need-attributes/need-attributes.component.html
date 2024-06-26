@@ -29,29 +29,29 @@
                         PUBLIZIEREN
                     </button>
                 </div>
-                <h2 style="font-weight: normal;">Realisierung</h2>
+                <h2 style="font-weight: normal;">Baubeginn</h2>
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
-                    <div style="margin: 0.5em;margin-bottom: 1em;">
-                        Fr&uuml;hest: <span
+                    <div style="margin: 0.5em;">
+                        Fr&uuml;hester:&nbsp;<span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishEarlyTo")}}</span>
                         <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishEarlyQuartal"
-                            (change)="update()" showTickMarks style="margin: 1em;width: 80%;"
+                            (change)="update()" showTickMarks style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
-                    <div style="margin: 0.5em;margin-bottom: 1em;">
-                        Wunsch: <span
+                    <div style="margin: 0.5em;">
+                        Wunsch:&nbsp;&nbsp;&nbsp;&nbsp;<span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishOptimumTo")}}</span>
                         <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishOptimumQuartal"
-                            (change)="update()" showTickMarks style="margin: 1em;width: 80%;"
+                            (change)="update()" showTickMarks style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
-                    <div style="margin: 0.5em;margin-bottom: 1em;">
-                        Sp&auml;test: <span
+                    <div style="margin: 0.5em;">
+                        Sp&auml;tester:&nbsp;<span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishLateTo")}}</span>
                         <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishLateQuartal"
-                            (change)="update()" showTickMarks style="margin: 1em;width: 80%;"
+                            (change)="update()" showTickMarks style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
