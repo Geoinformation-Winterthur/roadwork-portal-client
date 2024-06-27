@@ -329,6 +329,7 @@ export class ActivityAttributesComponent implements OnInit {
           }
         });
     }
+    this._updateDueDate();
   }
 
   deleteRoadworkActivity(uuid: string) {
@@ -468,8 +469,6 @@ export class ActivityAttributesComponent implements OnInit {
       this.roadWorkActivityStatusEnumControl.setValue(newStatus);
       this.update();
     }
-
-    this._updateDueDate();
 
     let mailText = "mailto:";
 
