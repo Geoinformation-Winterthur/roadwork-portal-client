@@ -78,6 +78,7 @@ export class EditActivityMapComponent implements OnInit {
     proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
     register(proj4);
     this.initializeMap();
+    this.resizeMap(null);
   }
 
   ngOnDestroy() {
@@ -164,8 +165,6 @@ export class EditActivityMapComponent implements OnInit {
         zoom: 14
       })
     });
-
-    this.resizeMap(null);
 
     this.polygonDraw = new Draw({
       source: this.userDrawSource,
@@ -340,13 +339,7 @@ export class EditActivityMapComponent implements OnInit {
   private resizeMap(event: any) {
     let mapElement: HTMLElement | undefined;
     mapElement = document.getElementById("edit_activity_map") as HTMLElement;
-    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
-    let topCoord: number = Math.round(mapElementRect.top);
-    let mapHeight: number = window.innerHeight - (topCoord + 70);
-    if (window.innerWidth / mapHeight > 3.5) {
-      mapHeight = window.innerWidth / 3.5;
-    }
-    mapElement.style.height = mapHeight + "px";
+    mapElement.style.height = screen.availHeight / 2 + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {

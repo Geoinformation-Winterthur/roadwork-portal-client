@@ -228,14 +228,9 @@ export class EditEventMapComponent implements OnInit {
   addFeatureFinished(event: any) {}
 
   private resizeMap(event: any) {
-    let mapElement: HTMLElement = document.getElementById("edit_event_map") as HTMLElement;
-    let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
-    let topCoord: number = Math.round(mapElementRect.top);
-    let mapHeight: number = window.innerHeight - (topCoord + 70);
-    if (window.innerWidth / mapHeight > 3.5) {
-      mapHeight = window.innerWidth / 3.5;
-    }
-    mapElement.style.height = mapHeight + "px";
+    let mapElement: HTMLElement | undefined;
+    mapElement = document.getElementById("edit_activity_map") as HTMLElement;
+    mapElement.style.height = screen.availHeight / 2 + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {
