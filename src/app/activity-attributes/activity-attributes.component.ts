@@ -451,9 +451,9 @@ export class ActivityAttributesComponent implements OnInit {
       const today: Date = new Date();
       const dueDate: Date = new Date(this.dueDate);
       let threeDaysBeforeDue: Date = new Date(dueDate);
-      threeDaysBeforeDue.setDate(dueDate.getDate() - 3);
+      threeDaysBeforeDue.setDate(dueDate.getDate() - 2);
       let oneDayAfterDue = new Date(dueDate);
-      oneDayAfterDue.setDate(dueDate.getDate() + 1);
+      oneDayAfterDue.setDate(dueDate.getDate() + 2);
       if (today >= threeDaysBeforeDue)
         return "background-color: rgb(255, 109, 109);";
       else if (today >= oneDayAfterDue)
