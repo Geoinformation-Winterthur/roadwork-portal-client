@@ -64,9 +64,6 @@ export class ManagementAreasComponent implements OnInit {
     this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.snackBar = snackBar;
-    setTimeout(() => {
-      this.resizeMap(null);
-    }, 20);
   }
 
   ngOnInit() {
@@ -146,6 +143,8 @@ export class ManagementAreasComponent implements OnInit {
         zoom: 13
       })
     });
+
+    this.resizeMap(null);
 
     this.loadGeometry();
 

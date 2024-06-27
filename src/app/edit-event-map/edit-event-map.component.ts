@@ -50,9 +50,6 @@ export class EditEventMapComponent implements OnInit {
     eventService: EventService) {
     this.eventService = eventService;
     this.snackBar = snackBar;
-    setTimeout(() => {
-      this.resizeMap(null);
-    }, 20);
   }
 
   ngOnInit() {
@@ -130,6 +127,8 @@ export class EditEventMapComponent implements OnInit {
         zoom: 14
       })
     });
+
+    this.resizeMap(null);
 
     this.polygonDraw = new Draw({
       source: this.userDrawSource,

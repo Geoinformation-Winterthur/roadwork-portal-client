@@ -27,7 +27,6 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
-import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
 
 @Component({
@@ -69,9 +68,6 @@ export class EditActivityMapComponent implements OnInit {
     this.needsOfActivityService = needsOfActivityService;
     this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
-    setTimeout(() => {
-      this.resizeMap(null);
-    }, 20);
   }
 
   ngOnInit() {
@@ -169,6 +165,8 @@ export class EditActivityMapComponent implements OnInit {
       })
     });
 
+    this.resizeMap(null);
+
     this.polygonDraw = new Draw({
       source: this.userDrawSource,
       type: "Polygon",
@@ -187,7 +185,7 @@ export class EditActivityMapComponent implements OnInit {
     this._reloadRoadworkNeeds(true);
   }
 
-  onChangeYear(){
+  onChangeYear() {
     this._reloadRoadworkNeeds(false);
   }
 
@@ -281,7 +279,7 @@ export class EditActivityMapComponent implements OnInit {
 
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
     this.roadWorkNeedService.getRoadWorkNeeds([], this.chosenYear,
-          "", ["requirement"])
+      "", ["requirement"])
       .subscribe({
         next: (roadWorkNeeds) => {
           this.needsOnMap = roadWorkNeeds;
@@ -340,7 +338,8 @@ export class EditActivityMapComponent implements OnInit {
   private addFeatureFinished(event: any) { }
 
   private resizeMap(event: any) {
-    let mapElement: HTMLElement = document.getElementById("edit_activity_map") as HTMLElement;
+    let mapElement: HTMLElement | undefined;
+    mapElement = document.getElementById("edit_activity_map") as HTMLElement;
     let mapElementRect: DOMRect = mapElement.getBoundingClientRect();
     let topCoord: number = Math.round(mapElementRect.top);
     let mapHeight: number = window.innerHeight - (topCoord + 70);

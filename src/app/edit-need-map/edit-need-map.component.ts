@@ -57,9 +57,6 @@ export class EditNeedMapComponent implements OnInit {
     this.roadWorkNeedService = roadWorkNeedService;
     this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
-    setTimeout(() => {
-      this.resizeMap(null);
-    }, 20);
   }
 
   ngOnInit() {
@@ -137,6 +134,8 @@ export class EditNeedMapComponent implements OnInit {
         zoom: 14
       })
     });
+
+    this.resizeMap(null);
 
     this.polygonDraw = new Draw({
       source: this.userDrawSource,
