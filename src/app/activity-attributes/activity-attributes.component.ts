@@ -23,6 +23,7 @@ import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -474,16 +475,34 @@ export class ActivityAttributesComponent implements OnInit {
 
     if (this.roadWorkActivityFeature &&
       (newStatus == "inconsult" || newStatus == "reporting")) {
+
+      if (this.involvedUsers.length > 0)
+        mailText += this.involvedUsers[0].mailAddress + ";";
+
       for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
         mailText += involvedUser.mailAddress + ";";
       }
 
-      mailText += "?subject=Ihre Meinung ist gefragt.&";
+      if (newStatus == "inconsult")
+        mailText += "?subject=Die Bedarfsklärung zum Bauvorhaben '" +
+          this.roadWorkActivityFeature.properties.name +
+          "' beginnt. Ihre Meinung ist gefragt.&";
+      else if (newStatus == "reporting")
+        mailText += "?subject=Die Stellungnahme zum Bauvorhaben '" + 
+          this.roadWorkActivityFeature.properties.name +
+          "' beginnt. Ihre Meinung ist gefragt.&";
       mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
       mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
+      mailText += environment.fullAppPath + "%0A%0A";
+      mailText += "Titel/Strasse: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
       mailText += "Bitte beurteilen Sie, ob in Ihrem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
       mailText += "Sollte Bedarf vorhanden sein, so bitten wir Sie, den Bedarf genauer zu erläutern und eine Beurteilung aus Ihrer Sicht abzugeben. Sie können auch einen neuen Bedarf via Button erfassen (Hinweis: mit Wählen des Button öffnet sich die Eingabemaske und Sie können einen neuen Bedarf inkl. Perimeter eingeben).%0A%0A";
-      mailText += "Die Bedarfsklärung läuft bis XXX.%0A%0A";
+      if (newStatus == "inconsult" && this.roadWorkActivityFeature.properties.dateConsultEnd)
+        mailText += "Die Bedarfsklärung läuft bis zum " +
+          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
+      else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
+        mailText += "Die Stellungnahme läuft bis zum " + 
+          new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
       mailText += "Mit «Speichern» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
       mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
@@ -562,7 +581,7 @@ export class ActivityAttributesComponent implements OnInit {
   private _updateDueDate() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.status.code == "inconsult" ||
-            this.roadWorkActivityFeature.properties.status.code == "verified") {
+        this.roadWorkActivityFeature.properties.status.code == "verified") {
         if (this.roadWorkActivityFeature.properties.dateConsultEnd)
           this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd);
       } else if (this.roadWorkActivityFeature.properties.status.code == "reporting") {
