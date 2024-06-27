@@ -18,9 +18,13 @@
             </mat-card-header>
             <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
                 <mat-chip-list>
-                    <mat-chip>
-                        <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
-                            style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung erhalten</span>
+                    <mat-chip *ngIf="consultationInput.feedbackGiven">
+                        <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
+                            style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung gegeben</span>
+                    </mat-chip>
+                    <mat-chip *ngIf="!consultationInput.feedbackGiven">
+                        <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
+                            style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Noch keine R&uuml;ckmeldung</span>
                     </mat-chip>
                 </mat-chip-list>
                 <div style="margin: 1em;">R&uuml;ckmeldung Besteller:</div>

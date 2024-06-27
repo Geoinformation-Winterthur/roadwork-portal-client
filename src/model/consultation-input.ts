@@ -14,5 +14,6 @@ export class ConsultationInput {
     managerFeedback: string = "";
     valuation: number = 0;
     feedbackPhase: string = "";
+    feedbackGiven: boolean = false;
     errorMessage: string = "";
 }

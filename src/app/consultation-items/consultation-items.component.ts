@@ -98,6 +98,7 @@ export class ConsultationItemsComponent implements OnInit {
               consultationInputObj.lastEdit = consultationInput.lastEdit;
               consultationInputObj.decline = consultationInput.decline;
               consultationInputObj.valuation = consultationInput.valuation;
+              consultationInputObj.feedbackGiven = true;
 
               this.consultationInputsFromInConsult.push(consultationInputObj);
             }
@@ -106,6 +107,7 @@ export class ConsultationItemsComponent implements OnInit {
           }
         });
     } else {
+      this.consultationInput.feedbackGiven = true;
       this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
         this.consultationInput)
         .subscribe({
