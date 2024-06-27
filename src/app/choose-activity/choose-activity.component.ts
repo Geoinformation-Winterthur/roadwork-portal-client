@@ -30,7 +30,7 @@ export class ChooseActivityComponent implements OnInit {
   statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated"];
 
   tableDisplayedColumns: string[] = ['title', 'status', 'area_man', 'project_man', 'lead',
-    'realisation_date', 'due_date', 'actions', 'link_cityplan', 'link_wwg',
+    'realisation_date', 'due_date', 'link_cityplan', 'link_wwg',
     'relevance', 'relevance_sks'];
 
   user: User = new User();

@@ -18,10 +18,8 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="float: right;">
-                    <button mat-button
-                        *ngIf="!roadWorkNeedFeature.properties.uuid && roadWorkNeedFeature.properties.isPrivate"
-                        (click)="savePrivate()" style="margin: 1em;background-color: rgb(236,236,234);">
-                        F&Uuml;R MICH SPEICHERN
+                    <button mat-button (click)="store()" style="margin: 1em;background-color: rgb(236,236,234);">
+                        SPEICHERN
                     </button>
                     <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate" (click)="publish()"
                         style="margin: 1em;background-color: rgb(236,236,234);">
@@ -32,26 +30,26 @@
                 <h2 style="font-weight: normal;">Baubeginn</h2>
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
                     <div style="margin: 0.5em;">
-                        Fr&uuml;hester:&nbsp;<span
+                        Fr&uuml;hester:&nbsp;<span [ngModel]="finishEarlyQuartal"
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishEarlyTo")}}</span>
-                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishEarlyQuartal"
-                            (change)="update()" showTickMarks style="margin-left: 1em;width: 80%;"
+                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishEarlyQuartal" showTickMarks
+                            (change)="updateQuartal()" style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Wunsch:&nbsp;&nbsp;&nbsp;&nbsp;<span
+                        Wunsch:&nbsp;&nbsp;&nbsp;&nbsp;<span [ngModel]="finishOptimumQuartal"
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishOptimumTo")}}</span>
-                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishOptimumQuartal"
-                            (change)="update()" showTickMarks style="margin-left: 1em;width: 80%;"
+                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishOptimumQuartal" showTickMarks
+                            (change)="updateQuartal()" style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Sp&auml;tester:&nbsp;<span
+                        Sp&auml;tester:&nbsp;<span [ngModel]="finishLateQuartal"
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishLateTo")}}</span>
-                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishLateQuartal"
-                            (change)="update()" showTickMarks style="margin-left: 1em;width: 80%;"
+                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishLateQuartal" showTickMarks
+                            (change)="updateQuartal()" style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
@@ -68,7 +66,6 @@
                                 <mat-form-field>
                                     <input matInput type="text" maxlength="80"
                                         [(ngModel)]="roadWorkNeedFeature.properties.name" placeholder="Titel/Strasse"
-                                        (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
@@ -79,13 +76,12 @@
                                 <mat-form-field>
                                     <input matInput type="text" maxlength="80"
                                         [(ngModel)]="roadWorkNeedFeature.properties.section" placeholder="Abschnitt"
-                                        (focusout)="update()"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Ausl&ouml;segrund</mat-label>
                                     <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.description" (focusout)="update()"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.description"
                                         placeholder="Ausl&ouml;segrund..." required
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </textarea>
@@ -93,8 +89,7 @@
                                 <mat-form-field>
                                     <mat-label>Bemerkung</mat-label>
                                     <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" (focusout)="update()"
-                                        placeholder="Bemerkung..."
+                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" placeholder="Bemerkung..."
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         </textarea>
                                 </mat-form-field>
@@ -102,7 +97,7 @@
                                     *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
                                     <input matInput type="number" min="0"
                                         [(ngModel)]="roadWorkNeedFeature.properties.costs"
-                                        placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
+                                        placeholder="Kostensch&auml;tzung (CHF)"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                             </div>
@@ -117,7 +112,7 @@
                             <div style="display:flex;flex-direction:column;">
                                 <p>Bewertung *<br>
                                     <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
-                                        (change)="update()" name="relevance" aria-label="Bewertung"
+                                        name="relevance" aria-label="Bewertung"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 1"
                                             value="1"
@@ -189,13 +184,13 @@
                                 <mat-form-field>
                                     <input matInput type="number" [min]="getCurrentYear()"
                                         [(ngModel)]="roadWorkNeedFeature.properties.desiredYearFrom"
-                                        placeholder="Umsetzungsjahr von" (focusout)="update()" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
+                                        placeholder="Umsetzungsjahr von" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
                                                         || !roadWorkNeedFeature.properties.overarchingMeasure">
                                 </mat-form-field>
                                 <mat-form-field>
                                     <input matInput type="number" [min]="getCurrentYear()"
                                         [(ngModel)]="roadWorkNeedFeature.properties.desiredYearTo"
-                                        placeholder="Umsetzungsjahr bis" (focusout)="update()" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
+                                        placeholder="Umsetzungsjahr bis" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
                                                         || !roadWorkNeedFeature.properties.overarchingMeasure">
                                 </mat-form-field>
                                 <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status.code"
@@ -215,18 +210,18 @@
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" mat-button
                                 (click)="createNewActivityFromNeed()"
                                 [disabled]="roadWorkNeedFeature.properties.isPrivate"><mat-icon
-                                    aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp; &Uuml;BERNEHMEN</button>
+                                    aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp;
+                                &Uuml;BERNEHMEN</button>
                             <button *ngIf="roadWorkNeedFeature.properties.isPrivate ||
                                         user.role.code === 'administrator'"
                                 (click)="openDeleteDialog(roadWorkNeedFeature.properties.uuid)"
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkNeedFeature.properties.isPrivate && 
-                                                !(user.role.code === 'administrator')"
-                                mat-button>L&Ouml;SCHEN</button>
+                                                !(user.role.code === 'administrator')" mat-button>L&Ouml;SCHEN</button>
                             <div style="margin-top: 3em;">
                                 <h3>Dokumente</h3>
                                 <mat-form-field style="width: 100%;">
                                     <input matInput type="url" maxlength="2048" [formControl]="urlControl"
-                                        placeholder="Link (URL)" (focusout)="update()"
+                                        placeholder="Link (URL)"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <p>Angeh&auml;ngtes PDF-Dokument herunterladen:</p>

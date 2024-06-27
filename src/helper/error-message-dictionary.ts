@@ -28,7 +28,7 @@ export class ErrorMessageDictionary {
              "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.",
              "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
              "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
-             "Änderung wurde nicht gespeichert, da der Bauvorhaben kein Bedarf zugeordnet ist.",
+             "Änderung wurde nicht gespeichert, da dem Bauvorhaben kein Bedarf zugeordnet ist.",
              "Löschen des Bedarfs nicht möglich, da ansonsten einer Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
              "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde.",
              "Keine Berechtigung, dieses Bauvorhaben zu editieren."

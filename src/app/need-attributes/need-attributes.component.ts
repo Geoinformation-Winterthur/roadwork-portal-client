@@ -142,6 +142,33 @@ export class NeedAttributesComponent implements OnInit {
                       error: (error) => {
                       }
                     });
+
+                  this.userService.getUser(this.userService.getLocalUser().mailAddress)
+                    .subscribe({
+                      next: (users) => {
+                        if (users && users.length > 0 && users[0]) {
+                          let user: User = users[0];
+                          ErrorMessageEvaluation._evaluateErrorMessage(user);
+                          if (user && user.errorMessage &&
+                            user.errorMessage.trim().length !== 0) {
+                            this.snckBar.open(user.errorMessage, "", {
+                              duration: 4000
+                            });
+                          } else {
+                            this.user = user;
+                            if (this.roadWorkNeedFeature) {
+                              this.roadWorkNeedFeature.properties.orderer.organisationalUnit =
+                                user.organisationalUnit;
+                            }
+                          }
+                        }
+                      },
+                      error: (error) => {
+                        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+                          duration: 4000
+                        });
+                      }
+                    });
                 }
               },
               error: (error) => {
@@ -152,50 +179,22 @@ export class NeedAttributesComponent implements OnInit {
 
       });
 
-    this.userService.getUser(this.userService.getLocalUser().mailAddress)
-      .subscribe({
-        next: (users) => {
-          if (users && users.length > 0 && users[0]) {
-            let user: User = users[0];
-            ErrorMessageEvaluation._evaluateErrorMessage(user);
-            if (user && user.errorMessage &&
-              user.errorMessage.trim().length !== 0) {
-              this.snckBar.open(user.errorMessage, "", {
-                duration: 4000
-              });
-            } else {
-              this.user = user;
-              if (this.roadWorkNeedFeature) {
-                this.roadWorkNeedFeature.properties.orderer.organisationalUnit =
-                  user.organisationalUnit;
-              }
-            }
-          }
-        },
-        error: (error) => {
-          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
-            duration: 4000
-          });
-        }
-      });
-
   }
 
   publish() {
     if (this.roadWorkNeedFeature) {
       this.roadWorkNeedFeature.properties.isPrivate = false;
       if (this.roadWorkNeedFeature.properties.uuid)
-        this.update();
+        this.save();
       else
         this.add();
     }
   }
 
-  savePrivate() {
+  store() {
     if (this.roadWorkNeedFeature) {
-      this.roadWorkNeedFeature.properties.isPrivate = true;
       if (this.roadWorkNeedFeature.properties.uuid)
-        this.update();
+        this.save();
       else
         this.add();
     }
@@ -241,7 +240,7 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  update() {
+  updateQuartal(){
     if (this.finishEarlyQuartal > this.finishOptimumQuartal)
       this.finishOptimumQuartal = this.finishEarlyQuartal;
     if (this.finishOptimumQuartal > this.finishLateQuartal)
@@ -253,9 +252,12 @@ export class NeedAttributesComponent implements OnInit {
       this._convertQuartalToDate(this.finishEarlyQuartal);
     this.roadWorkNeedFeature!.properties.finishLateTo =
       this._convertQuartalToDate(this.finishLateQuartal);
+  }
+
+  save() {
 
     this.roadWorkNeedFeature!.properties.url = this.urlControl.value;
-    
+
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
         .subscribe({
@@ -283,7 +285,7 @@ export class NeedAttributesComponent implements OnInit {
                           this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 
-                        if(this.roadWorkNeedFeature)
+                        if (this.roadWorkNeedFeature)
                           this.roadWorkNeedFeature.properties.managementArea = managementAreas[0];
                         this.snckBar.open("Bedarf ist gespeichert", "", {
                           duration: 4000,
@@ -310,13 +312,13 @@ export class NeedAttributesComponent implements OnInit {
       roadWorkActivity.properties.description = this.roadWorkNeedFeature.properties.description;
       roadWorkActivity.properties.comment = this.roadWorkNeedFeature.properties.comment;
       roadWorkActivity.properties.costsType.code = "valuation";
-      if(this.roadWorkNeedFeature.properties.costs)
+      if (this.roadWorkNeedFeature.properties.costs)
         roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
       else
         roadWorkActivity.properties.costs = -1;
-      if(this.roadWorkNeedFeature.properties.desiredYearFrom)
+      if (this.roadWorkNeedFeature.properties.desiredYearFrom)
         roadWorkActivity.properties.desiredYearFrom = this.roadWorkNeedFeature.properties.desiredYearFrom;
-      if(this.roadWorkNeedFeature.properties.desiredYearTo)
+      if (this.roadWorkNeedFeature.properties.desiredYearTo)
         roadWorkActivity.properties.desiredYearTo = this.roadWorkNeedFeature.properties.desiredYearTo;
       roadWorkActivity.properties.finishEarlyTo = this.roadWorkNeedFeature.properties.finishEarlyTo;
       roadWorkActivity.properties.finishOptimumTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
@@ -351,16 +353,16 @@ export class NeedAttributesComponent implements OnInit {
   writeOutQuartal(finishDateType: string): string {
     let result: string = "";
 
-    if(this.roadWorkNeedFeature){
+    if (this.roadWorkNeedFeature) {
       let finishDate: Date | undefined;
-      if(finishDateType == "finishEarlyTo"){
+      if (finishDateType == "finishEarlyTo") {
         finishDate = new Date(this.roadWorkNeedFeature.properties.finishEarlyTo);
-      } else if(finishDateType == "finishOptimumTo"){
-        finishDate = new Date(this.roadWorkNeedFeature.properties.finishOptimumTo);    
-      } else if(finishDateType == "finishLateTo"){
+      } else if (finishDateType == "finishOptimumTo") {
+        finishDate = new Date(this.roadWorkNeedFeature.properties.finishOptimumTo);
+      } else if (finishDateType == "finishLateTo") {
         finishDate = new Date(this.roadWorkNeedFeature.properties.finishLateTo);
       }
-      if(finishDate){
+      if (finishDate) {
         let finishMonth: number = finishDate.getMonth() + 1;
         let finishQuartal: number = Math.ceil(finishMonth / 3);
         if (finishQuartal === 1) {
@@ -469,9 +471,9 @@ export class NeedAttributesComponent implements OnInit {
     return new Date().getFullYear();
   }
 
-  switchShowRelevanceInfo(){
+  switchShowRelevanceInfo() {
     this.showRelevanceInfo = !this.showRelevanceInfo;
-    if(!this.roadWorkNeedFeature || this.roadWorkNeedFeature.properties.relevance < 0)
+    if (!this.roadWorkNeedFeature || this.roadWorkNeedFeature.properties.relevance < 0)
       this.showRelevanceInfo = false;
   }
 
@@ -500,7 +502,7 @@ export class NeedAttributesComponent implements OnInit {
     let currentYear: number = currentDate.getFullYear();
 
     let addYears = 0;
-    let averallQuartal = (currentQuartal + quartalCount - 1) / 4; 
+    let averallQuartal = (currentQuartal + quartalCount - 1) / 4;
     addYears = Math.floor(averallQuartal);
 
     result.setFullYear(currentYear + addYears);

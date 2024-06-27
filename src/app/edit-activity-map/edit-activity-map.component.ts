@@ -42,6 +42,7 @@ export class EditActivityMapComponent implements OnInit {
   chosenYear?: number;
 
   isInEditingMode: boolean = false;
+  isEditingFinished: boolean = true;
 
   map: Map = new Map();
 
@@ -173,8 +174,12 @@ export class EditActivityMapComponent implements OnInit {
 
     this.addFeatureFinished = () => {
       if (this.userDrawSource.getState() === 'ready') {
-        this.sendGeometry();
-        this.userDrawSource.clear();
+        this.isInEditingMode = true;
+        this.isEditingFinished = true;
+        setTimeout(() => {
+          if (this.polygonDraw !== undefined)
+            this.map.removeInteraction(this.polygonDraw);
+        }, 20);
         // this.endEditing();
       }
     }
@@ -257,17 +262,22 @@ export class EditActivityMapComponent implements OnInit {
   }
 
   startEditing() {
+    this.userDrawSource.clear();
     if (this.polygonDraw !== undefined) {
       this.map.addInteraction(this.polygonDraw);
       this.isInEditingMode = true;
+      this.isEditingFinished = false;
     }
   }
 
-  endEditing() {
-    if (this.polygonDraw !== undefined) {
+  endEditing(status: string) {
+    this.isInEditingMode = false;
+    this.isEditingFinished = true;
+    if (status == "save")
+      this.sendGeometry();
+    if (this.polygonDraw !== undefined)
       this.map.removeInteraction(this.polygonDraw);
-      this.isInEditingMode = false;
-    }
+    this.userDrawSource.clear();
   }
 
   showEditHelp() {

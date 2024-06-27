@@ -36,6 +36,7 @@ export class EditEventMapComponent implements OnInit {
   eventFeat?: EventFeature;
 
   isInEditingMode: boolean = false;
+  isEditingFinished: boolean = true;
 
   map: Map = new Map();
 
@@ -135,10 +136,14 @@ export class EditEventMapComponent implements OnInit {
       type: "Polygon",
     });
 
-    this.addFeatureFinished = (event) => {
+    this.addFeatureFinished = () => {
       if (this.userDrawSource.getState() === 'ready') {
-        this.sendGeometry();
-        this.userDrawSource.clear();
+        this.isInEditingMode = true;
+        this.isEditingFinished = true;
+        setTimeout(() => {
+          if (this.polygonDraw !== undefined)
+            this.map.removeInteraction(this.polygonDraw);
+        }, 20);
         // this.endEditing();
       }
     }
@@ -206,17 +211,22 @@ export class EditEventMapComponent implements OnInit {
   }
 
   startEditing() {
+    this.userDrawSource.clear();
     if (this.polygonDraw !== undefined) {
       this.map.addInteraction(this.polygonDraw);
       this.isInEditingMode = true;
+      this.isEditingFinished = false;
     }
   }
 
-  endEditing() {
-    if (this.polygonDraw !== undefined) {
+  endEditing(status: string) {
+    this.isInEditingMode = false;
+    this.isEditingFinished = true;
+    if (status == "save")
+      this.sendGeometry();
+    if (this.polygonDraw !== undefined)
       this.map.removeInteraction(this.polygonDraw);
-      this.isInEditingMode = false;
-    }
+    this.userDrawSource.clear();
   }
 
   showEditHelp() {
@@ -229,7 +239,7 @@ export class EditEventMapComponent implements OnInit {
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement | undefined;
-    mapElement = document.getElementById("edit_activity_map") as HTMLElement;
+    mapElement = document.getElementById("edit_event_map") as HTMLElement;
     mapElement.style.height = screen.availHeight / 2 + "px";
   }
 

@@ -18,10 +18,9 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="text-align: right;">
-                    <button mat-button
-                        *ngIf="!roadWorkActivityFeature.properties.uuid && roadWorkActivityFeature.properties.isPrivate"
-                        (click)="savePrivate()" style="margin: 1em;background-color: rgb(236,236,234);">
-                        F&Uuml;R MICH SPEICHERN
+                    <button mat-button (click)="store()"
+                        style="margin: 1em;background-color: rgb(236,236,234);">
+                        SPEICHERN
                     </button>
                     <button mat-button *ngIf="roadWorkActivityFeature.properties.isPrivate" (click)="publish()"
                         style="margin: 1em;background-color: rgb(236,236,234);">
@@ -59,7 +58,7 @@
                                         <mat-form-field>
                                             <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.name"
-                                                placeholder="Titel/Strasse" (focusout)="update()"
+                                                placeholder="Titel/Strasse"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
                                         <div *ngIf="!roadWorkActivityFeature.properties.name"
@@ -70,14 +69,14 @@
                                         </div>
                                         <mat-form-field>
                                             <input [(ngModel)]="roadWorkActivityFeature.properties.section" matInput
-                                                type="text" maxlength="80" placeholder="Abschnitt" (focusout)="update()"
+                                                type="text" maxlength="80" placeholder="Abschnitt"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
                                         <mat-form-field>
                                             <mat-label>Ausl&ouml;segrund</mat-label>
                                             <textarea matInput maxlength="255"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.description"
-                                                (focusout)="update()" placeholder="Kurzbeschrieb..."
+                                                placeholder="Kurzbeschrieb..."
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                 required>
                                             </textarea>
@@ -87,13 +86,13 @@
                                             <mat-label>Bemerkung</mat-label>
                                             <textarea matInput maxlength="255"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.comment"
-                                                (focusout)="update()" placeholder="Bemerkung..."
+                                                placeholder="Bemerkung..."
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                         </mat-form-field>
                                         <mat-form-field>
                                             <input matInput type="number" min="0"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                                placeholder="Kostensch&auml;tzung (CHF)" (focusout)="update()"
+                                                placeholder="Kostensch&auml;tzung (CHF)"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
                                         <form class="cost_type_form">
@@ -101,7 +100,7 @@
                                                 <mat-label>Kostenart</mat-label>
                                                 <mat-select
                                                     [(ngModel)]="roadWorkActivityFeature.properties.costsType.code"
-                                                    [formControl]="costTypesControl" (selectionChange)='update()'
+                                                    [formControl]="costTypesControl"
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-option *ngFor="let availableCostType of availableCostTypes"
                                                         [value]="availableCostType.code">
@@ -154,8 +153,7 @@
                                                 </mat-select>
                                             </mat-form-field>
                                         </form>
-                                        <mat-checkbox
-                                            [ngModel]="roadWorkActivityFeature.properties.overarchingMeasure"
+                                        <mat-checkbox [ngModel]="roadWorkActivityFeature.properties.overarchingMeasure"
                                             style="margin:10px;" disabled>
                                             &Uuml;bergeordnete Massnahme
                                         </mat-checkbox>
@@ -168,7 +166,7 @@
                                             </p>
                                         </div>
                                         <mat-checkbox [ngModel]="roadWorkActivityFeature.properties.isStudy"
-                                                style="margin:10px;" disabled>
+                                            style="margin:10px;" disabled>
                                             Vorstudie
                                         </mat-checkbox>
                                         <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
@@ -203,8 +201,9 @@
                                             <div style="margin-top: 1em;">
                                                 F&auml;lligkeit:
                                                 <mat-chip [style]="getColorDueDate()">
-                                                    {{dueDate | date:
-                                                    'dd.MM.yyyy'}}
+                                                    <span *ngIf="!dueDate">nicht bestimmt</span>
+                                                    <span *ngIf="dueDate">{{dueDate | date:
+                                                        'dd.MM.yyyy'}}</span>
                                                 </mat-chip>
                                             </div>
                                             <button (click)="changeStatus('inconsult')"
@@ -267,7 +266,7 @@
                                                 <mat-label>Projektleiter</mat-label>
                                                 <mat-select
                                                     [(ngModel)]="roadWorkActivityFeature.properties.projectManager.uuid"
-                                                    [formControl]="projectManagerControl" (selectionChange)='update()'
+                                                    [formControl]="projectManagerControl"
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-option *ngFor="let availableUser of availableUsers"
                                                         [value]="availableUser.uuid">
@@ -409,7 +408,7 @@
                                                     <mat-label>Baubeginn</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
-                                                        [matDatepicker]="startOfConstruction" (dateChange)="update()"
+                                                        [matDatepicker]="startOfConstruction"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #startOfConstruction></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -419,7 +418,7 @@
                                                     <mat-label>Bauende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
-                                                        [matDatepicker]="endOfConstruction" (dateChange)="update()"
+                                                        [matDatepicker]="endOfConstruction"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #endOfConstruction></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -429,7 +428,7 @@
                                                     <mat-label>Abnahme</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateOfAcceptance"
-                                                        [matDatepicker]="dateOfAcceptance" (dateChange)="update()"
+                                                        [matDatepicker]="dateOfAcceptance"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateOfAcceptance></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -439,7 +438,7 @@
                                                     <mat-label>Garantie</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGuarantee"
-                                                        [matDatepicker]="dateGuarantee" (dateChange)="update()"
+                                                        [matDatepicker]="dateGuarantee"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateGuarantee></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -458,7 +457,7 @@
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isStudy"
-                                                    (change)="update()" style="margin:10px;">
+                                                    style="margin:10px;">
                                                     Vorstudie
                                                 </mat-checkbox>
                                                 <br>
@@ -466,7 +465,7 @@
                                                     <mat-label>Vorstudie Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateStudyStart"
-                                                        [matDatepicker]="dateStudyStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateStudyStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
                                                     <mat-datepicker #dateStudyStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -476,7 +475,7 @@
                                                     <mat-label>Vorstudie Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateStudyEnd"
-                                                        [matDatepicker]="dateStudyStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateStudyStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
                                                     <mat-datepicker #dateStudyEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -496,7 +495,7 @@
                                             <div>
                                                 <mat-checkbox
                                                     [(ngModel)]="roadWorkActivityFeature.properties.isAggloprog"
-                                                    (change)='update()' style="margin:10px;">
+                                                    style="margin:10px;">
                                                     Aggloprogramm
                                                 </mat-checkbox>
                                             </div>
@@ -519,7 +518,7 @@
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
                                                     <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateSks"
-                                                        [formControl]="dateSksControl" (selectionChange)='update()'
+                                                        [formControl]="dateSksControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-option value="dateSks1">{{configurationData.dateSks1 |
                                                             date:'dd.MM.yyyy'}}</mat-option>
@@ -536,7 +535,7 @@
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
                                                     <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateKap"
-                                                        [formControl]="dateKapControl" (selectionChange)='update()'
+                                                        [formControl]="dateKapControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-option value="dateKap1">{{configurationData.dateKap1 |
                                                             date:'dd.MM.yyyy'}}</mat-option>
@@ -549,7 +548,7 @@
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
                                                     <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateOks"
-                                                        [formControl]="dateOksControl" (selectionChange)='update()'
+                                                        [formControl]="dateOksControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-option value="dateOks1">{{configurationData.dateOks1 |
                                                             date:'dd.MM.yyyy'}}</mat-option>
@@ -581,7 +580,7 @@
                                                     <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
-                                                        [matDatepicker]="dateGlTba" (dateChange)="update()"
+                                                        [matDatepicker]="dateGlTba"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateGlTba></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -603,7 +602,7 @@
                                                     <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
                                                     <mat-select
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateSksReal"
-                                                        [formControl]="dateSksControl" (selectionChange)='update()'
+                                                        [formControl]="dateSksControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-option value="dateSks1">{{configurationData.dateSks1 |
                                                             date:'dd.MM.yyyy'}}</mat-option>
@@ -621,7 +620,7 @@
                                                     <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
                                                     <mat-select
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateKapReal"
-                                                        [formControl]="dateKapControl" (selectionChange)='update()'
+                                                        [formControl]="dateKapControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-option value="dateKap1">{{configurationData.dateKap1 |
                                                             date:'dd.MM.yyyy'}}</mat-option>
@@ -635,7 +634,7 @@
                                                     <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
                                                     <mat-select
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateOksReal"
-                                                        [formControl]="dateOksControl" (selectionChange)='update()'
+                                                        [formControl]="dateOksControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-option value="dateOks1">{{configurationData.dateOks1 |
                                                             date:'dd.MM.yyyy'}}</mat-option>
@@ -667,7 +666,7 @@
                                                     <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
-                                                        [matDatepicker]="dateGlTba" (dateChange)="update()"
+                                                        [matDatepicker]="dateGlTba"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateGlTba></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -691,7 +690,7 @@
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isDesire"
-                                                    (change)="update()" style="margin:10px;">
+                                                    style="margin:10px;">
                                                     Begehrens&auml;usserung §&nbsp;45
                                                 </mat-checkbox>
                                                 <br>
@@ -699,7 +698,7 @@
                                                     <mat-label>Begehrens&auml;usserung Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateDesireStart"
-                                                        [matDatepicker]="dateDesireStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateDesireStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isDesire">
                                                     <mat-datepicker #dateDesireStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -709,7 +708,7 @@
                                                     <mat-label>Begehrens&auml;usserung Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateDesireEnd"
-                                                        [matDatepicker]="dateDesireEnd" (dateChange)="update()"
+                                                        [matDatepicker]="dateDesireEnd"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isDesire">
                                                     <mat-datepicker #dateDesireEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -729,7 +728,7 @@
                                             <div>
                                                 <mat-checkbox
                                                     [(ngModel)]="roadWorkActivityFeature.properties.isParticip"
-                                                    (change)="update()" style="margin:10px;">
+                                                    style="margin:10px;">
                                                     Mitwirkungsverfahren §&nbsp;13
                                                 </mat-checkbox>
                                                 <br>
@@ -737,7 +736,7 @@
                                                     <mat-label>Mitwirkungsverfahren Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateParticipStart"
-                                                        [matDatepicker]="dateParticipStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateParticipStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isParticip">
                                                     <mat-datepicker #dateParticipStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -747,7 +746,7 @@
                                                     <mat-label>Mitwirkungsverfahren Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateParticipEnd"
-                                                        [matDatepicker]="dateParticipEnd" (dateChange)="update()"
+                                                        [matDatepicker]="dateParticipEnd"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isParticip">
                                                     <mat-datepicker #dateParticipEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -767,7 +766,7 @@
                                             <div>
                                                 <mat-checkbox
                                                     [(ngModel)]="roadWorkActivityFeature.properties.isPlanCirc"
-                                                    (change)="update()" style="margin:10px;">
+                                                    style="margin:10px;">
                                                     Planauflage §&nbsp;16
                                                 </mat-checkbox>
                                                 <br>
@@ -775,7 +774,7 @@
                                                     <mat-label>Planauflage Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircStart"
-                                                        [matDatepicker]="datePlanCircStart" (dateChange)="update()"
+                                                        [matDatepicker]="datePlanCircStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isPlanCirc">
                                                     <mat-datepicker #datePlanCircStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -785,7 +784,7 @@
                                                     <mat-label>Planauflage Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircEnd"
-                                                        [matDatepicker]="datePlanCircEnd" (dateChange)="update()"
+                                                        [matDatepicker]="datePlanCircEnd"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isPlanCirc">
                                                     <mat-datepicker #datePlanCircEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -812,7 +811,7 @@
                                                     <mat-label>Bedarfskl&auml;rung Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart"
-                                                        [matDatepicker]="dateConsultStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateConsultStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateConsultStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -822,7 +821,7 @@
                                                     <mat-label>Bedarfskl&auml;rung Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd"
-                                                        [matDatepicker]="dateConsultEnd" (dateChange)="update()"
+                                                        [matDatepicker]="dateConsultEnd"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateConsultEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -832,7 +831,7 @@
                                                     <mat-label>Bedarfskl&auml;rung Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
-                                                        [matDatepicker]="dateConsultClose" (dateChange)="update()"
+                                                        [matDatepicker]="dateConsultClose"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateConsultClose></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -854,7 +853,7 @@
                                                     <mat-label>Stellungnahme Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateReportStart"
-                                                        [matDatepicker]="dateReportStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateReportStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateReportStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -864,7 +863,7 @@
                                                     <mat-label>Stellungnahme Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateReportEnd"
-                                                        [matDatepicker]="dateReportEnd" (dateChange)="update()"
+                                                        [matDatepicker]="dateReportEnd"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateReportEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -874,7 +873,7 @@
                                                     <mat-label>Stellungnahme Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateReportClose"
-                                                        [matDatepicker]="dateReportClose" (dateChange)="update()"
+                                                        [matDatepicker]="dateReportClose"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateReportClose></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -896,7 +895,7 @@
                                                     <mat-label>Infoversand Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateInfoStart"
-                                                        [matDatepicker]="dateInfoStart" (dateChange)="update()"
+                                                        [matDatepicker]="dateInfoStart"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateInfoStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -906,7 +905,7 @@
                                                     <mat-label>Infoversand Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateInfoEnd"
-                                                        [matDatepicker]="dateInfoEnd" (dateChange)="update()"
+                                                        [matDatepicker]="dateInfoEnd"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateInfoEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
@@ -916,7 +915,7 @@
                                                     <mat-label>Infoversand Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateInfoClose"
-                                                        [matDatepicker]="dateInfoClose" (dateChange)="update()"
+                                                        [matDatepicker]="dateInfoClose"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateInfoClose></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix

@@ -244,17 +244,16 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature) {
       this.roadWorkActivityFeature.properties.isPrivate = false;
       if (this.roadWorkActivityFeature.properties.uuid)
-        this.update();
+        this.save();
       else
         this.add();
     }
   }
 
-  savePrivate() {
+  store() {
     if (this.roadWorkActivityFeature) {
-      this.roadWorkActivityFeature.properties.isPrivate = true;
       if (this.roadWorkActivityFeature.properties.uuid)
-        this.update();
+        this.save();
       else
         this.add();
     }
@@ -289,7 +288,7 @@ export class ActivityAttributesComponent implements OnInit {
       });
   }
 
-  update() {
+  save() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
@@ -357,7 +356,7 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
       this.roadWorkActivityFeature.properties.projectType = this.roadWorkActivityProjectTypeEnumControl.value;
-      this.update();
+      this.save();
     }
   }
 
@@ -451,12 +450,12 @@ export class ActivityAttributesComponent implements OnInit {
       const today: Date = new Date();
       const dueDate: Date = new Date(this.dueDate);
       let threeDaysBeforeDue: Date = new Date(dueDate);
-      threeDaysBeforeDue.setDate(dueDate.getDate() - 2);
+      threeDaysBeforeDue.setDate(dueDate.getDate() - 3);
       let oneDayAfterDue = new Date(dueDate);
-      oneDayAfterDue.setDate(dueDate.getDate() + 2);
-      if (today >= threeDaysBeforeDue)
+      oneDayAfterDue.setDate(dueDate.getDate() + 1);
+      if (today >= oneDayAfterDue)
         return "background-color: rgb(255, 109, 109);";
-      else if (today >= oneDayAfterDue)
+      else if (today >= threeDaysBeforeDue)
         return "background-color: rgb(255, 194, 109);";
     }
     return "background-color: rgb(109, 255, 121);";
@@ -467,7 +466,7 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.status.code = newStatus;
       this.roadWorkActivityStatusEnumControl.setValue(newStatus);
-      this.update();
+      this.save();
     }
 
     let mailText = "mailto:";
@@ -524,7 +523,6 @@ export class ActivityAttributesComponent implements OnInit {
       for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
         this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
       }
-      this.update();
       this._getAllInvolvedOrgs();
     }
   }
