@@ -32,7 +32,7 @@ export class ChooseNeedComponent implements OnInit {
 
   statusFilterCodes: string[] = ["requirement"];
 
-  tableDisplayedColumns: string[] = ['title', 'areaman', 'create_date', 'status', 'link_cityplan', 'link_wwg', 'priority'];
+  tableDisplayedColumns: string[] = ['title', 'areaman', 'create_date', 'link_cityplan', 'link_wwg', 'priority'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
