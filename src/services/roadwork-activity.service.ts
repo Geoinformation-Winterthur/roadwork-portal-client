@@ -53,21 +53,23 @@ export class RoadWorkActivityService {
     return result;
   }
 
-  addRoadworkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<any> {
+  addRoadworkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<RoadWorkActivityFeature> {
     let result: Observable<any> =
-      this.http.post<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+      this.http.post<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/", 
+                roadworkActivity) as Observable<RoadWorkActivityFeature>;
     return result;
   }
 
-  updateRoadWorkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<any> {
+  updateRoadWorkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<RoadWorkActivityFeature> {
     let result: Observable<any> =
-      this.http.put(environment.apiUrl + "/roadworkactivity/", roadworkActivity);
+      this.http.put<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/",
+                roadworkActivity) as Observable<RoadWorkActivityFeature>;
     return result;
   }
 
   registerTrafficManager(roadworkActivity?: RoadWorkActivityFeature): Observable<RoadWorkActivityFeature> {
     let result: Observable<RoadWorkActivityFeature> = this.http
-        .put(environment.apiUrl + "/roadworkactivity/registertrafficmanager/",
+        .put<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/registertrafficmanager/",
                 roadworkActivity) as Observable<RoadWorkActivityFeature>;
     return result;
   }
