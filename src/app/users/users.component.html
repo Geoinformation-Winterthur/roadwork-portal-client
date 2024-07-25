@@ -41,8 +41,8 @@
       </ng-container>
   
       <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef> Rolle </th>
-        <td mat-cell *matCellDef="let user"> {{user.role.name}} </td>
+        <th mat-header-cell *matHeaderCellDef> Rollen </th>
+        <td mat-cell *matCellDef="let user"> {{userService.roleListToString(user)}} </td>
       </ng-container>
 
       <ng-container matColumnDef="organisation">

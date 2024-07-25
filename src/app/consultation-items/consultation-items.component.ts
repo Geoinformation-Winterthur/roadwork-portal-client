@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { ConsultationInput } from 'src/model/consultation-input';
@@ -26,6 +25,7 @@ export class ConsultationItemsComponent implements OnInit {
   consultationInputsFromInConsult: ConsultationInput[] = [];
 
   user: User;
+  userService: UserService;
 
   needsOfActivityService: NeedsOfActivityService;
 
@@ -37,6 +37,7 @@ export class ConsultationItemsComponent implements OnInit {
     userService: UserService, snckBar: MatSnackBar) {
     this.consultationService = consultationService;
     this.needsOfActivityService = needsOfActivityService;
+    this.userService = userService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
   }

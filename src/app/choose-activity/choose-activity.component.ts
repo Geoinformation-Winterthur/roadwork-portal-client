@@ -52,7 +52,7 @@ export class ChooseActivityComponent implements OnInit {
   ngOnInit(): void {
     this.getAllActivities();
 
-    this.userService.getUser(this.userService.getLocalUser().mailAddress)
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
       .subscribe({
         next: (users) => {
           if (users && users.length > 0 && users[0]) {

@@ -92,10 +92,11 @@
                 <div style="margin: 2em;">
                     <p>
                         Sie sind in der Rolle <b>
-                            <span *ngIf="user.role.code === 'eventmanager'">Eventmanager</span>
-                            <span *ngIf="user.role.code === 'orderer'">Besteller</span>
-                            <span *ngIf="user.role.code === 'territorymanager'">Gebietsmanager</span>
-                            <span *ngIf="user.role.code === 'administrator'">Administrator</span></b>.
+                            <span *ngIf="user.chosenRole === 'eventmanager'">Eventmanager</span>
+                            <span *ngIf="user.chosenRole === 'projectmanager'">Projektleiter</span>
+                            <span *ngIf="user.chosenRole === 'orderer'">Besteller</span>
+                            <span *ngIf="user.chosenRole === 'territorymanager'">Gebietsmanager</span>
+                            <span *ngIf="user.chosenRole === 'administrator'">Administrator</span></b>.
                     </p>
                     <div style="padding: 1em;margin-bottom: 1em;border: 1px solid lightgray;display:flex;flex-direction:column;">
                         <p>Ansicht:</p>

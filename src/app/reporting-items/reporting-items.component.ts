@@ -25,6 +25,7 @@ export class ReportingItemsComponent implements OnInit {
   consultationInputsFromReporting: ConsultationInput[] = [];
 
   user: User;
+  userService: UserService;
 
   needsOfActivityService: NeedsOfActivityService;
 
@@ -36,6 +37,7 @@ export class ReportingItemsComponent implements OnInit {
     userService: UserService, snckBar: MatSnackBar) {
     this.consultationService = consultationService;
     this.needsOfActivityService = needsOfActivityService;
+    this.userService = userService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
   }

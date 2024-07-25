@@ -45,6 +45,7 @@ export class NeedAttributesComponent implements OnInit {
   showRelevanceInfo: boolean = false;
 
   user: User = new User();
+  userService: UserService;
 
   environment = environment;
 
@@ -72,7 +73,6 @@ export class NeedAttributesComponent implements OnInit {
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
-  private userService: UserService;
   private documentService: DocumentService;
   private activatedRoute: ActivatedRoute;
   private router: Router;
@@ -143,7 +143,7 @@ export class NeedAttributesComponent implements OnInit {
                       }
                     });
 
-                  this.userService.getUser(this.userService.getLocalUser().mailAddress)
+                  this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
                     .subscribe({
                       next: (users) => {
                         if (users && users.length > 0 && users[0]) {
@@ -217,7 +217,7 @@ export class NeedAttributesComponent implements OnInit {
 
                 // editing is not allowed anymore when the need goes public (is not private):
                 if (!this.roadWorkNeedFeature?.properties.isPrivate
-                  && !(this.userService.getLocalUser().role.code === 'administrator')) {
+                  && !(this.userService.hasRole(this.userService.getLocalUser(), 'administrator'))) {
                   this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                 }
 
@@ -281,7 +281,7 @@ export class NeedAttributesComponent implements OnInit {
 
                         // editing is not allowed anymore when the need goes public (is not private):
                         if (!this.roadWorkNeedFeature?.properties.isPrivate
-                          && !(this.userService.getLocalUser().role.code === 'administrator')) {
+                          && !(this.userService.hasRole(this.userService.getLocalUser(), 'administrator'))) {
                           this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 

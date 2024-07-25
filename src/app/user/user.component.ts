@@ -7,7 +7,6 @@ import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
-import { Role } from 'src/model/role';
 import { UserService } from 'src/services/user.service';
 import { User } from '../../model/user';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,7 +25,6 @@ export class UserComponent implements OnInit {
   activeCheckBox: boolean = false;
 
   userRoleFormControl: FormControl = new FormControl();
-  availableUserRoleTypes: Role[] = [];
 
   userOrgFormControl: FormControl = new FormControl();
   availableUserOrgTypes: OrganisationalUnit[] = [];
@@ -54,13 +52,13 @@ export class UserComponent implements OnInit {
         next: (params) => {
           let userEMail: string = params['email'];
           if (userEMail !== "new") {
-            this.userService.getUser(userEMail).subscribe({
+            this.userService.getUserFromDB(userEMail).subscribe({
               next: (userArray) => {
                 if (userArray !== null && userArray.length === 1) {
                   ErrorMessageEvaluation._evaluateErrorMessage(userArray[0]);
                   if (userArray[0].errorMessage.trim().length === 0) {
                     this.user = userArray[0];
-                    this.userRoleFormControl.setValue(this.user.role.code);
+                    this.userRoleFormControl.setValue(this.userService.getRole(this.user));
                     this.userOrgFormControl.setValue(this.user.organisationalUnit.name);
                   }
                 } else {
@@ -75,16 +73,6 @@ export class UserComponent implements OnInit {
         error: (error) => {
         }
       });
-
-    this.userService.getAllRoleTypes().subscribe({
-      next: (userRoles) => {
-        for (let userRole of userRoles) {
-          this.availableUserRoleTypes.push(userRole);
-        }
-      },
-      error: (error) => {
-      }
-    });
 
     this.organisationService.getAllOrgTypes().subscribe({
       next: (organisations) => {
@@ -186,14 +174,9 @@ export class UserComponent implements OnInit {
   }
 
   onUserRoleChange() {
-    for (let roleType of this.availableUserRoleTypes) {
-      if (roleType.code === this.userRoleFormControl.value) {
-        this.user.role = roleType;
-        if (this.userRoleFormControl.value === 'projectmanager') {
-          this.user.active = false;
-        }
-        continue;
-      }
+    this.userService.setRole(this.user, this.userRoleFormControl.value);
+    if (this.userRoleFormControl.value === 'projectmanager') {
+      this.user.active = false;
     }
     this.updateUser();
   }
