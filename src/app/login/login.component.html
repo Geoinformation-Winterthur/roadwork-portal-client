@@ -18,6 +18,20 @@
                 required />
             </mat-form-field>
             <br />
+            <form class="choose_user_role_form">
+                <mat-form-field appearance="fill">
+                  <mat-label>Rolle</mat-label>
+                  <mat-select [(ngModel)]="chosenRole" name="role" required>
+                    <mat-option value="projectmanager">Projektleiter</mat-option>
+                    <mat-option value="eventmanager">Eventmanager</mat-option>
+                    <mat-option value="orderer">Besteller</mat-option>
+                    <mat-option value="trafficmanager">Verkehrsmanager</mat-option>
+                    <mat-option value="territorymanager">Gebietsmanager</mat-option>
+                    <mat-option value="administrator">Administrator</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </form>
+              <br>
             <button mat-button class="login_button" type="submit">LOGIN</button>
         </div>
     </form>

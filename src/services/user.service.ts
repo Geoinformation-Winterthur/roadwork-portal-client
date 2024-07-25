@@ -43,12 +43,13 @@ export class UserService implements CanActivate {
   }
 
   login(user: User, successFunc: () => void, errorFunc: () => void) {
-    let reqResult: Observable<any> = this.http.post(environment.apiUrl + '/account/login', user,
-      {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json"
-        })
-      }) as Observable<any>;
+    let reqResult: Observable<any> =
+      this.http.post(environment.apiUrl + '/account/login', user,
+        {
+          headers: new HttpHeaders({
+            "Content-Type": "application/json"
+          })
+        }) as Observable<any>;
     reqResult.subscribe({
       next: (userToken) => {
         // success:
@@ -104,7 +105,7 @@ export class UserService implements CanActivate {
     this.user.initials = "";
     this.user.mailAddress = "";
     this.user.passPhrase = "";
-    this.user.role = new Role();
+    this.user.grantedRoles = new Role();
     localStorage.clear();
   }
 
@@ -116,7 +117,7 @@ export class UserService implements CanActivate {
     return isUserLoggedIn;
   }
 
-  public getUser(email: string): Observable<User[]> {
+  public getUserFromDB(email: string): Observable<User[]> {
     let result: Observable<User[]> =
       this.http.get(environment.apiUrl + "/account/users/?email=" + email) as Observable<User[]>;
     return result;
@@ -131,7 +132,7 @@ export class UserService implements CanActivate {
   public updateUser(user: User, changePassphrase: boolean = false): Observable<ErrorMessage> {
     let result: Observable<ErrorMessage> =
       this.http.put(environment.apiUrl + "/account/users/?changepassphrase=" + changePassphrase,
-            user) as Observable<ErrorMessage>;
+        user) as Observable<ErrorMessage>;
     return result;
   }
 
@@ -153,19 +154,13 @@ export class UserService implements CanActivate {
     return result;
   }
 
-  public getAllRoleTypes(): Observable<Role[]> {
-    let result: Observable<Role[]> =
-      this.http.get(environment.apiUrl + "/account/userroles/") as Observable<Role[]>;
-    return result;
-  }
-
   public hasUserAccess(accessRestriction: string): boolean {
-    let userRole: string = this.getLocalUser().role.code;
+    let role: string = this.getLocalUser().chosenRole;
 
     if (accessRestriction === 'administrator') {
       // Only the administrator can do what the administrator
       // is allowed to do:
-      if (userRole === 'administrator') {
+      if (role === "administrator") {
         return true;
       } else {
         return false;
@@ -173,9 +168,9 @@ export class UserService implements CanActivate {
     } else if (accessRestriction === 'territorymanager') {
       // Only territorymanager and administrator are allowed
       // to do what the territorymanager is allowed to do:
-      if (userRole === 'territorymanager') {
+      if (role === "territorymanager") {
         return true;
-      } else if (userRole === 'administrator') {
+      } else if (role === "administrator") {
         return true;
       } else {
         return false;
@@ -184,11 +179,9 @@ export class UserService implements CanActivate {
       // Only orderer, territorymanager and administrator
       // are allowed to do what the orderer is allowed
       // to do:
-      if (userRole === 'orderer') {
+      if (role === "orderer") {
         return true;
-      } else if (userRole === 'territorymanager') {
-        return true;
-      } else if (userRole === 'administrator') {
+      } else if (role === "administrator") {
         return true;
       } else {
         return false;
@@ -196,13 +189,9 @@ export class UserService implements CanActivate {
     } else if (accessRestriction === 'trafficmanager') {
       // Orderer, trafficmanager, territorymanager and administrator
       // are allowed to do what the trafficmanager is allowed to do:
-      if (userRole === 'orderer') {
+      if (role === "trafficmanager") {
         return true;
-      } else if (userRole === 'trafficmanager') {
-        return true;
-      } else if (userRole === 'territorymanager') {
-        return true;
-      } else if (userRole === 'administrator') {
+      } else if (role === "administrator") {
         return true;
       } else {
         return false;
@@ -210,15 +199,9 @@ export class UserService implements CanActivate {
     } else if (accessRestriction === 'eventmanager') {
       // All roles are allowed to do what the
       // eventmanager is allowed to do:
-      if (userRole === 'eventmanager') {
+      if (role === "eventmanager") {
         return true;
-      } else if (userRole === 'orderer') {
-        return true;
-      } else if (userRole === 'trafficmanager') {
-        return true;
-      } else if (userRole === 'territorymanager') {
-        return true;
-      } else if (userRole === 'administrator') {
+      } else if (role === "administrator") {
         return true;
       } else {
         return false;
@@ -227,6 +210,47 @@ export class UserService implements CanActivate {
       // if nothing fits, restrict access:
       return false;
     }
+  }
+
+  setRole(user: User, roleName: string) {
+    if (roleName == "projectmanager") user.grantedRoles.projectmanager = true;
+    else if (roleName == "eventmanager") user.grantedRoles.eventmanager = true;
+    else if (roleName == "orderer") user.grantedRoles.orderer = true;
+    else if (roleName == "trafficmanager") user.grantedRoles.trafficmanager = true;
+    else if (roleName == "territorymanager") user.grantedRoles.territorymanager = true;
+    else if (roleName == "administrator") user.grantedRoles.administrator = true;
+  }
+
+  getRole(user: User): string {
+    if (user.grantedRoles.projectmanager) return "projectmanager";
+    else if (user.grantedRoles.eventmanager) return "eventmanager";
+    else if (user.grantedRoles.orderer) return "orderer";
+    else if (user.grantedRoles.trafficmanager) return "trafficmanager";
+    else if (user.grantedRoles.territorymanager) return "territorymanager";
+    else if (user.grantedRoles.administrator) "administrator";
+    return "";
+  }
+
+  hasRole(user: User, roleName: string): boolean {
+    let clearRoleName: string = roleName.trim().toLowerCase();
+    if (clearRoleName == "projectmanager") return user.grantedRoles.projectmanager;
+    if (clearRoleName == "eventmanager") return user.grantedRoles.eventmanager;
+    if (clearRoleName == "orderer") return user.grantedRoles.orderer;
+    if (clearRoleName == "trafficmanager") return user.grantedRoles.trafficmanager;
+    if (clearRoleName == "territorymanager") return user.grantedRoles.territorymanager;
+    if (clearRoleName == "administrator") return user.grantedRoles.administrator;
+    return false;
+  }
+
+  roleListToString(user: User): string {
+    let result: string = "";
+    if (user.grantedRoles.projectmanager) result += "Projektleiter ";
+    if (user.grantedRoles.eventmanager) result += "Eventmanager ";
+    if (user.grantedRoles.orderer) result += "Besteller ";
+    if (user.grantedRoles.trafficmanager) result += "Verkehrsmanager ";
+    if (user.grantedRoles.territorymanager) result += "Gebietsmanager ";
+    if (user.grantedRoles.administrator) result += "Administrator ";
+    return result;
   }
 
   private _readUserFromToken(userToken: string): User {
@@ -238,7 +262,7 @@ export class UserService implements CanActivate {
       resultUser.mailAddress = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
       resultUser.firstName = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"];
       resultUser.lastName = tokenDecoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
-      resultUser.role.code = tokenDecoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      resultUser.chosenRole = tokenDecoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       resultUser.initials = "anonym";
       if (resultUser.lastName !== null && resultUser.lastName.length > 1) {
         resultUser.initials = resultUser.lastName[0].toUpperCase() + resultUser.lastName[1].toUpperCase();

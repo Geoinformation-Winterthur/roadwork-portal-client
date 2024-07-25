@@ -14,7 +14,8 @@ export class User {
     passPhrase: string = "";
     active: boolean = false;
     prefTableView: boolean = false;
-    role: Role = new Role();
+    grantedRoles: Role = new Role();
+    chosenRole: string = "";
     organisationalUnit: OrganisationalUnit
         = new OrganisationalUnit();
     token: string = "";

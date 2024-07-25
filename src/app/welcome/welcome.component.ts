@@ -29,7 +29,7 @@ export class WelcomeComponent implements OnInit {
   userService: UserService;
 
   roadWorkActivityService: RoadWorkActivityService;
-  appVersion: string = "2024.17";
+  appVersion: string = "2024.18";
 
   displayedColumns: string[] = ['name', 'manager', 'created', 'period'];
 
@@ -67,7 +67,9 @@ export class WelcomeComponent implements OnInit {
         }
       });
 
-      this.userService.getUser(this.userService.getLocalUser().mailAddress)
+      let localUser: User = this.userService.getLocalUser();
+
+      this.userService.getUserFromDB(localUser.mailAddress)
         .subscribe({
           next: (users) => {
             if (users && users.length > 0 && users[0]) {
@@ -80,6 +82,7 @@ export class WelcomeComponent implements OnInit {
                 });
               } else {
                 this.user = user;
+                this.user.chosenRole = localUser.chosenRole;
               }
             }
           },
