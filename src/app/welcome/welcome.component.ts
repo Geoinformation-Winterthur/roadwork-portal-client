@@ -50,11 +50,11 @@ export class WelcomeComponent implements OnInit {
       this.roadWorkActivityService.getRoadWorkActivities("", "inconsult").subscribe({
         next: (roadWorkActivities) => {
           for (let roadWorkActInCoordination of roadWorkActivities) {
-            this.managementAreaService.getIntersectingManagementAreas(roadWorkActInCoordination.geometry)
+            this.managementAreaService.getIntersectingManagementArea(roadWorkActInCoordination.geometry)
               .subscribe({
-                next: (managementAreas) => {
-                  if (managementAreas && managementAreas.length !== 0) {
-                    roadWorkActInCoordination.properties.areaManager = managementAreas[0].manager;
+                next: (managementArea) => {
+                  if (managementArea) {
+                    roadWorkActInCoordination.properties.areaManager = managementArea.manager;
                   }
                 },
                 error: (error) => {

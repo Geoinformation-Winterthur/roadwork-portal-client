@@ -22,7 +22,8 @@ export class RoadWorkNeedService {
   }
 
   getRoadWorkNeeds(ids: string[] = [], year?: number, name: string = "",
-          status: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
+    areaManagerUuid?: string, relevance?: number, dateOfCreation?: Date,
+    status: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
 
@@ -56,9 +57,39 @@ export class RoadWorkNeedService {
       hasParameters = true;
       queryString += "name=" + name;
     }
-    
+
+    if (areaManagerUuid) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "areamanageruuid=" + areaManagerUuid;
+    }
+
+    if (relevance) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "relevance=" + relevance;
+    }
+
+    if (dateOfCreation) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "dateofcreation=" + dateOfCreation.toISOString();
+    }
+
     if (status !== null && status.length !== 0
-          && status[0].trim() !== "") {
+      && status[0].trim() !== "") {
       if (hasParameters) {
         queryString += "&";
       } else {
@@ -66,9 +97,9 @@ export class RoadWorkNeedService {
       }
       hasParameters = true;
       queryString += "status=";
-      for(let i = 0; i < status.length; i++){
+      for (let i = 0; i < status.length; i++) {
         queryString += status[i];
-        if(status.length > i + 1) queryString += ",";
+        if (status.length > i + 1) queryString += ",";
       }
     }
 
@@ -114,7 +145,7 @@ export class RoadWorkNeedService {
     return result;
   }
 
-  downloadRoadWorkNeeds() : Observable<string>{
+  downloadRoadWorkNeeds(): Observable<string> {
     let queryString = "/exportdata/";
     let result: Observable<string> =
       this.http.get(environment.apiUrl + queryString, {

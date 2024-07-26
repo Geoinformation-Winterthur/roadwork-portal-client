@@ -85,11 +85,11 @@ export class ChooseActivityComponent implements OnInit {
           let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
           blowUpPoly.coordinates = roadWorkActivity.geometry.coordinates;
           roadWorkActivity.geometry = blowUpPoly;
-          this.managementAreaService.getIntersectingManagementAreas(roadWorkActivity.geometry)
+          this.managementAreaService.getIntersectingManagementArea(roadWorkActivity.geometry)
             .subscribe({
-              next: (managementAreas) => {
-                if (roadWorkActivity && managementAreas && managementAreas.length !== 0) {
-                  roadWorkActivity.properties.areaManager = managementAreas[0].manager;
+              next: (managementArea) => {
+                if (roadWorkActivity && managementArea) {
+                  roadWorkActivity.properties.areaManager = managementArea.manager;
                   roadWorkActivity.properties.evaluation = 0;
                   roadWorkActivity.properties.evaluationSks = 0;
                 }

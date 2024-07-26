@@ -191,10 +191,10 @@ export class EditNeedMapComponent implements OnInit {
       this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
       this.loadGeometry(false);
       if (this.roadWorkNeedFeat.properties.uuid) {
-        this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeat.geometry)
+        this.managementAreaService.getIntersectingManagementArea(this.roadWorkNeedFeat.geometry)
           .subscribe({
-            next: (managementAreas) => {
-              if(managementAreas && managementAreas.length !== 0){
+            next: (managementArea) => {
+              if(managementArea){
                 this.roadWorkNeedService
                 .updateRoadWorkNeed(this.roadWorkNeedFeat)
                 .subscribe({
@@ -208,7 +208,7 @@ export class EditNeedMapComponent implements OnInit {
                       } else {
                         if (this.roadWorkNeedFeat) {
                           this.roadWorkNeedFeat = roadWorkNeedFeature;
-                          this.managementArea = managementAreas[0];
+                          this.managementArea = managementArea;
                           this.snackBar.open("Bedarfsgeometrie ist gespeichert", "", {
                             duration: 4000,
                           });

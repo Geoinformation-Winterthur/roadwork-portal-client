@@ -128,14 +128,14 @@
       </ng-container>
 
       <ng-container matColumnDef="area_man">
-        <th mat-header-cell *matHeaderCellDef> Gebietsmanagement </th>
+        <th mat-header-cell *matHeaderCellDef><span matTooltip="Gebietsmanagement">GM</span></th>
         <td mat-cell *matCellDef="let roadWorkActivity"><span
             *ngIf="roadWorkActivity.properties.areaManager">{{roadWorkActivity.properties.areaManager.firstName}}
             {{roadWorkActivity.properties.areaManager.lastName}}</span> </td>
       </ng-container>
 
       <ng-container matColumnDef="project_man">
-        <th mat-header-cell *matHeaderCellDef> Projektleitung </th>
+        <th mat-header-cell *matHeaderCellDef><span matTooltip="Projektleitung">PL</span></th>
         <td mat-cell *matCellDef="let roadWorkActivity"><span
             *ngIf="roadWorkActivity.properties.projectManager">{{roadWorkActivity.properties.projectManager.firstName}}
             {{roadWorkActivity.properties.projectManager.lastName}}</span> </td>
