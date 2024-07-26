@@ -22,6 +22,7 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSliderChange } from '@angular/material/slider';
 
 @Component({
   selector: 'app-need-attributes',
@@ -31,16 +32,16 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class NeedAttributesComponent implements OnInit {
 
-  finishOptimumQuartal: number = 0;
-  finishEarlyQuartal: number = 0;
-  finishLateQuartal: number = 0;
-
   roadWorkNeedFeature?: RoadWorkNeedFeature;
   orderer: User = new User();
   ordererOrgUnitName: string = "";
   areaManagerName: string = "";
   statusCode: string = "";
   priorityCode: string = "";
+
+  finishEarlyFormControl: FormControl = new FormControl();
+  finishOptimumFormControl: FormControl = new FormControl();
+  finishLateFormControl: FormControl = new FormControl();
 
   showRelevanceInfo: boolean = false;
 
@@ -127,9 +128,9 @@ export class NeedAttributesComponent implements OnInit {
                   if (this.roadWorkNeedFeature) {
                     this.urlControl.setValue(this.roadWorkNeedFeature.properties.url);
 
-                    this.finishOptimumQuartal = this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo);
-                    this.finishEarlyQuartal = this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishEarlyTo);
-                    this.finishLateQuartal = this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo);
+                    this.finishOptimumFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo));
+                    this.finishEarlyFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishEarlyTo));
+                    this.finishLateFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo));
                   }
 
                   this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
@@ -240,18 +241,32 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  updateQuartal(){
-    if (this.finishEarlyQuartal > this.finishOptimumQuartal)
-      this.finishOptimumQuartal = this.finishEarlyQuartal;
-    if (this.finishOptimumQuartal > this.finishLateQuartal)
-      this.finishLateQuartal = this.finishOptimumQuartal;
+  updateQuartal(sliderChange: MatSliderChange, quartalType: string) {
+    let newQuartal: number = sliderChange.value as number;
 
-    this.roadWorkNeedFeature!.properties.finishOptimumTo =
-      this._convertQuartalToDate(this.finishOptimumQuartal);
-    this.roadWorkNeedFeature!.properties.finishEarlyTo =
-      this._convertQuartalToDate(this.finishEarlyQuartal);
-    this.roadWorkNeedFeature!.properties.finishLateTo =
-      this._convertQuartalToDate(this.finishLateQuartal);
+    if (quartalType === "finishEarlyQuartal") {
+      this.roadWorkNeedFeature!.properties.finishEarlyTo =
+        this._convertQuartalToDate(newQuartal);
+      if (newQuartal > this.finishOptimumFormControl.value)
+        this._setQuartalValue(newQuartal, "finishOptimumQuartal");
+      if (newQuartal > this.finishLateFormControl.value)
+        this._setQuartalValue(newQuartal, "finishLateQuartal");
+    } else if (quartalType === "finishOptimumQuartal") {
+      this.roadWorkNeedFeature!.properties.finishOptimumTo =
+        this._convertQuartalToDate(newQuartal);
+      if (newQuartal < this.finishEarlyFormControl.value)
+        this._setQuartalValue(newQuartal, "finishEarlyQuartal");
+      if (newQuartal > this.finishLateFormControl.value)
+        this._setQuartalValue(newQuartal, "finishLateQuartal");
+    } else if (quartalType === "finishLateQuartal") {
+      this.roadWorkNeedFeature!.properties.finishLateTo =
+        this._convertQuartalToDate(newQuartal);
+        if (newQuartal < this.finishOptimumFormControl.value)
+          this._setQuartalValue(newQuartal, "finishOptimumQuartal");
+        if (newQuartal < this.finishEarlyFormControl.value)
+          this._setQuartalValue(newQuartal, "finishEarlyQuartal");
+    }
+
   }
 
   save() {
@@ -479,6 +494,22 @@ export class NeedAttributesComponent implements OnInit {
 
   ngOnDestroy() {
     this.activatedRouteSubscription.unsubscribe();
+  }
+
+  private _setQuartalValue(newQuartal: number, quartalType: string) {
+    if (quartalType === "finishEarlyQuartal") {
+      this.finishEarlyFormControl.setValue(newQuartal);
+      this.roadWorkNeedFeature!.properties.finishEarlyTo =
+        this._convertQuartalToDate(newQuartal);
+    } else if (quartalType === "finishOptimumQuartal") {
+      this.finishOptimumFormControl.setValue(newQuartal);
+      this.roadWorkNeedFeature!.properties.finishOptimumTo =
+        this._convertQuartalToDate(newQuartal);
+    } else if (quartalType === "finishLateQuartal") {
+      this.finishLateFormControl.setValue(newQuartal);
+      this.roadWorkNeedFeature!.properties.finishLateTo =
+        this._convertQuartalToDate(newQuartal);
+    }
   }
 
   private _convertQuartalToDate(quartalCount: number): Date {
