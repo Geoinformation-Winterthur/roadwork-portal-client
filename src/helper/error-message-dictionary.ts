@@ -31,6 +31,7 @@ export class ErrorMessageDictionary {
              "Änderung wurde nicht gespeichert, da dem Bauvorhaben kein Bedarf zugeordnet ist.",
              "Löschen des Bedarfs nicht möglich, da ansonsten einer Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
              "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde.",
-             "Keine Berechtigung, dieses Bauvorhaben zu editieren."
+             "Keine Berechtigung, dieses Bauvorhaben zu editieren.",
+             "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet"
             ];
 }

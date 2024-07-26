@@ -56,7 +56,6 @@ export class ActivityAttributesComponent implements OnInit {
 
   projectManagerControl: FormControl = new FormControl();
   costTypesControl: FormControl = new FormControl();
-  roadWorkActivityStatusEnumControl: FormControl = new FormControl();
   roadWorkActivityProjectTypeEnumControl: FormControl = new FormControl();
   dateSksControl: FormControl = new FormControl();
   dateKapControl: FormControl = new FormControl();
@@ -203,7 +202,6 @@ export class ActivityAttributesComponent implements OnInit {
                       }
                     });
 
-                  this.roadWorkActivityStatusEnumControl.setValue(roadWorkActivity.properties.status.code);
                   this.roadWorkActivityProjectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
 
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
@@ -252,22 +250,22 @@ export class ActivityAttributesComponent implements OnInit {
   save() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
-        this.update(false);
+        this.update();
       else
-        this.add(false);
+        this.add();
     }
   }
 
-  add(publish: boolean) {
+  add(publish: boolean = false) {
     if (this.roadWorkActivityFeature) {
-      if(publish) this.roadWorkActivityFeature.properties.isPrivate = false;
+      if (publish) this.roadWorkActivityFeature.properties.isPrivate = false;
       this.roadWorkActivityService.addRoadworkActivity(this.roadWorkActivityFeature)
         .subscribe({
           next: (roadWorkActivityFeature) => {
             if (this.roadWorkActivityFeature) {
               ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
               if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
-                if(publish) this.roadWorkActivityFeature.properties.isPrivate = true;
+                if (publish) this.roadWorkActivityFeature.properties.isPrivate = true;
                 this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
                   duration: 4000
                 });
@@ -290,9 +288,11 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  update(publish: boolean) {
+  update(publish: boolean = false, newStatus: string = "") {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-      if(publish) this.roadWorkActivityFeature.properties.isPrivate = false;
+      if (publish) this.roadWorkActivityFeature.properties.isPrivate = false;
+      let oldStatus = this.roadWorkActivityFeature.properties.status.code;
+      if (newStatus) this.roadWorkActivityFeature.properties.status.code = newStatus;
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
           next: (managementAreas) => {
@@ -303,7 +303,8 @@ export class ActivityAttributesComponent implements OnInit {
                     if (this.roadWorkActivityFeature) {
                       ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
                       if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
-                        if(publish) this.roadWorkActivityFeature.properties.isPrivate = true;
+                        if (publish) this.roadWorkActivityFeature.properties.isPrivate = true;
+                        if (newStatus) this.roadWorkActivityFeature.properties.status.code = oldStatus;
                         this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
                           duration: 4000
                         });
@@ -314,15 +315,19 @@ export class ActivityAttributesComponent implements OnInit {
                           roadWorkActivityFeature.properties.investmentNo = undefined;
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementAreas[0];
+                        this._updateDueDate();
                         this.snckBar.open("Vorhaben ist gespeichert", "", {
                           duration: 4000,
                         });
+                        this._openMail(newStatus);
                       }
                     }
                   },
                   error: (error) => {
-                    if (this.roadWorkActivityFeature && publish)
-                      this.roadWorkActivityFeature.properties.isPrivate = true;
+                    if (this.roadWorkActivityFeature) {
+                      if (publish) this.roadWorkActivityFeature.properties.isPrivate = true;
+                      if (newStatus) this.roadWorkActivityFeature.properties.status.code = oldStatus;
+                    }
                     this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
                       duration: 4000
                     });
@@ -334,7 +339,6 @@ export class ActivityAttributesComponent implements OnInit {
           }
         });
     }
-    this._updateDueDate();
   }
 
   deleteRoadworkActivity(uuid: string) {
@@ -360,7 +364,6 @@ export class ActivityAttributesComponent implements OnInit {
 
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-      this.roadWorkActivityFeature.properties.status.code = this.roadWorkActivityStatusEnumControl.value;
       this.roadWorkActivityFeature.properties.projectType = this.roadWorkActivityProjectTypeEnumControl.value;
       this.save();
     }
@@ -467,56 +470,6 @@ export class ActivityAttributesComponent implements OnInit {
     return "background-color: rgb(109, 255, 121);";
   }
 
-  changeStatus(newStatus: string) {
-
-    if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-      this.roadWorkActivityFeature.properties.status.code = newStatus;
-      this.roadWorkActivityStatusEnumControl.setValue(newStatus);
-      this.save();
-    }
-
-    let mailText = "mailto:";
-
-    if (this.roadWorkActivityFeature &&
-      (newStatus == "inconsult" || newStatus == "reporting")) {
-
-      if (this.involvedUsers.length > 0)
-        mailText += this.involvedUsers[0].mailAddress + ";";
-
-      for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
-        mailText += involvedUser.mailAddress + ";";
-      }
-
-      if (newStatus == "inconsult")
-        mailText += "?subject=Die Bedarfsklärung zum Bauvorhaben '" +
-          this.roadWorkActivityFeature.properties.name +
-          "' beginnt. Ihre Meinung ist gefragt.&";
-      else if (newStatus == "reporting")
-        mailText += "?subject=Die Stellungnahme zum Bauvorhaben '" +
-          this.roadWorkActivityFeature.properties.name +
-          "' beginnt. Ihre Meinung ist gefragt.&";
-      mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
-      mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
-      mailText += environment.fullAppPath + "%0A%0A";
-      mailText += "Titel/Strasse: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
-      mailText += "Bitte beurteilen Sie, ob in Ihrem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
-      mailText += "Sollte Bedarf vorhanden sein, so bitten wir Sie, den Bedarf genauer zu erläutern und eine Beurteilung aus Ihrer Sicht abzugeben. Sie können auch einen neuen Bedarf via Button erfassen (Hinweis: mit Wählen des Button öffnet sich die Eingabemaske und Sie können einen neuen Bedarf inkl. Perimeter eingeben).%0A%0A";
-      if (newStatus == "inconsult" && this.roadWorkActivityFeature.properties.dateConsultEnd)
-        mailText += "Die Bedarfsklärung läuft bis zum " +
-          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
-      else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
-        mailText += "Die Stellungnahme läuft bis zum " +
-          new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
-      mailText += "Mit «Speichern» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
-      mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
-      mailText += "Freundliche Grüsse.%0A%0A";
-      mailText += "Tiefbauamt, Abteilung Planung & Koordination%0A%0A";
-      window.open(mailText, "_blank", "noreferrer");
-
-    }
-
-  }
-
   changeInvolvedUsers() {
     if (this.roadWorkActivityFeature) {
       if (!this.roadWorkActivityFeature.properties.involvedUsers) {
@@ -598,6 +551,50 @@ export class ActivityAttributesComponent implements OnInit {
         this.dueDate.setDate(this.dueDate.getDate() + 7);
       }
     }
+  }
+
+  private _openMail(newStatus: string) {
+
+    let mailText = "mailto:";
+
+    if (this.roadWorkActivityFeature &&
+      (newStatus == "inconsult" || newStatus == "reporting")) {
+
+      if (this.involvedUsers.length > 0)
+        mailText += this.involvedUsers[0].mailAddress + ";";
+
+      for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
+        mailText += involvedUser.mailAddress + ";";
+      }
+
+      if (newStatus == "inconsult")
+        mailText += "?subject=Die Bedarfsklärung zum Bauvorhaben '" +
+          this.roadWorkActivityFeature.properties.name +
+          "' beginnt. Ihre Meinung ist gefragt.&";
+      else if (newStatus == "reporting")
+        mailText += "?subject=Die Stellungnahme zum Bauvorhaben '" +
+          this.roadWorkActivityFeature.properties.name +
+          "' beginnt. Ihre Meinung ist gefragt.&";
+      mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
+      mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
+      mailText += environment.fullAppPath + "%0A%0A";
+      mailText += "Titel/Strasse: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
+      mailText += "Bitte beurteilen Sie, ob in Ihrem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
+      mailText += "Sollte Bedarf vorhanden sein, so bitten wir Sie, den Bedarf genauer zu erläutern und eine Beurteilung aus Ihrer Sicht abzugeben. Sie können auch einen neuen Bedarf via Button erfassen (Hinweis: mit Wählen des Button öffnet sich die Eingabemaske und Sie können einen neuen Bedarf inkl. Perimeter eingeben).%0A%0A";
+      if (newStatus == "inconsult" && this.roadWorkActivityFeature.properties.dateConsultEnd)
+        mailText += "Die Bedarfsklärung läuft bis zum " +
+          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
+      else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
+        mailText += "Die Stellungnahme läuft bis zum " +
+          new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
+      mailText += "Mit «Speichern» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
+      mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
+      mailText += "Freundliche Grüsse.%0A%0A";
+      mailText += "Tiefbauamt, Abteilung Planung & Koordination%0A%0A";
+      window.open(mailText, "_blank", "noreferrer");
+
+    }
+
   }
 
 }
