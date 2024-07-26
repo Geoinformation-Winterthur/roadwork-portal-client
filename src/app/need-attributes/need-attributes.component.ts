@@ -133,11 +133,11 @@ export class NeedAttributesComponent implements OnInit {
                     this.finishLateFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo));
                   }
 
-                  this.managementAreaService.getIntersectingManagementAreas(roadWorkNeedFeature.geometry)
+                  this.managementAreaService.getIntersectingManagementArea(roadWorkNeedFeature.geometry)
                     .subscribe({
-                      next: (managementAreas) => {
-                        if (this.roadWorkNeedFeature && managementAreas && managementAreas.length !== 0) {
-                          this.roadWorkNeedFeature.properties.managementArea = managementAreas[0];
+                      next: (managementArea) => {
+                        if (this.roadWorkNeedFeature && managementArea) {
+                          this.roadWorkNeedFeature.properties.managementArea = managementArea;
                         }
                       },
                       error: (error) => {
@@ -274,10 +274,10 @@ export class NeedAttributesComponent implements OnInit {
     this.roadWorkNeedFeature!.properties.url = this.urlControl.value;
 
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
-      this.managementAreaService.getIntersectingManagementAreas(this.roadWorkNeedFeature.geometry)
+      this.managementAreaService.getIntersectingManagementArea(this.roadWorkNeedFeature.geometry)
         .subscribe({
-          next: (managementAreas) => {
-            if (managementAreas && managementAreas.length !== 0) {
+          next: (managementArea) => {
+            if (managementArea) {
 
               this.roadWorkNeedService.updateRoadWorkNeed(this.roadWorkNeedFeature)
                 .subscribe({
@@ -301,7 +301,7 @@ export class NeedAttributesComponent implements OnInit {
                         }
 
                         if (this.roadWorkNeedFeature)
-                          this.roadWorkNeedFeature.properties.managementArea = managementAreas[0];
+                          this.roadWorkNeedFeature.properties.managementArea = managementArea;
                         this.snckBar.open("Bedarf ist gespeichert", "", {
                           duration: 4000,
                         });

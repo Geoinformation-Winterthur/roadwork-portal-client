@@ -191,11 +191,11 @@ export class ActivityAttributesComponent implements OnInit {
                   if (roadWorkActivityFeature.properties.investmentNo == 0)
                     roadWorkActivityFeature.properties.investmentNo = undefined;
 
-                  this.managementAreaService.getIntersectingManagementAreas(roadWorkActivityFeature.geometry)
+                  this.managementAreaService.getIntersectingManagementArea(roadWorkActivityFeature.geometry)
                     .subscribe({
-                      next: (managementAreas) => {
-                        if (managementAreas && managementAreas.length !== 0) {
-                          this.managementArea = managementAreas[0];
+                      next: (managementArea) => {
+                        if (managementArea) {
+                          this.managementArea = managementArea;
                         }
                       },
                       error: (error) => {
@@ -293,10 +293,10 @@ export class ActivityAttributesComponent implements OnInit {
       if (publish) this.roadWorkActivityFeature.properties.isPrivate = false;
       let oldStatus = this.roadWorkActivityFeature.properties.status.code;
       if (newStatus) this.roadWorkActivityFeature.properties.status.code = newStatus;
-      this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
+      this.managementAreaService.getIntersectingManagementArea(this.roadWorkActivityFeature.geometry)
         .subscribe({
-          next: (managementAreas) => {
-            if (managementAreas && managementAreas.length !== 0) {
+          next: (managementArea) => {
+            if (managementArea) {
               this.roadWorkActivityService.updateRoadWorkActivity(this.roadWorkActivityFeature)
                 .subscribe({
                   next: (roadWorkActivityFeature) => {
@@ -314,7 +314,7 @@ export class ActivityAttributesComponent implements OnInit {
                         if (roadWorkActivityFeature.properties.investmentNo == 0)
                           roadWorkActivityFeature.properties.investmentNo = undefined;
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
-                        this.managementArea = managementAreas[0];
+                        this.managementArea = managementArea;
                         this._updateDueDate();
                         this.snckBar.open("Vorhaben ist gespeichert", "", {
                           duration: 4000,

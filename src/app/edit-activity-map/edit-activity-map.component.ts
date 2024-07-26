@@ -204,10 +204,10 @@ export class EditActivityMapComponent implements OnInit {
       this._putRoadworksOnMap(false);
       if (this.roadWorkActivityFeat.properties.uuid) {
 
-        this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeat.geometry)
+        this.managementAreaService.getIntersectingManagementArea(this.roadWorkActivityFeat.geometry)
           .subscribe({
-            next: (managementAreas) => {
-              if (managementAreas && managementAreas.length !== 0) {
+            next: (managementArea) => {
+              if (managementArea) {
                 this.roadWorkActivityService
                   .updateRoadWorkActivity(this.roadWorkActivityFeat)
                   .subscribe({
@@ -288,7 +288,7 @@ export class EditActivityMapComponent implements OnInit {
 
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
     this.roadWorkNeedService.getRoadWorkNeeds([], this.chosenYear,
-      "", ["requirement"])
+      "", "", undefined, undefined, ["requirement"])
       .subscribe({
         next: (roadWorkNeeds) => {
           this.needsOnMap = roadWorkNeeds;

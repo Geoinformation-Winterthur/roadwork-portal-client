@@ -29,10 +29,10 @@ export class ManagementAreaService {
      return result;
    }
 
-   getIntersectingManagementAreas(roadWorkPoly: RoadworkPolygon): Observable<ManagementArea[]> {
-    let result: Observable<ManagementArea[]> = new Observable<ManagementArea[]>();
+   getIntersectingManagementArea(roadWorkPoly: RoadworkPolygon): Observable<ManagementArea> {
+    let result: Observable<ManagementArea> = new Observable<ManagementArea>();
     if (roadWorkPoly !== null) {
-      result = this.http.post(environment.apiUrl + "/managementarea/", roadWorkPoly) as Observable<ManagementArea[]>;
+      result = this.http.post(environment.apiUrl + "/managementarea/", roadWorkPoly) as Observable<ManagementArea>;
     }
     return result;
   }
