@@ -24,8 +24,6 @@ export class UserComponent implements OnInit {
 
   activeCheckBox: boolean = false;
 
-  userRoleFormControl: FormControl = new FormControl();
-
   userOrgFormControl: FormControl = new FormControl();
   availableUserOrgTypes: OrganisationalUnit[] = [];
 
@@ -58,7 +56,6 @@ export class UserComponent implements OnInit {
                   ErrorMessageEvaluation._evaluateErrorMessage(userArray[0]);
                   if (userArray[0].errorMessage.trim().length === 0) {
                     this.user = userArray[0];
-                    this.userRoleFormControl.setValue(this.userService.getRole(this.user));
                     this.userOrgFormControl.setValue(this.user.organisationalUnit.name);
                   }
                 } else {
@@ -171,14 +168,6 @@ export class UserComponent implements OnInit {
       error: (error) => {
       }
     })
-  }
-
-  onUserRoleChange() {
-    this.userService.setRole(this.user, this.userRoleFormControl.value);
-    if (this.userRoleFormControl.value === 'projectmanager') {
-      this.user.active = false;
-    }
-    this.updateUser();
   }
 
   onUserOrgChange() {

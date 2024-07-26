@@ -30,26 +30,29 @@
                 <h2 style="font-weight: normal;">Baubeginn</h2>
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
                     <div style="margin: 0.5em;">
-                        Fr&uuml;hester:&nbsp;<span [ngModel]="finishEarlyQuartal"
-                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishEarlyTo")}}</span>
-                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishEarlyQuartal" showTickMarks
-                            (change)="updateQuartal()" style="margin-left: 1em;width: 80%;"
+                        Fr&uuml;hester:&nbsp;<span style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
+                            {{writeOutQuartal("finishEarlyTo")}}
+                        </span>
+                        <mat-slider min="0" max="28" tickInterval="1"  [formControl]="finishEarlyFormControl" showTickMarks
+                            (input)="updateQuartal($event, 'finishEarlyQuartal')" style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Wunsch:&nbsp;&nbsp;&nbsp;&nbsp;<span [ngModel]="finishOptimumQuartal"
-                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishOptimumTo")}}</span>
-                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishOptimumQuartal" showTickMarks
-                            (change)="updateQuartal()" style="margin-left: 1em;width: 80%;"
+                        Wunsch:&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
+                            {{writeOutQuartal("finishOptimumTo")}}
+                        </span>
+                        <mat-slider min="0" max="28" tickInterval="1" [formControl]="finishOptimumFormControl" showTickMarks
+                            (input)="updateQuartal($event, 'finishOptimumQuartal')" style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Sp&auml;tester:&nbsp;<span [ngModel]="finishLateQuartal"
-                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">{{writeOutQuartal("finishLateTo")}}</span>
-                        <mat-slider min="0" max="28" tickInterval="1" [(ngModel)]="finishLateQuartal" showTickMarks
-                            (change)="updateQuartal()" style="margin-left: 1em;width: 80%;"
+                        Sp&auml;tester:&nbsp;<span style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
+                            {{writeOutQuartal("finishLateTo")}}
+                        </span>
+                        <mat-slider min="0" max="28" tickInterval="1" [formControl]="finishLateFormControl" showTickMarks
+                            (input)="updateQuartal($event, 'finishLateQuartal')" style="margin-left: 1em;width: 80%;"
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                         </mat-slider>
                     </div>
