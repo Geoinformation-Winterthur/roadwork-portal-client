@@ -18,8 +18,7 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="text-align: right;">
-                    <button mat-button (click)="store()"
-                        style="margin: 1em;background-color: rgb(236,236,234);">
+                    <button mat-button (click)="save()" style="margin: 1em;background-color: rgb(236,236,234);">
                         SPEICHERN
                     </button>
                     <button mat-button *ngIf="roadWorkActivityFeature.properties.isPrivate" (click)="publish()"
@@ -124,30 +123,30 @@
                                                 <mat-label>Status</mat-label>
                                                 <mat-select [(ngModel)]="roadWorkActivityFeature.properties.status.code"
                                                     [formControl]="roadWorkActivityStatusEnumControl"
-                                                    (selectionChange)='onRoadWorkActivityEnumChange()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
-                                                    <mat-option value="review"
-                                                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'review')">
+                                                    (selectionChange)='onRoadWorkActivityEnumChange()' [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''
+                                                                || roadWorkActivityFeature.properties.isPrivate">
+                                                    <mat-option value="review" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'review')
+                                                            || roadWorkActivityFeature.properties.isPrivate">
                                                         In Pr&uuml;fung (Phase 12)
                                                     </mat-option>
-                                                    <mat-option value="inconsult"
-                                                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'inconsult')">
+                                                    <mat-option value="inconsult" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'inconsult')
+                                                            || roadWorkActivityFeature.properties.isPrivate">
                                                         in Bedarfskl&auml;rung (Phase 12)
                                                     </mat-option>
-                                                    <mat-option value="verified"
-                                                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'verified')">
+                                                    <mat-option value="verified" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'verified')
+                                                            || roadWorkActivityFeature.properties.isPrivate">
                                                         verifiziert (Phase 12)
                                                     </mat-option>
-                                                    <mat-option value="reporting"
-                                                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'reporting')">
+                                                    <mat-option value="reporting" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'reporting')
+                                                            || roadWorkActivityFeature.properties.isPrivate">
                                                         In Stellungnahme (Phase 12)
                                                     </mat-option>
-                                                    <mat-option value="coordinated"
-                                                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'coordinated')">
+                                                    <mat-option value="coordinated" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'coordinated')
+                                                            || roadWorkActivityFeature.properties.isPrivate">
                                                         koordiniert (Phase 12)
                                                     </mat-option>
-                                                    <mat-option value="suspended"
-                                                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'suspended')">
+                                                    <mat-option value="suspended" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'suspended')
+                                                            || roadWorkActivityFeature.properties.isPrivate">
                                                         sistiert
                                                     </mat-option>
                                                 </mat-select>
@@ -208,11 +207,11 @@
                                             </div>
                                             <button (click)="changeStatus('inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'review'"
+                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'review' || roadWorkActivityFeature.properties.isPrivate"
                                                 mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
                                             <button (click)="changeStatus('reporting')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'verified'"
+                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'verified'  || roadWorkActivityFeature.properties.isPrivate"
                                                 mat-button>Stellungnahme durchf&uuml;hren</button>
                                             <button
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
@@ -303,7 +302,8 @@
                                                 date:'dd.MM.yyyy'}}</b>
                                         </p>
                                         <div>
-                                            <button *ngIf="roadWorkActivityFeature.properties.isPrivate ||
+                                            <button
+                                                *ngIf="roadWorkActivityFeature.properties.isPrivate ||
                                                         userService.hasRole(userService.getLocalUser(), 'administrator')"
                                                 (click)="deleteRoadworkActivity(roadWorkActivityFeature.properties.uuid)"
                                                 style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkActivityFeature.properties.isPrivate && 
