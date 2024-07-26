@@ -121,7 +121,7 @@
                                         <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status.code">
                                         </app-status-chip>
                                         <div>
-                                            <button (click)="update(false, 'suspended')"
+                                            <button *ngIf="roadWorkActivityFeature.properties.status.code != 'suspended'" (click)="update(false, 'suspended')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'suspended')
                                                 || roadWorkActivityFeature.properties.isPrivate"
