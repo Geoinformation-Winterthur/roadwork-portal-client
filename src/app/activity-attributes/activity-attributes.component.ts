@@ -242,54 +242,57 @@ export class ActivityAttributesComponent implements OnInit {
 
   publish() {
     if (this.roadWorkActivityFeature) {
-      this.roadWorkActivityFeature.properties.isPrivate = false;
       if (this.roadWorkActivityFeature.properties.uuid)
-        this.save();
+        this.update(true);
       else
-        this.add();
+        this.add(true);
     }
-  }
-
-  store() {
-    if (this.roadWorkActivityFeature) {
-      if (this.roadWorkActivityFeature.properties.uuid)
-        this.save();
-      else
-        this.add();
-    }
-  }
-
-  add() {
-    this.roadWorkActivityService.addRoadworkActivity(this.roadWorkActivityFeature)
-      .subscribe({
-        next: (roadWorkActivityFeature) => {
-          if (this.roadWorkActivityFeature) {
-            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
-            if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
-              this.roadWorkActivityFeature.properties.isPrivate = true;
-              this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
-                duration: 4000
-              });
-            } else {
-              this.snckBar.open("Vorhaben wurde erfolgreich erstellt", "", {
-                duration: 4000,
-              });
-              this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
-            }
-          }
-        },
-        error: (error) => {
-          this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
-            duration: 4000,
-          });
-          if (this.roadWorkActivityFeature)
-            this.roadWorkActivityFeature.properties.isPrivate = true;
-        }
-      });
   }
 
   save() {
+    if (this.roadWorkActivityFeature) {
+      if (this.roadWorkActivityFeature.properties.uuid)
+        this.update(false);
+      else
+        this.add(false);
+    }
+  }
+
+  add(publish: boolean) {
+    if (this.roadWorkActivityFeature) {
+      if(publish) this.roadWorkActivityFeature.properties.isPrivate = false;
+      this.roadWorkActivityService.addRoadworkActivity(this.roadWorkActivityFeature)
+        .subscribe({
+          next: (roadWorkActivityFeature) => {
+            if (this.roadWorkActivityFeature) {
+              ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
+              if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+                if(publish) this.roadWorkActivityFeature.properties.isPrivate = true;
+                this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
+                  duration: 4000
+                });
+              } else {
+                this.snckBar.open("Vorhaben wurde erfolgreich erstellt", "", {
+                  duration: 4000,
+                });
+                this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
+              }
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
+              duration: 4000,
+            });
+            if (this.roadWorkActivityFeature && publish)
+              this.roadWorkActivityFeature.properties.isPrivate = true;
+          }
+        });
+    }
+  }
+
+  update(publish: boolean) {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
+      if(publish) this.roadWorkActivityFeature.properties.isPrivate = false;
       this.managementAreaService.getIntersectingManagementAreas(this.roadWorkActivityFeature.geometry)
         .subscribe({
           next: (managementAreas) => {
@@ -300,6 +303,7 @@ export class ActivityAttributesComponent implements OnInit {
                     if (this.roadWorkActivityFeature) {
                       ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
                       if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
+                        if(publish) this.roadWorkActivityFeature.properties.isPrivate = true;
                         this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
                           duration: 4000
                         });
@@ -317,6 +321,8 @@ export class ActivityAttributesComponent implements OnInit {
                     }
                   },
                   error: (error) => {
+                    if (this.roadWorkActivityFeature && publish)
+                      this.roadWorkActivityFeature.properties.isPrivate = true;
                     this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
                       duration: 4000
                     });
@@ -486,7 +492,7 @@ export class ActivityAttributesComponent implements OnInit {
           this.roadWorkActivityFeature.properties.name +
           "' beginnt. Ihre Meinung ist gefragt.&";
       else if (newStatus == "reporting")
-        mailText += "?subject=Die Stellungnahme zum Bauvorhaben '" + 
+        mailText += "?subject=Die Stellungnahme zum Bauvorhaben '" +
           this.roadWorkActivityFeature.properties.name +
           "' beginnt. Ihre Meinung ist gefragt.&";
       mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
@@ -499,7 +505,7 @@ export class ActivityAttributesComponent implements OnInit {
         mailText += "Die Bedarfsklärung läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
       else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
-        mailText += "Die Stellungnahme läuft bis zum " + 
+        mailText += "Die Stellungnahme läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
       mailText += "Mit «Speichern» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
       mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
