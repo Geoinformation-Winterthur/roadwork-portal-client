@@ -14,46 +14,72 @@
   <div style="margin-bottom: 2em;">
     <mat-accordion>
       <mat-expansion-panel id="expansionPanel1" (opened)="filterPanelOpen = true" (closed)="filterPanelOpen = false"
-        style="margin-bottom:2em;">
+        style="margin-bottom:1em;">
         <mat-expansion-panel-header>
           <mat-panel-title>Filter</mat-panel-title>
         </mat-expansion-panel-header>
-        <div fxLayout="row wrap padding">
-          <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-            fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-            <mat-card-content>
-              <div style="display:flex;flex-direction:column;">
-                <app-activity-name-filter></app-activity-name-filter>
-              </div>
-            </mat-card-content>
-          </mat-card>
-          <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-            fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-            <mat-card-content>
-              <div style="display:flex;flex-direction:column;">
-                <app-activity-year-filter></app-activity-year-filter>
-              </div>
-            </mat-card-content>
-          </mat-card>
-          <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-            fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-            <mat-card-content>
-              <div style="display:flex;flex-direction:column;">
-                <mat-form-field appearance="fill">
-                  <mat-label>Status</mat-label>
-                  <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
-                    <mat-option value="review">In Pr&uuml;fung (Phase 12)</mat-option>
-                    <mat-option value="inconsult">In Bedarfskl&auml;rung (Phase 12)</mat-option>
-                    <mat-option value="verified">verfiziert (Phase 12)</mat-option>
-                    <mat-option value="reporting">In Stellungnahme (Phase 12)</mat-option>
-                    <mat-option value="coordinated">koordiniert (Phase 12)</mat-option>
-                    <mat-option value="suspended">sistiert</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </mat-card-content>
-          </mat-card>
-        </div>
+        <app-activity-name-filter style="margin: 1em;"></app-activity-name-filter>
+        <span style="margin: 1em;">
+          <mat-form-field appearance="fill">
+            <mat-label>Gebietsmanagement</mat-label>
+            <mat-select [formControl]="filterAreaManagerControl" (ngModelChange)="filterActivities()">
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let areaManager of filterUniqueAreaManagers(roadWorkActivityFeatures)"
+                [value]="areaManager">
+                {{areaManager.firstName}}
+                {{areaManager.lastName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </span>
+        <span style="margin: 1em;">
+          <mat-form-field appearance="fill">
+            <mat-label>Projektleitung</mat-label>
+            <mat-select [formControl]="filterProjectManagerControl" (ngModelChange)="filterActivities()">
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let projectManager of filterUniqueProjectManagers(roadWorkActivityFeatures)"
+                [value]="projectManager">
+                {{projectManager.firstName}}
+                {{projectManager.lastName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </span>
+        <mat-form-field style="margin: 1em;">
+          <mat-label>Realisierung (Grobplanung)</mat-label>
+          <input matInput (dateChange)="filterActivities()" name="finish_optimum_to" [(ngModel)]="filterFinishOptimumTo"
+            [matDatepicker]="finish_optimum_to">
+          <mat-datepicker #finish_optimum_to></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="finish_optimum_to"></mat-datepicker-toggle>
+        </mat-form-field>
+        <mat-form-field style="margin: 1em;">
+          <mat-label>Wunschtermin</mat-label>
+          <input matInput (dateChange)="filterActivities()" name="date_of_acceptance" [(ngModel)]="filterDateOfAcceptance"
+            [matDatepicker]="date_of_acceptance">
+          <mat-datepicker #date_of_acceptance></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="date_of_acceptance"></mat-datepicker-toggle>
+        </mat-form-field>
+        <mat-form-field style="margin: 1em;">
+          <input type="number" placeholder="Beurteilung (Endwert)" aria-label="Beurteilung (Endwert)"
+            (change)="filterActivities()" [(ngModel)]="filterEvaluation" matInput name="filter_evaluation" min="0"
+            max="4">
+        </mat-form-field>
+        <mat-form-field style="margin: 1em;">
+          <input type="number" placeholder="Beurteilung (Prio. SKS)" aria-label="Beurteilung (Prio. SKS)"
+            (change)="filterActivities()" [(ngModel)]="filterEvaluationSks" matInput name="filter_evaluation_sks" min="0"
+            max="4">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
+            <mat-option value="review">In Pr&uuml;fung (Phase 12)</mat-option>
+            <mat-option value="inconsult">In Bedarfskl&auml;rung (Phase 12)</mat-option>
+            <mat-option value="verified">verfiziert (Phase 12)</mat-option>
+            <mat-option value="reporting">In Stellungnahme (Phase 12)</mat-option>
+            <mat-option value="coordinated">koordiniert (Phase 12)</mat-option>
+            <mat-option value="suspended">sistiert</mat-option>
+          </mat-select>
+        </mat-form-field>
       </mat-expansion-panel>
     </mat-accordion>
     <mat-divider></mat-divider>
@@ -68,7 +94,7 @@
               *ngIf="roadWorkActivity.properties.name.length > 20">...</span>
           </mat-card-title>
           <mat-card-subtitle>
-            {{ roadWorkActivity.properties.costs }} CHF
+            {{ roadWorkActivity.properties.costs | number }} CHF
             <span *ngIf="roadWorkActivity.properties.costsType.code === 'valuation'">(Sch&auml;tzung)</span>
             <span *ngIf="roadWorkActivity.properties.costsType.code !== 'valuation'">(exakt)</span>
           </mat-card-subtitle>
@@ -82,29 +108,64 @@
       </div>
       <mat-card-content style="margin: 0.5em;">
         <span style="font-size: 70%;color: grey;">Bildquelle: Stadtplan Winterthur</span><br /><br />
-        <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
-          target="_blank">
-          Zeige im Stadtplan Winterthur</a>
-        <br />
-        <br />
-        <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
-          target="_blank">
-          Zeige im WinWebGIS</a>
-        <br />
-        <br />
+        <p style="margin-left: 0.7em;">
+          <b>Gebietsmanagement</b>:
+          <span *ngIf="roadWorkActivity.properties.areaManager && roadWorkActivity.properties.areaManager.uuid">
+            {{roadWorkActivity.properties.areaManager.firstName}}
+            {{roadWorkActivity.properties.areaManager.lastName}}
+          </span>
+          <span *ngIf="!roadWorkActivity.properties.areaManager || !roadWorkActivity.properties.areaManager.uuid">
+            unbestimmt
+          </span>
+        </p>
+        <p *ngIf="roadWorkActivity.properties.projectManager" style="margin-left: 0.7em;">
+          <b>Projektleitung</b>:
+          <span *ngIf="roadWorkActivity.properties.projectManager && roadWorkActivity.properties.projectManager.uuid">
+            {{roadWorkActivity.properties.projectManager.firstName}}
+            {{roadWorkActivity.properties.projectManager.lastName}}
+          </span>
+          <span *ngIf="!roadWorkActivity.properties.projectManager || !roadWorkActivity.properties.projectManager.uuid">
+            unbestimmt
+          </span>
+        </p>
+        <p *ngIf="roadWorkActivity.properties.involvedUsers[0]" style="margin-left: 0.7em;">
+          <b>Lead</b>: <span>{{roadWorkActivity.properties.involvedUsers[0]}}</span>
+        </p>
         <mat-chip-list>
-          <mat-chip style="background-color: lightgreen;">Bis: {{ roadWorkActivity.properties.finishLateTo |
-            date:"dd.MM.yyyy" }}
+          <mat-chip style="background-color: rgb(239, 239, 239);"><b>Realisierung (Grobplanung)</b>:
+            {{roadWorkActivity.properties.finishOptimumTo | date }}
+          </mat-chip>
+          <mat-chip style="background-color: rgb(239, 239, 239);"><b>Wunschtermin</b>:
+            {{roadWorkActivity.properties.finishOptimumTo | date }}
           </mat-chip>
         </mat-chip-list>
-        <br />
-        <span *ngIf="roadWorkActivity.properties.isPrivate"
-          style="color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin-top: 0.5em;">ENTWURF</span>
+        <p style="margin-left: 0.7em;margin-top: 2em;margin-bottom: 2em;">
+          <b>Beurteilung (Endwert)</b>:&nbsp;&nbsp;&nbsp;
+          <span
+            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
+            {{roadWorkActivity.properties.evaluation}}
+          </span>
+        </p>
+        <p style="margin-left: 0.7em;">
+          <b>Beurteilung (Prio. SKS)</b>:&nbsp;
+          <span
+            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
+            {{roadWorkActivity.properties.evaluationSks}}
+          </span>
+        </p>
+        <div style="margin-left: 0.7em;margin-top: 2em;margin-bottom: 1em;;">
+          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+            target="_blank">Im Stadtplan</a>
+          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+            target="_blank" style="margin: 0.7em;">Im WinWebGIS</a>
+        </div>
       </mat-card-content>
       <mat-divider style="margin-top: 1em;"></mat-divider>
-      <mat-card-actions style="margin: 0.5em;">
-        <button style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
+      <mat-card-actions style="padding-top: 1.5em;">
+        <button style="background-color: rgb(236,236,234);margin: 0.5em;" mat-button
           [routerLink]="['/activities', roadWorkActivity.properties.uuid]">&Ouml;FFNEN</button>
+        <span *ngIf="roadWorkActivity.properties.isPrivate"
+          style="color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em">ENTWURF</span>
       </mat-card-actions>
     </mat-card>
   </div>
@@ -113,9 +174,10 @@
 
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"> <a [routerLink]="['/activities', roadWorkActivity.properties.uuid]">
-          {{ roadWorkActivity.properties.name.slice(0, 20) }}
-          <span *ngIf="roadWorkActivity.properties.name.length > 20">...</span></a>
+        <td mat-cell *matCellDef="let roadWorkActivity"> <a
+            [routerLink]="['/activities', roadWorkActivity.properties.uuid]">
+            {{ roadWorkActivity.properties.name.slice(0, 20) }}
+            <span *ngIf="roadWorkActivity.properties.name.length > 20">...</span></a>
         </td>
       </ng-container>
 
@@ -178,7 +240,8 @@
       <ng-container matColumnDef="relevance">
         <th mat-header-cell *matHeaderCellDef> Beurteilung (Endwert) </th>
         <td mat-cell *matCellDef="let roadWorkActivity">
-          <span class="evaluation_class{{roadWorkActivity.properties.evaluation}}">
+          <span
+            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
             {{roadWorkActivity.properties.evaluation}}
           </span>
         </td>
@@ -187,7 +250,8 @@
       <ng-container matColumnDef="relevance_sks">
         <th mat-header-cell *matHeaderCellDef> Beurteilung (Prio. SKS) </th>
         <td mat-cell *matCellDef="let roadWorkActivity">
-          <span class="evaluation_class{{roadWorkActivity.properties.evaluationSks}}">
+          <span
+            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
             {{roadWorkActivity.properties.evaluationSks}}
           </span>
         </td>

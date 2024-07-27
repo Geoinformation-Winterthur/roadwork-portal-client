@@ -19,20 +19,19 @@
           <mat-panel-title>Filter</mat-panel-title>
         </mat-expansion-panel-header>
         <app-need-name-filter style="margin: 1em;display: inline;"></app-need-name-filter>
-        <form class="need-name-filter-form" style="margin: 1em;display: inline;">
-          <mat-form-field class="choose-need">
-            <input type="text" placeholder="Gebietsmanagement" aria-label="Gebietsmanagement"
-              (ngModelChange)="getNeedsWithFilter()" [formControl]="filterAreaManagerControl" matInput
-              name="filter_area_manager" [matAutocomplete]="auto">
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
-              [displayWith]="getFilterAreaManagerName.bind(this)">
-              <mat-option *ngFor="let roadWorkNeedFeature of roadWorkNeedFeatures" [value]="roadWorkNeedFeature">
-                {{roadWorkNeedFeature.properties.managementArea?.manager?.firstName}}
-                {{roadWorkNeedFeature.properties.managementArea?.manager?.lastName}}
+        <span style="margin: 1em;">
+          <mat-form-field appearance="fill">
+            <mat-label>Gebietsmanagement</mat-label>
+            <mat-select [(ngModel)]="filterAreaManager" (ngModelChange)="getNeedsWithFilter()">
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let areaManager of areaManagers"
+                [value]="areaManager">
+                {{areaManager.firstName}}
+                {{areaManager.lastName}}
               </mat-option>
-            </mat-autocomplete>
+            </mat-select>
           </mat-form-field>
-        </form>
+        </span>
         <mat-form-field style="margin: 1em;">
           <mat-label>Bedarf erfasst</mat-label>
           <input matInput (dateChange)="getNeedsWithFilter()" name="date_of_creation" [(ngModel)]="filterDateOfCreation"
@@ -47,6 +46,9 @@
               max="4">
           </mat-form-field>
         </form>
+        <mat-checkbox (change)="getNeedsWithFilter()" [(ngModel)]="filterMyNeeds" style="margin: 1em;">
+          Nur Meine
+        </mat-checkbox>
       </mat-expansion-panel>
     </mat-accordion>
     <mat-divider></mat-divider>
@@ -92,7 +94,7 @@
               target="_blank">
               Im Stadtplan</a>
             <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
-              target="_blank" style="margin: 1em;">Im WinWebGIS</a>
+              target="_blank" style="margin: 0.7em;">Im WinWebGIS</a>
           </div>
         </div>
         <span *ngIf="roadWorkNeed.properties.isPrivate"

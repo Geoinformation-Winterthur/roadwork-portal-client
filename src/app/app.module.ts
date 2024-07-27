@@ -3,7 +3,7 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
  import { BrowserModule } from '@angular/platform-browser';
- import { NgModule } from '@angular/core';
+ import { LOCALE_ID, NgModule } from '@angular/core';
  
  import { HttpClientModule } from '@angular/common/http';
  import { AppRoutingModule } from './app-routing.module';
@@ -76,6 +76,8 @@ import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dial
 import { ActivityHistoryComponent } from './activity-history/activity-history.component';
 import { ConsultationItemsComponent } from './consultation-items/consultation-items.component';
 import { ReportingItemsComponent } from './reporting-items/reporting-items.component';
+import { registerLocaleData } from '@angular/common';
+import deChLocale from '@angular/common/locales/de-CH';
  
  
  export function getToken(){
@@ -87,6 +89,8 @@ import { ReportingItemsComponent } from './reporting-items/reporting-items.compo
      return null;
    }
  }
+
+ registerLocaleData(deChLocale, "de-CH");
  
  @NgModule({
    declarations: [
@@ -168,7 +172,7 @@ import { ReportingItemsComponent } from './reporting-items/reporting-items.compo
      })
    ],
    providers: [UserService, MatDatepickerModule,
-     {provide: MAT_DATE_LOCALE, useValue: 'de-CH'}
+     {provide: LOCALE_ID, useValue: 'de-CH'}
    ],
    bootstrap: [AppComponent]
  })

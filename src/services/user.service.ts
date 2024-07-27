@@ -253,6 +253,14 @@ export class UserService implements CanActivate {
     return result;
   }
 
+  getFullUserName(user: User) : string {
+    if (user) {
+      return user.firstName + " " + user.lastName;
+    } else {
+      return ""
+    }
+  }
+
   private _readUserFromToken(userToken: string): User {
     let resultUser: User = new User();
     if (userToken !== null && "" !== userToken) {
