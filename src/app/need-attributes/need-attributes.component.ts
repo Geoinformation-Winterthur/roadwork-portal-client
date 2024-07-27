@@ -217,8 +217,8 @@ export class NeedAttributesComponent implements OnInit {
                 this.roadWorkNeedFeature = roadWorkNeedFeature;
 
                 // editing is not allowed anymore when the need goes public (is not private):
-                if (!this.roadWorkNeedFeature?.properties.isPrivate
-                  && !(this.userService.hasRole(this.userService.getLocalUser(), 'administrator'))) {
+                if (!this.roadWorkNeedFeature?.properties.isPrivate &&
+                        this.user.chosenRole != 'administrator') {
                   this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                 }
 
@@ -295,8 +295,8 @@ export class NeedAttributesComponent implements OnInit {
                         this.roadWorkNeedFeature = roadWorkNeedFeature;
 
                         // editing is not allowed anymore when the need goes public (is not private):
-                        if (!this.roadWorkNeedFeature?.properties.isPrivate
-                          && !(this.userService.hasRole(this.userService.getLocalUser(), 'administrator'))) {
+                        if (!this.roadWorkNeedFeature?.properties.isPrivate &&
+                                this.user.chosenRole != 'administrator') {
                           this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 

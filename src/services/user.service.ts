@@ -154,62 +154,48 @@ export class UserService implements CanActivate {
     return result;
   }
 
-  public hasUserAccess(accessRestriction: string): boolean {
+  hasUserAccess(functionDesc: string): boolean {
     let role: string = this.getLocalUser().chosenRole;
-
-    if (accessRestriction === 'administrator') {
-      // Only the administrator can do what the administrator
-      // is allowed to do:
-      if (role === "administrator") {
+    if (functionDesc === "see_needs_list") {
+      if (role === "administrator" ||
+        role === "trafficmanager" ||
+        role === "territorymanager" ||
+        role === "orderer")
         return true;
-      } else {
-        return false;
-      }
-    } else if (accessRestriction === 'territorymanager') {
-      // Only territorymanager and administrator are allowed
-      // to do what the territorymanager is allowed to do:
-      if (role === "territorymanager") {
+    } else if (functionDesc === "see_activities_list") {
+      if (role === "administrator" ||
+        role === "trafficmanager" ||
+        role === "territorymanager" ||
+        role === "orderer")
         return true;
-      } else if (role === "administrator") {
+    } else if (functionDesc === "see_events_list") {
+      if (role === "administrator" ||
+        role === "trafficmanager" ||
+        role === "territorymanager" ||
+        role === "eventmanager")
         return true;
-      } else {
-        return false;
-      }
-    } else if (accessRestriction === 'orderer') {
-      // Only orderer, territorymanager and administrator
-      // are allowed to do what the orderer is allowed
-      // to do:
-      if (role === "orderer") {
+    } else if (functionDesc === "conf_management_areas") {
+      if (role === "administrator")
         return true;
-      } else if (role === "administrator") {
+    } else if (functionDesc === "add_activity") {
+      if (role === "administrator" ||
+        role === "territorymanager")
         return true;
-      } else {
-        return false;
-      }
-    } else if (accessRestriction === 'trafficmanager') {
-      // Orderer, trafficmanager, territorymanager and administrator
-      // are allowed to do what the trafficmanager is allowed to do:
-      if (role === "trafficmanager") {
+    } else if (functionDesc === "see_reports") {
+      if (role === "administrator")
         return true;
-      } else if (role === "administrator") {
+    } else if (functionDesc === "see_management_areas") {
+      if (role === "administrator" ||
+        role === "territorymanager")
         return true;
-      } else {
-        return false;
-      }
-    } else if (accessRestriction === 'eventmanager') {
-      // All roles are allowed to do what the
-      // eventmanager is allowed to do:
-      if (role === "eventmanager") {
+    } else if (functionDesc === "app_configuration") {
+      if (role === "administrator")
         return true;
-      } else if (role === "administrator") {
+    } else if (functionDesc === "data_export") {
+      if (role === "administrator")
         return true;
-      } else {
-        return false;
-      }
-    } else {
-      // if nothing fits, restrict access:
-      return false;
     }
+    return false;
   }
 
   setRole(user: User, roleName: string) {
@@ -231,16 +217,6 @@ export class UserService implements CanActivate {
     return "";
   }
 
-  hasRole(user: User, roleName: string): boolean {
-    let clearRoleName: string = roleName.trim().toLowerCase();
-    if (clearRoleName == "projectmanager") return user.grantedRoles.projectmanager;
-    if (clearRoleName == "eventmanager") return user.grantedRoles.eventmanager;
-    if (clearRoleName == "orderer") return user.grantedRoles.orderer;
-    if (clearRoleName == "trafficmanager") return user.grantedRoles.trafficmanager;
-    if (clearRoleName == "territorymanager") return user.grantedRoles.territorymanager;
-    if (clearRoleName == "administrator") return user.grantedRoles.administrator;
-    return false;
-  }
 
   roleListToString(user: User): string {
     let result: string = "";
@@ -253,7 +229,7 @@ export class UserService implements CanActivate {
     return result;
   }
 
-  getFullUserName(user: User) : string {
+  getFullUserName(user: User): string {
     if (user) {
       return user.firstName + " " + user.lastName;
     } else {

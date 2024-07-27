@@ -270,7 +270,9 @@ export class ActivityAttributesComponent implements OnInit {
                   duration: 4000
                 });
               } else {
-                this.snckBar.open("Vorhaben wurde erfolgreich erstellt", "", {
+                let successMassage: string = "Bauvorhaben wurde erfolgreich erstellt";
+                if (publish) successMassage += " und publiziert";
+                this.snckBar.open(successMassage, "", {
                   duration: 4000,
                 });
                 this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
@@ -316,7 +318,10 @@ export class ActivityAttributesComponent implements OnInit {
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementArea;
                         this._updateDueDate();
-                        this.snckBar.open("Vorhaben ist gespeichert", "", {
+
+                        let successMassage: string = "Bauvorhaben wurde erfolgreich gespeichert";
+                        if (publish) successMassage += " und publiziert";
+                        this.snckBar.open(successMassage, "", {
                           duration: 4000,
                         });
                         this._openMail(newStatus);
@@ -382,7 +387,7 @@ export class ActivityAttributesComponent implements OnInit {
                 });
               } else {
                 this.roadWorkActivityFeature = roadWorkActivityFeature;
-                this.snckBar.open("Vorhaben ist gespeichert", "", {
+                this.snckBar.open("Bauvorhaben wurde gespeichert", "", {
                   duration: 4000,
                 });
               }
@@ -595,6 +600,38 @@ export class ActivityAttributesComponent implements OnInit {
 
     }
 
+  }
+
+  isStatusLater(roadWorkActivity: RoadWorkActivityFeature, status: string): boolean {
+    let statusCode: string | undefined = roadWorkActivity.properties?.status?.code;
+    if (statusCode) {
+      if (status == "requirement") {
+        return true;
+      } else if (status == "review") {
+        if (statusCode != "requirement")
+          return true;
+      } else if (status == "inconsult") {
+        if (statusCode != "inconsult" &&
+          statusCode != "requirement" &&
+          statusCode != "review")
+          return true;
+      } else if (status == "verified") {
+        if (statusCode == "reporting" ||
+          statusCode == "coordinated" ||
+          statusCode == "suspended")
+          return true;
+      } else if (status == "reporting") {
+        if (statusCode == "coordinated" ||
+          statusCode == "suspended")
+          return true;
+      } else if (status == "coordinated") {
+        if (statusCode == "suspended")
+          return true;
+      } else if (status == "suspended") {
+          return false;
+      }
+    }
+    return false;
   }
 
 }

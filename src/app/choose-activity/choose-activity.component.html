@@ -5,7 +5,7 @@
 <div style="margin: 2em;">
   <h1>Bauvorhaben<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenActivityYearFrom}}</span></h1>
-  <div class="add-project-button-container" *ngIf="userService.hasUserAccess('territorymanager')">
+  <div class="add-project-button-container" *ngIf="userService.hasUserAccess('add_activity')">
     <button mat-fab [routerLink]="['/activities', 'new']" style="background-color: rgb(255, 25, 0);" class="fab-button">
       <mat-icon aria-label="Icon shows a plus sign">add</mat-icon>
       <mat-icon aria-label="Icon shows tools">handyman</mat-icon>
@@ -129,7 +129,8 @@
           </span>
         </p>
         <p *ngIf="roadWorkActivity.properties.involvedUsers[0]" style="margin-left: 0.7em;">
-          <b>Lead</b>: <span>{{roadWorkActivity.properties.involvedUsers[0]}}</span>
+          <b>Lead</b>: <span>{{roadWorkActivity.properties.involvedUsers[0].firstName}}
+            {{roadWorkActivity.properties.involvedUsers[0].lastName}}</span>
         </p>
         <mat-chip-list>
           <mat-chip style="background-color: rgb(239, 239, 239);"><b>Realisierung (Grobplanung)</b>:

@@ -1,4 +1,4 @@
-<div *ngIf="(userService.hasRole(user, 'administrator') || userService.hasRole(user, 'territorymanager'))">
+<div *ngIf="user.chosenRole == 'administrator' || user.chosenRole == 'territorymanager'">
     <div *ngIf="!consultationInputsFromInConsult || consultationInputsFromInConsult.length == 0" style="margin: 2em;">
         Bisher keine Eingaben aus der Bedarfskl&auml;rung
     </div>
@@ -71,7 +71,7 @@
         </mat-card>
     </div>
 </div>
-<div *ngIf="roadworkActivityStatus ==='inconsult' && userService.hasRole(user, 'orderer')">
+<div *ngIf="roadworkActivityStatus ==='inconsult' && user.chosenRole == 'orderer'">
     <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
         <p>Bewertung des Bauvorhabens:<br>
