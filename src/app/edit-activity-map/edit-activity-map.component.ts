@@ -288,7 +288,7 @@ export class EditActivityMapComponent implements OnInit {
 
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
     this.roadWorkNeedService.getRoadWorkNeeds([], this.chosenYear,
-      "", "", undefined, undefined, ["requirement"])
+      "", "", false, undefined, undefined, ["requirement"])
       .subscribe({
         next: (roadWorkNeeds) => {
           this.needsOnMap = roadWorkNeeds;

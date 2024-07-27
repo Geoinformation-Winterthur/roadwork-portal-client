@@ -28,11 +28,15 @@ export class ChooseNeedComponent implements OnInit {
   filterPanelOpen: boolean = false;
   filterNeedName: string = "";
   filterNeedYearOptFrom?: number;
-  filterAreaManagerControl: FormControl = new FormControl();
   filterRelevance?: number;
   filterDateOfCreation?: Date;
+  filterMyNeeds?: boolean = false;
+  filterAreaManager?: User;
 
   user: User = new User();
+  userService: UserService;
+
+  areaManagers: User[] = [];
 
   statusFilterCodes: string[] = ["requirement"];
 
@@ -43,7 +47,6 @@ export class ChooseNeedComponent implements OnInit {
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
   private router: Router;
-  private userService: UserService;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     roadWorkActivityService: RoadWorkActivityService, router: Router,
@@ -86,18 +89,12 @@ export class ChooseNeedComponent implements OnInit {
 
   getNeedsWithFilter() {
 
-    let filterAreaManager: User | undefined;
-    if(this.filterAreaManagerControl.value){
-      let roadWorkNeedFeature: RoadWorkNeedFeature = this.filterAreaManagerControl.value as RoadWorkNeedFeature;
-      filterAreaManager = roadWorkNeedFeature.properties.managementArea?.manager;
-    }
-
     let roadWorkNeedName: string = this.filterNeedName.trim().toLowerCase();
 
     this.roadWorkNeedService
       .getRoadWorkNeeds([], this.filterNeedYearOptFrom,
-        roadWorkNeedName, filterAreaManager?.uuid,
-        this.filterRelevance, this.filterDateOfCreation,
+        roadWorkNeedName, this.filterAreaManager?.uuid,
+        this.filterMyNeeds, this.filterRelevance, this.filterDateOfCreation,
         this.statusFilterCodes).subscribe({
           next: (roadWorkNeeds) => {
 
@@ -110,6 +107,8 @@ export class ChooseNeedComponent implements OnInit {
                   next: (managementArea) => {
                     if (roadWorkNeed && managementArea) {
                       roadWorkNeed.properties.managementArea = managementArea;
+                      if (managementArea.manager && managementArea.manager.uuid)
+                        this._addAreaManager(managementArea.manager);
                     }
                   },
                   error: (error) => {
@@ -125,14 +124,19 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
-  getFilterAreaManagerName(roadWorkNeed: RoadWorkNeedFeature) : string {
-    if(roadWorkNeed && roadWorkNeed.properties.managementArea 
-        && roadWorkNeed.properties.managementArea.manager){
-      return roadWorkNeed.properties.managementArea.manager.firstName + " " +
-          roadWorkNeed.properties.managementArea.manager.lastName;
-    } else {
-      return ""
+  private _addAreaManager(areaManager: User) {
+
+    let containsAlready: boolean = false;
+    for (let areaManagerThis of this.areaManagers) {
+      if (areaManagerThis.uuid === areaManager.uuid) {
+        containsAlready = true;
+        break;
+      }
     }
+
+    if (!containsAlready)
+      this.areaManagers.push(areaManager);
+
   }
 
 }

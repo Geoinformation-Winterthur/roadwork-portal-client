@@ -22,8 +22,9 @@ export class RoadWorkNeedService {
   }
 
   getRoadWorkNeeds(ids: string[] = [], year?: number, name: string = "",
-    areaManagerUuid?: string, relevance?: number, dateOfCreation?: Date,
-    status: string[] = [], summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
+    areaManagerUuid?: string, onlyMyNeeds?: boolean, relevance?: number,
+    dateOfCreation?: Date, status: string[] = [],
+    summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
 
@@ -66,6 +67,16 @@ export class RoadWorkNeedService {
       }
       hasParameters = true;
       queryString += "areamanageruuid=" + areaManagerUuid;
+    }
+
+    if (onlyMyNeeds) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "onlymyneeds=true";
     }
 
     if (relevance) {

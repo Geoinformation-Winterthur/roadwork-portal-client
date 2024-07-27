@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-choose-activity',
@@ -26,6 +27,13 @@ export class ChooseActivityComponent implements OnInit {
 
   chosenActivityName: string = "";
   chosenActivityYearFrom?: number;
+  filterMyActivities?: boolean = false;
+  filterFinishOptimumTo?: Date;
+  filterDateOfAcceptance?: Date;
+  filterEvaluation?: number;
+  filterEvaluationSks?: number;
+  filterAreaManagerControl: FormControl = new FormControl();
+  filterProjectManagerControl: FormControl = new FormControl();
 
   statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated"];
 
@@ -111,19 +119,99 @@ export class ChooseActivityComponent implements OnInit {
   filterActivities() {
     this.roadWorkActivityFeaturesFiltered =
       this.roadWorkActivityFeatures
-        .filter(roadWorkActivityFeature => {
-          if (roadWorkActivityFeature && roadWorkActivityFeature.properties &&
-            roadWorkActivityFeature.properties.name && roadWorkActivityFeature.properties.finishEarlyTo) {
-            let roadWorkActivityName: string = this.chosenActivityName.trim().toLowerCase();
-            let finishEarlyTo: Date = new Date(roadWorkActivityFeature.properties.finishEarlyTo);
-            return (roadWorkActivityName === ''
-              || roadWorkActivityFeature.properties.name.trim().toLowerCase().includes(roadWorkActivityName))
-              && (!this.chosenActivityYearFrom || finishEarlyTo.getFullYear() === this.chosenActivityYearFrom) &&
-              this.statusFilterCodes.includes(roadWorkActivityFeature.properties.status.code);
-          } else {
-            return false;
+        .filter(roadWorkActivity => {
+
+          let showActivity = true;
+
+          if (showActivity && roadWorkActivity && roadWorkActivity.properties) {
+
+            if (roadWorkActivity.properties.name) {
+              let activityName: string = roadWorkActivity.properties.name.trim().toLowerCase();
+              let filterActivityName: string = this.chosenActivityName.trim().toLowerCase();
+              if (filterActivityName && activityName) {
+                showActivity = activityName.includes(filterActivityName);
+              }
+            }
+
+            if (showActivity && roadWorkActivity.properties.finishEarlyTo) {
+              let finishEarlyTo: Date = new Date(roadWorkActivity.properties.finishEarlyTo);
+              if (this.chosenActivityYearFrom) {
+                showActivity = finishEarlyTo.getFullYear() === this.chosenActivityYearFrom;
+              }
+            }
+
+            if (showActivity && roadWorkActivity.properties.status && roadWorkActivity.properties.status.code) {
+              if (this.statusFilterCodes) {
+                showActivity = this.statusFilterCodes.includes(roadWorkActivity.properties.status.code);
+              }
+            }
+
+            if (showActivity && this.filterEvaluation && roadWorkActivity.properties.evaluation !== undefined) {
+              showActivity = this.filterEvaluation === roadWorkActivity.properties.evaluation;
+            }
+
+            if (showActivity && this.filterEvaluationSks && roadWorkActivity.properties.evaluationSks !== undefined) {
+              showActivity = this.filterEvaluationSks === roadWorkActivity.properties.evaluationSks;
+            }
+
+            if (showActivity && roadWorkActivity.properties.finishOptimumTo && this.filterFinishOptimumTo) {
+              let finishOptimumTo: Date = new Date(roadWorkActivity.properties.finishOptimumTo);
+              finishOptimumTo.setHours(0, 0, 0, 0);
+
+              let filterFinishOptimumTo: Date = new Date(this.filterFinishOptimumTo);
+              filterFinishOptimumTo.setHours(0, 0, 0, 0);
+
+              showActivity = filterFinishOptimumTo.valueOf() === finishOptimumTo.valueOf();
+            }
+
+            let filterAreaManager: User | undefined;
+            if (showActivity && this.filterAreaManagerControl.value)
+              filterAreaManager = this.filterAreaManagerControl.value as User;
+            if (filterAreaManager && roadWorkActivity.properties.areaManager) {
+              showActivity = filterAreaManager.uuid === roadWorkActivity.properties.areaManager.uuid;
+            }
+
+            let filterProjectManager: User | undefined;
+            if (showActivity && this.filterProjectManagerControl.value)
+              filterProjectManager = this.filterProjectManagerControl.value as User;
+            if (filterProjectManager && roadWorkActivity.properties.projectManager) {
+              showActivity = filterProjectManager.uuid === roadWorkActivity.properties.projectManager.uuid;
+            }
+
           }
+
+          return showActivity;
         });
+  }
+
+  filterUniqueAreaManagers(roadWorkActivityFeatures: RoadWorkActivityFeature[]): User[] {
+    let resultUuids: string[] = [];
+    let result: User[] = [];
+    for (let roadWorkActivityFeature of roadWorkActivityFeatures) {
+      if (roadWorkActivityFeature.properties.areaManager &&
+        roadWorkActivityFeature.properties.areaManager &&
+        !resultUuids.includes(roadWorkActivityFeature.properties.areaManager.uuid)
+      ) {
+        resultUuids.push(roadWorkActivityFeature.properties.areaManager.uuid);
+        result.push(roadWorkActivityFeature.properties.areaManager);
+      }
+    }
+    return result;
+  }
+
+  filterUniqueProjectManagers(roadWorkActivityFeatures: RoadWorkActivityFeature[]): User[] {
+    let resultUuids: string[] = [];
+    let result: User[] = [];
+    for (let roadWorkActivityFeature of roadWorkActivityFeatures) {
+      if (roadWorkActivityFeature.properties.projectManager &&
+        roadWorkActivityFeature.properties.projectManager.uuid &&
+        !resultUuids.includes(roadWorkActivityFeature.properties.projectManager.uuid)
+      ) {
+        resultUuids.push(roadWorkActivityFeature.properties.projectManager.uuid);
+        result.push(roadWorkActivityFeature.properties.projectManager);
+      }
+    }
+    return result;
   }
 
 }
