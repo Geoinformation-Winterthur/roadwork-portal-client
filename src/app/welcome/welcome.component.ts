@@ -47,7 +47,7 @@ export class WelcomeComponent implements OnInit {
   ngOnInit(): void {
     if (this.userService.isUserLoggedIn()) {
 
-      this.roadWorkActivityService.getRoadWorkActivities("", "inconsult").subscribe({
+      this.roadWorkActivityService.getRoadWorkActivities("", "inconsult,reporting").subscribe({
         next: (roadWorkActivities) => {
           for (let roadWorkActInCoordination of roadWorkActivities) {
             this.managementAreaService.getIntersectingManagementArea(roadWorkActInCoordination.geometry)

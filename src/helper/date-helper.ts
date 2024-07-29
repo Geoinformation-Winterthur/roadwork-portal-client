@@ -1,5 +1,6 @@
 export class DateHelper {
 
+    // Calculated number of month between two dates
     public static calcMonthDiff(date1: Date, date2: Date): number {
         let result = 0;
         result = (date2.getFullYear() - date1.getFullYear()) * 12;

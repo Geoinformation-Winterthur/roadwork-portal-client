@@ -53,7 +53,7 @@
     </mat-accordion>
     <mat-divider></mat-divider>
   </div>
-  <div *ngIf="!user.prefTableView" fxLayout="row wrap padding">
+  <div *ngIf="!user || !user.prefTableView" fxLayout="row wrap padding">
     <mat-card class="maincard mat-elevation-z2" *ngFor="let roadWorkNeed of roadWorkNeedFeatures" fxFlex.xs="100"
       fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
       <mat-card-header style="margin: 0.5em;">
@@ -112,7 +112,7 @@
       </mat-card-actions>
     </mat-card>
   </div>
-  <div *ngIf="user.prefTableView">
+  <div *ngIf="user && user.prefTableView">
     <table mat-table [dataSource]="roadWorkNeedFeatures" class="mat-elevation-z2" style="width: 100%">
 
       <ng-container matColumnDef="title">

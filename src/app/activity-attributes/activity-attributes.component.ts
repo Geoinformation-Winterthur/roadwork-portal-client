@@ -24,6 +24,7 @@ import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { environment } from 'src/environments/environment';
+import { StatusHelper } from 'src/helper/status-helper';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -68,6 +69,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   dueDate?: Date;
 
+  statusHelper: StatusHelper;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -94,6 +97,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.appConfigService = appConfigService;
     this.router = router;
     this.snckBar = snckBar;
+    this.statusHelper = new StatusHelper();
   }
 
   ngOnInit() {
@@ -270,7 +274,9 @@ export class ActivityAttributesComponent implements OnInit {
                   duration: 4000
                 });
               } else {
-                this.snckBar.open("Vorhaben wurde erfolgreich erstellt", "", {
+                let successMassage: string = "Bauvorhaben wurde erfolgreich erstellt";
+                if (publish) successMassage += " und publiziert";
+                this.snckBar.open(successMassage, "", {
                   duration: 4000,
                 });
                 this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
@@ -316,7 +322,10 @@ export class ActivityAttributesComponent implements OnInit {
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementArea;
                         this._updateDueDate();
-                        this.snckBar.open("Vorhaben ist gespeichert", "", {
+
+                        let successMassage: string = "Bauvorhaben wurde erfolgreich gespeichert";
+                        if (publish) successMassage += " und publiziert";
+                        this.snckBar.open(successMassage, "", {
                           duration: 4000,
                         });
                         this._openMail(newStatus);
@@ -382,7 +391,7 @@ export class ActivityAttributesComponent implements OnInit {
                 });
               } else {
                 this.roadWorkActivityFeature = roadWorkActivityFeature;
-                this.snckBar.open("Vorhaben ist gespeichert", "", {
+                this.snckBar.open("Bauvorhaben wurde gespeichert", "", {
                   duration: 4000,
                 });
               }
@@ -596,5 +605,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
 
   }
+
+
 
 }

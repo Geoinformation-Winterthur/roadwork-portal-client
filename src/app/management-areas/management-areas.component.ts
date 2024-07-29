@@ -191,7 +191,7 @@ export class ManagementAreasComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.snackBar.open("Gebietsmanager-Flächen konnten NICHT geladen werden", "", {
+          this.snackBar.open("Gebietsmanagement-Flächen konnten NICHT geladen werden", "", {
             duration: 4000,
           });
         }

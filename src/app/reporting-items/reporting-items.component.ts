@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { StatusHelper } from 'src/helper/status-helper';
 import { ConsultationInput } from 'src/model/consultation-input';
 import { User } from 'src/model/user';
 import { ConsultationService } from 'src/services/consultation.service';
@@ -24,10 +25,14 @@ export class ReportingItemsComponent implements OnInit {
 
   consultationInputsFromReporting: ConsultationInput[] = [];
 
+  tableDisplayedColumns: string[] = ['name', 'date_last_change', 'has_feedback', 'feedback', 'valuation', 'consult_input'];
+
   user: User;
   userService: UserService;
 
   needsOfActivityService: NeedsOfActivityService;
+
+  statusHelper: StatusHelper;
 
   private consultationService: ConsultationService;
   private snckBar: MatSnackBar;
@@ -40,20 +45,33 @@ export class ReportingItemsComponent implements OnInit {
     this.userService = userService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
+    this.statusHelper = new StatusHelper();
   }
 
   ngOnInit(): void {
+
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
+      .subscribe({
+        next: (user) => {
+          if (user && user.length > 0)
+            this.user = user[0];
+        },
+        error: (error) => {
+        }
+      });
 
     this.consultationInput.feedbackPhase = this.roadworkActivityStatus;
 
     this.consultationService.getConsultationInputs(this.roadworkActivityUuid)
       .subscribe({
         next: (consultationInputs) => {
+          let consultationInputsFromReportingTemp: ConsultationInput[] = [];
           for (let consultationInput of consultationInputs) {
             if (consultationInput.feedbackPhase === 'reporting') {
-              this.consultationInputsFromReporting.push(consultationInput);
+              consultationInputsFromReportingTemp.push(consultationInput);
             }
           }
+          this.consultationInputsFromReporting = consultationInputsFromReportingTemp;
 
           for (let consultationInput of consultationInputs) {
             if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
@@ -89,6 +107,10 @@ export class ReportingItemsComponent implements OnInit {
                 this.snckBar.open(consultationInput.errorMessage, "", {
                   duration: 4000
                 });
+              } else {
+                this.snckBar.open("Rückmeldung gespeichert", "", {
+                  duration: 4000
+                });
               }
               let consultationInputObj: ConsultationInput = new ConsultationInput();
               consultationInputObj.uuid = "" + consultationInput.uuid;
@@ -104,6 +126,9 @@ export class ReportingItemsComponent implements OnInit {
             }
           },
           error: (error) => {
+            this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
+              duration: 4000
+            });
           }
         });
     } else {
@@ -117,6 +142,10 @@ export class ReportingItemsComponent implements OnInit {
                 this.snckBar.open(consultationInput.errorMessage, "", {
                   duration: 4000
                 });
+              } else {
+                this.snckBar.open("Rückmeldung gespeichert", "", {
+                  duration: 4000
+                });    
               }
               let consultationInputObj: ConsultationInput = new ConsultationInput();
               consultationInputObj.uuid = "" + consultationInput.uuid;
@@ -142,8 +171,44 @@ export class ReportingItemsComponent implements OnInit {
             }
           },
           error: (error) => {
+            this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
+              duration: 4000
+            });
           }
         });
+    }
+  }
+
+  updateComment(consultationInput: ConsultationInput) {
+    this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
+      consultationInput)
+      .subscribe({
+        next: (consultationInput) => {
+          if (consultationInput) {
+            ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
+            if (consultationInput.errorMessage.trim().length !== 0) {
+              this.snckBar.open(consultationInput.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.snckBar.open("Bemerkung gespeichert", "", {
+                duration: 4000
+              });
+            }
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Unbekannter Fehler beim Speichern der Bemerkung", "", {
+            duration: 4000
+          });
+        }
+      });
+
+  }
+
+  setDecline() {
+    if (this.consultationInput.decline) {
+      this.consultationInput.ordererFeedback = "";
     }
   }
 

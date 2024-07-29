@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
-import { Status } from 'src/model/status';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
@@ -35,7 +34,6 @@ export class NeedsOfActivityComponent {
   searchSliderMax: number = new Date().getFullYear() + 30;
   searchSliderStep: number = 1;
   searchSliderThumbLabel: boolean = true;
-  searchNeedYearOptFrom: number = new Date().getFullYear();
 
   private roadWorkNeedService: RoadWorkNeedService;
   private snckBar: MatSnackBar;
@@ -47,7 +45,7 @@ export class NeedsOfActivityComponent {
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.snckBar = snckBar;
-    this.userService = userService;    
+    this.userService = userService;
   }
 
   ngOnInit(): void {
@@ -131,6 +129,9 @@ export class NeedsOfActivityComponent {
           }
         },
         error: (error) => {
+          this.snckBar.open("Unbekannter Fehler", "", {
+            duration: 4000
+          });
         }
       });
   }
@@ -205,12 +206,16 @@ export class NeedsOfActivityComponent {
       this.allRoadWorkNeedFeatures
         .filter(roadWorkNeedFeature => {
           if (roadWorkNeedFeature.properties && roadWorkNeedFeature.properties.name
-            && roadWorkNeedFeature.properties.finishOptimumTo) {
-            let roadWorkNeedName: string = this.roadWorkNeedSearchControl.value.trim().toLowerCase();
-            let finishOptimumTo: Date = new Date(roadWorkNeedFeature.properties.finishOptimumTo);
-            return (roadWorkNeedName === ''
-              || roadWorkNeedFeature.properties.name.trim().toLowerCase().includes(roadWorkNeedName))
-              && finishOptimumTo.getFullYear() === this.searchNeedYearOptFrom;
+                && roadWorkNeedFeature.properties.status) {
+            let roadWorkNeedNameToSeaarch: string = "";
+            if (this.roadWorkNeedSearchControl.value)
+              roadWorkNeedNameToSeaarch = this.roadWorkNeedSearchControl.value.trim().toLowerCase();
+            let roadWorkNeedName: string = roadWorkNeedFeature.properties.name.trim().toLowerCase();
+            let isNameEqual: boolean = roadWorkNeedName.includes(roadWorkNeedNameToSeaarch);
+            let isPrivate: boolean = roadWorkNeedFeature.properties.isPrivate;
+            let isAlive: boolean = roadWorkNeedFeature.properties.status.code !== "coordinated" && 
+                    roadWorkNeedFeature.properties.status.code !== "suspended";
+            return (roadWorkNeedNameToSeaarch === '' || isNameEqual) && !isPrivate && isAlive;
           } else {
             return false;
           }

@@ -17,8 +17,8 @@ export class ErrorMessageDictionary {
              "Keine Berechtigung, diesen Bedarf zu editieren.",
              "Es wurde keine gültige UUID empfangen.",
              "Die Fläche des Bedarfes ist grösser als die zulässige Maximalgrösse.",
-             "Der zugewiesene Benutzer ist kein Gebietsmanager. Zuweisung abgebrochen.",
-             "Der Gebietsmanager kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist.",
+             "Der:die zugewiesene:r Benutzer:in ist nicht vom Gebietsmanagement. Zuweisung abgebrochen.",
+             "Gebietsmanagement kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist.",
              "Das Startdatum darf nicht nach dem Enddatum liegen.",
              "Es wurde kein Statuscode empfangen.",
              "Es wurden keine Organisationsdaten empfangen.",
@@ -29,9 +29,10 @@ export class ErrorMessageDictionary {
              "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
              "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
              "Änderung wurde nicht gespeichert, da dem Bauvorhaben kein Bedarf zugeordnet ist.",
-             "Löschen des Bedarfs nicht möglich, da ansonsten einer Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
+             "Löschen/Zuweisen/Anmelden des Bedarfs nicht möglich, da ansonsten einem Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
              "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde.",
              "Keine Berechtigung, dieses Bauvorhaben zu editieren.",
-             "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet"
+             "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet",
+             "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist"
             ];
 }

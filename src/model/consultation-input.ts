@@ -7,7 +7,7 @@ import { User } from "./user";
 
 export class ConsultationInput {
     uuid: string = "";
-    lastEdit: Date = new Date(1, 0, 1);
+    lastEdit?: Date;
     inputBy: User = new User();
     decline: boolean = false;
     ordererFeedback: string = "";
