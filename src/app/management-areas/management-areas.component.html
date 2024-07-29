@@ -3,8 +3,8 @@
         <mat-tab label="Gebiete">
             <div id="management_areas_map" class="management-areas-map"></div>
         </mat-tab>
-        <mat-tab label="Gebietsmanager" *ngIf="userService.hasUserAccess('conf_management_areas')">
-            <h2>Gebietsmanager-Einstellungen</h2>
+        <mat-tab label="Gebietsmanagement" *ngIf="userService.hasUserAccess('conf_management_areas')">
+            <h2>Gebietsmanagement-Einstellungen</h2>
             <div fxLayout="row wrap padding">
                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">

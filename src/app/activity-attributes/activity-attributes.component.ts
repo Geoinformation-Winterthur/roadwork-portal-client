@@ -24,6 +24,7 @@ import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { environment } from 'src/environments/environment';
+import { StatusHelper } from 'src/helper/status-helper';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -68,6 +69,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   dueDate?: Date;
 
+  statusHelper: StatusHelper;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -94,6 +97,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.appConfigService = appConfigService;
     this.router = router;
     this.snckBar = snckBar;
+    this.statusHelper = new StatusHelper();
   }
 
   ngOnInit() {
@@ -602,36 +606,6 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
-  isStatusLater(roadWorkActivity: RoadWorkActivityFeature, status: string): boolean {
-    let statusCode: string | undefined = roadWorkActivity.properties?.status?.code;
-    if (statusCode) {
-      if (status == "requirement") {
-        return true;
-      } else if (status == "review") {
-        if (statusCode != "requirement")
-          return true;
-      } else if (status == "inconsult") {
-        if (statusCode != "inconsult" &&
-          statusCode != "requirement" &&
-          statusCode != "review")
-          return true;
-      } else if (status == "verified") {
-        if (statusCode == "reporting" ||
-          statusCode == "coordinated" ||
-          statusCode == "suspended")
-          return true;
-      } else if (status == "reporting") {
-        if (statusCode == "coordinated" ||
-          statusCode == "suspended")
-          return true;
-      } else if (status == "coordinated") {
-        if (statusCode == "suspended")
-          return true;
-      } else if (status == "suspended") {
-          return false;
-      }
-    }
-    return false;
-  }
+
 
 }

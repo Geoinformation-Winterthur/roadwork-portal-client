@@ -220,12 +220,12 @@ export class UserService implements CanActivate {
 
   roleListToString(user: User): string {
     let result: string = "";
-    if (user.grantedRoles.projectmanager) result += "Projektleiter ";
-    if (user.grantedRoles.eventmanager) result += "Eventmanager ";
-    if (user.grantedRoles.orderer) result += "Besteller ";
-    if (user.grantedRoles.trafficmanager) result += "Verkehrsmanager ";
-    if (user.grantedRoles.territorymanager) result += "Gebietsmanager ";
-    if (user.grantedRoles.administrator) result += "Administrator ";
+    if (user.grantedRoles.projectmanager) result += "Projektleitung ";
+    if (user.grantedRoles.eventmanager) result += "Eventmanagement ";
+    if (user.grantedRoles.orderer) result += "Besteller:in ";
+    if (user.grantedRoles.trafficmanager) result += "Verkehrsmanagement ";
+    if (user.grantedRoles.territorymanager) result += "Gebietsmanagement ";
+    if (user.grantedRoles.administrator) result += "Administration ";
     return result;
   }
 

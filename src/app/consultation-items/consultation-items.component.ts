@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { StatusHelper } from 'src/helper/status-helper';
 import { ConsultationInput } from 'src/model/consultation-input';
 import { User } from 'src/model/user';
 import { ConsultationService } from 'src/services/consultation.service';
@@ -24,10 +25,14 @@ export class ConsultationItemsComponent implements OnInit {
 
   consultationInputsFromInConsult: ConsultationInput[] = [];
 
+  tableDisplayedColumns: string[] = ['name', 'date_last_change', 'has_feedback', 'feedback', 'valuation', 'consult_input'];
+
   user: User;
   userService: UserService;
 
   needsOfActivityService: NeedsOfActivityService;
+
+  statusHelper: StatusHelper;
 
   private consultationService: ConsultationService;
   private snckBar: MatSnackBar;
@@ -40,20 +45,33 @@ export class ConsultationItemsComponent implements OnInit {
     this.userService = userService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
+    this.statusHelper = new StatusHelper();
   }
 
   ngOnInit(): void {
+
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
+      .subscribe({
+        next: (user) => {
+          if (user && user.length > 0)
+            this.user = user[0];
+        },
+        error: (error) => {
+        }
+      });
 
     this.consultationInput.feedbackPhase = this.roadworkActivityStatus;
 
     this.consultationService.getConsultationInputs(this.roadworkActivityUuid)
       .subscribe({
         next: (consultationInputs) => {
+          let consultationInputsFromInConsultTemp: ConsultationInput[] = []
           for (let consultationInput of consultationInputs) {
             if (consultationInput.feedbackPhase === 'inconsult') {
-              this.consultationInputsFromInConsult.push(consultationInput);
+              consultationInputsFromInConsultTemp.push(consultationInput);
             }
           }
+          this.consultationInputsFromInConsult = consultationInputsFromInConsultTemp;
 
           for (let consultationInput of consultationInputs) {
             if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
@@ -78,6 +96,7 @@ export class ConsultationItemsComponent implements OnInit {
   }
 
   sendInConsult() {
+    this.consultationInput.feedbackGiven = true;
     if (this.consultationInput.uuid === "") {
       this.consultationService.addConsultationInput(this.roadworkActivityUuid,
         this.consultationInput)
@@ -87,6 +106,10 @@ export class ConsultationItemsComponent implements OnInit {
               ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
               if (consultationInput.errorMessage.trim().length !== 0) {
                 this.snckBar.open(consultationInput.errorMessage, "", {
+                  duration: 4000
+                });
+              } else {
+                this.snckBar.open("Rückmeldung gespeichert", "", {
                   duration: 4000
                 });
               }
@@ -99,16 +122,18 @@ export class ConsultationItemsComponent implements OnInit {
               consultationInputObj.lastEdit = consultationInput.lastEdit;
               consultationInputObj.decline = consultationInput.decline;
               consultationInputObj.valuation = consultationInput.valuation;
-              consultationInputObj.feedbackGiven = true;
+              consultationInputObj.feedbackGiven = consultationInput.feedbackGiven;
 
               this.consultationInputsFromInConsult.push(consultationInputObj);
             }
           },
           error: (error) => {
+            this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
+              duration: 4000
+            });
           }
         });
     } else {
-      this.consultationInput.feedbackGiven = true;
       this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
         this.consultationInput)
         .subscribe({
@@ -127,6 +152,9 @@ export class ConsultationItemsComponent implements OnInit {
             }
           },
           error: (error) => {
+            this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
+              duration: 4000
+            });
           }
         });
     }
@@ -144,16 +172,26 @@ export class ConsultationItemsComponent implements OnInit {
                 duration: 4000
               });
             } else {
-              this.snckBar.open("Rückmeldung gespeichert", "", {
+              this.snckBar.open("Bemerkung gespeichert", "", {
                 duration: 4000
               });
             }
           }
         },
         error: (error) => {
+          this.snckBar.open("Unbekannter Fehler beim Speichern der Bemerkung", "", {
+            duration: 4000
+          });
         }
       });
 
+  }
+
+  setDecline() {
+    if (this.consultationInput.decline) {
+      this.consultationInput.valuation = 0;
+      this.consultationInput.ordererFeedback = "";
+    }
   }
 
 }

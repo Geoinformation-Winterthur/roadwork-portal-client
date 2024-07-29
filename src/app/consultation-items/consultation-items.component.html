@@ -1,81 +1,161 @@
-<div *ngIf="user.chosenRole == 'administrator' || user.chosenRole == 'territorymanager'">
-    <div *ngIf="!consultationInputsFromInConsult || consultationInputsFromInConsult.length == 0" style="margin: 2em;">
-        Bisher keine Eingaben aus der Bedarfskl&auml;rung
+<div
+    *ngIf="userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager'">
+    <div *ngIf="!consultationInputsFromInConsult || consultationInputsFromInConsult.length == 0
+    && !statusHelper.isStatusLater(roadworkActivityStatus, 'inconsult')" style="margin: 2em;">
+        Bedarfskl&auml;rung noch nicht er&ouml;ffnet. Oder es wurden keine Beteiligten vorausgew&auml;hlt
+        und es gibt noch keine R&uuml;ckmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
+        werden.
     </div>
-    <div fxLayout="row wrap padding" style="margin: 2em;">
-        <mat-card class="maincard mat-elevation-z2" *ngFor="let consultationInput of consultationInputsFromInConsult"
-            fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
-            <mat-card-header style="margin: 0.5em;">
-                <div style="width: 80%; margin-right: 1em;">
-                    <mat-card-title>
-                        {{ (consultationInput.inputBy.firstName + " " + consultationInput.inputBy.lastName).slice(0, 20)
-                        }}<span
-                            *ngIf="consultationInput.inputBy.firstName.length + consultationInput.inputBy.lastName.length > 20">...</span>
-                    </mat-card-title>
-                    <mat-card-subtitle>Letzte &Auml;nderung: {{consultationInput.lastEdit |
-                        date:'dd.MM.yyyy'}}</mat-card-subtitle>
-                </div>
-            </mat-card-header>
-            <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
-                <mat-chip-list>
-                    <mat-chip *ngIf="consultationInput.feedbackGiven">
-                        <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
-                            style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung gegeben</span>
-                    </mat-chip>
-                    <mat-chip *ngIf="!consultationInput.feedbackGiven">
-                        <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
-                            style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Noch keine R&uuml;ckmeldung</span>
-                    </mat-chip>
-                </mat-chip-list>
-                <div style="margin: 1em;">R&uuml;ckmeldung Besteller:</div>
-                <div
-                    style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
-                    {{consultationInput.ordererFeedback}}
-                </div>
-                <p style="margin: 2em;">Bewertung des Bauvorhabens:<br>
-                    <mat-button-toggle-group [(ngModel)]="consultationInput.valuation"
-                        aria-label="Bewertung des Bauvorhabens" disabled>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 0" value="0"
-                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 0" value="0"
-                            style="background-color: rgb(239, 239, 239);">0</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 1" value="1"
-                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 1" value="1"
-                            style="background-color: rgb(239, 239, 239);">1</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 2" value="2"
-                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 2" value="2"
-                            style="background-color: rgb(239, 239, 239);">2</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 3" value="3"
-                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 3" value="3"
-                            style="background-color: rgb(239, 239, 239);">3</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 4" value="4"
-                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
-                        <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 4" value="4"
-                            style="background-color: rgb(239, 239, 239);">4</mat-button-toggle>
-                    </mat-button-toggle-group>
-                </p>
-            </mat-card-content>
-            <mat-divider></mat-divider>
-            <mat-card-actions style="margin: 0.5em;">
-                <mat-form-field style="width: 100%;">
-                    <mat-label>Bemerkung GM</mat-label>
-                    <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
-                        [(ngModel)]="consultationInput.managerFeedback"
-                        placeholder="Bemerkung GM...">
+    <div *ngIf="!user || !user.prefTableView">
+        <div fxLayout="row wrap padding">
+            <mat-card class="maincard mat-elevation-z2"
+                *ngFor="let consultationInput of consultationInputsFromInConsult" fxFlex.xs="100" fxFlex="31"
+                fxFlex.md="31" fxFlex.sm="50">
+                <mat-card-header style="margin: 0.5em;">
+                    <div style="width: 80%; margin-right: 1em;">
+                        <mat-card-title>
+                            {{ (consultationInput.inputBy.firstName + " " + consultationInput.inputBy.lastName).slice(0,
+                            20)
+                            }}<span
+                                *ngIf="consultationInput.inputBy.firstName.length + consultationInput.inputBy.lastName.length > 20">...</span>
+                        </mat-card-title>
+                        <mat-card-subtitle>Letzte &Auml;nderung:
+                            <span *ngIf="consultationInput.lastEdit">
+                                {{consultationInput.lastEdit | date:'dd.MM.yyyy'}}
+                            </span>
+                            <span *ngIf="!consultationInput.lastEdit">-</span>
+                        </mat-card-subtitle>
+                    </div>
+                </mat-card-header>
+                <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
+                    <mat-chip-list>
+                        <mat-chip *ngIf="consultationInput.feedbackGiven">
+                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
+                                style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung gegeben</span>
+                        </mat-chip>
+                        <mat-chip *ngIf="!consultationInput.feedbackGiven">
+                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Noch keine
+                                R&uuml;ckmeldung</span>
+                        </mat-chip>
+                    </mat-chip-list>
+                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">Kommentar Besteller:in:</div>
+                    <div *ngIf="consultationInput.feedbackGiven"
+                        style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
+                        <span *ngIf="consultationInput.ordererFeedback">{{consultationInput.ordererFeedback}}</span>
+                        <span *ngIf="!consultationInput.ordererFeedback">Kein Text</span>
+                    </div>
+                    <p style="margin: 2em;">Bewertung des Bauvorhabens:<br>
+                        <mat-button-toggle-group [(ngModel)]="consultationInput.valuation"
+                            aria-label="Bewertung des Bauvorhabens" disabled>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 0" value="0"
+                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 0" value="0"
+                                style="background-color: rgb(239, 239, 239);">0</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 1" value="1"
+                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 1" value="1"
+                                style="background-color: rgb(239, 239, 239);">1</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 2" value="2"
+                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 2" value="2"
+                                style="background-color: rgb(239, 239, 239);">2</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 3" value="3"
+                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 3" value="3"
+                                style="background-color: rgb(239, 239, 239);">3</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 4" value="4"
+                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
+                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 4" value="4"
+                                style="background-color: rgb(239, 239, 239);">4</mat-button-toggle>
+                        </mat-button-toggle-group>
+                    </p>
+                </mat-card-content>
+                <mat-divider></mat-divider>
+                <mat-card-actions style="margin: 0.5em;">
+                    <mat-form-field style="width: 100%;">
+                        <mat-label>Bemerkung GM</mat-label>
+                        <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
+                            [(ngModel)]="consultationInput.managerFeedback" placeholder="Bemerkung GM...">
                     </textarea>
-                </mat-form-field>
-            </mat-card-actions>
-        </mat-card>
+                    </mat-form-field>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+    <div *ngIf="user && user.prefTableView" style="margin-top: 1em;">
+        <table mat-table [dataSource]="consultationInputsFromInConsult" class="mat-elevation-z2" style="width: 100%">
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let consultationInput"> {{consultationInput.inputBy.firstName}}
+                    {{consultationInput.inputBy.lastName}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="date_last_change">
+                <th mat-header-cell *matHeaderCellDef> Letzte &Auml;nderung </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <span *ngIf="consultationInput.lastEdit">
+                        {{consultationInput.lastEdit | date:'dd.MM.yyyy'}}
+                    </span>
+                    <span *ngIf="!consultationInput.lastEdit">-</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="has_feedback">
+                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung gegeben </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-chip-list>
+                        <mat-chip *ngIf="consultationInput.feedbackGiven">
+                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
+                                style="color: green;">check</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="!consultationInput.feedbackGiven">
+                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="feedback">
+                <th mat-header-cell *matHeaderCellDef> Kommentar </th>
+                <td mat-cell *matCellDef="let consultationInput" style="max-width: 10em; word-wrap:break-word;">
+                    {{consultationInput.ordererFeedback}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="valuation">
+                <th mat-header-cell *matHeaderCellDef> Bewertung </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <span
+                        style="padding: 0.5em;border: 1px solid;background-color: rgb(239, 239, 239);">{{consultationInput.valuation}}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="consult_input">
+                <th mat-header-cell *matHeaderCellDef> Bemerkung GM </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-form-field style="width: 100%;">
+                        <mat-label>Bemerkung GM</mat-label>
+                        <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
+                            [(ngModel)]="consultationInput.managerFeedback" placeholder="Bemerkung GM...">
+                </textarea>
+                    </mat-form-field>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="tableDisplayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: tableDisplayedColumns;"></tr>
+        </table>
     </div>
 </div>
-<div *ngIf="roadworkActivityStatus ==='inconsult' && user.chosenRole == 'orderer'">
+<div *ngIf="roadworkActivityStatus ==='inconsult' && userService.getLocalUser().chosenRole == 'orderer'">
     <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;margin-bottom: 2em;">
         <p>Bewertung des Bauvorhabens:<br>
-            <mat-button-toggle-group [(ngModel)]="consultationInput.valuation" aria-label="Bewertung">
+            <mat-button-toggle-group [(ngModel)]="consultationInput.valuation" aria-label="Bewertung"
+                [disabled]="consultationInput.decline || roadworkActivityStatus !=='inconsult'">
                 <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 0" value="0"
                     style="background-color: rgb(173, 255, 197); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
                 <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 0" value="0"
@@ -99,8 +179,8 @@
             </mat-button-toggle-group>
         </p>
         <p>
-            <mat-checkbox [(ngModel)]="consultationInput.decline" [disabled]="roadworkActivityStatus !=='inconsult'"
-                style="margin:10px;">
+            <mat-checkbox [(ngModel)]="consultationInput.decline" (change)="setDecline()"
+                [disabled]="roadworkActivityStatus !=='inconsult'" style="margin:10px;">
                 Kein Bedarf f&uuml;r uns
             </mat-checkbox>
         </p>

@@ -229,7 +229,7 @@
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
-                                        <p>Gebietsmanager:
+                                        <p>Gebietsmanagement:
                                             <b *ngIf="managementArea && managementArea.manager">
                                                 {{managementArea.manager.firstName}}
                                                 {{managementArea.manager.lastName}}
@@ -936,7 +936,7 @@
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="Bedarfskl&auml;rung">
                         <div style="margin: 2em;">
-                            <span *ngIf="isStatusLater(roadWorkActivityFeature, 'inconsult')"
+                            <span *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'inconsult')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -955,7 +955,7 @@
                     </mat-tab>
                     <mat-tab label="Stellungnahme">
                         <div style="margin: 2em;">
-                            <span *ngIf="isStatusLater(roadWorkActivityFeature, 'reporting')"
+                            <span *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'reporting')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
