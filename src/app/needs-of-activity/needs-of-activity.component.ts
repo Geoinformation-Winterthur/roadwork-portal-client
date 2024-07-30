@@ -213,8 +213,8 @@ export class NeedsOfActivityComponent {
             let roadWorkNeedName: string = roadWorkNeedFeature.properties.name.trim().toLowerCase();
             let isNameEqual: boolean = roadWorkNeedName.includes(roadWorkNeedNameToSeaarch);
             let isPrivate: boolean = roadWorkNeedFeature.properties.isPrivate;
-            let isAlive: boolean = roadWorkNeedFeature.properties.status.code !== "coordinated" && 
-                    roadWorkNeedFeature.properties.status.code !== "suspended";
+            let isAlive: boolean = roadWorkNeedFeature.properties.status !== "coordinated" && 
+                    roadWorkNeedFeature.properties.status !== "suspended";
             return (roadWorkNeedNameToSeaarch === '' || isNameEqual) && !isPrivate && isAlive;
           } else {
             return false;

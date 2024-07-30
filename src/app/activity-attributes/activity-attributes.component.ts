@@ -18,13 +18,13 @@ import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
-import { CostType } from 'src/model/cost-type';
 import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { environment } from 'src/environments/environment';
 import { StatusHelper } from 'src/helper/status-helper';
+import { EnumType } from 'src/model/enum-type';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -51,13 +51,14 @@ export class ActivityAttributesComponent implements OnInit {
   usersOfChosenOrganisation: User[] = [];
   selectedUsersOfChosenOrganisation: User[] = [];
 
-  availableCostTypes: CostType[] = [];
+  availableCostTypes: EnumType[] = [];
 
   userService: UserService;
 
   projectManagerControl: FormControl = new FormControl();
   costTypesControl: FormControl = new FormControl();
-  roadWorkActivityProjectTypeEnumControl: FormControl = new FormControl();
+  projectTypeEnumControl: FormControl = new FormControl();
+  availableProjectTypes: EnumType[] = [];
   dateSksControl: FormControl = new FormControl();
   dateKapControl: FormControl = new FormControl();
   dateOksControl: FormControl = new FormControl();
@@ -153,6 +154,14 @@ export class ActivityAttributesComponent implements OnInit {
       }
     });
 
+    this.roadWorkActivityService.getProjectTypes().subscribe({
+      next: (projectTypes) => {
+        this.availableProjectTypes = projectTypes;
+      },
+      error: (error) => {
+      }
+    });
+
     this.needsOfActivityService.assignedRoadWorkNeeds = [];
     this.needsOfActivityService.nonAssignedRoadWorkNeeds = [];
     this.needsOfActivityService.registeredRoadWorkNeeds = [];
@@ -164,13 +173,13 @@ export class ActivityAttributesComponent implements OnInit {
         if (idParamString == "new") {
 
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
-          this.roadWorkActivityFeature.properties.status.code = "review";
+          this.roadWorkActivityFeature.properties.status = "review";
           this.roadWorkActivityFeature.properties.finishEarlyTo = new Date();
           this.roadWorkActivityFeature.properties.isPrivate = true;
           let plus50Years: Date = new Date();
           plus50Years.setFullYear(plus50Years.getFullYear() + 50);
           this.roadWorkActivityFeature.properties.finishLateTo = plus50Years;
-          this.roadWorkActivityFeature.properties.costsType.code = "valuation";
+          this.roadWorkActivityFeature.properties.costsType = "valuation";
           this.roadWorkActivityFeature.properties.isEditingAllowed = true;
           this.roadWorkActivityFeature.properties.created = new Date();
           this.roadWorkActivityFeature.properties.lastModified = new Date();
@@ -206,7 +215,7 @@ export class ActivityAttributesComponent implements OnInit {
                       }
                     });
 
-                  this.roadWorkActivityProjectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
+                  this.projectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
 
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
@@ -297,8 +306,8 @@ export class ActivityAttributesComponent implements OnInit {
   update(publish: boolean = false, newStatus: string = "") {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       if (publish) this.roadWorkActivityFeature.properties.isPrivate = false;
-      let oldStatus = this.roadWorkActivityFeature.properties.status.code;
-      if (newStatus) this.roadWorkActivityFeature.properties.status.code = newStatus;
+      let oldStatus = this.roadWorkActivityFeature.properties.status;
+      if (newStatus) this.roadWorkActivityFeature.properties.status = newStatus;
       this.managementAreaService.getIntersectingManagementArea(this.roadWorkActivityFeature.geometry)
         .subscribe({
           next: (managementArea) => {
@@ -310,7 +319,7 @@ export class ActivityAttributesComponent implements OnInit {
                       ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
                       if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
                         if (publish) this.roadWorkActivityFeature.properties.isPrivate = true;
-                        if (newStatus) this.roadWorkActivityFeature.properties.status.code = oldStatus;
+                        if (newStatus) this.roadWorkActivityFeature.properties.status = oldStatus;
                         this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
                           duration: 4000
                         });
@@ -335,7 +344,7 @@ export class ActivityAttributesComponent implements OnInit {
                   error: (error) => {
                     if (this.roadWorkActivityFeature) {
                       if (publish) this.roadWorkActivityFeature.properties.isPrivate = true;
-                      if (newStatus) this.roadWorkActivityFeature.properties.status.code = oldStatus;
+                      if (newStatus) this.roadWorkActivityFeature.properties.status = oldStatus;
                     }
                     this.snckBar.open("Unbekannter Fehler beim Senden des Bauvorhabens", "", {
                       duration: 4000
@@ -373,7 +382,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
-      this.roadWorkActivityFeature.properties.projectType = this.roadWorkActivityProjectTypeEnumControl.value;
+      this.roadWorkActivityFeature.properties.projectType = this.projectTypeEnumControl.value;
     }
   }
 
@@ -544,14 +553,14 @@ export class ActivityAttributesComponent implements OnInit {
 
   private _updateDueDate() {
     if (this.roadWorkActivityFeature) {
-      if (this.roadWorkActivityFeature.properties.status.code == "inconsult" ||
-        this.roadWorkActivityFeature.properties.status.code == "verified") {
+      if (this.roadWorkActivityFeature.properties.status == "inconsult" ||
+        this.roadWorkActivityFeature.properties.status == "verified") {
         if (this.roadWorkActivityFeature.properties.dateConsultEnd)
           this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd);
-      } else if (this.roadWorkActivityFeature.properties.status.code == "reporting") {
+      } else if (this.roadWorkActivityFeature.properties.status == "reporting") {
         if (this.roadWorkActivityFeature.properties.dateReportEnd)
           this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
-      } else if (this.roadWorkActivityFeature.properties.status.code == "coordinated") {
+      } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
         if (this.roadWorkActivityFeature.properties.dateInfoEnd)
           this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
       } else {

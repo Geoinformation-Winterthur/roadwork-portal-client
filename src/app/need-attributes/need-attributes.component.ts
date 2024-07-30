@@ -326,7 +326,7 @@ export class NeedAttributesComponent implements OnInit {
       roadWorkActivity.properties.name = this.roadWorkNeedFeature.properties.name;
       roadWorkActivity.properties.description = this.roadWorkNeedFeature.properties.description;
       roadWorkActivity.properties.comment = this.roadWorkNeedFeature.properties.comment;
-      roadWorkActivity.properties.costsType.code = "valuation";
+      roadWorkActivity.properties.costsType = "valuation";
       if (this.roadWorkNeedFeature.properties.costs)
         roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
       else
@@ -553,7 +553,7 @@ export class NeedAttributesComponent implements OnInit {
   private static _createNewRoadWorkNeedFeature(user: User): RoadWorkNeedFeature {
 
     let roadWorkNeedFeature: RoadWorkNeedFeature = new RoadWorkNeedFeature();
-    roadWorkNeedFeature.properties.status.code = "requirement";
+    roadWorkNeedFeature.properties.status = "requirement";
     roadWorkNeedFeature.properties.priority.code = "middle";
     roadWorkNeedFeature.properties.isEditingAllowed = true;
     roadWorkNeedFeature.properties.isPrivate = true;

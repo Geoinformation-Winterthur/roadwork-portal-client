@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessage } from 'src/model/error-message';
-import { CostType } from 'src/model/cost-type';
+import { EnumType } from 'src/model/enum-type';
 
 
 @Injectable({
@@ -47,9 +47,15 @@ export class RoadWorkActivityService {
     return result;
   }
 
-  getCostTypes(): Observable<CostType[]> {
-    let result: Observable<CostType[]> =
-      this.http.get(environment.apiUrl + "/roadworkactivity/costtypes/") as Observable<CostType[]>;
+  getCostTypes(): Observable<EnumType[]> {
+    let result: Observable<EnumType[]> =
+      this.http.get(environment.apiUrl + "/roadworkactivity/costtypes/") as Observable<EnumType[]>;
+    return result;
+  }
+
+  getProjectTypes(): Observable<EnumType[]> {
+    let result: Observable<EnumType[]> =
+      this.http.get(environment.apiUrl + "/roadworkactivity/projecttypes/") as Observable<EnumType[]>;
     return result;
   }
 

@@ -95,11 +95,11 @@
           </mat-card-title>
           <mat-card-subtitle>
             {{ roadWorkActivity.properties.costs | number }} CHF
-            <span *ngIf="roadWorkActivity.properties.costsType.code === 'valuation'">(Sch&auml;tzung)</span>
-            <span *ngIf="roadWorkActivity.properties.costsType.code !== 'valuation'">(exakt)</span>
+            <span *ngIf="roadWorkActivity.properties.costsType === 'valuation'">(Sch&auml;tzung)</span>
+            <span *ngIf="roadWorkActivity.properties.costsType !== 'valuation'">(exakt)</span>
           </mat-card-subtitle>
         </div>
-        <app-status-chip [statusCode]="roadWorkActivity.properties.status.code" [short]="true"></app-status-chip>
+        <app-status-chip [statusCode]="roadWorkActivity.properties.status" [short]="true"></app-status-chip>
       </mat-card-header>
       <div class="crosshair-frame">
         <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">

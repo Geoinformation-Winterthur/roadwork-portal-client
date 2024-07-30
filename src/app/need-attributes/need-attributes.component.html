@@ -203,7 +203,7 @@
                                         placeholder="Umsetzungsjahr bis" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
                                                         || !roadWorkNeedFeature.properties.overarchingMeasure">
                                 </mat-form-field>
-                                <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status.code"
+                                <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status"
                                     [short]="false"></app-status-chip>
                                 <div style="margin: 1em;">
                                     <mat-chip-list>
