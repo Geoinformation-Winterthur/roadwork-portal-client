@@ -374,7 +374,6 @@ export class ActivityAttributesComponent implements OnInit {
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.projectType = this.roadWorkActivityProjectTypeEnumControl.value;
-      this.save();
     }
   }
 
