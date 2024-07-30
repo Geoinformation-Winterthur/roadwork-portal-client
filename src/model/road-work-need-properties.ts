@@ -17,7 +17,7 @@ export class RoadWorkNeedProperties {
     finishOptimumTo: Date = new Date(1, 0, 1);
     finishLateTo: Date = new Date(1, 0, 1);
     priority: Priority = new Priority();
-    status: Status = new Status();
+    status: string = "";
     costs?: number;
     relevance: number = -1;
     activityRelationType: string = "";

@@ -314,7 +314,7 @@ export class EditActivityMapComponent implements OnInit {
         geometry: needPoly
       });
 
-      needFeature.set("status", roadWorkNeedFeature.properties.status.code);
+      needFeature.set("status", roadWorkNeedFeature.properties.status);
 
       this.roadWorkNeedSource.addFeature(needFeature);
     }

@@ -3,7 +3,7 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { ActivityHistoryItem } from "./activity-history-item";
-import { CostType } from "./cost-type";
+import { EnumType } from "./enum-type";
 import { Status } from "./status";
 import { User } from "./user";
 
@@ -32,9 +32,9 @@ export class RoadWorkActivityProperties {
     dateOfAcceptance?: Date;
     consultDue: Date = new Date(1, 0, 1);
     costs?: number;
-    costsType: CostType = new CostType();
+    costsType: string = "";
     roadWorkNeedsUuids: string[] = [];
-    status: Status = new Status();
+    status: string = "";
     isEditingAllowed: boolean = false;
     isInInternet: boolean = false;
     billingAddress1: string = "";

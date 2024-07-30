@@ -100,7 +100,7 @@
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Kostenart</mat-label>
                                                 <mat-select
-                                                    [(ngModel)]="roadWorkActivityFeature.properties.costsType.code"
+                                                    [(ngModel)]="roadWorkActivityFeature.properties.costsType"
                                                     [formControl]="costTypesControl"
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-option *ngFor="let availableCostType of availableCostTypes"
@@ -120,14 +120,14 @@
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
-                                        <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status.code">
+                                        <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
                                         </app-status-chip>
                                         <div>
                                             <button
-                                                *ngIf="roadWorkActivityFeature.properties.status.code != 'suspended'"
+                                                *ngIf="roadWorkActivityFeature.properties.status != 'suspended'"
                                                 (click)="update(false, 'suspended')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status.code, 'suspended')
+                                                [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status, 'suspended')
                                                 || roadWorkActivityFeature.properties.isPrivate
                                                 || !roadWorkActivityFeature.properties.isEditingAllowed"
                                                 mat-button>sistieren</button>
@@ -187,13 +187,13 @@
                                             </div>
                                             <button (click)="update(false, 'inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'review' 
+                                                [disabled]="roadWorkActivityFeature.properties.status != 'review' 
                                                         || roadWorkActivityFeature.properties.isPrivate
                                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
                                                 mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
                                             <button (click)="update(false, 'reporting')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status.code != 'verified'
+                                                [disabled]="roadWorkActivityFeature.properties.status != 'verified'
                                                         || roadWorkActivityFeature.properties.isPrivate
                                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
                                                 mat-button>Stellungnahme durchf&uuml;hren</button>
@@ -263,17 +263,12 @@
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Projekttyp</mat-label>
                                                 <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectType"
-                                                    [formControl]="roadWorkActivityProjectTypeEnumControl"
+                                                    [formControl]="projectTypeEnumControl"
                                                     (selectionChange)='onRoadWorkActivityEnumChange()'
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
-                                                    <mat-option value="type_a">
-                                                        Typ A
-                                                    </mat-option>
-                                                    <mat-option value="type_b">
-                                                        Typ B
-                                                    </mat-option>
-                                                    <mat-option value="type_c">
-                                                        Typ C
+                                                    <mat-option *ngFor="let availableProjectType of availableProjectTypes"
+                                                        [value]="availableProjectType.code">
+                                                        {{availableProjectType.name}}
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
@@ -932,12 +927,12 @@
             <mat-tab *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
                             userService.getLocalUser().chosenRole == 'territorymanager' || 
                             userService.getLocalUser().chosenRole == 'orderer') && 
-                            roadWorkActivityFeature.properties.status.code !== 'requirement'" label="Vernehmlassung">
+                            roadWorkActivityFeature.properties.status !== 'requirement'" label="Vernehmlassung">
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="Bedarfskl&auml;rung">
                         <div style="margin: 2em;">
                             <span
-                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'inconsult')"
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -945,24 +940,24 @@
                         <div style="text-align: right;">
                             <button *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
                                                 userService.getLocalUser().chosenRole == 'territorymanager') &&
-                                                roadWorkActivityFeature.properties.status.code == 'inconsult'"
+                                                roadWorkActivityFeature.properties.status == 'inconsult'"
                                 (click)="update(false, 'verified')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>ABSCHLIESSEN</button>
                             <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
-                                    roadWorkActivityFeature.properties.status.code == 'verified'"
+                                    roadWorkActivityFeature.properties.status == 'verified'"
                                 (click)="update(false, 'inconsult')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERER&Ouml;FFNEN</button>
                         </div>
                         <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
-                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
+                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status">
                         </app-consultation-items>
                     </mat-tab>
                     <mat-tab label="Stellungnahme">
                         <div style="margin: 2em;">
                             <span
-                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'reporting')"
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'reporting')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -970,18 +965,18 @@
                         <div style="text-align: right;">
                             <button *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
                                 userService.getLocalUser().chosenRole == 'territorymanager') &&
-                                roadWorkActivityFeature.properties.status.code == 'reporting'"
+                                roadWorkActivityFeature.properties.status == 'reporting'"
                                 (click)="update(false, 'coordinated')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>ABSCHLIESSEN</button>
                             <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
-                                roadWorkActivityFeature.properties.status.code == 'coordinated'"
+                                roadWorkActivityFeature.properties.status == 'coordinated'"
                                 (click)="update(false, 'reporting')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERER&Ouml;FFNEN</button>
                         </div>
                         <app-reporting-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
-                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
+                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status">
                         </app-reporting-items>
                     </mat-tab>
                     <mat-tab label="Infoversand">

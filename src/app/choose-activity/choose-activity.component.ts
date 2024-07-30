@@ -140,9 +140,9 @@ export class ChooseActivityComponent implements OnInit {
               }
             }
 
-            if (showActivity && roadWorkActivity.properties.status && roadWorkActivity.properties.status.code) {
+            if (showActivity && roadWorkActivity.properties.status) {
               if (this.statusFilterCodes) {
-                showActivity = this.statusFilterCodes.includes(roadWorkActivity.properties.status.code);
+                showActivity = this.statusFilterCodes.includes(roadWorkActivity.properties.status);
               }
             }
 
