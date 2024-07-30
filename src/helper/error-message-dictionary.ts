@@ -33,6 +33,7 @@ export class ErrorMessageDictionary {
              "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde.",
              "Keine Berechtigung, dieses Bauvorhaben zu editieren.",
              "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet",
-             "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist"
+             "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist",
+             "Abbruch, da dieser Statusübergang nicht zulässig ist"
             ];
 }

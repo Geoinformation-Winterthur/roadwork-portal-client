@@ -936,7 +936,8 @@
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="Bedarfskl&auml;rung">
                         <div style="margin: 2em;">
-                            <span *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'inconsult')"
+                            <span
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'inconsult')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -948,6 +949,11 @@
                                 (click)="update(false, 'verified')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>ABSCHLIESSEN</button>
+                            <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
+                                    roadWorkActivityFeature.properties.status.code == 'verified'"
+                                (click)="update(false, 'inconsult')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                mat-button>WIEDERER&Ouml;FFNEN</button>
                         </div>
                         <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                             [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
@@ -955,7 +961,8 @@
                     </mat-tab>
                     <mat-tab label="Stellungnahme">
                         <div style="margin: 2em;">
-                            <span *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'reporting')"
+                            <span
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status.code, 'reporting')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -967,6 +974,11 @@
                                 (click)="update(false, 'coordinated')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>ABSCHLIESSEN</button>
+                            <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
+                                roadWorkActivityFeature.properties.status.code == 'coordinated'"
+                                (click)="update(false, 'reporting')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                mat-button>WIEDERER&Ouml;FFNEN</button>
                         </div>
                         <app-reporting-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                             [roadworkActivityStatus]="roadWorkActivityFeature.properties.status.code">
