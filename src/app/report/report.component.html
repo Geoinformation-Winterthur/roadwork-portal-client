@@ -10,13 +10,49 @@
             </mat-card-header>
             <mat-card-content style="min-width: 400px;">
                 <div class="chartjs-container">
-                    <canvas baseChart [datasets]="chart3.chartData" [labels]="chart3.chartLabels"
-                        [options]="chart3.chartOptions" [colors]="chart3.chartColors" [legend]="chart3.chartLegend"
-                        [chartType]="chart3ChartType" [plugins]="chart3.chartPlugins">
+                    <canvas baseChart [datasets]="newActivitiesLastMonthChart.chartData"
+                        [labels]="newActivitiesLastMonthChart.chartLabels"
+                        [options]="newActivitiesLastMonthChart.chartOptions"
+                        [colors]="newActivitiesLastMonthChart.chartColors"
+                        [legend]="newActivitiesLastMonthChart.chartLegend"
+                        [chartType]="newActivitiesLastMonthChartType"
+                        [plugins]="newActivitiesLastMonthChart.chartPlugins">
+                    </canvas>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="maincard mat-elevation-z0" fxFlex.xs="100" fxFlex="33" fxFlex.md="33" fxFlex.sm="50"
+            style="padding: 2em;">
+            <mat-card-header style="min-width: 400px;">
+                <mat-card-title>Neue Bedarfe der letzten Monate</mat-card-title>
+                <mat-card-subtitle>Zeitraum: Letzte 5 Monate<br />
+                    &Uuml;ber die gesamte Stadt</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content style="min-width: 400px;">
+                <div class="chartjs-container">
+                    <canvas baseChart [datasets]="newNeedsLastMonthChart.chartData"
+                        [labels]="newNeedsLastMonthChart.chartLabels" [options]="newNeedsLastMonthChart.chartOptions"
+                        [colors]="newNeedsLastMonthChart.chartColors" [legend]="newNeedsLastMonthChart.chartLegend"
+                        [chartType]="newNeedsLastMonthChartType" [plugins]="newNeedsLastMonthChart.chartPlugins">
+                    </canvas>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <mat-card class="maincard mat-elevation-z0" fxFlex.xs="100" fxFlex="33" fxFlex.md="33" fxFlex.sm="50"
+            style="padding: 2em;">
+            <mat-card-header style="min-width: 400px;">
+                <mat-card-title>Anzahl Bauvorhaben pro Gebietsmanagement</mat-card-title>
+                <mat-card-subtitle>&Uuml;ber die gesamte Stadt</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content style="min-width: 400px;">
+                <div class="chartjs-container">
+                    <canvas baseChart [datasets]="activitiesOfAreaManagerChart.chartData"
+                        [labels]="activitiesOfAreaManagerChart.chartLabels" [options]="activitiesOfAreaManagerChart.chartOptions"
+                        [colors]="activitiesOfAreaManagerChart.chartColors" [legend]="activitiesOfAreaManagerChart.chartLegend"
+                        [chartType]="activitiesOfAreaManagerChartType" [plugins]="activitiesOfAreaManagerChart.chartPlugins">
                     </canvas>
                 </div>
             </mat-card-content>
         </mat-card>
     </div>
-
 </div>
