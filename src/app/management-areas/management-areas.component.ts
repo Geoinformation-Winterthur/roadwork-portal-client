@@ -157,7 +157,7 @@ export class ManagementAreasComponent implements OnInit {
       .subscribe({
         next: (managementAreasCollection) => {
           if (managementAreasCollection !== undefined) {
-            this.loadSource.clear();
+            this.loadSource.clear();''
             for (let featureJson of managementAreasCollection.features) {
               let generalObject: any = featureJson;
               let managementAreaPoly: Polygon = new Polygon(generalObject.geometry.coordinates);
@@ -233,7 +233,7 @@ export class ManagementAreasComponent implements OnInit {
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement | undefined;
-    mapElement = document.getElementById("edit_activity_map") as HTMLElement;
+    mapElement = document.getElementById("management_areas_map") as HTMLElement;
     mapElement.style.height = screen.availHeight / 2 + "px";
   }
 
