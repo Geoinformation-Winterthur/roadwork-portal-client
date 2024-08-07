@@ -52,12 +52,6 @@ export class ManagementAreasComponent implements OnInit {
   private managementAreasUuids: string[] = [];
   private snackBar: MatSnackBar;
 
-  reloadAreaMap(event: any){
-    if(event.index === 0){
-      document.location.href = "/civil-engineering/roadworks-portal/managementareas/"
-    }
-  }
-
   public constructor(snackBar: MatSnackBar,
     managementAreaService: ManagementAreaService,
     userService: UserService) {
@@ -157,7 +151,7 @@ export class ManagementAreasComponent implements OnInit {
       .subscribe({
         next: (managementAreasCollection) => {
           if (managementAreasCollection !== undefined) {
-            this.loadSource.clear();''
+            this.loadSource.clear();
             for (let featureJson of managementAreasCollection.features) {
               let generalObject: any = featureJson;
               let managementAreaPoly: Polygon = new Polygon(generalObject.geometry.coordinates);
@@ -168,19 +162,19 @@ export class ManagementAreasComponent implements OnInit {
               managementArea.setProperties(generalObject.properties, true);
               this.loadSource.addFeature(managementArea);
 
-              if (managementArea.get("name").startsWith("Wülfl")) {
+              if (managementArea.get("uuid") == "316c6468-81e5-4156-8817-ba13a185d0a5") {
                 this.managementAreasUuids[0] = managementArea.get("uuid");
                 this.managerOfArea1EnumControl.setValue(managementArea.get("manager_uuid"));
                 this.substituteManagerOfArea1EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
               }
 
-              if (managementArea.get("name").startsWith("Velt")) {
+              if (managementArea.get("uuid") == "3028fb7e-c07d-4dc4-a1d2-f627e875d4ae") {
                 this.managementAreasUuids[1] = managementArea.get("uuid");
                 this.managerOfArea2EnumControl.setValue(managementArea.get("manager_uuid"));
                 this.substituteManagerOfArea2EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
               }
 
-              if (managementArea.get("name").startsWith("Matten")) {
+              if (managementArea.get("uuid") == "4dbc20b8-4a91-40da-9ef4-07de90b89f34") {
                 this.managementAreasUuids[2] = managementArea.get("uuid");
                 this.managerOfArea3EnumControl.setValue(managementArea.get("manager_uuid"));
                 this.substituteManagerOfArea3EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
@@ -212,17 +206,16 @@ export class ManagementAreasComponent implements OnInit {
             duration: 4000
           });
         } else {
+          this.snackBar.open("Gebietsmanagement erfolgreich aktualisiert", "", {
+            duration: 4000
+          });
           for(let feat of this.loadSource.getFeatures()){
             if(feat.get("uuid") === managementArea.uuid){
               feat.set("manager_uuid", managementArea.manager.uuid);
-              feat.set("manager_name",
+              feat.set("managername",
                   managementArea.manager.firstName + " " +
                         managementArea.manager.lastName);
-              // this.loadSource.changed();
             }
-          }
-          for(let layer of this.map.getAllLayers()){
-            layer.getSource()?.changed();
           }
         }
       },
