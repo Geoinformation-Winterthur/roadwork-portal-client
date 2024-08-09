@@ -99,8 +99,7 @@
                                         <form class="cost_type_form">
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Kostenart</mat-label>
-                                                <mat-select
-                                                    [(ngModel)]="roadWorkActivityFeature.properties.costsType"
+                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.costsType"
                                                     [formControl]="costTypesControl"
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-option *ngFor="let availableCostType of availableCostTypes"
@@ -123,8 +122,7 @@
                                         <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
                                         </app-status-chip>
                                         <div>
-                                            <button
-                                                *ngIf="roadWorkActivityFeature.properties.status != 'suspended'"
+                                            <button *ngIf="roadWorkActivityFeature.properties.status != 'suspended'"
                                                 (click)="update(false, 'suspended')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status, 'suspended')
@@ -266,7 +264,8 @@
                                                     [formControl]="projectTypeEnumControl"
                                                     (selectionChange)='onRoadWorkActivityEnumChange()'
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
-                                                    <mat-option *ngFor="let availableProjectType of availableProjectTypes"
+                                                    <mat-option
+                                                        *ngFor="let availableProjectType of availableProjectTypes"
                                                         [value]="availableProjectType.code">
                                                         {{availableProjectType.name}}
                                                     </mat-option>
@@ -493,23 +492,11 @@
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
-                                            <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
-                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateSks"
-                                                        [formControl]="dateSksControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option value="dateSks1">{{configurationData.dateSks1 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateSks2">{{configurationData.dateSks2 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateSks3">{{configurationData.dateSks3 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateSks4">{{configurationData.dateSks4 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                            </form>
+                                            <div style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                                Strategische Koord. (SKS):
+                                                <b>{{roadWorkActivityFeature.properties.dateSks |
+                                                    date:'dd.MM.yyyy'}}</b>
+                                            </div>
                                             <form>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
