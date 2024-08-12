@@ -4,8 +4,7 @@
             <mat-icon aria-label="Konflikt" style="color: brown;">sync_problem</mat-icon>
             EVENTS MIT KONFLIKT
         </h2>
-        <div>Hier werden Events gelistet, die sowohl <i>r&auml;umlich als
-                auch zeitlich</i> mit diesem Bauvorhaben <i>im Konflikt</i> stehen.</div>
+        <div>Hier werden Events gelistet, die <i>zur gleichen Zeit am gleichen Ort</i> stattfinden.</div>
         <div *ngIf="eventsWithSpatioTemporalConflict.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
             Es sind zurzeit <i>keine</i> Events registriert, die sowohl <i>r&auml;umlich als
@@ -51,7 +50,7 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Raumkonflikt" style="color: darkgreen;">crop_rotate</mat-icon>
-            EVENTS MIT R&Auml;UMLICHER, JEDOCH KEINER ZEITLICHEN &Uuml;BERSCHNEIDUNG
+            EVENTS, DIE AM GLEICHEN ORT JEDOCH ZU EINER ANDEREN ZEIT STATTFINDEN
         </h2>
         <div>Hier werden Events gelistet, die zwar <i>im gleichen Raum</i> liegen, wie dieses Bauvorhaben,
             jedoch <i>zu einem anderen Zeitpunkt</i> stattfinden.</div>
@@ -99,7 +98,7 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Zeitkonflikt" style="color: darkgreen;">history</mat-icon>
-            EVENTS MIT ZEITLICHER, JEDOCH KEINER R&Auml;UMLICHEN &Uuml;BERSCHNEIDUNG
+            EVENTS, DIE ZUR GLEICHEN ZEIT, JEDOCH AN EINEM ANDEREN ORT STATTFINDEN
         </h2>
         <div>Hier werden Events gelistet, die zwar <i>zur gleichen Zeit</i> stattfinden wie dieses
             Bauvorhaben, sich jedoch <i>an einem anderen Ort</i> befinden.</div>
