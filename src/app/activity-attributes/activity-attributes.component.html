@@ -90,25 +90,6 @@
                                                 placeholder="Bemerkung..."
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                         </mat-form-field>
-                                        <mat-form-field>
-                                            <input matInput type="number" min="0"
-                                                [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                                placeholder="Kostensch&auml;tzung (CHF)"
-                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                        </mat-form-field>
-                                        <form class="cost_type_form">
-                                            <mat-form-field appearance="fill">
-                                                <mat-label>Kostenart</mat-label>
-                                                <mat-select [(ngModel)]="roadWorkActivityFeature.properties.costsType"
-                                                    [formControl]="costTypesControl"
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-option *ngFor="let availableCostType of availableCostTypes"
-                                                        [value]="availableCostType.code">
-                                                        {{availableCostType.name}}
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </form>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
@@ -278,7 +259,8 @@
                                         <div *ngIf="showProjectTypeInfo"
                                             style="background-color: rgb(236,236,234);padding: 1em;">
                                             <b>Typ A</b>: mit geplanter Ver&auml;nderung an der Oberfl&auml;che<br>
-                                            <b>Typ B</b>: ohne geplante Ver&auml;nderung an der Oberfl&auml;che (1:1 Ersatz)<br>
+                                            <b>Typ B</b>: ohne geplante Ver&auml;nderung an der Oberfl&auml;che (1:1
+                                            Ersatz)<br>
                                             <b>Typ C</b>: Koordiniertes Einzelvorhaben (Werk) ohne Beteiligung TBA
                                         </div>
                                         <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created |
@@ -905,8 +887,27 @@
                         </div>
                     </mat-tab>
                     <mat-tab label="Kosten" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
+                        <div style="margin: 2em;">
+                            <mat-form-field style="margin-bottom: -0.8em;">
+                                <input matInput type="number" min="0"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.costs"
+                                    placeholder="Kostensch&auml;tzung (CHF)"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </mat-form-field>
+                            <div style="color:grey;margin-bottom: 2em;">({{ roadWorkActivityFeature.properties.costs | number }} CHF)</div>
+                            <form class="cost_type_form">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Finanzierungsart</mat-label>
+                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.costsType"
+                                        [formControl]="costTypesControl"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        <mat-option *ngFor="let availableCostType of availableCostTypes"
+                                            [value]="availableCostType.code">
+                                            {{availableCostType.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </form>
                         </div>
                     </mat-tab>
                     <mat-tab label="Bewertung" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
