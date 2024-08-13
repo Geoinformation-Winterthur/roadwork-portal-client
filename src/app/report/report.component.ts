@@ -77,7 +77,6 @@ export class ReportComponent implements OnInit {
     chartLegend: true,
     chartPlugins: []
   }
-  activitiesOfAreaManagerChartType: ChartType = 'doughnut';
 
   private statisticsService: StatisticsService;
 

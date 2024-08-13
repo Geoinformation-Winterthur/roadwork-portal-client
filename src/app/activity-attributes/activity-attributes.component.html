@@ -271,7 +271,16 @@
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
+                                            <span (click)="switchProjectTypeInfo()" style="margin: 1em;">
+                                                <mat-icon aria-label="Info zum Projekttyp">info</mat-icon>
+                                            </span>
                                         </form>
+                                        <div *ngIf="showProjectTypeInfo"
+                                            style="background-color: rgb(236,236,234);padding: 1em;">
+                                            <b>Typ A</b>: mit geplanter Ver&auml;nderung an der Oberfl&auml;che<br>
+                                            <b>Typ B</b>: ohne geplante Ver&auml;nderung an der Oberfl&auml;che (1:1 Ersatz)<br>
+                                            <b>Typ C</b>: Koordiniertes Einzelvorhaben (Werk) ohne Beteiligung TBA
+                                        </div>
                                         <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created |
                                                 date:'dd.MM.yyyy'}}</b>
                                         </p>
@@ -492,7 +501,8 @@
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
-                                            <div style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            <div
+                                                style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                                 Strategische Koord. (SKS):
                                                 <b>{{roadWorkActivityFeature.properties.dateSks |
                                                     date:'dd.MM.yyyy'}}</b>
