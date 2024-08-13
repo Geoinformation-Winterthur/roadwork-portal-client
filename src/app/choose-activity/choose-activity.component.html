@@ -95,8 +95,8 @@
           </mat-card-title>
           <mat-card-subtitle>
             {{ roadWorkActivity.properties.costs | number }} CHF
-            <span *ngIf="roadWorkActivity.properties.costsType === 'valuation'">(Sch&auml;tzung)</span>
-            <span *ngIf="roadWorkActivity.properties.costsType !== 'valuation'">(exakt)</span>
+            <span *ngIf="roadWorkActivity.properties.costsType === 'municipal'">(Kommunal)</span>
+            <span *ngIf="roadWorkActivity.properties.costsType === 'supracommunal'">(Superkommunal)</span>
           </mat-card-subtitle>
         </div>
         <app-status-chip [statusCode]="roadWorkActivity.properties.status" [short]="true"></app-status-chip>
