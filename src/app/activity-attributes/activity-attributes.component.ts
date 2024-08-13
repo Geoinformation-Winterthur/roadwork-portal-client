@@ -70,6 +70,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   dueDate?: Date;
 
+  showProjectTypeInfo: boolean = false;
+
   statusHelper: StatusHelper;
 
   private roadWorkActivityService: RoadWorkActivityService;
@@ -511,6 +513,10 @@ export class ActivityAttributesComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  switchProjectTypeInfo() {
+    this.showProjectTypeInfo = !this.showProjectTypeInfo;
   }
 
   ngOnDestroy() {
