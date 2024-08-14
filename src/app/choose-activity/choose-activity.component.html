@@ -72,6 +72,7 @@
         <mat-form-field appearance="fill">
           <mat-label>Status</mat-label>
           <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
+            <mat-option value="all">alle</mat-option>
             <mat-option value="review">In Pr&uuml;fung (Phase 12)</mat-option>
             <mat-option value="inconsult">In Bedarfskl&auml;rung (Phase 12)</mat-option>
             <mat-option value="verified">verfiziert (Phase 12)</mat-option>
