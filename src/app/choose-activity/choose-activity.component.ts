@@ -117,6 +117,21 @@ export class ChooseActivityComponent implements OnInit {
   }
 
   filterActivities() {
+
+    if(this.statusFilterCodes.includes("all")){
+      let chooseAll = [];
+      chooseAll.push('all');
+      chooseAll.push('review');
+      chooseAll.push('inconsult');
+      chooseAll.push('verified');
+      chooseAll.push('reporting');
+      chooseAll.push('coordinated');
+      chooseAll.push('suspended');
+      this.statusFilterCodes = chooseAll;
+    } else if(this.statusFilterCodes.length == 6){
+      this.statusFilterCodes = [];
+    }
+
     this.roadWorkActivityFeaturesFiltered =
       this.roadWorkActivityFeatures
         .filter(roadWorkActivity => {
