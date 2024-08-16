@@ -226,7 +226,8 @@
                                         userService.getLocalUser().chosenRole == 'administrator'"
                                 (click)="openDeleteDialog(roadWorkNeedFeature.properties.uuid)"
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkNeedFeature.properties.isPrivate && 
-                                            userService.getLocalUser().chosenRole != 'administrator'" mat-button>L&Ouml;SCHEN</button>
+                                            userService.getLocalUser().chosenRole != 'administrator'"
+                                mat-button>L&Ouml;SCHEN</button>
                             <div style="margin-top: 3em;">
                                 <h3>Dokumente</h3>
                                 <mat-form-field style="width: 100%;">
@@ -234,15 +235,27 @@
                                         placeholder="Link (URL)"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
-                                <p>Angeh&auml;ngtes PDF-Dokument herunterladen:</p>
-                                <button (click)="downloadPdf()" mat-button style="background-color: rgb(236,236,234);">
-                                    Herunterladen
-                                </button><br><br>
-                                <p>PDF-Dokument &uuml;berschreiben:</p>
-                                <form method="post" enctype="multipart/form-data">
-                                    <input type="file" name="pdfFile" accept="application/pdf"
-                                        (change)="uploadPdf($event)"><br>
-                                </form>
+                                <div style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                    <p><i>PDF-Dokument:</i></p>
+                                    <div *ngIf="roadWorkNeedFeature.properties.hasPdfDocument"
+                                        style="margin-bottom: 1em;">
+                                        <button (click)="downloadPdf()" mat-button
+                                            style="background-color: rgb(236,236,234);margin: 1em;">
+                                            Herunterladen
+                                        </button>
+                                        <button (click)="deletePdf()" mat-button
+                                            style="background-color: rgb(236,236,234);margin: 1em;">
+                                            L&ouml;schen
+                                        </button>
+                                    </div>
+                                    <div *ngIf="!roadWorkNeedFeature.properties.hasPdfDocument">
+                                        <p>Hochladen:</p>
+                                        <form method="post" enctype="multipart/form-data">
+                                            <input type="file" name="pdfFile" accept="application/pdf"
+                                                (change)="uploadPdf($event)"><br>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>

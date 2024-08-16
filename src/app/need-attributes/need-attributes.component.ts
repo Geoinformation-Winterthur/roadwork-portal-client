@@ -405,11 +405,12 @@ export class NeedAttributesComponent implements OnInit {
       this.documentService.uploadDocument(this.roadWorkNeedFeature.properties.uuid, formData).subscribe({
         next: (errorObj) => {
           ErrorMessageEvaluation._evaluateErrorMessage(errorObj);
-          if (errorObj.errorMessage.trim().length !== 0) {
+          if (errorObj !== null && errorObj.errorMessage.trim().length !== 0) {
             this.snckBar.open(errorObj.errorMessage, "", {
               duration: 4000
             });
           } else {
+            this.roadWorkNeedFeature!.properties.hasPdfDocument = true;
             this.snckBar.open("PDF-Dokument wurde erfolgreich hochgeladen", "", {
               duration: 4000,
             });
@@ -441,6 +442,24 @@ export class NeedAttributesComponent implements OnInit {
         },
         error: (error) => {
           this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
+            duration: 4000
+          });
+        }
+      });
+    }
+  }
+
+  deletePdf() {
+    if (this.roadWorkNeedFeature) {
+      this.documentService.deleteDocument(this.roadWorkNeedFeature.properties.uuid).subscribe({
+        next: (documentData) => {
+          this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
+            duration: 4000
+          });
+          this.roadWorkNeedFeature!.properties.hasPdfDocument = false;
+        },
+        error: (error) => {
+          this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {
             duration: 4000
           });
         }

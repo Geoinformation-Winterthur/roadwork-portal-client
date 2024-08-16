@@ -35,4 +35,5 @@ export class RoadWorkNeedProperties {
     desiredYearFrom?: number;
     desiredYearTo?: number;
     managementArea?: ManagementArea;
+    hasPdfDocument: boolean = false;
 }

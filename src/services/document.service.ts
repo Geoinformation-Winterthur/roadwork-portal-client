@@ -37,4 +37,11 @@ export class DocumentService {
     return result;    
   }
 
+  deleteDocument(roadWorkNeedUuid: string): Observable<any> {
+    let head: HttpHeaders = new HttpHeaders();
+    let result: Observable<any> =
+      this.http.delete(environment.apiUrl + "/roadworkneed/" + roadWorkNeedUuid + "/pdf/");
+    return result;    
+  }
+
 }
