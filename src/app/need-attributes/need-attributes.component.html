@@ -231,10 +231,12 @@
                             <div style="margin-top: 3em;">
                                 <h3>Dokumente</h3>
                                 <mat-form-field style="width: 100%;">
-                                    <input matInput type="url" maxlength="2048" [formControl]="urlControl"
+                                    <input matInput maxlength="2048" [(ngModel)]="roadWorkNeedFeature.properties.url"
                                         placeholder="Link (URL)"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
+                                <a *ngIf="roadWorkNeedFeature.properties.url"
+                                        href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link &ouml;ffnen</a>
                                 <div style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
                                     <p><i>PDF-Dokument:</i></p>
                                     <div *ngIf="roadWorkNeedFeature.properties.hasPdfDocument"

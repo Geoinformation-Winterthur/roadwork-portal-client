@@ -51,10 +51,6 @@ export class NeedAttributesComponent implements OnInit {
   environment = environment;
 
   overarchingMeasureControl: FormControl = new FormControl();
-  urlControl: FormControl = new FormControl('',
-    [
-      this._isUrlValidator()
-    ]);
 
   private _isUrlValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -126,8 +122,6 @@ export class NeedAttributesComponent implements OnInit {
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
 
                   if (this.roadWorkNeedFeature) {
-                    this.urlControl.setValue(this.roadWorkNeedFeature.properties.url);
-
                     this.finishOptimumFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo));
                     this.finishEarlyFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishEarlyTo));
                     this.finishLateFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo));
@@ -270,8 +264,6 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   save() {
-
-    this.roadWorkNeedFeature!.properties.url = this.urlControl.value;
 
     if (this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.uuid) {
       this.managementAreaService.getIntersectingManagementArea(this.roadWorkNeedFeature.geometry)
