@@ -81,4 +81,6 @@ export class RoadWorkActivityProperties {
     dateInfoEnd?: Date;
     dateInfoClose?: Date;
     isAggloprog: boolean = false;
+    url: string = "";
+    hasPdfDocument: boolean = false;
 }

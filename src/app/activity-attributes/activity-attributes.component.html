@@ -91,6 +91,40 @@
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                         </mat-form-field>
                                     </div>
+                                    <div style="margin-top: 3em;">
+                                        <h3>Dokumente</h3>
+                                        <mat-form-field style="width: 100%;">
+                                            <input matInput maxlength="2048"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.url"
+                                                placeholder="Link (URL)"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                        <a *ngIf="roadWorkActivityFeature.properties.url"
+                                            href="{{roadWorkActivityFeature.properties.url}}" target="_blank">Link
+                                            &ouml;ffnen</a>
+                                        <div
+                                            style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                            <p><i>PDF-Dokument:</i></p>
+                                            <div *ngIf="roadWorkActivityFeature.properties.hasPdfDocument"
+                                                style="margin-bottom: 1em;">
+                                                <button (click)="downloadPdf()" mat-button
+                                                    style="background-color: rgb(236,236,234);margin: 1em;">
+                                                    Herunterladen
+                                                </button>
+                                                <button (click)="deletePdf()" mat-button
+                                                    style="background-color: rgb(236,236,234);margin: 1em;">
+                                                    L&ouml;schen
+                                                </button>
+                                            </div>
+                                            <div *ngIf="!roadWorkActivityFeature.properties.hasPdfDocument">
+                                                <p>Hochladen:</p>
+                                                <form method="post" enctype="multipart/form-data">
+                                                    <input type="file" name="pdfFile" accept="application/pdf"
+                                                        (change)="uploadPdf($event)"><br>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </mat-card-content>
                             </mat-card>
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
@@ -894,7 +928,8 @@
                                     placeholder="Kostensch&auml;tzung (CHF)"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                             </mat-form-field>
-                            <div style="color:grey;margin-bottom: 2em;">({{ roadWorkActivityFeature.properties.costs | number }} CHF)</div>
+                            <div style="color:grey;margin-bottom: 2em;">({{ roadWorkActivityFeature.properties.costs |
+                                number }} CHF)</div>
                             <form class="cost_type_form">
                                 <mat-form-field appearance="fill">
                                     <mat-label>Finanzierungsart</mat-label>

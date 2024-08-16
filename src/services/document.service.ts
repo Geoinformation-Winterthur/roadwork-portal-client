@@ -18,30 +18,30 @@ export class DocumentService {
     this.http = http;
   }
 
-  getDocument(roadWorkNeedUuid: string): Observable<any> {
+  getDocument(uuid: string, type: string): Observable<any> {
     let head: HttpHeaders = new HttpHeaders();
     head = head.set("Accept", "application/pdf");
     let result: Observable<any> = this.http.get(environment.apiUrl +
-      "/roadworkneed/" + roadWorkNeedUuid + "/pdf/", 
-      {headers: head, responseType: "blob"}) as Observable<any>;
+      "/" + type + "/" + uuid + "/pdf/",
+      { headers: head, responseType: "blob" }) as Observable<any>;
     return result;
   }
 
-  uploadDocument(roadWorkNeedUuid: string, pdfFile: FormData): Observable<any> {
+  uploadDocument(uuid: string, pdfFile: FormData, type: string): Observable<any> {
     let head: HttpHeaders = new HttpHeaders();
     head = head.set("enctype", "multipart/form-data");
     let result: Observable<any> =
-      this.http.post<FormData>(environment.apiUrl + "/roadworkneed/" + roadWorkNeedUuid + "/pdf/",
-            pdfFile,
-            {headers : head});
-    return result;    
+      this.http.post<FormData>(environment.apiUrl + "/" + type + "/" + uuid + "/pdf/",
+        pdfFile,
+        { headers: head });
+    return result;
   }
 
-  deleteDocument(roadWorkNeedUuid: string): Observable<any> {
+  deleteDocument(uuid: string, type: string): Observable<any> {
     let head: HttpHeaders = new HttpHeaders();
     let result: Observable<any> =
-      this.http.delete(environment.apiUrl + "/roadworkneed/" + roadWorkNeedUuid + "/pdf/");
-    return result;    
+      this.http.delete(environment.apiUrl + "/" + type + "/" + uuid + "/pdf/");
+    return result;
   }
 
 }

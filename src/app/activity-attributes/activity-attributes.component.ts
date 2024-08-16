@@ -25,6 +25,7 @@ import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { environment } from 'src/environments/environment';
 import { StatusHelper } from 'src/helper/status-helper';
 import { EnumType } from 'src/model/enum-type';
+import { DocumentService } from 'src/services/document.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -81,6 +82,7 @@ export class ActivityAttributesComponent implements OnInit {
   private activatedRoute: ActivatedRoute;
   private router: Router;
   private activatedRouteSubscription: Subscription = new Subscription();
+  private documentService: DocumentService;
   private appConfigService: AppConfigService;
 
   private snckBar: MatSnackBar;
@@ -89,7 +91,7 @@ export class ActivityAttributesComponent implements OnInit {
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService, router: Router,
-    snckBar: MatSnackBar) {
+    snckBar: MatSnackBar,  documentService: DocumentService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
@@ -101,6 +103,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.router = router;
     this.snckBar = snckBar;
     this.statusHelper = new StatusHelper();
+    this.documentService = documentService;
   }
 
   ngOnInit() {
@@ -517,6 +520,77 @@ export class ActivityAttributesComponent implements OnInit {
 
   switchProjectTypeInfo() {
     this.showProjectTypeInfo = !this.showProjectTypeInfo;
+  }
+
+  uploadPdf(event: any) {
+    if (this.roadWorkActivityFeature && event && event.target &&
+      event.target.files && event.target.files.length > 0) {
+      let file: File = event.target.files[0]
+      let formData: FormData = new FormData();
+      formData.append("pdfFile", file, file.name);
+      this.documentService.uploadDocument(this.roadWorkActivityFeature.properties.uuid, formData, "roadworkactivity").subscribe({
+        next: (errorObj) => {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorObj);
+          if (errorObj !== null && errorObj.errorMessage.trim().length !== 0) {
+            this.snckBar.open(errorObj.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.roadWorkActivityFeature!.properties.hasPdfDocument = true;
+            this.snckBar.open("PDF-Dokument wurde erfolgreich hochgeladen", "", {
+              duration: 4000,
+            });
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Fehler beim Upload des PDF-Dokuments.", "", {
+            duration: 4000
+          });
+        }
+      });
+    }
+  }
+
+  downloadPdf() {
+    if (this.roadWorkActivityFeature) {
+      this.documentService.getDocument(this.roadWorkActivityFeature.properties.uuid, "roadworkactivity").subscribe({
+        next: (documentData) => {
+          if (documentData === null || documentData.size === 0) {
+            this.snckBar.open("Dieses Bauvorhaben hat kein angehängtes PDF-Dokument.", "", {
+              duration: 4000
+            });
+          } else {
+            let objUrl = window.URL.createObjectURL(documentData);
+            let newBrowserTab = window.open();
+            if (newBrowserTab)
+              newBrowserTab.location.href = objUrl;
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
+            duration: 4000
+          });
+        }
+      });
+    }
+  }
+
+  deletePdf() {
+    if (this.roadWorkActivityFeature) {
+      this.documentService.deleteDocument(this.roadWorkActivityFeature.properties.uuid, "roadworkactivity").subscribe({
+        next: (documentData) => {
+          this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
+            duration: 4000
+          });
+          this.roadWorkActivityFeature!.properties.hasPdfDocument = false;
+        },
+        error: (error) => {
+          this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {
+            duration: 4000
+          });
+        }
+      });
+    }
   }
 
   ngOnDestroy() {

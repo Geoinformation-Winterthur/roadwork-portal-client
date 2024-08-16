@@ -394,7 +394,7 @@ export class NeedAttributesComponent implements OnInit {
       let file: File = event.target.files[0]
       let formData: FormData = new FormData();
       formData.append("pdfFile", file, file.name);
-      this.documentService.uploadDocument(this.roadWorkNeedFeature.properties.uuid, formData).subscribe({
+      this.documentService.uploadDocument(this.roadWorkNeedFeature.properties.uuid, formData, "roadworkneed").subscribe({
         next: (errorObj) => {
           ErrorMessageEvaluation._evaluateErrorMessage(errorObj);
           if (errorObj !== null && errorObj.errorMessage.trim().length !== 0) {
@@ -419,7 +419,7 @@ export class NeedAttributesComponent implements OnInit {
 
   downloadPdf() {
     if (this.roadWorkNeedFeature) {
-      this.documentService.getDocument(this.roadWorkNeedFeature.properties.uuid).subscribe({
+      this.documentService.getDocument(this.roadWorkNeedFeature.properties.uuid, "roadworkneed").subscribe({
         next: (documentData) => {
           if (documentData === null || documentData.size === 0) {
             this.snckBar.open("Dieser Bedarf hat kein angehängtes PDF-Dokument.", "", {
@@ -443,7 +443,7 @@ export class NeedAttributesComponent implements OnInit {
 
   deletePdf() {
     if (this.roadWorkNeedFeature) {
-      this.documentService.deleteDocument(this.roadWorkNeedFeature.properties.uuid).subscribe({
+      this.documentService.deleteDocument(this.roadWorkNeedFeature.properties.uuid, "roadworkneed").subscribe({
         next: (documentData) => {
           this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
             duration: 4000
