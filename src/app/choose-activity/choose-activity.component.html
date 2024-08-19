@@ -158,7 +158,7 @@
         <div style="margin-left: 0.7em;margin-top: 2em;margin-bottom: 1em;;">
           <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
             target="_blank">Im Stadtplan</a>
-          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+          <a href="http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}"
             target="_blank" style="margin: 0.7em;">Im WinWebGIS</a>
         </div>
       </mat-card-content>
@@ -234,7 +234,7 @@
       <ng-container matColumnDef="link_wwg">
         <th mat-header-cell *matHeaderCellDef> WinWebGIS-Link </th>
         <td mat-cell *matCellDef="let roadWorkActivity">
-          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+          <a href="http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}"
             target="_blank" style="margin: 1em;">Im WinWebGIS</a>
         </td>
       </ng-container>
