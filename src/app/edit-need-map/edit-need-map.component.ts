@@ -79,10 +79,12 @@ export class EditNeedMapComponent implements OnInit {
 
     let loadLayerStyle: Style = new Style({
       fill: new Fill({
-        color: 'rgba(160, 10, 10,0.4)'
+        color: 'rgba(149, 35, 210, 0.1)'
       }),
       stroke: new Stroke({
-        color: 'rgba(160, 10, 10,1.0)'
+        color: 'rgba(149, 35, 210, 1.0)',
+        width: 2,
+        lineDash: [6, 6]
       })
     });
 
