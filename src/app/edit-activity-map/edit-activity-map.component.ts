@@ -92,10 +92,10 @@ export class EditActivityMapComponent implements OnInit {
 
     let roadWorkActivityLayerStyle: Style = new Style({
       fill: new Fill({
-        color: 'rgba(149, 35, 210,0.4)'
+        color: 'rgba(147, 227, 255, 0.1)'
       }),
       stroke: new Stroke({
-        color: 'rgba(149, 35, 210,1.0)',
+        color: 'rgba(147, 227, 255, 1.0)',
         width: 2
       })
     });
@@ -108,8 +108,11 @@ export class EditActivityMapComponent implements OnInit {
 
     function roadWorkNeedLayerStyleFunc(feature: any, resolution: any) {
       let roadWorkNeedLayerStyle: Style = new Style({
+        fill: new Fill({
+          color: 'rgba(149, 35, 210, 0.1)'
+        }),
         stroke: new Stroke({
-          color: "rgba(61, 195, 244, 1.0)",
+          color: "rgba(149, 35, 210, 1.0)",
           width: 2,
           lineDash: feature.get('status') === "requirement" ? [6, 6] : []
         })
