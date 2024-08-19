@@ -318,7 +318,7 @@ export class NeedAttributesComponent implements OnInit {
       roadWorkActivity.properties.name = this.roadWorkNeedFeature.properties.name;
       roadWorkActivity.properties.description = this.roadWorkNeedFeature.properties.description;
       roadWorkActivity.properties.comment = this.roadWorkNeedFeature.properties.comment;
-      roadWorkActivity.properties.costsType = "valuation";
+      roadWorkActivity.properties.costsType = "municipal";
       if (this.roadWorkNeedFeature.properties.costs)
         roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
       else
