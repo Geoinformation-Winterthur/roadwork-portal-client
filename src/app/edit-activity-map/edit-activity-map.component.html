@@ -19,5 +19,14 @@
         <input matInput maxlength="4" placeholder="Bedarf Real. von (Jahr)..." type="number" [(ngModel)]="chosenYear"
             (change)="onChangeYear()" />
     </mat-form-field>
+    <mat-form-field *ngIf="!roadWorkActivityFeat?.properties?.uuid" class="address-filter"  style="margin-left: 1em;">
+        <input type="text" name="address_input" maxlength="150" placeholder="Adresse suchen" aria-label="Adresse suchen"
+            matInput [(ngModel)]="addressSearchString" [matAutocomplete]="auto" (focusout)="zoomToAddress()"
+            (keyup)="refreshAddressList()">
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <mat-option *ngFor="let address of addresses" [value]="address.address">{{address.address}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
 </div>
 <div id="edit_activity_map" class="edit-activity-map"></div>

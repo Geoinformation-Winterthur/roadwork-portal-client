@@ -1,6 +1,6 @@
 /**
  * @author Edgar Butwilowski
- * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ * @copyright Copyright (c) Geoinformation Winterthur. All rights reserved.
  */
 import { Component, Input, OnInit } from '@angular/core';
 import Map from 'ol/Map';
@@ -20,6 +20,7 @@ import Stroke from 'ol/style/Stroke';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
 import proj4 from 'proj4';
+import { Projection, get as getProjection } from 'ol/proj.js';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
@@ -28,6 +29,8 @@ import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { ManagementAreaService } from 'src/services/management-area.service';
+import { Address } from 'src/model/address';
+import { AddressService } from 'src/services/address.service';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -46,6 +49,9 @@ export class EditActivityMapComponent implements OnInit {
 
   map: Map = new Map();
 
+  addresses: Address[] = [];
+  addressSearchString: string = "";
+
   userDrawSource: VectorSource = new VectorSource();
   roadWorkActivitySource: VectorSource = new VectorSource();
   roadWorkNeedSource: VectorSource = new VectorSource();
@@ -55,6 +61,7 @@ export class EditActivityMapComponent implements OnInit {
   needsOnMap: RoadWorkNeedFeature[] = [];
 
   private roadWorkActivityService: RoadWorkActivityService;
+  private addressService: AddressService;
   private snackBar: MatSnackBar;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -63,11 +70,13 @@ export class EditActivityMapComponent implements OnInit {
     roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService,
     roadWorkNeedService: RoadWorkNeedService,
-    managementAreaService: ManagementAreaService) {
+    managementAreaService: ManagementAreaService,
+    addressService: AddressService) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.managementAreaService = managementAreaService;
+    this.addressService = addressService;
     this.snackBar = snackBar;
   }
 
@@ -79,7 +88,7 @@ export class EditActivityMapComponent implements OnInit {
     proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
     register(proj4);
     this.initializeMap();
-    this.resizeMap(null);
+    this.resizeMap();
   }
 
   ngOnDestroy() {
@@ -143,6 +152,8 @@ export class EditActivityMapComponent implements OnInit {
 
     // this.map = new EditableMap("edit_activity_map");
 
+    const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
+
     this.map = new Map({
       target: 'edit_activity_map',
       layers: [
@@ -150,14 +161,14 @@ export class EditActivityMapComponent implements OnInit {
           source: new TileWMS({
             url: 'http://wms.zh.ch/upwms',
             params: { 'LAYERS': 'upwms', 'TILED': true },
-            serverType: 'geoserver',
+            serverType: 'mapserver',
           })
         }),
         new Tile({
           source: new TileWMS({
             url: 'http://wms.zh.ch/OGDCMS3ZH',
             params: { 'LAYERS': 'OGDCMS3ZH', 'TILED': true },
-            serverType: 'geoserver',
+            serverType: 'mapserver',
           })
         }),
         roadWorkActivityLayer,
@@ -165,7 +176,8 @@ export class EditActivityMapComponent implements OnInit {
         roadWorkNeedLayer
       ],
       view: new View({
-        center: [972000.5, 6023000.72],
+        projection: epsg2056Proj,
+        center: [2697567.0, 1262079.0],
         zoom: 14
       })
     });
@@ -283,6 +295,32 @@ export class EditActivityMapComponent implements OnInit {
     this.userDrawSource.clear();
   }
 
+  refreshAddressList() {
+    this.addressService.getAddressList(this.addressSearchString)
+      .subscribe({
+        next: (addressList) => {
+          if (addressList)
+            this.addresses = addressList;
+        },
+        error: (error) => {
+        }
+      });
+  }
+
+  zoomToAddress() {
+    let chosenAddress: Address = new Address();
+    for (let address of this.addresses) {
+      if (address.address == this.addressSearchString) {
+        chosenAddress = address;
+        break;
+      }
+    }
+    if (chosenAddress.x && chosenAddress.y) {
+      this.map.getView().setCenter([chosenAddress.x, chosenAddress.y]);
+      this.map.getView().setZoom(18);
+    }
+  }
+
   showEditHelp() {
     alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. " +
       "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
@@ -349,7 +387,7 @@ export class EditActivityMapComponent implements OnInit {
 
   private addFeatureFinished(event: any) { }
 
-  private resizeMap(event: any) {
+  private resizeMap(event: any = null) {
     let mapElement: HTMLElement | undefined;
     mapElement = document.getElementById("edit_activity_map") as HTMLElement;
     mapElement.style.height = screen.availHeight / 2 + "px";

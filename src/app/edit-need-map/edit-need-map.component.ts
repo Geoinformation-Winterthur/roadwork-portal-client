@@ -1,6 +1,6 @@
 /**
  * @author Edgar Butwilowski
- * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ * @copyright Copyright (c) Geoinformation Winterthur. All rights reserved.
  */
 import { Component, Input, OnInit } from '@angular/core';
 import Map from 'ol/Map';
@@ -26,6 +26,8 @@ import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
+import { AddressService } from 'src/services/address.service';
+import { Address } from 'src/model/address';
 
 @Component({
   selector: 'app-edit-need-map',
@@ -48,16 +50,22 @@ export class EditNeedMapComponent implements OnInit {
   loadSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
 
+  addresses: Address[] = [];
+  addressSearchString: string = "";
+
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
+  private addressService: AddressService;
   private snackBar: MatSnackBar;
 
   public constructor(snackBar: MatSnackBar,
     roadWorkNeedService: RoadWorkNeedService,
-    managementAreaService: ManagementAreaService) {
+    managementAreaService: ManagementAreaService,
+    addressService: AddressService) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
+    this.addressService = addressService;
   }
 
   ngOnInit() {
@@ -138,7 +146,7 @@ export class EditNeedMapComponent implements OnInit {
       })
     });
 
-    this.resizeMap(null);
+    this.resizeMap();
 
     this.polygonDraw = new Draw({
       source: this.userDrawSource,
@@ -196,31 +204,31 @@ export class EditNeedMapComponent implements OnInit {
         this.managementAreaService.getIntersectingManagementArea(this.roadWorkNeedFeat.geometry)
           .subscribe({
             next: (managementArea) => {
-              if(managementArea){
+              if (managementArea) {
                 this.roadWorkNeedService
-                .updateRoadWorkNeed(this.roadWorkNeedFeat)
-                .subscribe({
-                  next: (roadWorkNeedFeature) => {
-                    if (roadWorkNeedFeature) {
-                      ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
-                      if (roadWorkNeedFeature.errorMessage !== "") {
-                        this.snackBar.open(roadWorkNeedFeature.errorMessage, "", {
-                          duration: 4000
-                        });
-                      } else {
-                        if (this.roadWorkNeedFeat) {
-                          this.roadWorkNeedFeat = roadWorkNeedFeature;
-                          this.managementArea = managementArea;
-                          this.snackBar.open("Bedarfsgeometrie ist gespeichert", "", {
-                            duration: 4000,
+                  .updateRoadWorkNeed(this.roadWorkNeedFeat)
+                  .subscribe({
+                    next: (roadWorkNeedFeature) => {
+                      if (roadWorkNeedFeature) {
+                        ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+                        if (roadWorkNeedFeature.errorMessage !== "") {
+                          this.snackBar.open(roadWorkNeedFeature.errorMessage, "", {
+                            duration: 4000
                           });
+                        } else {
+                          if (this.roadWorkNeedFeat) {
+                            this.roadWorkNeedFeat = roadWorkNeedFeature;
+                            this.managementArea = managementArea;
+                            this.snackBar.open("Bedarfsgeometrie ist gespeichert", "", {
+                              duration: 4000,
+                            });
+                          }
                         }
                       }
+                    },
+                    error: (error) => {
                     }
-                  },
-                  error: (error) => {
-                  }
-                });
+                  });
               }
             },
             error: (error) => {
@@ -249,6 +257,32 @@ export class EditNeedMapComponent implements OnInit {
     this.userDrawSource.clear();
   }
 
+  refreshAddressList() {
+    this.addressService.getAddressList(this.addressSearchString)
+      .subscribe({
+        next: (addressList) => {
+          if (addressList)
+            this.addresses = addressList;
+        },
+        error: (error) => {
+        }
+      });
+  }
+
+  zoomToAddress() {
+    let chosenAddress: Address = new Address();
+    for(let address of this.addresses){
+      if(address.address == this.addressSearchString){
+        chosenAddress = address;
+        break;
+      }
+    }
+    if(chosenAddress.x && chosenAddress.y){
+      this.map.getView().setCenter([chosenAddress.x, chosenAddress.y]);
+      this.map.getView().setZoom(18);
+    }
+  }
+
   showEditHelp() {
     alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. " +
       "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
@@ -257,7 +291,7 @@ export class EditNeedMapComponent implements OnInit {
 
   addFeatureFinished(event: any) { }
 
-  private resizeMap(event: any) {
+  private resizeMap(event: any = null) {
     let mapElement: HTMLElement | undefined;
     mapElement = document.getElementById("edit_need_map") as HTMLElement;
     mapElement.style.height = screen.availHeight / 2 + "px";
