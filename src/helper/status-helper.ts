@@ -23,6 +23,10 @@ export class StatusHelper {
                 if (realStatus == "coordinated" ||
                     realStatus == "suspended")
                     return true;
+            } else if (referenceStatus == "prestudy") {
+                if (realStatus == "coordinated" ||
+                    realStatus == "suspended")
+                    return true;
             } else if (referenceStatus == "coordinated") {
                 if (realStatus == "suspended")
                     return true;

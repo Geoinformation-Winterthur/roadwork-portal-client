@@ -62,6 +62,8 @@ export class RoadWorkActivityProperties {
     isStudy: boolean = false;
     dateStudyStart?: Date;
     dateStudyEnd?: Date;
+    projectStudyApproved?: Date;
+    studyApproved?: Date;
     isDesire: boolean = false;
     dateDesireStart?: Date;
     dateDesireEnd?: Date;

@@ -35,7 +35,7 @@ export class ChooseActivityComponent implements OnInit {
   filterAreaManagerControl: FormControl = new FormControl();
   filterProjectManagerControl: FormControl = new FormControl();
 
-  statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated"];
+  statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated", "prestudy"];
 
   tableDisplayedColumns: string[] = ['title', 'status', 'area_man', 'project_man', 'lead',
     'realisation_date', 'due_date', 'link_cityplan', 'link_wwg',
@@ -127,8 +127,9 @@ export class ChooseActivityComponent implements OnInit {
       chooseAll.push('reporting');
       chooseAll.push('coordinated');
       chooseAll.push('suspended');
+      chooseAll.push('prestudy');
       this.statusFilterCodes = chooseAll;
-    } else if(this.statusFilterCodes.length == 6){
+    } else if(this.statusFilterCodes.length == 7){
       this.statusFilterCodes = [];
     }
 

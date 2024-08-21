@@ -465,7 +465,7 @@
                                                 </mat-checkbox>
                                                 <br>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Vorstudie Start</mat-label>
+                                                    <mat-label>Plantermin: Vorstudie Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateStudyStart"
                                                         [matDatepicker]="dateStudyStart"
@@ -475,7 +475,17 @@
                                                         [for]="dateStudyStart"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Vorstudie Ende</mat-label>
+                                                    <mat-label>Projektauftrag Vorstudie genehmigt</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.projectStudyApproved"
+                                                        [matDatepicker]="projectStudyApproved"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
+                                                    <mat-datepicker #projectStudyApproved></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="projectStudyApproved"></mat-datepicker-toggle>
+                                                </mat-form-field><br>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Plantermin: Vorstudie Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateStudyEnd"
                                                         [matDatepicker]="dateStudyEnd"
@@ -483,6 +493,16 @@
                                                     <mat-datepicker #dateStudyEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="dateStudyEnd"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Vorstudie genehmigt</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.studyApproved"
+                                                        [matDatepicker]="studyApproved"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
+                                                    <mat-datepicker #studyApproved></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="studyApproved"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                             </div>
                                         </div>

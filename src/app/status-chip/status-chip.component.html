@@ -26,6 +26,11 @@
         <span *ngIf="short">koordiniert</span>
         <span *ngIf="!short">koordiniert (Phase 12)</span>
       </mat-chip>
+      <mat-chip *ngIf="statusCode === 'prestudy'"
+        class="chip-coordinated">
+        <span *ngIf="short">Vorstudie</span>
+        <span *ngIf="!short">Vorstudie (Phase 21)</span>
+      </mat-chip>
       <mat-chip *ngIf="statusCode === 'suspended'"
         class="chip-suspended">
         sistiert
