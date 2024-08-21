@@ -34,6 +34,7 @@ export class ErrorMessageDictionary {
              "Keine Berechtigung, dieses Bauvorhaben zu editieren.",
              "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet",
              "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist",
-             "Abbruch, da dieser Statusübergang nicht zulässig ist"
+             "Abbruch, da dieser Statusübergang nicht zulässig ist",
+             "Vorstudie ohne Start- oder Enddatum im Plantermin"
             ];
 }
