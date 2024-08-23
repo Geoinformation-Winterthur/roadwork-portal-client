@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-  title: "WiKiS (DEV)",
-  shorttitle: "WiKiS (DEV)",
+  title: "WiKIS (DEV)",
+  shorttitle: "WiKIS (DEV)",
   subtitle: "Koordination Infrastruktur Strasse",
   fullAppPath: "http://localhost:4200/civil-engineering/roadworks-portal/",  
   apiDomain: "localhost:7295",

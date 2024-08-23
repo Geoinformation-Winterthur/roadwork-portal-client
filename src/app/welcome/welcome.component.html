@@ -7,9 +7,9 @@
     <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Departement Bau und Mobilit&auml;t</h2>
 </div>
 <div style="margin: 2em;color: rgb(90, 90, 90);">
-    <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
-        Willkommen im <b>WiKiS</b> (<b>Winterthurer Koordinationstool f&uuml;r Infrastrukturvorhaben im
-            &ouml;ffentlichen Strassenraum</b>) des Tiefbauamts Winterthur.
+    <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
+        Willkommen im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool f&uuml;r <b>I</b>nfrastrukturvorhaben im
+            &ouml;ffentlichen <b>S</b>trassenraum) des Tiefbauamts Winterthur.
     </h3>
     <div i18n *ngIf="!userService.isUserLoggedIn()">
         <p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
@@ -23,19 +23,19 @@
         <p>
             Die Abteilung Planung & Koordination des Tiefbauamts der Stadt Winterthur nimmt diese Aufgabe im Rahmen der
             dazu
-            vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe von WiKiS soll die Eingabe von
+            vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe von WiKIS soll die Eingabe von
             W&uuml;nschen
             (Bedarf) vereinfacht und die Koordination der Bauvorhaben zentralisiert werden.</p>
         <p>
-            Der Zugriff auf WiKiS ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
+            Der Zugriff auf WiKIS ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
             rechten oberen Ecke.
             Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an
             <a href="mailto:planung.koordination@win.ch">planung.koordination@win.ch</a></p>
         <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
     </div>
-    <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;text-transform: uppercase;color: black;">
-        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKiS</b> (<b>Winterthurer Koordinationstool f&uuml;r
-            Infrastrukturvorhaben im &ouml;ffentlichen Strassenraum</b>)
+    <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
+        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool f&uuml;r
+            <b>I</b>nfrastrukturvorhaben im &ouml;ffentlichen <b>S</b>trassenraum)
         der Abteilung Planung & Koordination des Tiefbauamts Winterthur.</h3>
     <div *ngIf="userService.isUserLoggedIn()">
         <mat-tab-group>
