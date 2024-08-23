@@ -323,14 +323,23 @@
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
-                                        <p>Strategische Koordinationssitzung (SKS):
-                                            {{roadWorkActivityFeature.properties.dateSks | date: 'dd.MM.yyyy'}}</p>
-                                        <p>Koordinationsausschuss Projekte (KAP):
-                                            {{roadWorkActivityFeature.properties.dateKap | date: 'dd.MM.yyyy'}}</p>
-                                        <p>Operative Koordinationssitzung (OKS):
-                                            {{roadWorkActivityFeature.properties.dateOks | date: 'dd.MM.yyyy'}}</p>
-                                        <p>Gesch&auml;ftsleitung Tiefbau (GL TBA):
-                                            {{roadWorkActivityFeature.properties.dateGlTba | date: 'dd.MM.yyyy'}}</p>
+                                        <div
+                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            Strategische Koordinationssitzung (SKS):<br>
+                                            <b>{{roadWorkActivityFeature.properties.dateSks |
+                                                date:'dd.MM.yyyy'}}</b>
+                                        </div>
+                                        <div
+                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            Koordinationsausschuss Projekte (KAP):<br>
+                                            <b>{{roadWorkActivityFeature.properties.dateKap |
+                                                date:'dd.MM.yyyy'}}</b>
+                                        </div>
+                                        <div *ngIf="roadWorkActivityFeature.properties.dateGlTba"
+                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            Gesch&auml;ftsleitung Tiefbau (GL TBA):<br>
+                                            <b>{{roadWorkActivityFeature.properties.dateGlTba | date:'dd.MM.yyyy'}}</b>
+                                        </div>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
@@ -539,58 +548,20 @@
                                         <div style="display:flex;flex-direction:column;">
                                             <div
                                                 style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                                Strategische Koord. (SKS):
+                                                Strategische Koord. (SKS):<br>
                                                 <b>{{roadWorkActivityFeature.properties.dateSks |
                                                     date:'dd.MM.yyyy'}}</b>
                                             </div>
+                                            <div
+                                                style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                                Koordinationsausschuss Projekte (KAP):<br>
+                                                <b>{{roadWorkActivityFeature.properties.dateKap |
+                                                    date:'dd.MM.yyyy'}}</b>
+                                            </div>
                                             <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
-                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateKap"
-                                                        [formControl]="dateKapControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option value="dateKap1">{{configurationData.dateKap1 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateKap2">{{configurationData.dateKap2 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                            </form>
-                                            <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
-                                                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.dateOks"
-                                                        [formControl]="dateOksControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option value="dateOks1">{{configurationData.dateOks1 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks2">{{configurationData.dateOks2 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks3">{{configurationData.dateOks3 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks4">{{configurationData.dateOks4 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks5">{{configurationData.dateOks5 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks6">{{configurationData.dateOks6 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks7">{{configurationData.dateOks7 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks8">{{configurationData.dateOks8 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks9">{{configurationData.dateOks9 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks10">{{configurationData.dateOks10
-                                                            |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks11">{{configurationData.dateOks11
-                                                            |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
-                                                    <input matInput
+                                                    <input matInput name="dateGlTba"
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
                                                         [matDatepicker]="dateGlTba"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
@@ -616,14 +587,11 @@
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateSksReal"
                                                         [formControl]="dateSksControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option value="dateSks1">{{configurationData.dateSks1 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateSks2">{{configurationData.dateSks2 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateSks3">{{configurationData.dateSks3 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateSks4">{{configurationData.dateSks4 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option
+                                                            *ngFor="let plannedDateSks of configurationData.plannedDatesSks"
+                                                            value="{{plannedDateSks}}">{{plannedDateSks |
+                                                            date:'dd.MM.yyyy'}}
+                                                        </mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
                                             </form>
@@ -634,10 +602,11 @@
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateKapReal"
                                                         [formControl]="dateKapControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option value="dateKap1">{{configurationData.dateKap1 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateKap2">{{configurationData.dateKap2 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option
+                                                            *ngFor="let plannedDateKap of configurationData.plannedDatesKap"
+                                                            value="{{plannedDateKap}}">
+                                                            {{plannedDateKap | date:'dd.MM.yyyy'}}
+                                                        </mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
                                             </form>
@@ -648,41 +617,22 @@
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateOksReal"
                                                         [formControl]="dateOksControl"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option value="dateOks1">{{configurationData.dateOks1 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks2">{{configurationData.dateOks2 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks3">{{configurationData.dateOks3 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks4">{{configurationData.dateOks4 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks5">{{configurationData.dateOks5 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks6">{{configurationData.dateOks6 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks7">{{configurationData.dateOks7 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks8">{{configurationData.dateOks8 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks9">{{configurationData.dateOks9 |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks10">{{configurationData.dateOks10
-                                                            |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
-                                                        <mat-option value="dateOks11">{{configurationData.dateOks11
-                                                            |
-                                                            date:'dd.MM.yyyy'}}</mat-option>
+                                                        <mat-option
+                                                            *ngFor="let plannedDateOks of configurationData.plannedDatesOks"
+                                                            value="{{plannedDateOks}}">
+                                                            {{plannedDateOks | date:'dd.MM.yyyy'}}
+                                                        </mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
-                                                    <input matInput
+                                                    <input matInput name="dateGlTbaReal"
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
-                                                        [matDatepicker]="dateGlTba"
+                                                        [matDatepicker]="dateGlTbaReal"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateGlTba></mat-datepicker>
+                                                    <mat-datepicker #dateGlTbaReal></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="dateGlTba"></mat-datepicker-toggle>
+                                                        [for]="dateGlTbaReal"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                             </form>
                                         </div>
