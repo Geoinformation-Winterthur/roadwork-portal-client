@@ -94,31 +94,31 @@ export class ConfigurationComponent implements OnInit {
 
   private updateCurrentDates(){
     this.configurationData.plannedDatesSks = [];
-    this.configurationData.plannedDatesSks.push(new Date(this.dateSks1Control.value));
-    this.configurationData.plannedDatesSks.push(new Date(this.dateSks2Control.value));
-    this.configurationData.plannedDatesSks.push(new Date(this.dateSks3Control.value));
-    this.configurationData.plannedDatesSks.push(new Date(this.dateSks4Control.value));
-    this.configurationData.plannedDatesSks.push(new Date(this.dateSks5Control.value));
-    this.configurationData.plannedDatesSks.push(new Date(this.dateSks6Control.value));
+    if(this.dateSks1Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks1Control.value));
+    if(this.dateSks2Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks2Control.value));
+    if(this.dateSks3Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks3Control.value));
+    if(this.dateSks4Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks4Control.value));
+    if(this.dateSks5Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks5Control.value));
+    if(this.dateSks6Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks6Control.value));
 
     this.configurationData.plannedDatesKap = [];
-    this.configurationData.plannedDatesKap.push(new Date(this.dateKap1Control.value));
-    this.configurationData.plannedDatesKap.push(new Date(this.dateKap2Control.value));
-    this.configurationData.plannedDatesKap.push(new Date(this.dateKap3Control.value));
-    this.configurationData.plannedDatesKap.push(new Date(this.dateKap4Control.value));
+    if(this.dateKap1Control.value) this.configurationData.plannedDatesKap.push(new Date(this.dateKap1Control.value));
+    if(this.dateKap2Control.value) this.configurationData.plannedDatesKap.push(new Date(this.dateKap2Control.value));
+    if(this.dateKap3Control.value) this.configurationData.plannedDatesKap.push(new Date(this.dateKap3Control.value));
+    if(this.dateKap4Control.value) this.configurationData.plannedDatesKap.push(new Date(this.dateKap4Control.value));
 
     this.configurationData.plannedDatesOks = [];
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks1Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks2Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks3Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks4Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks5Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks6Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks7Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks8Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks9Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks10Control.value));
-    this.configurationData.plannedDatesOks.push(new Date(this.dateOks11Control.value));
+    if(this.dateOks1Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks1Control.value));
+    if(this.dateOks2Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks2Control.value));
+    if(this.dateOks3Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks3Control.value));
+    if(this.dateOks4Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks4Control.value));
+    if(this.dateOks5Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks5Control.value));
+    if(this.dateOks6Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks6Control.value));
+    if(this.dateOks7Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks7Control.value));
+    if(this.dateOks8Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks8Control.value));
+    if(this.dateOks9Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks9Control.value));
+    if(this.dateOks10Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks10Control.value));
+    if(this.dateOks11Control.value) this.configurationData.plannedDatesOks.push(new Date(this.dateOks11Control.value));
   }
 
 }
