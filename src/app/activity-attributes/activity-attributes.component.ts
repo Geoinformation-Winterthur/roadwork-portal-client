@@ -342,7 +342,6 @@ export class ActivityAttributesComponent implements OnInit {
                         this.snckBar.open(successMassage, "", {
                           duration: 4000,
                         });
-                        this._openMail(newStatus);
                       }
                     }
                   },
@@ -650,7 +649,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  private _openMail(newStatus: string) {
+  public openMail(newStatus: string) {
 
     let mailText = "mailto:";
 

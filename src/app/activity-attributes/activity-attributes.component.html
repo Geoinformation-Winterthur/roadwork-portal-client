@@ -198,6 +198,13 @@
                                                         'dd.MM.yyyy'}}</span>
                                                 </mat-chip>
                                             </div>
+                                            <button (click)="openMail(roadWorkActivityFeature.properties.status)"
+                                            style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                            [disabled]="(roadWorkActivityFeature.properties.status != 'inconsult'
+                                                    && roadWorkActivityFeature.properties.status != 'reporting')
+                                                    || roadWorkActivityFeature.properties.isPrivate
+                                                    || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                            mat-button>Rundmail senden</button>
                                             <button (click)="update(false, 'inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 [disabled]="roadWorkActivityFeature.properties.status != 'review' 
@@ -213,7 +220,6 @@
                                             <button
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 disabled mat-button>Infoversand durchführen</button>
-
                                         </div>
                                     </div>
                                 </mat-card-content>
