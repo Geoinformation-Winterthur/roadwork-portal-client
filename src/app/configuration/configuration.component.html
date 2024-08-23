@@ -33,32 +33,46 @@
                     <mat-card-content>
                         <div style="display: flex;flex-direction: column;">
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Erster Termin im Jahr</mat-label>
-                                <input matInput [ngModel]="configurationData.dateSks1" [formControl]="dateSks1Control"
+                                <mat-label>Termin 1</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesSks[0]" [formControl]="dateSks1Control"
                                     [matDatepicker]="dateSks1" (dateChange)="update()">
                                 <mat-datepicker #dateSks1></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks1"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Zweiter Termin im Jahr</mat-label>
-                                <input matInput [ngModel]="configurationData.dateSks2" [formControl]="dateSks2Control"
+                                <mat-label>Termin 2</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesSks[1]" [formControl]="dateSks2Control"
                                     [matDatepicker]="dateSks2" (dateChange)="update()">
                                 <mat-datepicker #dateSks2></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks2"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Dritter Termin im Jahr</mat-label>
-                                <input matInput [ngModel]="configurationData.dateSks3" [formControl]="dateSks3Control"
+                                <mat-label>Termin 3</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesSks[2]" [formControl]="dateSks3Control"
                                     [matDatepicker]="dateSks3" (dateChange)="update()">
                                 <mat-datepicker #dateSks3></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks3"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Vierter Termin im Jahr</mat-label>
-                                <input matInput [ngModel]="configurationData.dateSks4" [formControl]="dateSks4Control"
+                                <mat-label>Termin 4</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesSks[3]" [formControl]="dateSks4Control"
                                     [matDatepicker]="dateSks4" (dateChange)="update()">
                                 <mat-datepicker #dateSks4></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks4"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 5</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesSks[4]" [formControl]="dateSks5Control"
+                                    [matDatepicker]="dateSks5" (dateChange)="update()">
+                                <mat-datepicker #dateSks5></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateSks5"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 6</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesSks[5]" [formControl]="dateSks6Control"
+                                    [matDatepicker]="dateSks6" (dateChange)="update()">
+                                <mat-datepicker #dateSks6></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateSks6"></mat-datepicker-toggle>
                             </mat-form-field>
                         </div>
                     </mat-card-content>
@@ -70,18 +84,32 @@
                     <mat-card-content>
                         <div style="display:flex;flex-direction:column;">
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Erster Termin im Jahr</mat-label>
-                                <input matInput [ngModel]="configurationData.dateKap1" [formControl]="dateKap1Control"
+                                <mat-label>Termin 1</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesKap[0]" [formControl]="dateKap1Control"
                                     [matDatepicker]="dateKap1" (dateChange)="update()">
                                 <mat-datepicker #dateKap1></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateKap1"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Zweiter Termin im Jahr</mat-label>
-                                <input matInput [ngModel]="configurationData.dateKap2" [formControl]="dateKap2Control"
+                                <mat-label>Termin 2</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesKap[1]" [formControl]="dateKap2Control"
                                     [matDatepicker]="dateKap2" (dateChange)="update()">
                                 <mat-datepicker #dateKap2></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateKap2"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 3</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesKap[2]" [formControl]="dateKap3Control"
+                                    [matDatepicker]="dateKap3" (dateChange)="update()">
+                                <mat-datepicker #dateKap3></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateKap3"></mat-datepicker-toggle>
+                            </mat-form-field>
+                            <mat-form-field style="margin:10px;">
+                                <mat-label>Termin 4</mat-label>
+                                <input matInput [ngModel]="configurationData.plannedDatesKap[3]" [formControl]="dateKap4Control"
+                                    [matDatepicker]="dateKap4" (dateChange)="update()">
+                                <mat-datepicker #dateKap4></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix [for]="dateKap4"></mat-datepicker-toggle>
                             </mat-form-field>
                         </div>
                     </mat-card-content>
@@ -94,42 +122,42 @@
                         <div style="display:flex;flex-direction:column;">
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 1</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks1" [formControl]="dateOks1Control"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[0]" [formControl]="dateOks1Control"
                                     [matDatepicker]="dateOks1" (dateChange)="update()">
                                 <mat-datepicker #dateOks1></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateOks1"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 2</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks2" [formControl]="dateOks2Control"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[1]" [formControl]="dateOks2Control"
                                     [matDatepicker]="dateOks2" (dateChange)="update()">
                                 <mat-datepicker #dateOks2></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateOks2"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 3</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks3" [formControl]="dateOks3Control"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[2]" [formControl]="dateOks3Control"
                                     [matDatepicker]="dateOks3" (dateChange)="update()">
                                 <mat-datepicker #dateOks3></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateOks3"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 4</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks4" [formControl]="dateOks4Control"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[3]" [formControl]="dateOks4Control"
                                     [matDatepicker]="dateOks4" (dateChange)="update()">
                                 <mat-datepicker #dateOks4></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateOks4"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 5</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks5" [formControl]="dateOks5Control"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[4]" [formControl]="dateOks5Control"
                                     [matDatepicker]="dateOks5" (dateChange)="update()">
                                 <mat-datepicker #dateOks5></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateOks5"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 6</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks6"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[5]"
                                 [formControl]="dateOks6Control" [matDatepicker]="dateOks6"
                                 (dateChange)="update()">
                                 <mat-datepicker #dateOks6></mat-datepicker>
@@ -137,7 +165,7 @@
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 7</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks7"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[6]"
                                 [formControl]="dateOks7Control" [matDatepicker]="dateOks7"
                                 (dateChange)="update()">
                                 <mat-datepicker #dateOks7></mat-datepicker>
@@ -145,7 +173,7 @@
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 8</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks8"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[7]"
                                 [formControl]="dateOks8Control" [matDatepicker]="dateOks8"
                                 (dateChange)="update()">
                                 <mat-datepicker #dateOks8></mat-datepicker>
@@ -153,7 +181,7 @@
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 9</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks9"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[8]"
                                 [formControl]="dateOks9Control" [matDatepicker]="dateOks9"
                                 (dateChange)="update()">
                                 <mat-datepicker #dateOks9></mat-datepicker>
@@ -161,7 +189,7 @@
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 10</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks10"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[9]"
                                 [formControl]="dateOks10Control" [matDatepicker]="dateOks10"
                                 (dateChange)="update()">
                                 <mat-datepicker #dateOks10></mat-datepicker>
@@ -169,7 +197,7 @@
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
                                 <mat-label>Termin 11</mat-label>
-                                <input matInput [ngModel]="configurationData.dateOks11"
+                                <input matInput [ngModel]="configurationData.plannedDatesOks[10]"
                                 [formControl]="dateOks11Control" [matDatepicker]="dateOks11"
                                 (dateChange)="update()">
                                 <mat-datepicker #dateOks11></mat-datepicker>

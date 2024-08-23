@@ -115,7 +115,7 @@ export class ActivityAttributesComponent implements OnInit {
       }
     });
 
-    this.appConfigService.getConfigurationData()
+    this.appConfigService.getConfigurationData(true)
       .subscribe({
         next: (configData) => {
           if (configData) {
