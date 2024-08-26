@@ -198,25 +198,28 @@
                                                         'dd.MM.yyyy'}}</span>
                                                 </mat-chip>
                                             </div>
-                                            <button (click)="openMail(roadWorkActivityFeature.properties.status)"
-                                            style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                            [disabled]="(roadWorkActivityFeature.properties.status != 'inconsult'
-                                                    && roadWorkActivityFeature.properties.status != 'reporting')
-                                                    || roadWorkActivityFeature.properties.isPrivate
-                                                    || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                            mat-button>Rundmail senden</button>
                                             <button (click)="update(false, 'inconsult')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 [disabled]="roadWorkActivityFeature.properties.status != 'review' 
                                                         || roadWorkActivityFeature.properties.isPrivate
                                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
                                                 mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
+                                            <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult'"
+                                                (click)="openMail('inconsult')"
+                                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
+                                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
                                             <button (click)="update(false, 'reporting')"
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 [disabled]="roadWorkActivityFeature.properties.status != 'verified'
                                                         || roadWorkActivityFeature.properties.isPrivate
                                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
                                                 mat-button>Stellungnahme durchf&uuml;hren</button>
+                                            <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
+                                                (click)="openMail('reporting')"
+                                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
+                                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
                                             <button
                                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                                 disabled mat-button>Infoversand durchführen</button>
@@ -475,8 +478,7 @@
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isStudy"
-                                                    (change)="onChangeIsStudy()"
-                                                    style="margin:10px;">
+                                                    (change)="onChangeIsStudy()" style="margin:10px;">
                                                     Vorstudie
                                                 </mat-checkbox>
                                                 <br>
