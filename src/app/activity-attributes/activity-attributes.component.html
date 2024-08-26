@@ -475,6 +475,7 @@
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isStudy"
+                                                    (change)="onChangeIsStudy()"
                                                     style="margin:10px;">
                                                     Vorstudie
                                                 </mat-checkbox>

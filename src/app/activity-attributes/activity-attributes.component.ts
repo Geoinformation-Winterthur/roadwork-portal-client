@@ -592,6 +592,15 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  onChangeIsStudy(){
+    if(this.roadWorkActivityFeature){
+      if(!this.roadWorkActivityFeature.properties.isStudy){
+        this.roadWorkActivityFeature.properties.dateStudyStart = undefined;
+        this.roadWorkActivityFeature.properties.dateStudyEnd = undefined;
+      }  
+    }
+  }
+
   ngOnDestroy() {
     this.activatedRouteSubscription.unsubscribe();
   }
