@@ -1,35 +1,15 @@
 
-.chip-notcoord {
-    color: white;
-    background-color: rgb(47, 85, 150);
+.chip-phase-1 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(147, 227, 255);
 }
 
-.chip-inwork {
-    color: white;
-    background-color: rgb(47, 85, 150);
+.chip-phase-2 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(61, 195, 244);
 }
 
-.chip-inconsult {
-    color: white;
-    background-color: rgb(47, 85, 150);
-}
-
-.chip-coordinated {
-    color: white;
-    background-color: rgb(47, 85, 150);
-}
-
-.chip-provfixed {
-    color: white;
-    background-color: rgb(47, 85, 150);
-}
-
-.chip-deffixed {
-    color: white;
-    background-color: rgb(47, 85, 150);
-}
-
-.chip-executed {
-    color: white;
-    background-color: rgb(47, 85, 150);
+.chip-suspended {
+    color: rgb(218, 218, 218);
+    background-color: rgb(86, 86, 86);
 }
