@@ -35,6 +35,7 @@ export class ErrorMessageDictionary {
              "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet",
              "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist",
              "Abbruch, da dieser Statusübergang nicht zulässig ist",
-             "Vorstudie ohne Start- oder Enddatum im Plantermin"
+             "Vorstudie ohne Start- oder Enddatum im Plantermin. Änderung wurde nicht gespeichert",
+             "Startdatum der Vorstudie liegt nach dem Enddatum. Änderung wurde nicht gespeichert"
             ];
 }
