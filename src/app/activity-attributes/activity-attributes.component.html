@@ -335,14 +335,28 @@
                                         <div
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                             Strategische Koordinationssitzung (SKS):<br>
-                                            <b>{{roadWorkActivityFeature.properties.dateSks |
-                                                date:'dd.MM.yyyy'}}</b>
+                                            <b>
+                                                <span *ngIf="roadWorkActivityFeature.properties.dateSks">
+                                                    {{roadWorkActivityFeature.properties.dateSks |
+                                                    date:'dd.MM.yyyy'}}
+                                                </span>
+                                                <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
+                                                    Sitzung konnte nicht ermittelt werden
+                                                </span>
+                                            </b>
                                         </div>
                                         <div
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                             Koordinationsausschuss Projekte (KAP):<br>
-                                            <b>{{roadWorkActivityFeature.properties.dateKap |
-                                                date:'dd.MM.yyyy'}}</b>
+                                            <b>
+                                                <span *ngIf="roadWorkActivityFeature.properties.dateKap">
+                                                    {{roadWorkActivityFeature.properties.dateKap |
+                                                    date:'dd.MM.yyyy'}}
+                                                </span>
+                                                <span *ngIf="!roadWorkActivityFeature.properties.dateKap">
+                                                    Sitzung konnte nicht ermittelt werden
+                                                </span>
+                                            </b>
                                         </div>
                                         <div *ngIf="roadWorkActivityFeature.properties.dateGlTba"
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
@@ -558,14 +572,28 @@
                                             <div
                                                 style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                                 Strategische Koord. (SKS):<br>
-                                                <b>{{roadWorkActivityFeature.properties.dateSks |
-                                                    date:'dd.MM.yyyy'}}</b>
+                                                <b>
+                                                    <span *ngIf="roadWorkActivityFeature.properties.dateSks">
+                                                        {{roadWorkActivityFeature.properties.dateSks |
+                                                        date:'dd.MM.yyyy'}}
+                                                    </span>
+                                                    <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
+                                                        Sitzung konnte nicht ermittelt werden
+                                                    </span>
+                                                </b>
                                             </div>
                                             <div
                                                 style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                                 Koordinationsausschuss Projekte (KAP):<br>
-                                                <b>{{roadWorkActivityFeature.properties.dateKap |
-                                                    date:'dd.MM.yyyy'}}</b>
+                                                <b>
+                                                    <span *ngIf="roadWorkActivityFeature.properties.dateKap">
+                                                        {{roadWorkActivityFeature.properties.dateKap |
+                                                        date:'dd.MM.yyyy'}}
+                                                    </span>
+                                                    <span *ngIf="!roadWorkActivityFeature.properties.dateKap">
+                                                        Sitzung konnte nicht ermittelt werden
+                                                    </span>
+                                                </b>
                                             </div>
                                             <form>
                                                 <mat-form-field style="margin:10px;">
