@@ -287,7 +287,7 @@
                                                 <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectType"
                                                     [formControl]="projectTypeEnumControl"
                                                     (selectionChange)='onRoadWorkActivityEnumChange()'
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || roadWorkActivityFeature.properties.uuid===''">
+                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-option
                                                         *ngFor="let availableProjectType of availableProjectTypes"
                                                         [value]="availableProjectType.code">
