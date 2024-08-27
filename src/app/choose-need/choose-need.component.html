@@ -90,7 +90,7 @@
             </mat-chip-list>
           </p>
           <div style="margin-left: 0.7em;">
-            <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+            <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=1000&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
               target="_blank">
               Im Stadtplan</a>
             <a href="http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}"
@@ -139,7 +139,7 @@
       <ng-container matColumnDef="link_cityplan">
         <th mat-header-cell *matHeaderCellDef> Stadtplan-Link </th>
         <td mat-cell *matCellDef="let roadWorkNeed">
-          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=391&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+          <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=1000&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
             target="_blank">Im Stadtplan</a>
         </td>
       </ng-container>
