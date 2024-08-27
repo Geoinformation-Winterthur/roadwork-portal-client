@@ -103,7 +103,7 @@ export class EditActivityMapComponent implements OnInit {
       let status: string = feature.get('status');
       let dateSksReal = feature.get('dateSksReal');
       if (status === 'coordinated' && dateSksReal)
-          return true;
+        return true;
       return false;
     }
 
@@ -115,7 +115,7 @@ export class EditActivityMapComponent implements OnInit {
         stroke: new Stroke({
           color: "rgba(147, 227, 255, 1.0)",
           width: 2,
-          lineDash: isRoadWorkActFinished(feature) ? [] : [6, 6] 
+          lineDash: isRoadWorkActFinished(feature) ? [] : [6, 6]
         })
       });
       return [roadWorkActivityLayerStyle];
@@ -183,9 +183,9 @@ export class EditActivityMapComponent implements OnInit {
             serverType: 'mapserver',
           })
         }),
+        roadWorkNeedLayer,
         roadWorkActivityLayer,
-        userDrawLayer,
-        roadWorkNeedLayer
+        userDrawLayer
       ],
       view: new View({
         projection: epsg2056Proj,
@@ -340,7 +340,8 @@ export class EditActivityMapComponent implements OnInit {
   }
 
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
-    this.roadWorkNeedService.getRoadWorkNeeds([], this.chosenYear,
+    this.roadWorkNeedSource.clear();
+    this.roadWorkNeedService.getRoadWorkNeeds([], undefined,
       "", "", false, undefined, undefined, ["requirement"])
       .subscribe({
         next: (roadWorkNeeds) => {
@@ -350,11 +351,20 @@ export class EditActivityMapComponent implements OnInit {
         error: (error) => {
         }
       });
+    if (this.roadWorkActivityFeat && !this.roadWorkActivityFeat.properties.dateSksReal) {
+      this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeat.properties.roadWorkNeedsUuids)
+        .subscribe({
+          next: (roadWorkNeeds) => {
+            this.needsOnMap = roadWorkNeeds;
+            this._putRoadworksOnMap(refreshExtent);
+          },
+          error: (error) => {
+          }
+        });
+    }
   }
 
   private _putRoadworksOnMap(refreshExtent: boolean) {
-
-    this.roadWorkNeedSource.clear();
     let i: number = 0;
     for (let roadWorkNeedFeature of this.needsOnMap) {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(roadWorkNeedFeature.geometry);
