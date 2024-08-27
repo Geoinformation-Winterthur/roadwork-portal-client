@@ -99,23 +99,35 @@ export class EditActivityMapComponent implements OnInit {
 
   initializeMap() {
 
-    let roadWorkActivityLayerStyle: Style = new Style({
-      fill: new Fill({
-        color: 'rgba(147, 227, 255, 0.1)'
-      }),
-      stroke: new Stroke({
-        color: 'rgba(147, 227, 255, 1.0)',
-        width: 2
-      })
-    });
+    function isRoadWorkActFinished(feature: any): boolean {
+      let status: string = feature.get('status');
+      let dateSksReal = feature.get('dateSksReal');
+      if (status === 'coordinated' && dateSksReal)
+          return true;
+      return false;
+    }
+
+    function roadWorkActivityLayerStyleFunc(feature: any) {
+      let roadWorkActivityLayerStyle: Style = new Style({
+        fill: new Fill({
+          color: 'rgba(147, 227, 255, 0.1)'
+        }),
+        stroke: new Stroke({
+          color: "rgba(147, 227, 255, 1.0)",
+          width: 2,
+          lineDash: isRoadWorkActFinished(feature) ? [] : [6, 6] 
+        })
+      });
+      return [roadWorkActivityLayerStyle];
+    }
 
     this.roadWorkActivitySource = new VectorSource({ wrapX: false });
     let roadWorkActivityLayer = new VectorLayer({
       source: this.roadWorkActivitySource,
-      style: roadWorkActivityLayerStyle
+      style: roadWorkActivityLayerStyleFunc
     });
 
-    function roadWorkNeedLayerStyleFunc(feature: any, resolution: any) {
+    function roadWorkNeedLayerStyleFunc(feature: any) {
       let roadWorkNeedLayerStyle: Style = new Style({
         fill: new Fill({
           color: 'rgba(149, 35, 210, 0.1)'
@@ -372,6 +384,9 @@ export class EditActivityMapComponent implements OnInit {
         id: 1,
         geometry: activityPoly
       });
+
+      activityFeature.set("status", this.roadWorkActivityFeat.properties.status);
+      activityFeature.set("dateSksReal", this.roadWorkActivityFeat.properties.dateSksReal);
 
       this.roadWorkActivitySource.clear();
       this.roadWorkActivitySource.addFeature(activityFeature);
