@@ -91,7 +91,7 @@ export class ActivityAttributesComponent implements OnInit {
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService, router: Router,
-    snckBar: MatSnackBar,  documentService: DocumentService) {
+    snckBar: MatSnackBar, documentService: DocumentService) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
@@ -592,12 +592,12 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  onChangeIsStudy(){
-    if(this.roadWorkActivityFeature){
-      if(!this.roadWorkActivityFeature.properties.isStudy){
+  onChangeIsStudy() {
+    if (this.roadWorkActivityFeature) {
+      if (!this.roadWorkActivityFeature.properties.isStudy) {
         this.roadWorkActivityFeature.properties.dateStudyStart = undefined;
         this.roadWorkActivityFeature.properties.dateStudyEnd = undefined;
-      }  
+      }
     }
   }
 
@@ -665,19 +665,28 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature &&
       (newStatus == "inconsult" || newStatus == "reporting")) {
 
-      if (this.involvedUsers.length > 0)
-        mailText += this.involvedUsers[0].mailAddress + ";";
+      if (this.involvedUsers.length > 0) {
+        mailText += this.involvedUsers[0].mailAddress + ";"
+      }
 
       for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
         mailText += involvedUser.mailAddress + ";";
       }
 
+      let separator = "?";
+
+      let loggedInUser = this.userService.getLocalUser();
+      if (loggedInUser && loggedInUser.mailAddress) {
+        mailText += separator + "cc=" + loggedInUser.mailAddress;
+        separator = "&";
+      }
+
       if (newStatus == "inconsult")
-        mailText += "?subject=Die Bedarfsklärung zum Bauvorhaben '" +
+        mailText += separator + "subject=Die Bedarfsklärung zum Bauvorhaben '" +
           this.roadWorkActivityFeature.properties.name +
           "' beginnt. Ihre Meinung ist gefragt.&";
       else if (newStatus == "reporting")
-        mailText += "?subject=Die Stellungnahme zum Bauvorhaben '" +
+        mailText += separator + "subject=Die Stellungnahme zum Bauvorhaben '" +
           this.roadWorkActivityFeature.properties.name +
           "' beginnt. Ihre Meinung ist gefragt.&";
       mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
@@ -696,6 +705,7 @@ export class ActivityAttributesComponent implements OnInit {
       mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
       mailText += "Tiefbauamt, Abteilung Planung & Koordination%0A%0A";
+
       window.open(mailText, "_blank", "noreferrer");
 
     }
