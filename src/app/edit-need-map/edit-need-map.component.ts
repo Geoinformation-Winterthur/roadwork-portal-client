@@ -167,23 +167,23 @@ export class EditNeedMapComponent implements OnInit {
 
     this.userDrawSource.on('addfeature', this.addFeatureFinished);
 
-    this.loadGeometry(true);
+    this._putRoadworkNeedOnMap(true);
 
   }
 
-  loadGeometry(refreshExtent: boolean) {
+  private _putRoadworkNeedOnMap(refreshExtent: boolean) {
     if (this.roadWorkNeedFeat !== undefined) {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkNeedFeat.geometry);
 
-      let testFeature: Feature = new Feature({
+      let roadworkNeedFeature: Feature = new Feature({
         type: "Feature",
         name: "testFeature",
-        id: 231243,
+        id: 123456,
         geometry: needPoly
       });
 
       this.loadSource.clear();
-      this.loadSource.addFeature(testFeature);
+      this.loadSource.addFeature(roadworkNeedFeature);
       this.loadSource.changed();
 
       if (refreshExtent) {
@@ -199,7 +199,7 @@ export class EditNeedMapComponent implements OnInit {
       let feature1 = features[0];
       let geom: Polygon = feature1.getGeometry() as Polygon;
       this.roadWorkNeedFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
-      this.loadGeometry(false);
+      this._putRoadworkNeedOnMap(false);
       if (this.roadWorkNeedFeat.properties.uuid) {
         this.managementAreaService.getIntersectingManagementArea(this.roadWorkNeedFeat.geometry)
           .subscribe({

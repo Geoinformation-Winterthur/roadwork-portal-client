@@ -224,13 +224,10 @@ export class EditActivityMapComponent implements OnInit {
     if (this.roadWorkActivityFeat != undefined) {
       let features = this.userDrawSource.getFeatures();
       let feature1 = features[0];
-      let geom1: Polygon = feature1.getGeometry() as Polygon;
-      let geom2: Polygon = geom1.clone();
-      geom2.transform('EPSG:3857', "EPSG:2056");
-      this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom2);
+      let geom: Polygon = feature1.getGeometry() as Polygon;
+      this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(geom);
       this._putRoadworksOnMap(false);
       if (this.roadWorkActivityFeat.properties.uuid) {
-
         this.managementAreaService.getIntersectingManagementArea(this.roadWorkActivityFeat.geometry)
           .subscribe({
             next: (managementArea) => {
@@ -368,7 +365,6 @@ export class EditActivityMapComponent implements OnInit {
     let i: number = 0;
     for (let roadWorkNeedFeature of this.needsOnMap) {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(roadWorkNeedFeature.geometry);
-      needPoly.transform("EPSG:2056", 'EPSG:3857');
 
       let needFeature: Feature = new Feature({
         type: "Feature",
@@ -386,12 +382,10 @@ export class EditActivityMapComponent implements OnInit {
     if (this.roadWorkActivityFeat !== undefined) {
       let activityPoly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkActivityFeat.geometry);
 
-      activityPoly.transform("EPSG:2056", 'EPSG:3857');
-
       let activityFeature: Feature = new Feature({
         type: "Feature",
         name: "Roadwork activity",
-        id: 1,
+        id: i++,
         geometry: activityPoly
       });
 
@@ -400,7 +394,6 @@ export class EditActivityMapComponent implements OnInit {
 
       this.roadWorkActivitySource.clear();
       this.roadWorkActivitySource.addFeature(activityFeature);
-
       this.roadWorkActivitySource.changed();
 
       if (refreshExtent) {
@@ -420,14 +413,9 @@ export class EditActivityMapComponent implements OnInit {
 
   private setViewToPolyExtent(polyExtent: Extent) {
     if (polyExtent && polyExtent.length >= 0 && polyExtent[0] !== Infinity) {
-      // extent: [minx, miny, maxx, maxy]
-      let extentCenterX: number = polyExtent[0] + ((polyExtent[2] - polyExtent[0]) / 2.0);
-      let extentCenterY: number = polyExtent[1] + ((polyExtent[3] - polyExtent[1]) / 2.0);
-      var extentCenter: Point = new Point([extentCenterX, extentCenterY]);
-
+      const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
       let view = new View({
-        center: extentCenter.getCoordinates(),
-        zoom: 15
+        projection: epsg2056Proj
       });
       view.fit(polyExtent);
 
