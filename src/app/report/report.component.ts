@@ -64,16 +64,16 @@ export class ReportComponent implements OnInit {
 
   activitiesOfAreaManagerChart = {
     chartData: [
-      { data: [0], label: 'Anzahl Bauvorhaben pro Gebietsmanagement' }
+      {
+        data: [0],
+        label: 'Anzahl Bauvorhaben pro Gebietsmanagement',
+        backgroundColor: ['']
+      }
     ],
     chartLabels: [''],
     chartOptions: {
       responsive: true
     },
-    chartColors: [{
-      backgroundColor: '',
-      borderColor: ''
-    }],
     chartLegend: true,
     chartPlugins: []
   }
@@ -130,7 +130,7 @@ export class ReportComponent implements OnInit {
           let chartLabels: string[] = [];
           let chartValues: number[] = [];
           let chartColorsTemp = [];
-          this.activitiesOfAreaManagerChart.chartColors = [];
+          this.activitiesOfAreaManagerChart.chartData[0].backgroundColor = [];
           for (let chartEntry of chartEntries) {
             if (chartEntry.value) {
               let randomRgb: string = Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255);
@@ -138,14 +138,14 @@ export class ReportComponent implements OnInit {
               let randBorderColor: string = "rgba(" + randomRgb + ",1.0)";
               chartLabels.push(chartEntry.label);
               chartValues.push(chartEntry.value);
-              chartColorsTemp.push({ backgroundColor: randBackgroundColor, borderColor: randBorderColor})
+              chartColorsTemp.push(randBackgroundColor);
             }
           }
 
           this.activitiesOfAreaManagerChart.chartLabels = chartLabels;
           this.activitiesOfAreaManagerChart.chartData[0].data = chartValues;
-          this.activitiesOfAreaManagerChart.chartColors = chartColorsTemp;
-          
+          this.activitiesOfAreaManagerChart.chartData[0].backgroundColor = chartColorsTemp;
+
         },
         error: (error) => {
         }
