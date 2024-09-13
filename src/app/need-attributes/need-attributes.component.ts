@@ -52,21 +52,6 @@ export class NeedAttributesComponent implements OnInit {
 
   overarchingMeasureControl: FormControl = new FormControl();
 
-  private _isUrlValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      let urlToCheck = control.value;
-      if (!urlToCheck)
-        return null;
-      try {
-        let urlObj = new URL(urlToCheck);
-        return null;
-      } catch (_) {
-        return { noUrl: true };
-      }
-    }
-  }
-
-
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
@@ -122,6 +107,9 @@ export class NeedAttributesComponent implements OnInit {
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
 
                   if (this.roadWorkNeedFeature) {
+                    if(!roadWorkNeedFeature.properties.spongeCityMeasures)
+                      roadWorkNeedFeature.properties.spongeCityMeasures = [];
+
                     this.finishOptimumFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo));
                     this.finishEarlyFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishEarlyTo));
                     this.finishLateFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo));
@@ -212,7 +200,7 @@ export class NeedAttributesComponent implements OnInit {
 
                 // editing is not allowed anymore when the need goes public (is not private):
                 if (!this.roadWorkNeedFeature?.properties.isPrivate &&
-                        this.userService.getLocalUser().chosenRole != 'administrator') {
+                  this.userService.getLocalUser().chosenRole != 'administrator') {
                   this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                 }
 
@@ -255,10 +243,10 @@ export class NeedAttributesComponent implements OnInit {
     } else if (quartalType === "finishLateQuartal") {
       this.roadWorkNeedFeature!.properties.finishLateTo =
         this._convertQuartalToDate(newQuartal);
-        if (newQuartal < this.finishOptimumFormControl.value)
-          this._setQuartalValue(newQuartal, "finishOptimumQuartal");
-        if (newQuartal < this.finishEarlyFormControl.value)
-          this._setQuartalValue(newQuartal, "finishEarlyQuartal");
+      if (newQuartal < this.finishOptimumFormControl.value)
+        this._setQuartalValue(newQuartal, "finishOptimumQuartal");
+      if (newQuartal < this.finishEarlyFormControl.value)
+        this._setQuartalValue(newQuartal, "finishEarlyQuartal");
     }
 
   }
@@ -288,7 +276,7 @@ export class NeedAttributesComponent implements OnInit {
 
                         // editing is not allowed anymore when the need goes public (is not private):
                         if (!this.roadWorkNeedFeature?.properties.isPrivate &&
-                                this.userService.getLocalUser().chosenRole != 'administrator') {
+                          this.userService.getLocalUser().chosenRole != 'administrator') {
                           this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 
@@ -571,6 +559,7 @@ export class NeedAttributesComponent implements OnInit {
     roadWorkNeedFeature.properties.created = new Date();
     roadWorkNeedFeature.properties.lastModified = new Date();
     roadWorkNeedFeature.properties.orderer = user;
+    roadWorkNeedFeature.properties.spongeCityMeasures = [];
 
     let today: Date = new Date();
 

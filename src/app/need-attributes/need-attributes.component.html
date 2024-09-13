@@ -228,8 +228,41 @@
                                 style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkNeedFeature.properties.isPrivate && 
                                             userService.getLocalUser().chosenRole != 'administrator'"
                                 mat-button>L&Ouml;SCHEN</button>
-                            <div style="margin-top: 3em;">
-                                <h3>Dokumente</h3>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Beteiligte</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <p>Besteller: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
+                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
+                                </p>
+                                <p>Bedarfsstelle:
+                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
+                                </p>
+                                <p>Gebietsmanagement:
+                                    <b>{{roadWorkNeedFeature.properties.managementArea?.manager?.firstName}}
+                                        {{roadWorkNeedFeature.properties.managementArea?.manager?.lastName}}
+                                    </b>
+                                </p>
+                                <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
+                                <p>
+                                    Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
+                                        date:'dd.MM.yyyy'}}</b>
+                                </p>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title>Dokumente</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div>
                                 <mat-form-field style="width: 100%;">
                                     <input matInput maxlength="2048" [(ngModel)]="roadWorkNeedFeature.properties.url"
                                         placeholder="Link (URL)"
@@ -264,26 +297,43 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
-                            <mat-card-title>Beteiligte</mat-card-title>
+                            <mat-card-title>Schwammstadt</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Besteller: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
-                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
-                                </p>
-                                <p>Bedarfsstelle:
-                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
-                                </p>
-                                <p>Gebietsmanagement:
-                                    <b>{{roadWorkNeedFeature.properties.managementArea?.manager?.firstName}}
-                                        {{roadWorkNeedFeature.properties.managementArea?.manager?.lastName}}
-                                    </b>
-                                </p>
-                                <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
-                                <p>
-                                    Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
-                                        date:'dd.MM.yyyy'}}</b>
-                                </p>
+                                <mat-checkbox style="margin: 1em;"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.hasSpongeCityMeasures"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    Schwammstadt-Massnahme
+                                </mat-checkbox>
+                                <div *ngIf="roadWorkNeedFeature.properties.hasSpongeCityMeasures">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Schwammstadt-Massnahmen</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.spongeCityMeasures"
+                                            multiple [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            <mat-option value="1.1">1.1 Versickerungsmulden</mat-option>
+                                            <mat-option value="1.2">1.2 Tiefbeet</mat-option>
+                                            <mat-option value="1.3">1.3 Schotterrasen</mat-option>
+                                            <mat-option value="1.4">1.4 Chaussierung</mat-option>
+                                            <mat-option value="1.5">1.5 Rasengitterstein</mat-option>
+                                            <mat-option value="1.6">1.6 Plattenbelag breiten Fugen</mat-option>
+                                            <mat-option value="1.7">1.7 Plattenbelag mit schmalen Fugen</mat-option>
+                                            <mat-option value="1.8">1.8 Unterirdische Versickerung</mat-option>
+                                            <mat-option value="2.1">2.1 Baumgrube mit Baumsubstrat</mat-option>
+                                            <mat-option value="2.2">2.2 Vegetations-Pufferzone</mat-option>
+                                            <mat-option value="2.3">2.3 Verdunstungsbecken</mat-option>
+                                            <mat-option value="2.4">2.4 Intensive Dachbegrünung</mat-option>
+                                            <mat-option value="2.5">2.5 Extensive Dachbegrünung</mat-option>
+                                            <mat-option value="2.6">2.6 Vertikalbegrünung</mat-option>
+                                            <mat-option value="2.7">2.7 Begrünte Pergola</mat-option>
+                                            <mat-option value="3.1">3.1 Retention im Strassenraum</mat-option>
+                                            <mat-option value="3.2">3.2 Retention auf Platzflächen</mat-option>
+                                            <mat-option value="3.3">3.3 Unterirdische Retention</mat-option>
+                                            <mat-option value="4.1">4.1 Regenwassertank</mat-option>
+                                            <mat-option value="4.2">4.2 Erlebbares Regenwasser</mat-option>
+                                            <mat-option value="5.1">5.1 Filterreinigung</mat-option> </mat-select>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>
