@@ -36,4 +36,6 @@ export class RoadWorkNeedProperties {
     desiredYearTo?: number;
     managementArea?: ManagementArea;
     hasPdfDocument: boolean = false;
+    hasSpongeCityMeasures: boolean = false;
+    spongeCityMeasures: string[] = [];
 }
