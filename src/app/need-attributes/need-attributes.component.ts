@@ -45,7 +45,6 @@ export class NeedAttributesComponent implements OnInit {
 
   showRelevanceInfo: boolean = false;
 
-  user: User = new User();
   userService: UserService;
 
   environment = environment;
@@ -88,7 +87,8 @@ export class NeedAttributesComponent implements OnInit {
 
         if (idParamString == "new") {
           this.roadWorkNeedFeature = NeedAttributesComponent.
-            _createNewRoadWorkNeedFeature(this.userService.getLocalUser());
+            _createNewRoadWorkNeedFeature();
+          this._setUserOnRoadworkNeed();
           this.roadWorkNeedFeature.properties.managementArea = NeedAttributesComponent.
             _createNewManagementArea();
         } else {
@@ -123,33 +123,6 @@ export class NeedAttributesComponent implements OnInit {
                         }
                       },
                       error: (error) => {
-                      }
-                    });
-
-                  this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
-                    .subscribe({
-                      next: (users) => {
-                        if (users && users.length > 0 && users[0]) {
-                          let user: User = users[0];
-                          ErrorMessageEvaluation._evaluateErrorMessage(user);
-                          if (user && user.errorMessage &&
-                            user.errorMessage.trim().length !== 0) {
-                            this.snckBar.open(user.errorMessage, "", {
-                              duration: 4000
-                            });
-                          } else {
-                            this.user = user;
-                            if (this.roadWorkNeedFeature) {
-                              this.roadWorkNeedFeature.properties.orderer.organisationalUnit =
-                                user.organisationalUnit;
-                            }
-                          }
-                        }
-                      },
-                      error: (error) => {
-                        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
-                          duration: 4000
-                        });
                       }
                     });
                 }
@@ -495,6 +468,33 @@ export class NeedAttributesComponent implements OnInit {
     this.activatedRouteSubscription.unsubscribe();
   }
 
+  private _setUserOnRoadworkNeed(){
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
+    .subscribe({
+      next: (users) => {
+        if (users && users.length > 0 && users[0]) {
+          let user: User = users[0];
+          ErrorMessageEvaluation._evaluateErrorMessage(user);
+          if (user && user.errorMessage &&
+            user.errorMessage.trim().length !== 0) {
+            this.snckBar.open(user.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            if (this.roadWorkNeedFeature) {
+              this.roadWorkNeedFeature.properties.orderer = user;
+            }
+          }
+        }
+      },
+      error: (error) => {
+        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+          duration: 4000
+        });
+      }
+    });
+  }
+
   private _setQuartalValue(newQuartal: number, quartalType: string) {
     if (quartalType === "finishEarlyQuartal") {
       this.finishEarlyFormControl.setValue(newQuartal);
@@ -549,7 +549,7 @@ export class NeedAttributesComponent implements OnInit {
     return Math.ceil(monthDiff / 3);
   }
 
-  private static _createNewRoadWorkNeedFeature(user: User): RoadWorkNeedFeature {
+  private static _createNewRoadWorkNeedFeature(): RoadWorkNeedFeature {
 
     let roadWorkNeedFeature: RoadWorkNeedFeature = new RoadWorkNeedFeature();
     roadWorkNeedFeature.properties.status = "requirement";
@@ -558,7 +558,6 @@ export class NeedAttributesComponent implements OnInit {
     roadWorkNeedFeature.properties.isPrivate = true;
     roadWorkNeedFeature.properties.created = new Date();
     roadWorkNeedFeature.properties.lastModified = new Date();
-    roadWorkNeedFeature.properties.orderer = user;
     roadWorkNeedFeature.properties.spongeCityMeasures = [];
 
     let today: Date = new Date();
