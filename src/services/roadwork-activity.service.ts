@@ -80,9 +80,10 @@ export class RoadWorkActivityService {
     return result;
   }
 
-  deleteRoadWorkActivity(uuid: string): Observable<ErrorMessage> {
+  deleteRoadWorkActivity(uuid: string, deleteReason: string = ""): Observable<ErrorMessage> {
     let result: Observable<ErrorMessage> =
-      this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" + uuid) as Observable<ErrorMessage>;
+      this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" +
+        uuid + "&deletereason=" + deleteReason) as Observable<ErrorMessage>;
     return result;
   }
 

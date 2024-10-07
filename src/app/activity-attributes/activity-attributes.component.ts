@@ -26,6 +26,8 @@ import { environment } from 'src/environments/environment';
 import { StatusHelper } from 'src/helper/status-helper';
 import { EnumType } from 'src/model/enum-type';
 import { DocumentService } from 'src/services/document.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-activity-dialog.component';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -85,13 +87,14 @@ export class ActivityAttributesComponent implements OnInit {
   private documentService: DocumentService;
   private appConfigService: AppConfigService;
 
+  private dialog: MatDialog;
   private snckBar: MatSnackBar;
 
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService, router: Router,
-    snckBar: MatSnackBar, documentService: DocumentService) {
+    snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
@@ -104,6 +107,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.snckBar = snckBar;
     this.statusHelper = new StatusHelper();
     this.documentService = documentService;
+    this.dialog = dialog;
   }
 
   ngOnInit() {
@@ -363,27 +367,6 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  deleteRoadworkActivity(uuid: string) {
-    this.roadWorkActivityService.deleteRoadWorkActivity(uuid).subscribe({
-      next: (errorMessage) => {
-        if (errorMessage != null && errorMessage.errorMessage != null &&
-          errorMessage.errorMessage.trim().length !== 0) {
-          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
-          this.snckBar.open(errorMessage.errorMessage, "", {
-            duration: 4000
-          });
-        } else {
-          this.router.navigate(["/activities/"]);
-          this.snckBar.open("Bauvorhaben wurde gelöscht", "", {
-            duration: 4000,
-          });
-        }
-      },
-      error: (error) => {
-      }
-    });
-  }
-
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.projectType = this.projectTypeEnumControl.value;
@@ -589,6 +572,14 @@ export class ActivityAttributesComponent implements OnInit {
           });
         }
       });
+    }
+  }
+
+  openDeleteDialog() {
+    if(this.roadWorkActivityFeature){
+      this.dialog.open(DeleteActivityDialogComponent,
+        {data: {roadWorkActivityUuid: this.roadWorkActivityFeature?.properties.uuid}}
+      );  
     }
   }
 
