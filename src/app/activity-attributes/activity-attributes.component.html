@@ -261,12 +261,16 @@
                                             </b>
                                         </p>
                                         <p>Beteiligte:
-                                            <b>
+                                            <b *ngIf="!involvedOrgs || involvedOrgs.length == 0">
+                                                keine
+                                            </b>
+                                            <b *ngIf="involvedOrgs && involvedOrgs.length != 0">
                                                 <span *ngFor="let involvedOrg of involvedOrgs">
                                                     {{involvedOrg.abbreviation}},
                                                 </span>
                                             </b>
                                         </p>
+                                        <!--
                                         <form class="choose_user_role_form" style="margin-top: 1em;">
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Projektleitung</mat-label>
@@ -281,6 +285,7 @@
                                                 </mat-select>
                                             </mat-form-field>
                                         </form>
+                                        -->
                                         <form class="choose_user_role_form">
                                             <mat-form-field appearance="fill">
                                                 <mat-label>Projekttyp</mat-label>
