@@ -575,12 +575,37 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  openDeleteDialog() {
-    if(this.roadWorkActivityFeature){
-      this.dialog.open(DeleteActivityDialogComponent,
-        {data: {roadWorkActivityUuid: this.roadWorkActivityFeature?.properties.uuid}}
-      );  
+  removeRoadworkActivity() {
+    if (this.roadWorkActivityFeature) {
+      if (this.roadWorkActivityFeature.properties.isPrivate) {
+        this._deleteRoadworkActivity(this.roadWorkActivityFeature.properties.uuid);
+      } else {
+        this.dialog.open(DeleteActivityDialogComponent,
+          { data: { roadWorkActivityUuid: this.roadWorkActivityFeature?.properties.uuid } }
+        );
+      }
     }
+  }
+
+  private _deleteRoadworkActivity(roadWorkActivityUuid: string) {
+    this.roadWorkActivityService.deleteRoadWorkActivity(roadWorkActivityUuid).subscribe({
+      next: (errorMessage) => {
+        if (errorMessage != null && errorMessage.errorMessage != null &&
+          errorMessage.errorMessage.trim().length !== 0) {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+          this.snckBar.open(errorMessage.errorMessage, "", {
+            duration: 4000
+          });
+        } else {
+          this.router.navigate(["/activities/"]);
+          this.snckBar.open("Bauvorhaben wurde gelöscht", "", {
+            duration: 4000,
+          });
+        }
+      },
+      error: (error) => {
+      }
+    });
   }
 
   onChangeIsStudy() {

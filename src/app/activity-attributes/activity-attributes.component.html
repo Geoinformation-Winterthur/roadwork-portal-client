@@ -322,7 +322,7 @@
                                         <div>
                                             <button *ngIf="roadWorkActivityFeature.properties.isPrivate ||
                                                         userService.getLocalUser().chosenRole == 'administrator'"
-                                                (click)="openDeleteDialog()"
+                                                (click)="removeRoadworkActivity()"
                                                 style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkActivityFeature.properties.isPrivate && 
                                                 !(userService.getLocalUser().chosenRole == 'administrator')"
                                                 mat-button>L&Ouml;SCHEN</button>
