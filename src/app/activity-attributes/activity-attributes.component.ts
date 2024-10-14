@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -28,6 +28,7 @@ import { EnumType } from 'src/model/enum-type';
 import { DocumentService } from 'src/services/document.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-activity-dialog.component';
+import { EditActivityMapComponent } from '../edit-activity-map/edit-activity-map.component';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -36,6 +37,8 @@ import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-
   encapsulation: ViewEncapsulation.None
 })
 export class ActivityAttributesComponent implements OnInit {
+
+  @ViewChild("edit_activity_map") editActivityMap: any;
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
   managementArea?: ManagementArea;
@@ -339,6 +342,12 @@ export class ActivityAttributesComponent implements OnInit {
                           roadWorkActivityFeature.properties.investmentNo = undefined;
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementArea;
+
+                        if (roadWorkActivityFeature.properties.status == "coordinated" &&
+                          roadWorkActivityFeature.properties.dateSksReal) {
+                          this.editActivityMap.setRoadworkActivityFinished();
+                        }
+
                         this._updateDueDate();
 
                         let successMassage: string = "Bauvorhaben wurde erfolgreich gespeichert";

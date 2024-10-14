@@ -13,7 +13,6 @@ import VectorSource from 'ol/source/Vector';
 import Draw from 'ol/interaction/Draw';
 import VectorLayer from 'ol/layer/Vector';
 import { Extent } from 'ol/extent';
-import Point from 'ol/geom/Point';
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
@@ -399,6 +398,17 @@ export class EditActivityMapComponent implements OnInit {
       if (refreshExtent) {
         let polyExtent: Extent = activityPoly.getExtent();
         this.setViewToPolyExtent(polyExtent);
+      }
+    }
+  }
+
+  public setRoadworkActivityFinished(){
+    for(let feature of this.roadWorkActivitySource.getFeatures()){
+      let featName: string = feature.get("name");
+      if(featName === "Roadwork activity"){
+        feature.set("status", 'coordinated');
+        feature.set("dateSksReal", new Date());
+        feature.changed()
       }
     }
   }
