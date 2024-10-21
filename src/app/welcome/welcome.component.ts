@@ -34,7 +34,7 @@ export class WelcomeComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
-  appVersion: string = "2024.25";
+  appVersion: string = "2024.26";
 
   involvedOrgs: Map<string, OrganisationalUnit>;
   displayedColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
