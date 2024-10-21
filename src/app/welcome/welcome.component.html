@@ -30,7 +30,7 @@
             Der Zugriff auf WiKIS ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
             rechten oberen Ecke.
             Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an
-            <a href="mailto:planung.koordination@win.ch">planung.koordination@win.ch</a></p>
+            <a href="mailto:planung.koordination@win.ch">planung.koordination&#64;win.ch</a></p>
         <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
     </div>
     <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
@@ -41,16 +41,13 @@
         <mat-tab-group>
             <mat-tab label="Aktuelles">
                 <div style="margin: 2em;">
-                    <div *ngIf="roadWorkActivityFeaturesInCoordination.length === 0"><span
+                    <div *ngIf="myRoadWorkActivityFeatures.length === 0"><span
                             style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
-                            sind zurzeit keine Bauvorhaben in der Vernehmlassung.</span></div>
-                    <div *ngIf="roadWorkActivityFeaturesInCoordination.length !== 0">Folgende Bauvorhaben sind zurzeit
-                        in
-                        der
-                        <b>Vernehmlassung</b>:
-                        <table mat-table [dataSource]="roadWorkActivityFeaturesInCoordination" class="mat-elevation-z2"
+                            gibt zurzeit keine Bedarfe oder Bauvorhaben im Zusammenhang mit deinem pers&ouml;nlichen Login.</span></div>
+                    <div *ngIf="myRoadWorkActivityFeatures.length !== 0">
+                        Folgende Eintr&auml;ge stehen im Zusammenhang mit deinem pers&ouml;nlichen Login:
+                        <table mat-table [dataSource]="myRoadWorkActivityFeatures" class="mat-elevation-z2"
                             style="width: 100%; margin-top:1em;">
-
                             <ng-container matColumnDef="name">
                                 <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
                                 <td mat-cell *matCellDef="let roadWorkActivity">
@@ -60,26 +57,60 @@
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="manager">
-                                <th mat-header-cell *matHeaderCellDef> Gebietsmanagement </th>
+                            <ng-container matColumnDef="territorymanager">
+                                <th mat-header-cell *matHeaderCellDef><span matTooltip="Gebietsmanagement">GM</span></th>
                                 <td mat-cell *matCellDef="let roadWorkActivity">
                                     {{roadWorkActivity.properties.areaManager?.firstName}}
                                     {{roadWorkActivity.properties.areaManager?.lastName}} </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="created">
-                                <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity"> {{roadWorkActivity.properties.created |
-                                    date:'dd.MM.yyyy'}} </td>
+                            <!--
+                            <ng-container matColumnDef="projectmanager">
+                                <th mat-header-cell *matHeaderCellDef><span matTooltip="Projektmanagement">PM</span></th>
+                                <td mat-cell *matCellDef="let roadWorkActivity">
+                                    {{roadWorkActivity.properties.projectManager?.firstName}}
+                                    {{roadWorkActivity.properties.projectManager?.lastName}} </td>
+                            </ng-container>
+                            -->
+
+                            <ng-container matColumnDef="lead">
+                                <th mat-header-cell *matHeaderCellDef> Lead </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity"><span
+                                    *ngIf="roadWorkActivity.properties.kind">{{roadWorkActivity.properties.kind.name}}</span> </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="period">
-                                <th mat-header-cell *matHeaderCellDef> Realisierung </th>
+                            <ng-container matColumnDef="involved">
+                                <th mat-header-cell *matHeaderCellDef> Beteiligte </th>
                                 <td mat-cell *matCellDef="let roadWorkActivity">
-                                    {{roadWorkActivity.properties.finishEarlyTo
-                                    |
-                                    date:'dd.MM.yyyy'}} - {{roadWorkActivity.properties.finishLateTo | date:'dd.MM.yyyy'}}
+                                    <b *ngIf="!roadWorkActivity.properties.involvedUsers[0]">
+                                        keine
+                                    </b>
+                                    <b *ngIf="roadWorkActivity.properties.involvedUsers[0]">
+                                        <span>
+                                            {{involvedOrgs.get(roadWorkActivity.properties.involvedUsers[0].uuid)?.abbreviation}},
+                                        </span>
+                                    </b>        
                                 </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef> Status </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity">
+                                  <app-status-chip [statusCode]="roadWorkActivity.properties.status" [short]="true"></app-status-chip>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="optimum_date">
+                                <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity">
+                                    {{roadWorkActivity.properties.finishOptimumTo | date:'dd.MM.yyyy'}}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="due_date">
+                                <th mat-header-cell *matHeaderCellDef> F&auml;lligkeit </th>
+                                <td mat-cell *matCellDef="let roadWorkActivity"> {{roadWorkActivity.properties.created |
+                                    date:'dd.MM.yyyy'}} </td>
                             </ng-container>
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
