@@ -5,10 +5,13 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
+import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 
 @Component({
@@ -23,31 +26,61 @@ import { UserService } from 'src/services/user.service';
  */
 export class WelcomeComponent implements OnInit {
 
-  roadWorkActivityFeaturesInCoordination: RoadWorkActivityFeature[] = [];
+  myRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
+  myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
 
   user: User = new User();
   userService: UserService;
 
-  roadWorkActivityService: RoadWorkActivityService;
+  private roadWorkNeedService: RoadWorkNeedService;
+  private roadWorkActivityService: RoadWorkActivityService;
   appVersion: string = "2024.25";
 
-  displayedColumns: string[] = ['name', 'manager', 'created', 'period'];
+  involvedOrgs: Map<string, OrganisationalUnit>;
+  displayedColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
 
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
 
   constructor(userService: UserService, roadWorkActivityService: RoadWorkActivityService,
+    roadWorkNeedService: RoadWorkNeedService,
     managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
     this.userService = userService;
+    this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.managementAreaService = managementAreaService;
-    this.snckBar = snckBar;
+    this.snckBar = snckBar;    
+    this.involvedOrgs = new Map();
   }
 
   ngOnInit(): void {
+    let loggedInuser: User = this.userService.getLocalUser();
     if (this.userService.isUserLoggedIn()) {
 
-      this.roadWorkActivityService.getRoadWorkActivities("", "inconsult,reporting").subscribe({
+      this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
+    next: (roadWorkNeeds) => {
+      let myRoadWorkNeeds: Map<string, RoadWorkNeedFeature> = new Map();
+      for (let roadWorkNeed of roadWorkNeeds) {
+        if(roadWorkNeed.properties.status == "requirement")
+          if(roadWorkNeed.properties.orderer.uuid == loggedInuser.uuid)
+            myRoadWorkNeeds.set(roadWorkNeed.properties.uuid, roadWorkNeed);
+      }
+      this.myRoadWorkNeedFeatures = Array.from(myRoadWorkNeeds.values());
+
+      // prepare involvedOrgs:
+      for (let roadWorkActivityFeature of this.myRoadWorkActivityFeatures) {
+        for (let involvedUser of roadWorkActivityFeature.properties.involvedUsers) {
+          this.involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+        }
+      }
+
+    },
+    error: (error) => {
+    }
+  });
+
+      this.roadWorkActivityService
+          .getRoadWorkActivities("", "requirement,review,inconsult,reporting,verified").subscribe({
         next: (roadWorkActivities) => {
           for (let roadWorkActInCoordination of roadWorkActivities) {
             this.managementAreaService.getIntersectingManagementArea(roadWorkActInCoordination.geometry)
@@ -61,7 +94,26 @@ export class WelcomeComponent implements OnInit {
                 }
               });
           }
-          this.roadWorkActivityFeaturesInCoordination = roadWorkActivities;
+          let myRoadWorkActivities: Map<string, RoadWorkActivityFeature> = new Map();
+          for(let roadWorkActivity of roadWorkActivities){
+            if(roadWorkActivity.properties.areaManager.uuid = loggedInuser.uuid)
+              myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
+            else if(roadWorkActivity.properties.projectManager.uuid = loggedInuser.uuid)
+              myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
+
+            for(let roadWorkNeedsUuid of roadWorkActivity.properties.roadWorkNeedsUuids){
+
+            }
+          }
+          this.myRoadWorkActivityFeatures = Array.from(myRoadWorkActivities.values());
+
+          // prepare involvedOrgs:
+          for (let roadWorkActivityFeature of this.myRoadWorkActivityFeatures) {
+            for (let involvedUser of roadWorkActivityFeature.properties.involvedUsers) {
+              this.involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+            }
+          }
+
         },
         error: (error) => {
         }
