@@ -932,12 +932,12 @@
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Kosten" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+                    <mat-tab label="Kosten">
                         <div style="margin: 2em;">
                             <mat-form-field style="margin-bottom: -0.8em;">
                                 <input matInput type="number" min="0"
                                     [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                    placeholder="Kostensch&auml;tzung (CHF)"
+                                    placeholder="Kostensch&auml;tzung (CHF)" step="100"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                             </mat-form-field>
                             <div style="color:grey;margin-bottom: 2em;">({{ roadWorkActivityFeature.properties.costs |
