@@ -64,10 +64,6 @@
           </mat-card-title>
           <mat-card-subtitle>{{ roadWorkNeed.properties.orderer.organisationalUnit.name }}</mat-card-subtitle>
         </div>
-        <span
-          style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
-          {{roadWorkNeed.properties.relevance}}
-        </span>
       </mat-card-header>
       <div class="crosshair-frame">
         <img mat-card-image class="framing-icon-img" src="assets/framing_icon.png">
@@ -149,16 +145,6 @@
         <td mat-cell *matCellDef="let roadWorkNeed">
           <a href="http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}"
             target="_blank" style="margin: 1em;">Im WinWebGIS</a>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="priority">
-        <th mat-header-cell *matHeaderCellDef> Bewertung (Bedarf) </th>
-        <td mat-cell *matCellDef="let roadWorkNeed">
-          <span
-            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
-            {{roadWorkNeed.properties.relevance}}
-          </span>
         </td>
       </ng-container>
 

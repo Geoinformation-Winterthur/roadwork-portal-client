@@ -272,52 +272,6 @@ export class NeedAttributesComponent implements OnInit {
     }
   }
 
-  createNewActivityFromNeed() {
-    if (this.roadWorkNeedFeature) {
-      let roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
-      roadWorkActivity.geometry = this.roadWorkNeedFeature.geometry;
-      roadWorkActivity.properties.name = this.roadWorkNeedFeature.properties.name;
-      roadWorkActivity.properties.description = this.roadWorkNeedFeature.properties.description;
-      roadWorkActivity.properties.comment = this.roadWorkNeedFeature.properties.comment;
-      roadWorkActivity.properties.costsType = "municipal";
-      if (this.roadWorkNeedFeature.properties.costs)
-        roadWorkActivity.properties.costs = this.roadWorkNeedFeature.properties.costs;
-      else
-        roadWorkActivity.properties.costs = -1;
-      if (this.roadWorkNeedFeature.properties.desiredYearFrom)
-        roadWorkActivity.properties.desiredYearFrom = this.roadWorkNeedFeature.properties.desiredYearFrom;
-      if (this.roadWorkNeedFeature.properties.desiredYearTo)
-        roadWorkActivity.properties.desiredYearTo = this.roadWorkNeedFeature.properties.desiredYearTo;
-      roadWorkActivity.properties.finishEarlyTo = this.roadWorkNeedFeature.properties.finishEarlyTo;
-      roadWorkActivity.properties.finishOptimumTo = this.roadWorkNeedFeature.properties.finishOptimumTo;
-      roadWorkActivity.properties.finishLateTo = this.roadWorkNeedFeature.properties.finishLateTo;
-      roadWorkActivity.properties.isPrivate = true;
-      roadWorkActivity.properties.overarchingMeasure = this.roadWorkNeedFeature.properties.overarchingMeasure;
-      roadWorkActivity.properties.section = this.roadWorkNeedFeature.properties.section;
-
-      roadWorkActivity.properties.roadWorkNeedsUuids.push(this.roadWorkNeedFeature.properties.uuid);
-
-      this.roadWorkActivityService.addRoadworkActivity(roadWorkActivity)
-        .subscribe({
-          next: (roadWorkActivityFeature) => {
-            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkActivityFeature);
-            if (roadWorkActivityFeature.errorMessage.trim().length !== 0) {
-              this.snckBar.open(roadWorkActivityFeature.errorMessage, "", {
-                duration: 4000
-              });
-            } else {
-              this.router.navigate(["/activities/" + roadWorkActivityFeature.properties.uuid]);
-              this.snckBar.open("Vorhaben wurde erstellt", "", {
-                duration: 4000,
-              });
-            }
-          },
-          error: (error) => {
-          }
-        });
-    }
-  }
-
   writeOutQuartal(finishDateType: string): string {
     let result: string = "";
 
@@ -456,12 +410,6 @@ export class NeedAttributesComponent implements OnInit {
 
   getCurrentYear(): number {
     return new Date().getFullYear();
-  }
-
-  switchShowRelevanceInfo() {
-    this.showRelevanceInfo = !this.showRelevanceInfo;
-    if (!this.roadWorkNeedFeature || this.roadWorkNeedFeature.properties.relevance < 0)
-      this.showRelevanceInfo = false;
   }
 
   ngOnDestroy() {

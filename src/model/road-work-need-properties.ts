@@ -19,7 +19,6 @@ export class RoadWorkNeedProperties {
     priority: Priority = new Priority();
     status: string = "";
     costs?: number;
-    relevance: number = -1;
     activityRelationType: string = "";
     description: string = "";
     roadWorkActivityUuid: string = "";
@@ -38,4 +37,7 @@ export class RoadWorkNeedProperties {
     hasPdfDocument: boolean = false;
     hasSpongeCityMeasures: boolean = false;
     spongeCityMeasures: string[] = [];
+    workTitle?: string;
+    projectType?: string;
+    costsComment?: string;
 }
