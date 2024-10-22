@@ -70,6 +70,23 @@
                         </mat-slider>
                     </div>
                 </div>
+                <div *ngIf="roadWorkNeedFeature.properties.overarchingMeasure">
+                    <mat-form-field style="margin: 1em;">
+                        <input matInput type="number" [min]="getCurrentYear()"
+                            [(ngModel)]="roadWorkNeedFeature.properties.desiredYearFrom"
+                            placeholder="Umsetzungsjahr von"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                    </mat-form-field>
+                    <mat-form-field style="margin: 1em;">
+                        <input matInput type="number" [min]="getCurrentYear()"
+                            [(ngModel)]="roadWorkNeedFeature.properties.desiredYearTo" placeholder="Umsetzungsjahr bis"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                    </mat-form-field>
+                </div>
+                <mat-checkbox style="margin: 1em;" [(ngModel)]="roadWorkNeedFeature.properties.overarchingMeasure"
+                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                    &Uuml;bergeordnete Massnahme
+                </mat-checkbox>
                 <div fxLayout="row wrap padding" style="width:100%;">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
@@ -109,106 +126,59 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         </textarea>
                                 </mat-form-field>
-                                <mat-form-field
+                                <div
                                     *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
-                                    <input matInput type="number" min="0"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.costs"
-                                        placeholder="Kostensch&auml;tzung (CHF)"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Arbeitsbezeichnung</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.workTitle"
+                                            name="work_title"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            <mat-option value="new_construction">Neubau</mat-option>
+                                            <mat-option value="replacement">Ersatz</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Projekt-Art</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.projectType"
+                                            name="project_type"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            <mat-option value="street_municipal">Strasse kommunal</mat-option>
+                                            <mat-option value="street_supramunicipal">Strasse
+                                                &uuml;berkommunal</mat-option>
+                                            <mat-option value="channel">Kanal</mat-option>
+                                            <mat-option value="waters">Gew&auml;sser</mat-option>
+                                            <mat-option value="lsa">LSA</mat-option>
+                                            <mat-option value="mobility">Mobilit&auml;t</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field>
+                                        <input matInput type="number" min="0"
+                                            [(ngModel)]="roadWorkNeedFeature.properties.costs"
+                                            placeholder="Kostensch&auml;tzung (CHF)" step="1000"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    </mat-form-field>
+                                    <div style="color:grey;margin-bottom: 2em;">({{ roadWorkNeedFeature.properties.costs
+                                        | number }} CHF)</div>
+                                    <mat-form-field>
+                                        <mat-label>Bemerkung/Kommentar</mat-label>
+                                        <textarea matInput maxlength="255"
+                                            [(ngModel)]="roadWorkNeedFeature.properties.costsComment"
+                                            placeholder="Bemerkung/Kommentar..."
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        </textarea>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
-                            <mat-card-title><mat-icon aria-label="Status-Icon">play_circle</mat-icon>&nbsp;Status</mat-card-title>
+                            <mat-card-title><mat-icon
+                                    aria-label="Status-Icon">play_circle</mat-icon>&nbsp;Status</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Bewertung *<br>
-                                    <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.relevance"
-                                        name="relevance" aria-label="Bewertung"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 1"
-                                            value="1"
-                                            style="background-color: rgb(220, 220, 220);font-weight: bold;border: 1px solid;">1</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 1"
-                                            value="1" matTooltip="Vorausschauendes Bedürfnis"
-                                            style="background-color: rgb(239, 239, 239);">1</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 2"
-                                            value="2"
-                                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 2"
-                                            value="2" matTooltip="Normales Bedürfnis (Standard)"
-                                            style="background-color: rgb(239, 239, 239);">2</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 3"
-                                            value="3"
-                                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 3"
-                                            value="3" matTooltip="Wichtiges Bedürfnis"
-                                            style="background-color: rgb(239, 239, 239);">3</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance == 4"
-                                            value="4"
-                                            style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
-                                        <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.relevance != 4"
-                                            value="4" matTooltip="Wichtiges + dringendes Bedürfnis"
-                                            style="background-color: rgb(239, 239, 239);">4</mat-button-toggle>
-                                    </mat-button-toggle-group>
-                                    <span (click)="switchShowRelevanceInfo()" style="margin: 1em;">
-                                        <mat-icon aria-label="Info zur Bewertung">info</mat-icon>
-                                    </span>
-                                </p>
-                                <div *ngIf="showRelevanceInfo"
-                                    style="margin-bottom: 3em;background-color: rgb(236,236,234);padding: 1em;">
-                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 0">
-                                        <b>Keine Beteiligung vorgesehen</b><br>
-                                        Wir bauen nicht mit und sind nicht projektbeteiligt. Sollte im System eine
-                                        Projektbeteiligung erfasst sein, muss diese durch APK gel&ouml;scht werden
-                                        (Bitte
-                                        unter Bemerkungen erfassen).
-                                    </div>
-                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 1">
-                                        <b>Vorausschauendes Bed&uuml;rfnis</b><br>
-                                        Es besteht auf l&auml;ngere Sicht kein zwingendes Bed&uuml;rfnis. Im Sinn des
-                                        koordinierten
-                                        Bauens beteiligen wir uns jedoch am Projekt unabh&auml;ngig vom
-                                        Ausf&uuml;hrungstermin.
-                                    </div>
-                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 2">
-                                        <b>Normales Bed&uuml;rfnis (Standard)</b><br>
-                                        Es besteht ein Bed&uuml;rfnis mit einer mittleren Dringlichkeit und Wichtigkeit
-                                    </div>
-                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 3">
-                                        <b>Wichtiges Bed&uuml;rfnis</b><br>
-                                        Es besteht ein wichtiges Bed&uuml;rfnis mit einer relativen Dringlichkeit.
-                                        Es bestehen m&ouml;glicherweise inhaltliche und/oder zeitliche
-                                        Abh&auml;ngigkeiten
-                                    </div>
-                                    <div *ngIf="roadWorkNeedFeature.properties.relevance == 4">
-                                        <b>Wichtiges + dringendes Bed&uuml;rfnis</b><br>
-                                        Es besteht ein wichtiges Bed&uuml;rfnis mit einer hohen Dringlichkeit.
-                                        Rechtliche und / oder politische Vorgaben k&ouml;nnen dem Bed&uuml;rfnis
-                                        zus&auml;tzliche Bedeutung verleihen.
-                                    </div>
-                                </div>
-                                <mat-checkbox style="margin: 1em;"
-                                    [(ngModel)]="roadWorkNeedFeature.properties.overarchingMeasure"
-                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    &Uuml;bergeordnete Massnahme
-                                </mat-checkbox>
-                                <mat-form-field>
-                                    <input matInput type="number" [min]="getCurrentYear()"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.desiredYearFrom"
-                                        placeholder="Umsetzungsjahr von" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
-                                                        || !roadWorkNeedFeature.properties.overarchingMeasure">
-                                </mat-form-field>
-                                <mat-form-field>
-                                    <input matInput type="number" [min]="getCurrentYear()"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.desiredYearTo"
-                                        placeholder="Umsetzungsjahr bis" [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed
-                                                        || !roadWorkNeedFeature.properties.overarchingMeasure">
-                                </mat-form-field>
                                 <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status"
                                     [short]="false"></app-status-chip>
                                 <div style="margin: 1em;">
@@ -221,19 +191,13 @@
                                     </mat-chip-list>
                                 </div>
                             </div>
-                            <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' ||
-                                            userService.getLocalUser().chosenRole == 'territorymanager'"
-                                style="background-color: rgb(236,236,234);margin: 0.5em;" mat-button
-                                (click)="createNewActivityFromNeed()"
-                                [disabled]="roadWorkNeedFeature.properties.isPrivate"><mat-icon
-                                    aria-label="Bedarf &uuml;bernehmen">handyman</mat-icon>&nbsp;
-                                &Uuml;BERNEHMEN</button>
                         </mat-card-content>
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
-                            <mat-card-title><mat-icon aria-label="Personenggruppe-Icon">group</mat-icon>&nbsp;Beteiligte</mat-card-title>
+                            <mat-card-title><mat-icon
+                                    aria-label="Personenggruppe-Icon">group</mat-icon>&nbsp;Beteiligte</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
@@ -259,7 +223,8 @@
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
-                            <mat-card-title><mat-icon aria-label="Dokument-Icon">description</mat-icon>&nbsp;Dokumente</mat-card-title>
+                            <mat-card-title><mat-icon
+                                    aria-label="Dokument-Icon">description</mat-icon>&nbsp;Dokumente</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <div>
