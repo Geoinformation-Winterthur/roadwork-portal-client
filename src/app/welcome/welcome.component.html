@@ -143,7 +143,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="orderer">
-                                    <th mat-header-cell *matHeaderCellDef>Besteller:in</th>
+                                    <th mat-header-cell *matHeaderCellDef>Ausl&ouml;sende:r</th>
                                     <td mat-cell *matCellDef="let roadWorkNeed">
                                         {{roadWorkNeed.properties.orderer.firstName}}
                                         {{roadWorkNeed.properties.orderer.lastName}} </td>
@@ -185,7 +185,7 @@
                                 *ngIf="userService.getLocalUser().chosenRole === 'eventmanager'">Eventmanagement</span>
                             <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'projectmanager'">Projektleitung</span>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'orderer'">Besteller:in</span>
+                            <span *ngIf="userService.getLocalUser().chosenRole === 'orderer'">Ausl&ouml;sende:r</span>
                             <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'territorymanager'">Gebietsmanagement</span>
                             <span

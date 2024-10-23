@@ -34,7 +34,7 @@
                         PUBLIZIEREN
                     </button>
                 </div>
-                <h2 style="font-weight: normal;">Baubeginn</h2>
+                <h2 style="font-weight: normal;">Wunschtermine</h2>
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
                     <div style="margin: 0.5em;">
                         Fr&uuml;hester:&nbsp;<span
@@ -173,10 +173,6 @@
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
-                            <mat-card-title><mat-icon
-                                    aria-label="Status-Icon">play_circle</mat-icon>&nbsp;Status</mat-card-title>
-                        </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
                                 <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status"
@@ -195,16 +191,12 @@
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
-                            <mat-card-title><mat-icon
-                                    aria-label="Personenggruppe-Icon">group</mat-icon>&nbsp;Beteiligte</mat-card-title>
-                        </mat-card-header>
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Besteller: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
+                                <p>Ausl&ouml;sende:r: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
                                         {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
                                 </p>
-                                <p>Bedarfsstelle:
+                                <p>Ausl&ouml;sendes Werk:
                                     <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
                                 </p>
                                 <p>Gebietsmanagement:
