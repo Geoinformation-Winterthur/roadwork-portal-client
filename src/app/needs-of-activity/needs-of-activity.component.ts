@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
@@ -17,7 +18,7 @@ export class NeedsOfActivityComponent {
   displayedColumns: string[] = ['name', 'orderer', 'dateCreated', 'optRealYears', 'action'];
 
   @Input()
-  roadWorkActivityUuid?: string;
+  roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
 
   @Input()
   isInEditingMode: boolean = false;
@@ -67,15 +68,15 @@ export class NeedsOfActivityComponent {
       error: (error) => {
       }
     });
-    if (this.roadWorkActivityUuid) {
-      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid, this.allRoadWorkNeedFeatures);
+    if (this.roadWorkActivity.properties.uuid) {
+      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.allRoadWorkNeedFeatures);
     }
   }
 
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "assignedneed";
-    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
+    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivity.properties.uuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
         next: (errorMessage) => {
@@ -98,6 +99,11 @@ export class NeedsOfActivityComponent {
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             assignedRoadWorkNeeds.push(roadWorkNeed);
             this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
+            for(let assignedRoadWorkNeed of assignedRoadWorkNeeds){
+              this.roadWorkActivity.properties.finishEarlyTo = assignedRoadWorkNeed.properties.finishEarlyTo;
+              this.roadWorkActivity.properties.finishOptimumTo = assignedRoadWorkNeed.properties.finishOptimumTo;
+              this.roadWorkActivity.properties.finishLateTo = assignedRoadWorkNeed.properties.finishLateTo;
+            }
           }
         },
         error: (error) => {
@@ -123,8 +129,8 @@ export class NeedsOfActivityComponent {
               this.needsOfActivityService.assignedRoadWorkNeeds
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             this.allRoadWorkNeedFeatures.push(roadWorkNeed);
-            if (this.roadWorkActivityUuid) {
-              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+            if (this.roadWorkActivity.properties.uuid) {
+              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid);
             }
           }
         },
@@ -139,7 +145,7 @@ export class NeedsOfActivityComponent {
   registerRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "registeredneed";
-    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
+    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivity.properties.uuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
         next: (errorMessage) => {
@@ -160,8 +166,8 @@ export class NeedsOfActivityComponent {
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             registeredRoadWorkNeedsCopy.push(roadWorkNeed);
             this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeedsCopy;
-            if (this.roadWorkActivityUuid) {
-              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+            if (this.roadWorkActivity.properties.uuid) {
+              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid);
             }
           }
         },
@@ -173,7 +179,7 @@ export class NeedsOfActivityComponent {
   deRegisterRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "";
-    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivityUuid as string;
+    roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivity.properties.uuid as string;
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
         next: (errorMessage) => {
@@ -191,8 +197,8 @@ export class NeedsOfActivityComponent {
               this.needsOfActivityService.registeredRoadWorkNeeds
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             this.allRoadWorkNeedFeatures.push(roadWorkNeed);
-            if (this.roadWorkActivityUuid) {
-              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivityUuid);
+            if (this.roadWorkActivity.properties.uuid) {
+              this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid);
             }
           }
         },

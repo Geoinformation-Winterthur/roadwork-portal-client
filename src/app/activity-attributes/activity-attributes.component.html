@@ -1027,7 +1027,7 @@
                     [dataSource]="roadWorkActivityFeature.properties.activityHistory"></app-activity-history>
             </mat-tab>
             <mat-tab label="Bedarfe" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                <app-needs-of-activity [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"
+                <app-needs-of-activity [roadWorkActivity]="roadWorkActivityFeature"
                     [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
             <mat-tab label="Events">
