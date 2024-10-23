@@ -129,9 +129,6 @@
                             </mat-card>
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                <mat-card-header>
-                                    <mat-card-title>Termine und Status</mat-card-title>
-                                </mat-card-header>
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
                                         <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
@@ -229,9 +226,6 @@
                             </mat-card>
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                <mat-card-header>
-                                    <mat-card-title>Zusatz-Stammdaten</mat-card-title>
-                                </mat-card-header>
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
                                         <p>Ausl&ouml;sendes Werk:
@@ -242,7 +236,7 @@
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
-                                        <p>Ausl&ouml;ser:
+                                        <p>Ausl&ouml;sende:r:
                                             <b *ngIf="involvedUsers && involvedUsers.length > 0">
                                                 {{involvedUsers[0].firstName}}
                                                 {{involvedUsers[0].lastName}}
@@ -333,7 +327,7 @@
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                 <mat-card-header>
-                                    <mat-card-title>Terminiert</mat-card-title>
+                                    <mat-card-title>Voraussichtlicher Termin</mat-card-title>
                                 </mat-card-header>
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
