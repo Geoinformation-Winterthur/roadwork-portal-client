@@ -29,6 +29,9 @@ export class WelcomeComponent implements OnInit {
   myRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
   myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
 
+  roadWorkNeedColumns: string[] = ['name', 'orderer', 'created', 'last_modified', 'description'];
+  roadWorkActivityColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
+
   user: User = new User();
   userService: UserService;
 
@@ -37,7 +40,6 @@ export class WelcomeComponent implements OnInit {
   appVersion: string = "2024.26";
 
   involvedOrgs: Map<string, OrganisationalUnit>;
-  displayedColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
 
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
@@ -49,75 +51,84 @@ export class WelcomeComponent implements OnInit {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.managementAreaService = managementAreaService;
-    this.snckBar = snckBar;    
+    this.snckBar = snckBar;
     this.involvedOrgs = new Map();
   }
 
   ngOnInit(): void {
-    let loggedInuser: User = this.userService.getLocalUser();
+    let loggedInUser: User = this.userService.getLocalUser();
     if (this.userService.isUserLoggedIn()) {
 
       this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
-    next: (roadWorkNeeds) => {
-      let myRoadWorkNeeds: Map<string, RoadWorkNeedFeature> = new Map();
-      for (let roadWorkNeed of roadWorkNeeds) {
-        if(roadWorkNeed.properties.status == "requirement")
-          if(roadWorkNeed.properties.orderer.uuid == loggedInuser.uuid)
-            myRoadWorkNeeds.set(roadWorkNeed.properties.uuid, roadWorkNeed);
-      }
-      this.myRoadWorkNeedFeatures = Array.from(myRoadWorkNeeds.values());
-
-      // prepare involvedOrgs:
-      for (let roadWorkActivityFeature of this.myRoadWorkActivityFeatures) {
-        for (let involvedUser of roadWorkActivityFeature.properties.involvedUsers) {
-          this.involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+        next: (roadWorkNeeds) => {
+          let myRoadWorkNeeds: Map<string, RoadWorkNeedFeature> = new Map();
+          for (let roadWorkNeed of roadWorkNeeds) {
+            if (roadWorkNeed.properties.status != "coordinated")
+              if (roadWorkNeed.properties.orderer.uuid == loggedInUser.uuid)
+                myRoadWorkNeeds.set(roadWorkNeed.properties.uuid, roadWorkNeed);
+          }
+          this.myRoadWorkNeedFeatures = Array.from(myRoadWorkNeeds.values());
+        },
+        error: (error) => {
         }
-      }
-
-    },
-    error: (error) => {
-    }
-  });
+      });
 
       this.roadWorkActivityService
-          .getRoadWorkActivities("", "requirement,review,inconsult,reporting,verified").subscribe({
-        next: (roadWorkActivities) => {
-          for (let roadWorkActInCoordination of roadWorkActivities) {
-            this.managementAreaService.getIntersectingManagementArea(roadWorkActInCoordination.geometry)
-              .subscribe({
-                next: (managementArea) => {
-                  if (managementArea) {
-                    roadWorkActInCoordination.properties.areaManager = managementArea.manager;
+        .getRoadWorkActivities("", "requirement,review,inconsult,reporting,verified").subscribe({
+          next: (roadWorkActivities) => {
+            for (let activeRoadWorkAct of roadWorkActivities) {
+              this.managementAreaService.getIntersectingManagementArea(activeRoadWorkAct.geometry)
+                .subscribe({
+                  next: (managementArea) => {
+                    if (managementArea) {
+                      activeRoadWorkAct.properties.areaManager = managementArea.manager;
+                    }
+                  },
+                  error: (error) => {
+                  }
+                });
+            }
+            let myRoadWorkActivities: Map<string, RoadWorkActivityFeature> = new Map();
+            for (let roadWorkActivity of roadWorkActivities) {
+              if (roadWorkActivity.properties.areaManager) {
+                if (roadWorkActivity.properties.areaManager.uuid == loggedInUser.uuid)
+                  myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
+                else if (roadWorkActivity.properties.projectManager.uuid = loggedInUser.uuid)
+                  myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
+              }
+
+              this.myRoadWorkActivityFeatures = Array.from(myRoadWorkActivities.values());
+              // prepare involvedOrgs:
+              for (let roadWorkActivityFeature of this.myRoadWorkActivityFeatures) {
+                for (let involvedUser of roadWorkActivityFeature.properties.involvedUsers) {
+                  this.involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+                }
+              }
+
+              this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivity.properties.roadWorkNeedsUuids).subscribe({
+                next: (roadWorkNeeds) => {
+                  for (let roadWorkNeed of roadWorkNeeds) {
+                    if (roadWorkNeed.properties.status != "coordinated")
+                      if (roadWorkNeed.properties.orderer.uuid == loggedInUser.uuid)
+                        myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
+                  }
+                  this.myRoadWorkActivityFeatures = Array.from(myRoadWorkActivities.values());
+                  // prepare involvedOrgs:
+                  for (let roadWorkActivityFeature of this.myRoadWorkActivityFeatures) {
+                    for (let involvedUser of roadWorkActivityFeature.properties.involvedUsers) {
+                      this.involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+                    }
                   }
                 },
                 error: (error) => {
                 }
               });
-          }
-          let myRoadWorkActivities: Map<string, RoadWorkActivityFeature> = new Map();
-          for(let roadWorkActivity of roadWorkActivities){
-            if(roadWorkActivity.properties.areaManager.uuid = loggedInuser.uuid)
-              myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
-            else if(roadWorkActivity.properties.projectManager.uuid = loggedInuser.uuid)
-              myRoadWorkActivities.set(roadWorkActivity.properties.uuid, roadWorkActivity);
-
-            for(let roadWorkNeedsUuid of roadWorkActivity.properties.roadWorkNeedsUuids){
-
             }
-          }
-          this.myRoadWorkActivityFeatures = Array.from(myRoadWorkActivities.values());
 
-          // prepare involvedOrgs:
-          for (let roadWorkActivityFeature of this.myRoadWorkActivityFeatures) {
-            for (let involvedUser of roadWorkActivityFeature.properties.involvedUsers) {
-              this.involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
-            }
+          },
+          error: (error) => {
           }
-
-        },
-        error: (error) => {
-        }
-      });
+        });
 
       let localUser: User = this.userService.getLocalUser();
 

@@ -8,8 +8,9 @@
 </div>
 <div style="margin: 2em;color: rgb(90, 90, 90);">
     <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
-        Willkommen im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool f&uuml;r <b>I</b>nfrastrukturvorhaben im
-            &ouml;ffentlichen <b>S</b>trassenraum) des Tiefbauamts Winterthur.
+        Willkommen im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool f&uuml;r <b>I</b>nfrastrukturvorhaben
+        im
+        &ouml;ffentlichen <b>S</b>trassenraum) des Tiefbauamts Winterthur.
     </h3>
     <div i18n *ngIf="!userService.isUserLoggedIn()">
         <p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
@@ -30,41 +31,48 @@
             Der Zugriff auf WiKIS ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
             rechten oberen Ecke.
             Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an
-            <a href="mailto:planung.koordination@win.ch">planung.koordination&#64;win.ch</a></p>
+            <a href="mailto:planung.koordination@win.ch">planung.koordination&#64;win.ch</a>
+        </p>
         <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
     </div>
     <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
-        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool f&uuml;r
-            <b>I</b>nfrastrukturvorhaben im &ouml;ffentlichen <b>S</b>trassenraum)
-        des Tiefbauamts Winterthur.</h3>
+        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool
+        f&uuml;r
+        <b>I</b>nfrastrukturvorhaben im &ouml;ffentlichen <b>S</b>trassenraum)
+        des Tiefbauamts Winterthur.
+    </h3>
     <div *ngIf="userService.isUserLoggedIn()">
         <mat-tab-group>
             <mat-tab label="Aktuelles">
                 <div style="margin: 2em;">
-                    <div *ngIf="myRoadWorkActivityFeatures.length === 0"><span
+                    <div *ngIf="myRoadWorkActivityFeatures.length === 0 && myRoadWorkNeedFeatures.length === 0"><span
                             style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
-                            gibt zurzeit keine Bedarfe oder Bauvorhaben im Zusammenhang mit deinem pers&ouml;nlichen Login.</span></div>
-                    <div *ngIf="myRoadWorkActivityFeatures.length !== 0">
-                        Folgende Eintr&auml;ge stehen im Zusammenhang mit deinem pers&ouml;nlichen Login:
-                        <table mat-table [dataSource]="myRoadWorkActivityFeatures" class="mat-elevation-z2"
-                            style="width: 100%; margin-top:1em;">
-                            <ng-container matColumnDef="name">
-                                <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity">
-                                    <a routerLink="/activities/{{roadWorkActivity.properties.uuid}}">
-                                        {{roadWorkActivity.properties.name}}
-                                    </a>
-                                </td>
-                            </ng-container>
+                            gibt zurzeit keine Meldungen im Zusammenhang mit deinem pers&ouml;nlichen Login.</span>
+                    </div>
+                    <div *ngIf="myRoadWorkActivityFeatures.length !== 0 || myRoadWorkNeedFeatures.length !== 0">
+                        Folgende Eintr&auml;ge stehen im Zusammenhang mit deinem <b>pers&ouml;nlichen Login</b>:
+                        <div *ngIf="myRoadWorkActivityFeatures.length !== 0" style="margin-top: 2em;">
+                            <h3>Bauvorhaben</h3>
+                            <table mat-table [dataSource]="myRoadWorkActivityFeatures" class="mat-elevation-z2"
+                                style="width: 100%; margin-top:1em;">
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity">
+                                        <a routerLink="/activities/{{roadWorkActivity.properties.uuid}}">
+                                            {{roadWorkActivity.properties.name}}
+                                        </a>
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="territorymanager">
-                                <th mat-header-cell *matHeaderCellDef><span matTooltip="Gebietsmanagement">GM</span></th>
-                                <td mat-cell *matCellDef="let roadWorkActivity">
-                                    {{roadWorkActivity.properties.areaManager?.firstName}}
-                                    {{roadWorkActivity.properties.areaManager?.lastName}} </td>
-                            </ng-container>
+                                <ng-container matColumnDef="territorymanager">
+                                    <th mat-header-cell *matHeaderCellDef><span matTooltip="Gebietsmanagement">GM</span>
+                                    </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity">
+                                        {{roadWorkActivity.properties.areaManager?.firstName}}
+                                        {{roadWorkActivity.properties.areaManager?.lastName}} </td>
+                                </ng-container>
 
-                            <!--
+                                <!--
                             <ng-container matColumnDef="projectmanager">
                                 <th mat-header-cell *matHeaderCellDef><span matTooltip="Projektmanagement">PM</span></th>
                                 <td mat-cell *matCellDef="let roadWorkActivity">
@@ -73,49 +81,99 @@
                             </ng-container>
                             -->
 
-                            <ng-container matColumnDef="lead">
-                                <th mat-header-cell *matHeaderCellDef> Lead </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity"><span
-                                    *ngIf="roadWorkActivity.properties.kind">{{roadWorkActivity.properties.kind.name}}</span> </td>
-                            </ng-container>
+                                <ng-container matColumnDef="lead">
+                                    <th mat-header-cell *matHeaderCellDef> Lead </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity"><span
+                                            *ngIf="roadWorkActivity.properties.kind">{{roadWorkActivity.properties.kind.name}}</span>
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="involved">
-                                <th mat-header-cell *matHeaderCellDef> Beteiligte </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity">
-                                    <b *ngIf="!roadWorkActivity.properties.involvedUsers[0]">
-                                        keine
-                                    </b>
-                                    <b *ngIf="roadWorkActivity.properties.involvedUsers[0]">
-                                        <span>
-                                            {{involvedOrgs.get(roadWorkActivity.properties.involvedUsers[0].uuid)?.abbreviation}},
-                                        </span>
-                                    </b>        
-                                </td>
-                            </ng-container>
+                                <ng-container matColumnDef="involved">
+                                    <th mat-header-cell *matHeaderCellDef> Beteiligte </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity">
+                                        <b *ngIf="!roadWorkActivity.properties.involvedUsers[0]">
+                                            keine
+                                        </b>
+                                        <b *ngIf="roadWorkActivity.properties.involvedUsers[0]">
+                                            <span>
+                                                {{involvedOrgs.get(roadWorkActivity.properties.involvedUsers[0].uuid)?.abbreviation}},
+                                            </span>
+                                        </b>
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="status">
-                                <th mat-header-cell *matHeaderCellDef> Status </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity">
-                                  <app-status-chip [statusCode]="roadWorkActivity.properties.status" [short]="true"></app-status-chip>
-                                </td>
-                            </ng-container>
+                                <ng-container matColumnDef="status">
+                                    <th mat-header-cell *matHeaderCellDef> Status </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity">
+                                        <app-status-chip [statusCode]="roadWorkActivity.properties.status"
+                                            [short]="true"></app-status-chip>
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="optimum_date">
-                                <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity">
-                                    {{roadWorkActivity.properties.finishOptimumTo | date:'dd.MM.yyyy'}}
-                                </td>
-                            </ng-container>
+                                <ng-container matColumnDef="optimum_date">
+                                    <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity">
+                                        {{roadWorkActivity.properties.finishOptimumTo | date:'dd.MM.yyyy'}}
+                                    </td>
+                                </ng-container>
 
-                            <ng-container matColumnDef="due_date">
-                                <th mat-header-cell *matHeaderCellDef> F&auml;lligkeit </th>
-                                <td mat-cell *matCellDef="let roadWorkActivity"> {{roadWorkActivity.properties.created |
-                                    date:'dd.MM.yyyy'}} </td>
-                            </ng-container>
+                                <ng-container matColumnDef="due_date">
+                                    <th mat-header-cell *matHeaderCellDef> F&auml;lligkeit </th>
+                                    <td mat-cell *matCellDef="let roadWorkActivity">
+                                        {{roadWorkActivity.properties.created |
+                                        date:'dd.MM.yyyy'}} </td>
+                                </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        </table>
+                                <tr mat-header-row *matHeaderRowDef="roadWorkActivityColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: roadWorkActivityColumns;"></tr>
+                            </table>
+                        </div>
+
+                        <div *ngIf="myRoadWorkNeedFeatures.length !== 0" style="margin-top: 2em;">
+                            <h3>Bedarfe</h3>
+                            <table mat-table [dataSource]="myRoadWorkNeedFeatures" class="mat-elevation-z2"
+                                style="width: 100%; margin-top:1em;">
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
+                                    <td mat-cell *matCellDef="let roadWorkNeed">
+                                        <a routerLink="/needs/{{roadWorkNeed.properties.uuid}}">
+                                            {{roadWorkNeed.properties.name}}
+                                        </a>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="orderer">
+                                    <th mat-header-cell *matHeaderCellDef>Besteller:in</th>
+                                    <td mat-cell *matCellDef="let roadWorkNeed">
+                                        {{roadWorkNeed.properties.orderer.firstName}}
+                                        {{roadWorkNeed.properties.orderer.lastName}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="created">
+                                    <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
+                                    <td mat-cell *matCellDef="let roadWorkNeed">{{roadWorkNeed.properties.created |
+                                        date:
+                                        'dd.MM.yyyy'}}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="last_modified">
+                                    <th mat-header-cell *matHeaderCellDef> Letzte &Auml;nderung </th>
+                                    <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.lastModified
+                                        |
+                                        date: 'dd.MM.yyyy'}} </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="description">
+                                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;segrund </th>
+                                    <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.description}}
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="roadWorkNeedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: roadWorkNeedColumns;"></tr>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
             </mat-tab>
@@ -123,13 +181,18 @@
                 <div style="margin: 2em;">
                     <p>
                         Sie sind in der Rolle <b>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'eventmanager'">Eventmanagement</span>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'projectmanager'">Projektleitung</span>
+                            <span
+                                *ngIf="userService.getLocalUser().chosenRole === 'eventmanager'">Eventmanagement</span>
+                            <span
+                                *ngIf="userService.getLocalUser().chosenRole === 'projectmanager'">Projektleitung</span>
                             <span *ngIf="userService.getLocalUser().chosenRole === 'orderer'">Besteller:in</span>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'territorymanager'">Gebietsmanagement</span>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'administrator'">Administration</span></b>.
+                            <span
+                                *ngIf="userService.getLocalUser().chosenRole === 'territorymanager'">Gebietsmanagement</span>
+                            <span
+                                *ngIf="userService.getLocalUser().chosenRole === 'administrator'">Administration</span></b>.
                     </p>
-                    <div style="padding: 1em;margin-bottom: 1em;border: 1px solid lightgray;display:flex;flex-direction:column;">
+                    <div
+                        style="padding: 1em;margin-bottom: 1em;border: 1px solid lightgray;display:flex;flex-direction:column;">
                         <p>Ansicht:</p>
                         <mat-slide-toggle [(ngModel)]="user.prefTableView" (focusout)="update()">Tabellenansicht
                             bevorzugen (nicht mobile-f&auml;hig)
@@ -138,8 +201,8 @@
                     <div style="padding: 1em;border: 1px solid lightgray;">
                         <p>Passphrase neu setzen:</p>
                         <mat-form-field>
-                            <input matInput [(ngModel)]="user.passPhrase" type="text"
-                                placeholder="Neue Passphrase" type="password">
+                            <input matInput [(ngModel)]="user.passPhrase" type="text" placeholder="Neue Passphrase"
+                                type="password">
                         </mat-form-field>
                         <button mat-button (click)="update(true)" style="margin:1em;">&Auml;NDERN</button>
                     </div>
