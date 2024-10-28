@@ -39,6 +39,7 @@ export class ErrorMessageDictionary {
              "Änderung wurde nicht gespeichert, da Startdatum der Vorstudie nach dem Enddatum liegt",
              "Änderung wurde nicht gespeichert. 'Projektauftrag Vorstudie genehmigt' kann nicht gesetzt werden, da Bauvorhaben nicht im Status 'koordiniert'",
              "Bei aktivierter Schwammstadt-Massnahme muss mindestens eine Schwammstadt-Massnahme ausgewählt werden",
-             "Es wurde kein Löschgrund angegeben, dies ist nicht zulässig"
+             "Es wurde kein Löschgrund angegeben, dies ist nicht zulässig",
+             "Dies ist ein Bedarf einer Tiefbauamt-Organisation, jedoch fehlen Attributwerte aus dem Bereich der Kostenschätzung"
             ];
 }

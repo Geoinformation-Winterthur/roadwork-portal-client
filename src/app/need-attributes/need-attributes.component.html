@@ -126,48 +126,6 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         </textarea>
                                 </mat-form-field>
-                                <div
-                                    *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Arbeitsbezeichnung</mat-label>
-                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.workTitle"
-                                            name="work_title"
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                            <mat-option value="new_construction">Neubau</mat-option>
-                                            <mat-option value="replacement">Ersatz</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Projekt-Art</mat-label>
-                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.projectType"
-                                            name="project_type"
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                            <mat-option value="street_municipal">Strasse kommunal</mat-option>
-                                            <mat-option value="street_supramunicipal">Strasse
-                                                &uuml;berkommunal</mat-option>
-                                            <mat-option value="channel">Kanal</mat-option>
-                                            <mat-option value="waters">Gew&auml;sser</mat-option>
-                                            <mat-option value="lsa">LSA</mat-option>
-                                            <mat-option value="mobility">Mobilit&auml;t</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                    <mat-form-field>
-                                        <input matInput type="number" min="0"
-                                            [(ngModel)]="roadWorkNeedFeature.properties.costs"
-                                            placeholder="Kostensch&auml;tzung (CHF)" step="1000"
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    </mat-form-field>
-                                    <div style="color:grey;margin-bottom: 2em;">({{ roadWorkNeedFeature.properties.costs
-                                        | number }} CHF)</div>
-                                    <mat-form-field>
-                                        <mat-label>Bemerkung/Kommentar</mat-label>
-                                        <textarea matInput maxlength="255"
-                                            [(ngModel)]="roadWorkNeedFeature.properties.costsComment"
-                                            placeholder="Bemerkung/Kommentar..."
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        </textarea>
-                                    </mat-form-field>
-                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -209,6 +167,65 @@
                                     Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card  *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering"
+                        style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title><mat-icon
+                                    aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostensch&auml;tzung</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div>
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Arbeitsbezeichnung *</mat-label>
+                                    <mat-select [(ngModel)]="roadWorkNeedFeature.properties.workTitle" name="work_title"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        <mat-option value="new_construction">Neubau</mat-option>
+                                        <mat-option value="replacement">Ersatz</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div *ngIf="roadWorkNeedFeature.properties.workTitle">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Projekt-Art *</mat-label>
+                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.projectType"
+                                            name="project_type"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            <mat-option value="street_municipal">Strasse kommunal</mat-option>
+                                            <mat-option value="street_supramunicipal">Strasse
+                                                &uuml;berkommunal</mat-option>
+                                            <mat-option value="channel">Kanal</mat-option>
+                                            <mat-option value="waters">Gew&auml;sser</mat-option>
+                                            <mat-option value="lsa">LSA</mat-option>
+                                            <mat-option value="mobility">Mobilit&auml;t</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <div *ngIf="roadWorkNeedFeature.properties.projectType == 'street_supramunicipal' ||
+                                            roadWorkNeedFeature.properties.projectType == 'lsa' ||
+                                            roadWorkNeedFeature.properties.projectType == 'mobility'"
+                                        style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
+                                        Kanton muss einbezogen werden
+                                    </div>
+                                    <mat-form-field>
+                                        <input matInput type="number" min="0"
+                                            [(ngModel)]="roadWorkNeedFeature.properties.costs"
+                                            placeholder="Kostensch&auml;tzung (CHF) *" step="1000"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    </mat-form-field>
+                                    <div style="color:grey;margin-bottom: 2em;">({{
+                                        roadWorkNeedFeature.properties.costs
+                                        | number }} CHF)</div>
+                                    <mat-form-field style="width: 100%;">
+                                        <mat-label>Bemerkung/Kommentar</mat-label>
+                                        <textarea matInput maxlength="255"
+                                            [(ngModel)]="roadWorkNeedFeature.properties.costsComment"
+                                            placeholder="Bemerkung/Kommentar..."
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </textarea>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </mat-card-content>
                     </mat-card>
