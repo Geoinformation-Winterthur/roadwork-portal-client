@@ -23,6 +23,7 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
+import { SimpleDialogComponent } from '../simple-dialog/simple-dialog.component';
 
 @Component({
   selector: 'app-need-attributes',
@@ -51,6 +52,7 @@ export class NeedAttributesComponent implements OnInit {
 
   overarchingMeasureControl: FormControl = new FormControl();
 
+  private dateSlidersDirty: boolean = false;
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
@@ -107,7 +109,7 @@ export class NeedAttributesComponent implements OnInit {
                   let roadWorkNeedFeature: RoadWorkNeedFeature = this.roadWorkNeedFeature as RoadWorkNeedFeature;
 
                   if (this.roadWorkNeedFeature) {
-                    if(!roadWorkNeedFeature.properties.spongeCityMeasures)
+                    if (!roadWorkNeedFeature.properties.spongeCityMeasures)
                       roadWorkNeedFeature.properties.spongeCityMeasures = [];
 
                     this.finishOptimumFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo));
@@ -138,21 +140,33 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   publish() {
-    if (this.roadWorkNeedFeature) {
-      this.roadWorkNeedFeature.properties.isPrivate = false;
-      if (this.roadWorkNeedFeature.properties.uuid)
-        this.save();
-      else
-        this.add();
+    if (this.dateSlidersDirty) {
+      if (this.roadWorkNeedFeature) {
+        this.roadWorkNeedFeature.properties.isPrivate = false;
+        if (this.roadWorkNeedFeature.properties.uuid)
+          this.save();
+        else
+          this.add();
+      }
+    } else {
+      this.dialog.open(SimpleDialogComponent, {
+        data: {infoText: "Bitte setzen Sie die Wunschtermine."}
+      });
     }
   }
 
   store() {
-    if (this.roadWorkNeedFeature) {
-      if (this.roadWorkNeedFeature.properties.uuid)
-        this.save();
-      else
-        this.add();
+    if (this.dateSlidersDirty) {
+      if (this.roadWorkNeedFeature) {
+        if (this.roadWorkNeedFeature.properties.uuid)
+          this.save();
+        else
+          this.add();
+      }
+    } else {
+      this.dialog.open(SimpleDialogComponent, {
+        data: {infoText: "Bitte setzen Sie die Wunschtermine."}
+      });
     }
   }
 
@@ -197,6 +211,8 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   updateQuartal(sliderChange: MatSliderChange, quartalType: string) {
+    this.dateSlidersDirty = true;
+
     let newQuartal: number = sliderChange.value as number;
 
     if (quartalType === "finishEarlyQuartal") {
@@ -416,31 +432,31 @@ export class NeedAttributesComponent implements OnInit {
     this.activatedRouteSubscription.unsubscribe();
   }
 
-  private _setUserOnRoadworkNeed(){
+  private _setUserOnRoadworkNeed() {
     this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
-    .subscribe({
-      next: (users) => {
-        if (users && users.length > 0 && users[0]) {
-          let user: User = users[0];
-          ErrorMessageEvaluation._evaluateErrorMessage(user);
-          if (user && user.errorMessage &&
-            user.errorMessage.trim().length !== 0) {
-            this.snckBar.open(user.errorMessage, "", {
-              duration: 4000
-            });
-          } else {
-            if (this.roadWorkNeedFeature) {
-              this.roadWorkNeedFeature.properties.orderer = user;
+      .subscribe({
+        next: (users) => {
+          if (users && users.length > 0 && users[0]) {
+            let user: User = users[0];
+            ErrorMessageEvaluation._evaluateErrorMessage(user);
+            if (user && user.errorMessage &&
+              user.errorMessage.trim().length !== 0) {
+              this.snckBar.open(user.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              if (this.roadWorkNeedFeature) {
+                this.roadWorkNeedFeature.properties.orderer = user;
+              }
             }
           }
+        },
+        error: (error) => {
+          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+            duration: 4000
+          });
         }
-      },
-      error: (error) => {
-        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
-          duration: 4000
-        });
-      }
-    });
+      });
   }
 
   private _setQuartalValue(newQuartal: number, quartalType: string) {

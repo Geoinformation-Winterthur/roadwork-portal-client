@@ -1,0 +1,7 @@
+<h1 mat-dialog-title><mat-icon aria-label="Dokument-Icon">info</mat-icon>&nbsp;Info</h1>
+<div mat-dialog-content>
+    <p>{{dialogMessage}}</p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="closeDialog()" [mat-dialog-close]="false">OK</button>
+</div>

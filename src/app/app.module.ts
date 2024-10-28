@@ -79,6 +79,7 @@ import { ConsultationItemsComponent } from './consultation-items/consultation-it
 import { ReportingItemsComponent } from './reporting-items/reporting-items.component';
 import { registerLocaleData } from '@angular/common';
 import deChLocale from '@angular/common/locales/de-CH';
+import { SimpleDialogComponent } from './simple-dialog/simple-dialog.component';
  
  
  export function getToken(){
@@ -127,7 +128,8 @@ import deChLocale from '@angular/common/locales/de-CH';
      ActivityHistoryComponent,
      ConsultationItemsComponent,
      ReportingItemsComponent,
-     DeleteActivityDialogComponent
+     DeleteActivityDialogComponent,
+     SimpleDialogComponent
    ],
    imports: [
      BrowserModule,
