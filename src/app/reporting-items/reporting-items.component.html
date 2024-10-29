@@ -41,7 +41,7 @@
                                 R&uuml;ckmeldung</span>
                         </mat-chip>
                     </mat-chip-list>
-                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">Kommentar Ausl&ouml;sende:r:</div>
+                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">R&uuml;ckmeldung Beteiligte:r:</div>
                     <div *ngIf="consultationInput.feedbackGiven"
                         style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
                         <span *ngIf="consultationInput.ordererFeedback">{{consultationInput.ordererFeedback}}</span>
@@ -124,7 +124,7 @@
             </ng-container>
 
             <ng-container matColumnDef="feedback">
-                <th mat-header-cell *matHeaderCellDef> Kommentar </th>
+                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung </th>
                 <td mat-cell *matCellDef="let consultationInput" style="max-width: 10em; word-wrap:break-word;">
                     {{consultationInput.ordererFeedback}}</td>
             </ng-container>
