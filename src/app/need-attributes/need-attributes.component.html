@@ -135,6 +135,11 @@
                             <div style="display:flex;flex-direction:column;">
                                 <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status"
                                     [short]="false"></app-status-chip>
+                                <p *ngIf="roadWorkNeedFeature.properties.status == 'suspended'
+                                        && roadWorkNeedFeature.properties.deleteReason">
+                                    <b>L&ouml;schbegr&uuml;ndung:</b>
+                                    {{roadWorkNeedFeature.properties.deleteReason}}
+                                </p>
                                 <div style="margin: 1em;">
                                     <mat-chip-list>
                                         <mat-chip *ngIf="priorityCode === 'high'" style="background-color: red;">Hohe
