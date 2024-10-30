@@ -3,9 +3,7 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
@@ -13,8 +11,6 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-choose-need',
@@ -31,6 +27,7 @@ export class ChooseNeedComponent implements OnInit {
   filterRelevance?: number;
   filterDateOfCreation?: Date;
   filterMyNeeds?: boolean = false;
+  filterWithDeleteComment?: boolean = false;
   filterAreaManager?: User;
 
   user: User = new User();
@@ -43,19 +40,14 @@ export class ChooseNeedComponent implements OnInit {
   tableDisplayedColumns: string[] = ['title', 'areaman', 'create_date', 'link_cityplan', 'link_wwg'];
 
   private roadWorkNeedService: RoadWorkNeedService;
-  private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
-  private router: Router;
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    roadWorkActivityService: RoadWorkActivityService, router: Router,
     managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
-    this.roadWorkActivityService = roadWorkActivityService;
     this.managementAreaService = managementAreaService;
     this.userService = userService;
-    this.router = router;
     this.snckBar = snckBar;
   }
 
@@ -91,36 +83,40 @@ export class ChooseNeedComponent implements OnInit {
 
     let roadWorkNeedName: string = this.filterNeedName.trim().toLowerCase();
 
-    this.roadWorkNeedService
-      .getRoadWorkNeeds([], this.filterNeedYearOptFrom,
-        roadWorkNeedName, this.filterAreaManager?.uuid,
-        this.filterMyNeeds, this.filterRelevance, this.filterDateOfCreation,
-        this.statusFilterCodes).subscribe({
-          next: (roadWorkNeeds) => {
+    if (this.statusFilterCodes.length == 0) {
+      this.roadWorkNeedFeatures = [];
+    } else {
+      this.roadWorkNeedService
+        .getRoadWorkNeeds([], this.filterNeedYearOptFrom,
+          roadWorkNeedName, this.filterAreaManager?.uuid,
+          this.filterMyNeeds, this.filterWithDeleteComment, this.filterRelevance, this.filterDateOfCreation,
+          this.statusFilterCodes).subscribe({
+            next: (roadWorkNeeds) => {
 
-            for (let roadWorkNeed of roadWorkNeeds) {
-              let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
-              blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
-              roadWorkNeed.geometry = blowUpPoly;
-              this.managementAreaService.getIntersectingManagementArea(roadWorkNeed.geometry)
-                .subscribe({
-                  next: (managementArea) => {
-                    if (roadWorkNeed && managementArea) {
-                      roadWorkNeed.properties.managementArea = managementArea;
-                      if (managementArea.manager && managementArea.manager.uuid)
-                        this._addAreaManager(managementArea.manager);
+              for (let roadWorkNeed of roadWorkNeeds) {
+                let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
+                blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
+                roadWorkNeed.geometry = blowUpPoly;
+                this.managementAreaService.getIntersectingManagementArea(roadWorkNeed.geometry)
+                  .subscribe({
+                    next: (managementArea) => {
+                      if (roadWorkNeed && managementArea) {
+                        roadWorkNeed.properties.managementArea = managementArea;
+                        if (managementArea.manager && managementArea.manager.uuid)
+                          this._addAreaManager(managementArea.manager);
+                      }
+                    },
+                    error: (error) => {
                     }
-                  },
-                  error: (error) => {
-                  }
-                });
-            }
+                  });
+              }
 
-            this.roadWorkNeedFeatures = roadWorkNeeds;
-          },
-          error: (error) => {
-          }
-        });
+              this.roadWorkNeedFeatures = roadWorkNeeds;
+            },
+            error: (error) => {
+            }
+          });
+    }
 
   }
 

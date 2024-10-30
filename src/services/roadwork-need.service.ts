@@ -22,7 +22,8 @@ export class RoadWorkNeedService {
   }
 
   getRoadWorkNeeds(ids: string[] = [], year?: number, name: string = "",
-    areaManagerUuid?: string, onlyMyNeeds?: boolean, relevance?: number,
+    areaManagerUuid?: string, onlyMyNeeds?: boolean,
+    filterWithDeleteComment?: boolean, relevance?: number,
     dateOfCreation?: Date, status: string[] = [],
     summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
@@ -77,6 +78,16 @@ export class RoadWorkNeedService {
       }
       hasParameters = true;
       queryString += "onlymyneeds=true";
+    }
+
+    if (filterWithDeleteComment) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "onlywithdeletecomment=true";
     }
 
     if (relevance) {

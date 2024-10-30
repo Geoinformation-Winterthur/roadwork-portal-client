@@ -24,8 +24,7 @@
             <mat-label>Gebietsmanagement</mat-label>
             <mat-select [(ngModel)]="filterAreaManager" (ngModelChange)="getNeedsWithFilter()">
               <mat-option value=""></mat-option>
-              <mat-option *ngFor="let areaManager of areaManagers"
-                [value]="areaManager">
+              <mat-option *ngFor="let areaManager of areaManagers" [value]="areaManager">
                 {{areaManager.firstName}}
                 {{areaManager.lastName}}
               </mat-option>
@@ -46,8 +45,19 @@
               max="4">
           </mat-form-field>
         </form>
+        <mat-form-field appearance="fill">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="getNeedsWithFilter()" multiple>
+            <mat-option value="requirement">Bedarf (Phase 12)</mat-option>
+            <mat-option value="suspended">sistiert (Phase 12)</mat-option>
+          </mat-select>
+        </mat-form-field>
         <mat-checkbox (change)="getNeedsWithFilter()" [(ngModel)]="filterMyNeeds" style="margin: 1em;">
           Nur Meine
+        </mat-checkbox>
+        <mat-checkbox *ngIf="statusFilterCodes.includes('suspended')" (change)="getNeedsWithFilter()"
+          [(ngModel)]="filterWithDeleteComment" style="margin: 1em;">
+          Nur mit L&ouml;schkommentar
         </mat-checkbox>
       </mat-expansion-panel>
     </mat-accordion>

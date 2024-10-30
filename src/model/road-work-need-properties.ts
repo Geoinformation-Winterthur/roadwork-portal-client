@@ -40,4 +40,5 @@ export class RoadWorkNeedProperties {
     workTitle?: string;
     projectType?: string;
     costsComment?: string;
+    deleteReason?: string;
 }
