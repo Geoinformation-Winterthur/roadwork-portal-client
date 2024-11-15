@@ -520,14 +520,15 @@ export class ActivityAttributesComponent implements OnInit {
       let formData: FormData = new FormData();
       formData.append("pdfFile", file, file.name);
       this.documentService.uploadDocument(this.roadWorkActivityFeature.properties.uuid, formData, "roadworkactivity").subscribe({
-        next: (errorObj) => {
-          ErrorMessageEvaluation._evaluateErrorMessage(errorObj);
-          if (errorObj !== null && errorObj.errorMessage.trim().length !== 0) {
-            this.snckBar.open(errorObj.errorMessage, "", {
+        next: (documentAtts) => {
+          ErrorMessageEvaluation._evaluateErrorMessage(documentAtts);
+          if (documentAtts !== null && documentAtts.errorMessage !== null &&
+                documentAtts.errorMessage.trim().length !== 0) {
+            this.snckBar.open(documentAtts.errorMessage, "", {
               duration: 4000
             });
           } else {
-            this.roadWorkActivityFeature!.properties.hasPdfDocument = true;
+            this.roadWorkActivityFeature!.properties.documentAtts!.push(documentAtts);
             this.snckBar.open("PDF-Dokument wurde erfolgreich hochgeladen", "", {
               duration: 4000,
             });
@@ -542,9 +543,10 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  downloadPdf() {
+  downloadPdf(documentUuid: string) {
     if (this.roadWorkActivityFeature) {
-      this.documentService.getDocument(this.roadWorkActivityFeature.properties.uuid, "roadworkactivity").subscribe({
+      this.documentService.getDocument(this.roadWorkActivityFeature.properties.uuid, documentUuid, "roadworkactivity")
+      .subscribe({
         next: (documentData) => {
           if (documentData === null || documentData.size === 0) {
             this.snckBar.open("Dieses Bauvorhaben hat kein angehängtes PDF-Dokument.", "", {
@@ -566,14 +568,17 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  deletePdf() {
+  deletePdf(documentUuid: string) {
     if (this.roadWorkActivityFeature) {
-      this.documentService.deleteDocument(this.roadWorkActivityFeature.properties.uuid, "roadworkactivity").subscribe({
+      this.documentService.deleteDocument(this.roadWorkActivityFeature.properties.uuid, documentUuid, "roadworkactivity")
+      .subscribe({
         next: (documentData) => {
+          this.roadWorkActivityFeature!.properties.documentAtts = 
+              this.roadWorkActivityFeature!.properties.documentAtts?.
+                  filter((docAttr) => docAttr.uuid !== documentUuid);
           this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
             duration: 4000
           });
-          this.roadWorkActivityFeature!.properties.hasPdfDocument = false;
         },
         error: (error) => {
           this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {

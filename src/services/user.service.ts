@@ -222,7 +222,7 @@ export class UserService implements CanActivate {
     let result: string = "";
     if (user.grantedRoles.projectmanager) result += "Projektleitung ";
     if (user.grantedRoles.eventmanager) result += "Eventmanagement ";
-    if (user.grantedRoles.orderer) result += "Ausl&ouml;sende:r ";
+    if (user.grantedRoles.orderer) result += "Auslösende:r ";
     if (user.grantedRoles.trafficmanager) result += "Verkehrsmanagement ";
     if (user.grantedRoles.territorymanager) result += "Gebietsmanagement ";
     if (user.grantedRoles.administrator) result += "Administration ";

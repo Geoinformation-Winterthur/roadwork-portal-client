@@ -18,11 +18,11 @@ export class DocumentService {
     this.http = http;
   }
 
-  getDocument(uuid: string, type: string): Observable<any> {
+  getDocument(uuid: string, docUuid: string, type: string): Observable<any> {
     let head: HttpHeaders = new HttpHeaders();
     head = head.set("Accept", "application/pdf");
     let result: Observable<any> = this.http.get(environment.apiUrl +
-      "/" + type + "/" + uuid + "/pdf/",
+      "/" + type + "/" + uuid + "/pdf/?docuuid=" + docUuid,
       { headers: head, responseType: "blob" }) as Observable<any>;
     return result;
   }
@@ -37,10 +37,10 @@ export class DocumentService {
     return result;
   }
 
-  deleteDocument(uuid: string, type: string): Observable<any> {
+  deleteDocument(uuid: string, docUuid: string, type: string): Observable<any> {
     let head: HttpHeaders = new HttpHeaders();
     let result: Observable<any> =
-      this.http.delete(environment.apiUrl + "/" + type + "/" + uuid + "/pdf/");
+      this.http.delete(environment.apiUrl + "/" + type + "/" + uuid + "/pdf/?docuuid=" + docUuid);
     return result;
   }
 
