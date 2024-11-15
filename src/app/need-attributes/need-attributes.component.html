@@ -185,16 +185,22 @@
                         <mat-card-content>
                             <div>
                                 <mat-form-field appearance="fill">
-                                    <mat-label>Arbeitsbezeichnung *</mat-label>
+                                    <mat-label>Finanzierung *</mat-label>
                                     <mat-select [(ngModel)]="roadWorkNeedFeature.properties.workTitle" name="work_title"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        <mat-option value="new_construction">Neubau</mat-option>
-                                        <mat-option value="replacement">Ersatz</mat-option>
+                                        <mat-option value="new_construction">ungebunden</mat-option>
+                                        <mat-option value="replacement">gebunden</mat-option>
                                     </mat-select>
                                 </mat-form-field>
+                                <div *ngIf="roadWorkNeedFeature.properties.workTitle"
+                                    style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
+                                    <span *ngIf="roadWorkNeedFeature.properties.workTitle == 'new_construction'">mind. 1 Teil ungebundene Ausgabe</span>
+                                    <span *ngIf="roadWorkNeedFeature.properties.workTitle == 'replacement'">alles gebundene Ausgaben</span>
+                                </div>
+
                                 <div *ngIf="roadWorkNeedFeature.properties.workTitle">
                                     <mat-form-field appearance="fill">
-                                        <mat-label>Projekt-Art *</mat-label>
+                                        <mat-label>Kostentr&auml;ger *</mat-label>
                                         <mat-select [(ngModel)]="roadWorkNeedFeature.properties.projectType"
                                             name="project_type"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
@@ -211,7 +217,7 @@
                                             roadWorkNeedFeature.properties.projectType == 'lsa' ||
                                             roadWorkNeedFeature.properties.projectType == 'mobility'"
                                         style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
-                                        Kanton muss einbezogen werden
+                                        Bitte im Vernehmlassungsprozess AfM ber&uuml;cksichtigen
                                     </div>
                                     <mat-form-field>
                                         <input matInput type="number" min="0"
@@ -249,11 +255,12 @@
                                 </mat-form-field>
                                 <a *ngIf="roadWorkNeedFeature.properties.url"
                                     href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link &ouml;ffnen</a>
-                                <div  style="padding: 1em;margin-top: 1em;">
+                                <div style="padding: 1em;margin-top: 1em;">
                                     <p><b>PDF-Dokumente:</b></p>
                                     <div *ngFor="let documentAtts of roadWorkNeedFeature.properties.documentAtts"
-                                       style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
-                                       <p [matTooltip]="documentAtts.filename!">Dateiname: {{documentAtts.filename!.slice(0, 12)}}...</p>
+                                        style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                        <p [matTooltip]="documentAtts.filename!">Dateiname:
+                                            {{documentAtts.filename!.slice(0, 12)}}...</p>
                                         <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
                                             style="background-color: rgb(236,236,234);margin: 1em;">
                                             Herunterladen
