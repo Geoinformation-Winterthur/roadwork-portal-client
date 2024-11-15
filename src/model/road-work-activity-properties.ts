@@ -3,6 +3,7 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
 import { ActivityHistoryItem } from "./activity-history-item";
+import { DocumentAttributes } from "./document-attributes";
 import { EnumType } from "./enum-type";
 import { Status } from "./status";
 import { User } from "./user";
@@ -84,5 +85,5 @@ export class RoadWorkActivityProperties {
     dateInfoClose?: Date;
     isAggloprog: boolean = false;
     url: string = "";
-    hasPdfDocument: boolean = false;
+    documentAtts?: DocumentAttributes[];
 }

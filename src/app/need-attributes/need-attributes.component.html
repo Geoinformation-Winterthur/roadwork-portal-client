@@ -175,7 +175,7 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
-                    <mat-card  *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering"
+                    <mat-card *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering"
                         style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
@@ -249,21 +249,22 @@
                                 </mat-form-field>
                                 <a *ngIf="roadWorkNeedFeature.properties.url"
                                     href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link &ouml;ffnen</a>
-                                <div style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
-                                    <p><i>PDF-Dokument:</i></p>
-                                    <div *ngIf="roadWorkNeedFeature.properties.hasPdfDocument"
-                                        style="margin-bottom: 1em;">
-                                        <button (click)="downloadPdf()" mat-button
+                                <div  style="padding: 1em;margin-top: 1em;">
+                                    <p><b>PDF-Dokumente:</b></p>
+                                    <div *ngFor="let documentAtts of roadWorkNeedFeature.properties.documentAtts"
+                                       style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                       <p [matTooltip]="documentAtts.filename!">Dateiname: {{documentAtts.filename!.slice(0, 12)}}...</p>
+                                        <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
                                             style="background-color: rgb(236,236,234);margin: 1em;">
                                             Herunterladen
                                         </button>
-                                        <button (click)="deletePdf()" mat-button
+                                        <button (click)="deletePdf(documentAtts.uuid!)" mat-button
                                             style="background-color: rgb(236,236,234);margin: 1em;"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                             L&ouml;schen
                                         </button>
                                     </div>
-                                    <div *ngIf="!roadWorkNeedFeature.properties.hasPdfDocument">
+                                    <div>
                                         <p>Hochladen:</p>
                                         <form method="post" enctype="multipart/form-data">
                                             <input type="file" name="pdfFile" accept="application/pdf"

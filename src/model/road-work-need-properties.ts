@@ -2,6 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
+import { DocumentAttributes } from "./document-attributes";
 import { ManagementArea } from "./management-area";
 import { Priority } from "./priority";
 import { Status } from "./status";
@@ -34,11 +35,11 @@ export class RoadWorkNeedProperties {
     desiredYearFrom?: number;
     desiredYearTo?: number;
     managementArea?: ManagementArea;
-    hasPdfDocument: boolean = false;
     hasSpongeCityMeasures: boolean = false;
     spongeCityMeasures: string[] = [];
     workTitle?: string;
     projectType?: string;
     costsComment?: string;
     deleteReason?: string;
+    documentAtts?: DocumentAttributes[];
 }
