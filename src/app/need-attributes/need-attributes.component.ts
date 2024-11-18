@@ -22,7 +22,6 @@ import { RoadWorkActivityService } from 'src/services/roadwork-activity.service'
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
-import { SimpleDialogComponent } from '../simple-dialog/simple-dialog.component';
 import { Costs } from 'src/model/costs';
 import { v4 as uuidv4} from 'uuid';
 
@@ -141,8 +140,12 @@ export class NeedAttributesComponent implements OnInit {
   }
 
   publish() {
-    if (this.dateSlidersDirty) {
-      if (this.roadWorkNeedFeature) {
+    if (this.roadWorkNeedFeature) {
+      if (!this.roadWorkNeedFeature.properties.uuid && !this.dateSlidersDirty) {
+        this.snckBar.open("Bedarf nicht gespeichert. Bitte setzen Sie zuerst die Wunschtermine.", "", {
+          duration: 4000
+        });
+      } else {
         this.roadWorkNeedFeature.properties.isPrivate = false;
         if (this.roadWorkNeedFeature.properties.uuid)
           this.save();
@@ -150,23 +153,27 @@ export class NeedAttributesComponent implements OnInit {
           this.add();
       }
     } else {
-      this.dialog.open(SimpleDialogComponent, {
-        data: {infoText: "Bitte setzen Sie die Wunschtermine."}
+      this.snckBar.open("Bedarf konnte nicht gespeichert werden, da kein Bedarfsobjekt vorliegt.", "", {
+        duration: 4000
       });
     }
   }
 
   store() {
-    if (this.dateSlidersDirty) {
-      if (this.roadWorkNeedFeature) {
+    if (this.roadWorkNeedFeature) {
+      if (!this.roadWorkNeedFeature.properties.uuid && !this.dateSlidersDirty) {
+        this.snckBar.open("Bedarf nicht gespeichert. Bitte setzen Sie zuerst die Wunschtermine.", "", {
+          duration: 4000
+        });  
+      } else {
         if (this.roadWorkNeedFeature.properties.uuid)
           this.save();
         else
           this.add();
       }
     } else {
-      this.dialog.open(SimpleDialogComponent, {
-        data: {infoText: "Bitte setzen Sie die Wunschtermine."}
+      this.snckBar.open("Bedarf konnte nicht gespeichert werden, da kein Bedarfsobjekt vorliegt.", "", {
+        duration: 4000
       });
     }
   }
