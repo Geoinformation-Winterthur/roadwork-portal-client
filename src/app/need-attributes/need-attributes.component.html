@@ -183,26 +183,34 @@
                                     aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostensch&auml;tzung</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
-                            <div>
+                            <button (click)="addCostsEstimation()" mat-button
+                                    style="background-color: lightgrey;margin-bottom: 1em;">
+                                    +Hinzuf&uuml;gen
+                            </button><br>
+                            <div *ngFor="let costObj of roadWorkNeedFeature.properties.costs"
+                                    style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
+                                    <button (click)="deleteCostsEstimation(costObj.uuid)" mat-button
+                                    style="background-color: lightgrey;margin-bottom: 1em;">
+                                    Entfernen
+                            </button><br>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Finanzierung *</mat-label>
-                                    <mat-select [(ngModel)]="roadWorkNeedFeature.properties.workTitle" name="work_title"
+                                    <mat-select [(ngModel)]="costObj.workTitle" name="work_title"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         <mat-option value="new_construction">ungebunden</mat-option>
                                         <mat-option value="replacement">gebunden</mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <div *ngIf="roadWorkNeedFeature.properties.workTitle"
+                                <div *ngIf="costObj.workTitle"
                                     style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
-                                    <span *ngIf="roadWorkNeedFeature.properties.workTitle == 'new_construction'">mind. 1 Teil ungebundene Ausgabe</span>
-                                    <span *ngIf="roadWorkNeedFeature.properties.workTitle == 'replacement'">alles gebundene Ausgaben</span>
+                                    <span *ngIf="costObj.workTitle == 'new_construction'">mind. 1 Teil ungebundene
+                                        Ausgabe</span>
+                                    <span *ngIf="costObj.workTitle == 'replacement'">alles gebundene Ausgaben</span>
                                 </div>
-
-                                <div *ngIf="roadWorkNeedFeature.properties.workTitle">
+                                <div *ngIf="costObj.workTitle">
                                     <mat-form-field appearance="fill">
                                         <mat-label>Kostentr&auml;ger *</mat-label>
-                                        <mat-select [(ngModel)]="roadWorkNeedFeature.properties.projectType"
-                                            name="project_type"
+                                        <mat-select [(ngModel)]="costObj.projectType" name="project_type"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                             <mat-option value="street_municipal">Strasse kommunal</mat-option>
                                             <mat-option value="street_supramunicipal">Strasse
@@ -213,25 +221,23 @@
                                             <mat-option value="mobility">Mobilit&auml;t</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <div *ngIf="roadWorkNeedFeature.properties.projectType == 'street_supramunicipal' ||
-                                            roadWorkNeedFeature.properties.projectType == 'lsa' ||
-                                            roadWorkNeedFeature.properties.projectType == 'mobility'"
+                                    <div *ngIf="costObj.projectType == 'street_supramunicipal' ||
+                                            costObj.projectType == 'lsa' ||
+                                            costObj.projectType == 'mobility'"
                                         style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
                                         Bitte im Vernehmlassungsprozess AfM ber&uuml;cksichtigen
                                     </div>
                                     <mat-form-field>
-                                        <input matInput type="number" min="0"
-                                            [(ngModel)]="roadWorkNeedFeature.properties.costs"
+                                        <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
                                             placeholder="Kostensch&auml;tzung (CHF) *" step="1000"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </mat-form-field>
                                     <div style="color:grey;margin-bottom: 2em;">({{
-                                        roadWorkNeedFeature.properties.costs
+                                        costObj.costs
                                         | number }} CHF)</div>
                                     <mat-form-field style="width: 100%;">
                                         <mat-label>Bemerkung/Kommentar</mat-label>
-                                        <textarea matInput maxlength="255"
-                                            [(ngModel)]="roadWorkNeedFeature.properties.costsComment"
+                                        <textarea matInput maxlength="255" [(ngModel)]="costObj.costsComment"
                                             placeholder="Bemerkung/Kommentar..."
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </textarea>
