@@ -184,15 +184,17 @@
                         </mat-card-header>
                         <mat-card-content>
                             <button (click)="addCostsEstimation()" mat-button
-                                    style="background-color: lightgrey;margin-bottom: 1em;">
-                                    +Hinzuf&uuml;gen
+                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
+                                style="background-color: lightgrey;margin-bottom: 1em;">
+                                +Hinzuf&uuml;gen
                             </button><br>
                             <div *ngFor="let costObj of roadWorkNeedFeature.properties.costs"
-                                    style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
-                                    <button (click)="deleteCostsEstimation(costObj.uuid)" mat-button
+                                style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
+                                <button (click)="deleteCostsEstimation(costObj.uuid)" mat-button
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
                                     style="background-color: lightgrey;margin-bottom: 1em;">
                                     Entfernen
-                            </button><br>
+                                </button><br>
                                 <mat-form-field appearance="fill">
                                     <mat-label>Finanzierungs-Kategorie *</mat-label>
                                     <mat-select [(ngModel)]="costObj.workTitle" name="work_title"
