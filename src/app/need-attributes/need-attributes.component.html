@@ -194,11 +194,11 @@
                                     Entfernen
                             </button><br>
                                 <mat-form-field appearance="fill">
-                                    <mat-label>Finanzierung *</mat-label>
+                                    <mat-label>Finanzierungs-Kategorie *</mat-label>
                                     <mat-select [(ngModel)]="costObj.workTitle" name="work_title"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        <mat-option value="new_construction">ungebunden</mat-option>
-                                        <mat-option value="replacement">gebunden</mat-option>
+                                        <mat-option value="new_construction">Neu</mat-option>
+                                        <mat-option value="replacement">Unterhalt</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                                 <div *ngIf="costObj.workTitle"
@@ -209,7 +209,7 @@
                                 </div>
                                 <div *ngIf="costObj.workTitle">
                                     <mat-form-field appearance="fill">
-                                        <mat-label>Kostentr&auml;ger *</mat-label>
+                                        <mat-label>Kostentstelle (Name) *</mat-label>
                                         <mat-select [(ngModel)]="costObj.projectType" name="project_type"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                             <mat-option value="street_municipal">Strasse kommunal</mat-option>
