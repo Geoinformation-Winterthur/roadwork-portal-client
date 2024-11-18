@@ -10,7 +10,7 @@ import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { ManagementArea } from 'src/model/management-area';
@@ -18,12 +18,13 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { DateHelper } from 'src/helper/date-helper';
 import { DocumentService } from 'src/services/document.service';
 import { environment } from 'src/environments/environment';
-import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
 import { SimpleDialogComponent } from '../simple-dialog/simple-dialog.component';
+import { Costs } from 'src/model/costs';
+import { v4 as uuidv4} from 'uuid';
 
 @Component({
   selector: 'app-need-attributes',
@@ -392,6 +393,24 @@ export class NeedAttributesComponent implements OnInit {
           });
         }
       });
+    }
+  }
+
+  addCostsEstimation(){
+    if(this.roadWorkNeedFeature){
+      let costs: Costs = new Costs();
+      costs.uuid = uuidv4();
+      if(!this.roadWorkNeedFeature.properties.costs)
+        this.roadWorkNeedFeature.properties.costs = [];
+      this.roadWorkNeedFeature.properties.costs?.push(costs);
+    }
+  }
+
+  deleteCostsEstimation(costsUuid: string | undefined){
+    if(costsUuid &&
+        this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.costs){
+      this.roadWorkNeedFeature.properties.costs =
+          this.roadWorkNeedFeature.properties.costs.filter((costs) => costs.uuid != costsUuid);
     }
   }
 
