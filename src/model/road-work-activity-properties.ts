@@ -4,8 +4,6 @@
  */
 import { ActivityHistoryItem } from "./activity-history-item";
 import { DocumentAttributes } from "./document-attributes";
-import { EnumType } from "./enum-type";
-import { Status } from "./status";
 import { User } from "./user";
 
 export class RoadWorkActivityProperties {
@@ -86,4 +84,9 @@ export class RoadWorkActivityProperties {
     isAggloprog: boolean = false;
     url: string = "";
     documentAtts?: DocumentAttributes[];
+    dateStartInconsult?: Date;
+    dateStartVerified?: Date; 
+    dateStartReporting?: Date;
+    dateStartSuspended?: Date;
+    dateStartCoordinated?: Date;
 }
