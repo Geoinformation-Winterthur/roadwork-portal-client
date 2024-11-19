@@ -14,7 +14,8 @@
         </h1>
         <mat-tab-group>
             <mat-tab label="Perimeter">
-                <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature" #edit_activity_map></app-edit-activity-map>
+                <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"
+                    #edit_activity_map></app-edit-activity-map>
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="text-align: right;">
@@ -102,30 +103,31 @@
                                         <a *ngIf="roadWorkActivityFeature.properties.url"
                                             href="{{roadWorkActivityFeature.properties.url}}" target="_blank">Link
                                             &ouml;ffnen</a>
-                                            <div  style="padding: 1em;margin-top: 1em;">
-                                                <p><b>PDF-Dokumente:</b></p>
-                                                <div *ngFor="let documentAtts of roadWorkActivityFeature.properties.documentAtts"
-                                                   style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
-                                                   <p [matTooltip]="documentAtts.filename!">Dateiname: {{documentAtts.filename!.slice(0, 12)}}...</p>
-                                                    <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
-                                                        style="background-color: rgb(236,236,234);margin: 1em;">
-                                                        Herunterladen
-                                                    </button>
-                                                    <button (click)="deletePdf(documentAtts.uuid!)" mat-button
-                                                        style="background-color: rgb(236,236,234);margin: 1em;"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        L&ouml;schen
-                                                    </button>
-                                                </div>
-                                                <div>
-                                                    <p>Hochladen:</p>
-                                                    <form method="post" enctype="multipart/form-data">
-                                                        <input type="file" name="pdfFile" accept="application/pdf"
-                                                            (change)="uploadPdf($event)"
-                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"><br>
-                                                    </form>
-                                                </div>
+                                        <div style="padding: 1em;margin-top: 1em;">
+                                            <p><b>PDF-Dokumente:</b></p>
+                                            <div *ngFor="let documentAtts of roadWorkActivityFeature.properties.documentAtts"
+                                                style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                                <p [matTooltip]="documentAtts.filename!">Dateiname:
+                                                    {{documentAtts.filename!.slice(0, 12)}}...</p>
+                                                <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
+                                                    style="background-color: rgb(236,236,234);margin: 1em;">
+                                                    Herunterladen
+                                                </button>
+                                                <button (click)="deletePdf(documentAtts.uuid!)" mat-button
+                                                    style="background-color: rgb(236,236,234);margin: 1em;"
+                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    L&ouml;schen
+                                                </button>
                                             </div>
+                                            <div>
+                                                <p>Hochladen:</p>
+                                                <form method="post" enctype="multipart/form-data">
+                                                    <input type="file" name="pdfFile" accept="application/pdf"
+                                                        (change)="uploadPdf($event)"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"><br>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
@@ -186,42 +188,6 @@
                                                     [ngModel]="roadWorkActivityFeature.properties.endOfConstruction | date: 'dd.MM.yyyy'"
                                                     disabled>
                                             </mat-form-field>
-                                        </div>
-                                        <div>
-                                            <h4>Vernehmlassungen:</h4>
-                                            <div style="margin-top: 1em;">
-                                                F&auml;lligkeit:
-                                                <mat-chip [style]="getColorDueDate()">
-                                                    <span *ngIf="!dueDate">nicht bestimmt</span>
-                                                    <span *ngIf="dueDate">{{dueDate | date:
-                                                        'dd.MM.yyyy'}}</span>
-                                                </mat-chip>
-                                            </div>
-                                            <button (click)="update(false, 'inconsult')"
-                                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status != 'review' 
-                                                        || roadWorkActivityFeature.properties.isPrivate
-                                                        || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                                mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
-                                            <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult'"
-                                                (click)="openMail('inconsult')"
-                                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
-                                            <button (click)="update(false, 'reporting')"
-                                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.status != 'verified'
-                                                        || roadWorkActivityFeature.properties.isPrivate
-                                                        || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                                mat-button>Stellungnahme durchf&uuml;hren</button>
-                                            <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
-                                                (click)="openMail('reporting')"
-                                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
-                                            <button
-                                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                disabled mat-button>Infoversand durchführen</button>
                                         </div>
                                     </div>
                                 </mat-card-content>
@@ -970,6 +936,58 @@
                             userService.getLocalUser().chosenRole == 'orderer') && 
                             roadWorkActivityFeature.properties.status !== 'requirement'" label="Vernehmlassung">
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
+                    <mat-tab label="&Uuml;bersicht">
+                        <div>
+                            <div style="margin-top: 1em;">
+                                N&auml;chste F&auml;lligkeit:
+                                <mat-chip [style]="getColorDueDate()">
+                                    <span *ngIf="!dueDate">nicht bestimmt</span>
+                                    <span *ngIf="dueDate">{{dueDate | date:
+                                        'dd.MM.yyyy'}}</span>
+                                </mat-chip>
+                            </div>
+                            <button (click)="update(false, 'inconsult')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                [disabled]="roadWorkActivityFeature.properties.status != 'review' 
+                                        || roadWorkActivityFeature.properties.isPrivate
+                                        || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
+                            <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult'"
+                                (click)="openMail('inconsult')"
+                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
+                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
+                            <span
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult')"
+                                style="margin: 2em;color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
+                                ABGESCHLOSSEN
+                            </span>
+                            <span *ngIf="roadWorkActivityFeature.properties.dateStartReporting">
+                                ({{roadWorkActivityFeature.properties.dateStartReporting | date:'dd.MM.yyyy'}})
+                            </span><br>
+                            <button (click)="update(false, 'reporting')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                [disabled]="roadWorkActivityFeature.properties.status != 'verified'
+                                        || roadWorkActivityFeature.properties.isPrivate
+                                        || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                mat-button>Stellungnahme durchf&uuml;hren</button>
+                            <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
+                                (click)="openMail('reporting')"
+                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
+                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
+                            <span
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'reporting')"
+                                style="margin: 2em;color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
+                                ABGESCHLOSSEN
+                            </span>
+                            <span *ngIf="roadWorkActivityFeature.properties.dateStartCoordinated">
+                                ({{roadWorkActivityFeature.properties.dateStartCoordinated | date:'dd.MM.yyyy'}})
+                            </span><br>
+                            <button style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                disabled mat-button>Infoversand durchführen</button>
+                        </div>
+                    </mat-tab>
                     <mat-tab label="Bedarfskl&auml;rung">
                         <div style="margin: 2em;">
                             <span
@@ -1019,8 +1037,6 @@
                         <app-reporting-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
                             [roadworkActivityStatus]="roadWorkActivityFeature.properties.status">
                         </app-reporting-items>
-                    </mat-tab>
-                    <mat-tab label="Infoversand">
                     </mat-tab>
                 </mat-tab-group>
             </mat-tab>
