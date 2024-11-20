@@ -49,15 +49,11 @@
           <mat-label>Status</mat-label>
           <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="getNeedsWithFilter()" multiple>
             <mat-option value="requirement">Bedarf (Phase 12)</mat-option>
-            <mat-option value="suspended">sistiert (Phase 12)</mat-option>
+            <mat-option value="edited">bearbeitet (Phase 12)</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-checkbox (change)="getNeedsWithFilter()" [(ngModel)]="filterMyNeeds" style="margin: 1em;">
           Nur Meine
-        </mat-checkbox>
-        <mat-checkbox *ngIf="statusFilterCodes.includes('suspended')" (change)="getNeedsWithFilter()"
-          [(ngModel)]="filterWithDeleteComment" style="margin: 1em;">
-          Nur mit L&ouml;schkommentar
         </mat-checkbox>
       </mat-expansion-panel>
     </mat-accordion>
