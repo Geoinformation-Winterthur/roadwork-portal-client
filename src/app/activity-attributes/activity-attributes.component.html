@@ -1009,8 +1009,7 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERER&Ouml;FFNEN</button>
                         </div>
-                        <app-consultation-items [roadworkActivityUuid]="roadWorkActivityFeature.properties.uuid"
-                            [roadworkActivityStatus]="roadWorkActivityFeature.properties.status">
+                        <app-consultation-items [roadWorkActivity]="roadWorkActivityFeature">
                         </app-consultation-items>
                     </mat-tab>
                     <mat-tab label="Stellungnahme">

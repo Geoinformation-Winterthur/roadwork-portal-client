@@ -25,6 +25,7 @@ export class RoadWorkNeedService {
     areaManagerUuid?: string, onlyMyNeeds?: boolean,
     filterWithDeleteComment?: boolean, relevance?: number,
     dateOfCreation?: Date, status: string[] = [],
+    roadWorkActivityUuid?: string,
     summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
@@ -58,6 +59,16 @@ export class RoadWorkNeedService {
       }
       hasParameters = true;
       queryString += "name=" + name;
+    }
+
+    if (roadWorkActivityUuid) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "roadworkactivityuuid=" + roadWorkActivityUuid;
     }
 
     if (areaManagerUuid) {
@@ -142,7 +153,7 @@ export class RoadWorkNeedService {
   getIntersectingRoadWorkNeeds(roadWorkActicityUuid: string): Observable<RoadWorkNeedFeature[]> {
     let result: Observable<RoadWorkNeedFeature[]> = new Observable<RoadWorkNeedFeature[]>();
     if (roadWorkActicityUuid !== null && roadWorkActicityUuid.trim() !== "") {
-      let queryString = "/roadworkneed/?roadworkactivityuuid=" + roadWorkActicityUuid;
+      let queryString = "/roadworkneed/?intersectsactivityuuid=" + roadWorkActicityUuid;
       result = this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkNeedFeature[]>;
     }
     return result;

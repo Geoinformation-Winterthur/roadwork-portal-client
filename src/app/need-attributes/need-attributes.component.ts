@@ -18,12 +18,11 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { DateHelper } from 'src/helper/date-helper';
 import { DocumentService } from 'src/services/document.service';
 import { environment } from 'src/environments/environment';
-import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { DeleteNeedDialogComponent } from '../delete-need-dialog/delete-need-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
 import { Costs } from 'src/model/costs';
-import { v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-need-attributes',
@@ -54,7 +53,6 @@ export class NeedAttributesComponent implements OnInit {
 
   private dateSlidersDirty: boolean = false;
   private roadWorkNeedService: RoadWorkNeedService;
-  private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
   private documentService: DocumentService;
   private activatedRoute: ActivatedRoute;
@@ -66,14 +64,12 @@ export class NeedAttributesComponent implements OnInit {
 
   constructor(activatedRoute: ActivatedRoute,
     roadWorkNeedService: RoadWorkNeedService,
-    roadWorkActivityService: RoadWorkActivityService,
     documentService: DocumentService,
     userService: UserService, snckBar: MatSnackBar,
     managementAreaService: ManagementAreaService,
     router: Router, dialog: MatDialog) {
     this.activatedRoute = activatedRoute;
     this.roadWorkNeedService = roadWorkNeedService;
-    this.roadWorkActivityService = roadWorkActivityService;
     this.documentService = documentService;
     this.managementAreaService = managementAreaService;
     this.userService = userService;
@@ -88,11 +84,39 @@ export class NeedAttributesComponent implements OnInit {
         let idParamString: string = params['id'];
 
         if (idParamString == "new") {
-          this.roadWorkNeedFeature = NeedAttributesComponent.
-            _createNewRoadWorkNeedFeature();
-          this._setUserOnRoadworkNeed();
-          this.roadWorkNeedFeature.properties.managementArea = NeedAttributesComponent.
-            _createNewManagementArea();
+          this.activatedRoute.queryParams.subscribe(queryParams => {
+            this.roadWorkNeedFeature = NeedAttributesComponent.
+              _createNewRoadWorkNeedFeature();
+
+            let finishEarlyToParamString: string = queryParams['finishEarlyTo'];
+            let finishOptimumToParamString: string = queryParams['finishOptimumTo'];
+            let finishLateToParamString: string = queryParams['finishLateTo'];
+            let coordinatesParamString: string = queryParams['coordinates'];
+
+            if (finishEarlyToParamString) {
+              this.roadWorkNeedFeature.properties.finishEarlyTo =
+                new Date(finishEarlyToParamString);
+              this.finishEarlyFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishEarlyTo));
+            }
+            if (finishOptimumToParamString) {
+              this.roadWorkNeedFeature.properties.finishOptimumTo
+                = new Date(finishOptimumToParamString);
+              this.finishOptimumFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishOptimumTo));
+            }
+            if (finishLateToParamString) {
+              this.roadWorkNeedFeature.properties.finishLateTo =
+                new Date(finishLateToParamString);
+              this.finishLateFormControl.setValue(this._convertDateToQuartal(this.roadWorkNeedFeature.properties.finishLateTo));
+            }
+
+            if (coordinatesParamString)
+              this.roadWorkNeedFeature.geometry =
+                new RoadworkPolygon(coordinatesParamString);
+
+            this._setUserOnRoadworkNeed();
+            this.roadWorkNeedFeature.properties.managementArea = NeedAttributesComponent.
+              _createNewManagementArea();
+          });
         } else {
 
           let constProjId: string = params['id'];
@@ -164,7 +188,7 @@ export class NeedAttributesComponent implements OnInit {
       if (!this.roadWorkNeedFeature.properties.uuid && !this.dateSlidersDirty) {
         this.snckBar.open("Bedarf nicht gespeichert. Bitte setzen Sie zuerst die Wunschtermine.", "", {
           duration: 4000
-        });  
+        });
       } else {
         if (this.roadWorkNeedFeature.properties.uuid)
           this.save();
@@ -337,7 +361,7 @@ export class NeedAttributesComponent implements OnInit {
         next: (documentAtts) => {
           ErrorMessageEvaluation._evaluateErrorMessage(documentAtts);
           if (documentAtts !== null && documentAtts.errorMessage !== null &&
-                documentAtts.errorMessage.trim().length !== 0) {
+            documentAtts.errorMessage.trim().length !== 0) {
             this.snckBar.open(documentAtts.errorMessage, "", {
               duration: 4000
             });
@@ -360,64 +384,64 @@ export class NeedAttributesComponent implements OnInit {
   downloadPdf(documentUuid: string) {
     if (this.roadWorkNeedFeature) {
       this.documentService.getDocument(this.roadWorkNeedFeature.properties.uuid, documentUuid, "roadworkneed")
-      .subscribe({
-        next: (documentData) => {
-          if (documentData === null || documentData.size === 0) {
-            this.snckBar.open("Dieser Bedarf hat kein angehängtes PDF-Dokument.", "", {
+        .subscribe({
+          next: (documentData) => {
+            if (documentData === null || documentData.size === 0) {
+              this.snckBar.open("Dieser Bedarf hat kein angehängtes PDF-Dokument.", "", {
+                duration: 4000
+              });
+            } else {
+              let objUrl = window.URL.createObjectURL(documentData);
+              let newBrowserTab = window.open();
+              if (newBrowserTab)
+                newBrowserTab.location.href = objUrl;
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
               duration: 4000
             });
-          } else {
-            let objUrl = window.URL.createObjectURL(documentData);
-            let newBrowserTab = window.open();
-            if (newBrowserTab)
-              newBrowserTab.location.href = objUrl;
           }
-        },
-        error: (error) => {
-          this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
-            duration: 4000
-          });
-        }
-      });
+        });
     }
   }
 
   deletePdf(documentUuid: string) {
     if (this.roadWorkNeedFeature) {
       this.documentService.deleteDocument(this.roadWorkNeedFeature.properties.uuid, documentUuid, "roadworkneed")
-      .subscribe({
-        next: (documentData) => {
-          this.roadWorkNeedFeature!.properties.documentAtts = 
+        .subscribe({
+          next: (documentData) => {
+            this.roadWorkNeedFeature!.properties.documentAtts =
               this.roadWorkNeedFeature!.properties.documentAtts?.
-                    filter((docAttr) => docAttr.uuid !== documentUuid);
-          this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
-            duration: 4000
-          });
-        },
-        error: (error) => {
-          this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {
-            duration: 4000
-          });
-        }
-      });
+                filter((docAttr) => docAttr.uuid !== documentUuid);
+            this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
+              duration: 4000
+            });
+          },
+          error: (error) => {
+            this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {
+              duration: 4000
+            });
+          }
+        });
     }
   }
 
-  addCostsEstimation(){
-    if(this.roadWorkNeedFeature){
+  addCostsEstimation() {
+    if (this.roadWorkNeedFeature) {
       let costs: Costs = new Costs();
       costs.uuid = uuidv4();
-      if(!this.roadWorkNeedFeature.properties.costs)
+      if (!this.roadWorkNeedFeature.properties.costs)
         this.roadWorkNeedFeature.properties.costs = [];
       this.roadWorkNeedFeature.properties.costs?.push(costs);
     }
   }
 
-  deleteCostsEstimation(costsUuid: string | undefined){
-    if(costsUuid &&
-        this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.costs){
+  deleteCostsEstimation(costsUuid: string | undefined) {
+    if (costsUuid &&
+      this.roadWorkNeedFeature && this.roadWorkNeedFeature.properties.costs) {
       this.roadWorkNeedFeature.properties.costs =
-          this.roadWorkNeedFeature.properties.costs.filter((costs) => costs.uuid != costsUuid);
+        this.roadWorkNeedFeature.properties.costs.filter((costs) => costs.uuid != costsUuid);
     }
   }
 
