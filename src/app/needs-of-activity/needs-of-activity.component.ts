@@ -50,7 +50,9 @@ export class NeedsOfActivityComponent {
   }
 
   ngOnInit(): void {
-    this.roadWorkNeedService.getRoadWorkNeeds().subscribe({
+    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
+      undefined, undefined, undefined, undefined, undefined, undefined, 
+          this.roadWorkActivity.properties.uuid).subscribe({
       next: (roadWorkNeeds) => {
         this.allRoadWorkNeedFeatures = roadWorkNeeds;
         if (this.needsOfActivityService.assignedRoadWorkNeeds.length != 0) {

@@ -28,7 +28,6 @@ import { EnumType } from 'src/model/enum-type';
 import { DocumentService } from 'src/services/document.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-activity-dialog.component';
-import { EditActivityMapComponent } from '../edit-activity-map/edit-activity-map.component';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -230,7 +229,9 @@ export class ActivityAttributesComponent implements OnInit {
                   this.projectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
 
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
-                    this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids)
+                    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
+                      undefined, undefined, undefined, undefined, undefined, undefined,
+                      this.roadWorkActivityFeature?.properties.uuid)
                       .subscribe({
                         next: (roadWorkNeeds) => {
                           let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];

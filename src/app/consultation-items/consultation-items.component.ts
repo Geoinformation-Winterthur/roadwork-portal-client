@@ -1,11 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, Input, OnChanges, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { StatusHelper } from 'src/helper/status-helper';
 import { ConsultationInput } from 'src/model/consultation-input';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { User } from 'src/model/user';
 import { ConsultationService } from 'src/services/consultation.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
+import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 
 @Component({
@@ -13,39 +18,70 @@ import { UserService } from 'src/services/user.service';
   templateUrl: './consultation-items.component.html',
   styleUrls: ['./consultation-items.component.css']
 })
-export class ConsultationItemsComponent implements OnInit {
+export class ConsultationItemsComponent {
 
   @Input()
-  roadworkActivityUuid: string = "";
-
-  @Input()
-  roadworkActivityStatus: string = "";
+  roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
 
   consultationInput: ConsultationInput = new ConsultationInput();
 
-  consultationInputsFromInConsult: ConsultationInput[] = [];
-
-  tableDisplayedColumns: string[] = ['name', 'date_last_change', 'has_feedback', 'feedback', 'valuation', 'consult_input'];
+  tableDisplayedColumns: string[] = ['name', 'participant', 'date_last_change', 'has_feedback', 'feedback', 'consult_input'];
 
   user: User;
   userService: UserService;
 
-  needsOfActivityService: NeedsOfActivityService;
+  needsOfActivity: RoadWorkNeedFeature[] = [];
 
   statusHelper: StatusHelper;
 
   private consultationService: ConsultationService;
+  private roadWorkNeedService: RoadWorkNeedService;
+  private needsOfActivityService: NeedsOfActivityService;
+  private router: Router;
   private snckBar: MatSnackBar;
 
   constructor(consultationService: ConsultationService,
     needsOfActivityService: NeedsOfActivityService,
+    roadWorkNeedService: RoadWorkNeedService,
+    router: Router,
     userService: UserService, snckBar: MatSnackBar) {
     this.consultationService = consultationService;
+    this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
+    this.router = router;
     this.statusHelper = new StatusHelper();
+
+    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
+      undefined, undefined, undefined, undefined,
+      undefined, undefined, this.roadWorkActivity.properties.uuid).subscribe({
+        next: (roadWorkNeeds) => {
+          let needsOfActivityTemp = [];
+          for (let roadWorkNeed of roadWorkNeeds) {
+            needsOfActivityTemp.push(roadWorkNeed);
+          }
+          for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
+            let userHasFeedback = false;
+            for (let needOfActivity of needsOfActivityTemp) {
+              if (involvedUser.uuid == needOfActivity.properties.orderer.uuid) {
+                userHasFeedback = true;
+                break;
+              }
+            }
+            if (!userHasFeedback) {
+              let dummyRoadWorkNeed = new RoadWorkNeedFeature();
+              dummyRoadWorkNeed.properties.orderer = involvedUser;
+              needsOfActivityTemp.push(dummyRoadWorkNeed);
+            }
+          }
+          this.needsOfActivity = needsOfActivityTemp;
+        },
+        error: (error) => {
+        }
+      });
+
   }
 
   ngOnInit(): void {
@@ -60,22 +96,28 @@ export class ConsultationItemsComponent implements OnInit {
         }
       });
 
-    this.consultationInput.feedbackPhase = this.roadworkActivityStatus;
+    if (this.roadWorkActivity.properties.uuid) {
+      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.needsOfActivity);
+    }
 
-    this.consultationService.getConsultationInputs(this.roadworkActivityUuid)
+    this.consultationInput.feedbackPhase = this.roadWorkActivity.properties.status;
+
+    this.consultationService.getConsultationInputs(this.roadWorkActivity.properties.uuid)
       .subscribe({
         next: (consultationInputs) => {
-          let consultationInputsFromInConsultTemp: ConsultationInput[] = []
           for (let consultationInput of consultationInputs) {
             if (consultationInput.feedbackPhase === 'inconsult') {
-              consultationInputsFromInConsultTemp.push(consultationInput);
+              for (let needOfActivity of this.needsOfActivity) {
+                if (needOfActivity.properties.orderer.uuid == consultationInput.inputBy.uuid) {
+                  needOfActivity.properties.comment = "Kein Bedarf für uns";
+                }
+              }
             }
           }
-          this.consultationInputsFromInConsult = consultationInputsFromInConsultTemp;
 
           for (let consultationInput of consultationInputs) {
             if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
-              consultationInput.feedbackPhase === this.roadworkActivityStatus) {
+              consultationInput.feedbackPhase === this.roadWorkActivity.properties.status) {
               this.consultationInput = new ConsultationInput();
               this.consultationInput.uuid = "" + consultationInput.uuid;
               this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
@@ -98,7 +140,7 @@ export class ConsultationItemsComponent implements OnInit {
   sendInConsult() {
     this.consultationInput.feedbackGiven = true;
     if (this.consultationInput.uuid === "") {
-      this.consultationService.addConsultationInput(this.roadworkActivityUuid,
+      this.consultationService.addConsultationInput(this.roadWorkActivity.properties.uuid,
         this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
@@ -124,7 +166,6 @@ export class ConsultationItemsComponent implements OnInit {
               consultationInputObj.valuation = consultationInput.valuation;
               consultationInputObj.feedbackGiven = consultationInput.feedbackGiven;
 
-              this.consultationInputsFromInConsult.push(consultationInputObj);
             }
           },
           error: (error) => {
@@ -134,7 +175,7 @@ export class ConsultationItemsComponent implements OnInit {
           }
         });
     } else {
-      this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
+      this.consultationService.updateConsultationInput(this.roadWorkActivity.properties.uuid,
         this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
@@ -160,15 +201,14 @@ export class ConsultationItemsComponent implements OnInit {
     }
   }
 
-  updateComment(consultationInput: ConsultationInput) {
-    this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
-      consultationInput)
+  updateComment(roadWorkNeed: RoadWorkNeedFeature) {
+    this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
-        next: (consultationInput) => {
-          if (consultationInput) {
-            ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
-            if (consultationInput.errorMessage.trim().length !== 0) {
-              this.snckBar.open(consultationInput.errorMessage, "", {
+        next: (roadWorkNeed) => {
+          if (roadWorkNeed) {
+            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeed);
+            if (roadWorkNeed.errorMessage.trim().length !== 0) {
+              this.snckBar.open(roadWorkNeed.errorMessage, "", {
                 duration: 4000
               });
             } else {
@@ -187,11 +227,40 @@ export class ConsultationItemsComponent implements OnInit {
 
   }
 
+  hasRequirementAlreadyEntered(): boolean {
+    for (let needOfActivity of this.needsOfActivity) {
+      if (needOfActivity.properties.uuid &&
+        needOfActivity.properties.orderer.uuid == this.user.uuid) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  createNewNeed() {
+    let protoNeed: RoadWorkNeedFeature | undefined;
+    for (let needOfActivity of this.needsOfActivity) {
+      protoNeed = needOfActivity;
+      if (needOfActivity.properties.isPrimary)
+        break;
+    }
+    if (protoNeed) {
+      let params = {
+        finishEarlyTo: protoNeed.properties.finishEarlyTo,
+        finishOptimumTo: protoNeed.properties.finishOptimumTo,
+        finishLateTo: protoNeed.properties.finishLateTo,
+        coordinates: RoadworkPolygon.coordinatesToString(protoNeed.geometry.coordinates)
+      };
+      this.router.navigate(["/needs/new"], { queryParams: params });
+    }
+  }
+
   setDecline() {
     if (this.consultationInput.decline) {
       this.consultationInput.valuation = 0;
       this.consultationInput.ordererFeedback = "";
     }
+    this.sendInConsult();
   }
 
 }

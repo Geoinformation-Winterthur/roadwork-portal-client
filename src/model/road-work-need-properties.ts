@@ -14,7 +14,7 @@ export class RoadWorkNeedProperties {
     name: string = "";
     orderer: User  = new User();
     created: Date = new Date(1, 0, 1);
-    lastModified: Date = new Date(1, 0, 1);
+    lastModified?: Date;
     finishEarlyTo: Date = new Date(1, 0, 1);
     finishOptimumTo: Date = new Date(1, 0, 1);
     finishLateTo: Date = new Date(1, 0, 1);
@@ -40,4 +40,5 @@ export class RoadWorkNeedProperties {
     deleteReason?: string;
     documentAtts?: DocumentAttributes[];
     costs?: Costs[];
+    isPrimary?: boolean;
 }
