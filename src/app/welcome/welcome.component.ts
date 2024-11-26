@@ -29,7 +29,7 @@ export class WelcomeComponent implements OnInit {
   myRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
   myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
 
-  roadWorkNeedColumns: string[] = ['name', 'orderer', 'created', 'last_modified', 'description'];
+  roadWorkNeedColumns: string[] = ['name', 'territorymanager', 'orderer', 'orderer_org', 'description', 'status', 'created', 'last_modified'];
   roadWorkActivityColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
 
   user: User = new User();
@@ -63,6 +63,18 @@ export class WelcomeComponent implements OnInit {
         next: (roadWorkNeeds) => {
           let myRoadWorkNeeds: Map<string, RoadWorkNeedFeature> = new Map();
           for (let roadWorkNeed of roadWorkNeeds) {
+
+            this.managementAreaService.getIntersectingManagementArea(roadWorkNeed.geometry)
+              .subscribe({
+                next: (managementArea) => {
+                  if (managementArea) {
+                    roadWorkNeed.properties.managementArea = managementArea;
+                  }
+                },
+                error: (error) => {
+                }
+              });
+
             if (roadWorkNeed.properties.status != "coordinated")
               if (roadWorkNeed.properties.orderer.uuid == loggedInUser.uuid)
                 myRoadWorkNeeds.set(roadWorkNeed.properties.uuid, roadWorkNeed);
@@ -187,6 +199,43 @@ export class WelcomeComponent implements OnInit {
           }
         });
     }
+  }
+
+  getColorDueDate(roadworkActivity: RoadWorkActivityFeature): string {
+    if (roadworkActivity) {
+      const today: Date = new Date();
+      const dueDate = this._calcDueDate(roadworkActivity);
+      if (dueDate) {
+        let threeDaysBeforeDue: Date = new Date(dueDate);
+        threeDaysBeforeDue.setDate(dueDate.getDate() - 3);
+        let oneDayAfterDue = new Date(dueDate);
+        oneDayAfterDue.setDate(dueDate.getDate() + 1);
+        if (today >= oneDayAfterDue)
+          return "background-color: rgb(255, 109, 109);";
+        else if (today >= threeDaysBeforeDue)
+          return "background-color: rgb(255, 194, 109);";
+      }
+    }
+    return "background-color: rgb(109, 255, 121);";
+  }
+
+  private _calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
+    let result = undefined;
+    if (roadworkActivity.properties.status == "inconsult" ||
+      roadworkActivity.properties.status == "verified") {
+      if (roadworkActivity.properties.dateConsultEnd)
+        result = new Date(roadworkActivity.properties.dateConsultEnd);
+    } else if (roadworkActivity.properties.status == "reporting") {
+      if (roadworkActivity.properties.dateReportEnd)
+        result = roadworkActivity.properties.dateReportEnd;
+    } else if (roadworkActivity.properties.status == "coordinated") {
+      if (roadworkActivity.properties.dateInfoEnd)
+        result = roadworkActivity.properties.dateInfoEnd;
+    } else {
+      result = new Date();
+      result.setDate(result.getDate() + 7);
+    }
+    return result;
   }
 
 
