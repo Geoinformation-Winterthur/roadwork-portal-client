@@ -4,7 +4,6 @@
  */
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { User } from 'src/model/user';
@@ -15,7 +14,7 @@ import { ErrorMessage } from 'src/model/error-message';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService implements CanActivate {
+export class UserService {
 
   private user: User = new User();
 
@@ -23,15 +22,11 @@ export class UserService implements CanActivate {
 
   private jwtHelperService: JwtHelperService;
 
-  private router: Router;
-
   public static userTokenName: string = environment.roadworksPortalUserToken;
 
-  constructor(http: HttpClient, jwtHelperService: JwtHelperService,
-    router: Router) {
+  constructor(http: HttpClient, jwtHelperService: JwtHelperService) {
     this.http = http;
     this.jwtHelperService = jwtHelperService;
-    this.router = router;
 
     let userTokenTemp = localStorage.getItem(UserService.userTokenName);
     let userToken: string = userTokenTemp !== null ? userTokenTemp : "";
@@ -107,14 +102,6 @@ export class UserService implements CanActivate {
     this.user.passPhrase = "";
     this.user.grantedRoles = new Role();
     localStorage.clear();
-  }
-
-  canActivate() {
-    let isUserLoggedIn: boolean = this.isUserLoggedIn();
-    if (!isUserLoggedIn) {
-      this.router.navigate(["login"]);
-    }
-    return isUserLoggedIn;
   }
 
   public getUserFromDB(email: string): Observable<User[]> {

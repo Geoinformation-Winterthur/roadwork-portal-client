@@ -4,7 +4,7 @@
  */
  import { Component, OnInit } from '@angular/core';
  import { NgForm } from '@angular/forms';
- import { Router } from '@angular/router';
+ import { ActivatedRoute, Router } from '@angular/router';
  import { UserService } from 'src/services/user.service';
  import { User } from '../../model/user';
  
@@ -23,10 +23,12 @@
    chosenRole: string = "";
  
    private router: Router;
+   private route: ActivatedRoute;
    private userService: UserService;
  
-   constructor(router: Router, userService: UserService) {
+   constructor(router: Router, route: ActivatedRoute, userService: UserService) {
      this.router = router;
+     this.route = route;
      this.userService = userService;
     }
  
@@ -44,7 +46,8 @@
           () => {
             // in the case of login success:
             this.loginInvalid = false;
-            this.router.navigate(["/"]);
+            let returnUrl = this.route.snapshot.queryParams['returnUrl'] || "/";
+            this.router.navigateByUrl(returnUrl);
           }, 
           () => {
             // in the case of login failure (error):
