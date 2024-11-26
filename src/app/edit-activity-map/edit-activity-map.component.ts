@@ -5,17 +5,20 @@
 import { Component, Input, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
-import { Polygon } from 'ol/geom';
+import { Point, Polygon } from 'ol/geom';
 import Tile from 'ol/layer/Tile';
 import View from 'ol/View';
 import TileWMS from 'ol/source/TileWMS';
 import VectorSource from 'ol/source/Vector';
 import Draw from 'ol/interaction/Draw';
+import Modify from 'ol/interaction/Modify';
+import Snap from 'ol/interaction/Snap';
 import VectorLayer from 'ol/layer/Vector';
 import { Extent } from 'ol/extent';
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Stroke from 'ol/style/Stroke';
+import Circle from 'ol/style/Circle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { register } from 'ol/proj/proj4';
 import proj4 from 'proj4';
@@ -43,8 +46,9 @@ export class EditActivityMapComponent implements OnInit {
 
   chosenYear?: number;
 
-  isInEditingMode: boolean = false;
-  isEditingFinished: boolean = true;
+  isInDrawNewMode: boolean = false;
+  isDrawNewFinished: boolean = true;
+  isInModifyExistingMode: boolean = false;
 
   map: Map = new Map();
 
@@ -52,9 +56,12 @@ export class EditActivityMapComponent implements OnInit {
   addressSearchString: string = "";
 
   userDrawSource: VectorSource = new VectorSource();
+  userModifyVerticesSource: VectorSource = new VectorSource();
   roadWorkActivitySource: VectorSource = new VectorSource();
   roadWorkNeedSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
+  polygonModify?: Modify;
+  polygonSnap?: Snap;
 
   public needsOfActivityService: NeedsOfActivityService;
   needsOnMap: RoadWorkNeedFeature[] = [];
@@ -161,6 +168,44 @@ export class EditActivityMapComponent implements OnInit {
       style: userDrawLayerStyle
     });
 
+    const modifyVerticesStyle = new Style({
+      image: new Circle({
+        radius: 5,
+        fill: new Fill({
+          color: 'rgba(255, 255, 255, 0.8)',
+        }),
+        stroke: new Stroke({
+          color: '#ffcc33',
+          width: 2,
+        }),
+      }),
+      fill: new Fill({
+        color: 'rgba(255, 255, 255, 0.2)',
+      }),
+      stroke: new Stroke({
+        color: '#ffcc33',
+        width: 2,
+      }),
+    });
+
+    this.userModifyVerticesSource = new VectorSource({ wrapX: false });
+    let userModifyVerticesLayer = new VectorLayer({
+      source: this.userModifyVerticesSource,
+      style: modifyVerticesStyle
+    });
+
+    this.userDrawSource.on('change', () => {
+      if (this.roadWorkActivityFeat) {
+        const userDrawFeatures: Feature<Polygon>[] =
+          this.userDrawSource.getFeatures() as Feature<Polygon>[];
+        if (userDrawFeatures && userDrawFeatures.length != 0) {
+          const modifyVertices: Feature[] = this.getPointsOfPoly(userDrawFeatures[0]);
+          this.userModifyVerticesSource.clear();
+          this.userModifyVerticesSource.addFeatures(modifyVertices);
+        }
+      }
+    });
+
     // this.map = new EditableMap("edit_activity_map");
 
     const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
@@ -184,7 +229,8 @@ export class EditActivityMapComponent implements OnInit {
         }),
         roadWorkNeedLayer,
         roadWorkActivityLayer,
-        userDrawLayer
+        userDrawLayer,
+        userModifyVerticesLayer
       ],
       view: new View({
         projection: epsg2056Proj,
@@ -200,8 +246,8 @@ export class EditActivityMapComponent implements OnInit {
 
     this.addFeatureFinished = () => {
       if (this.userDrawSource.getState() === 'ready') {
-        this.isInEditingMode = true;
-        this.isEditingFinished = true;
+        this.isInDrawNewMode = true;
+        this.isDrawNewFinished = true;
         setTimeout(() => {
           if (this.polygonDraw !== undefined)
             this.map.removeInteraction(this.polygonDraw);
@@ -284,23 +330,56 @@ export class EditActivityMapComponent implements OnInit {
     }
   }
 
-  startEditing() {
+  drawNew() {
     this.userDrawSource.clear();
     if (this.polygonDraw !== undefined) {
       this.map.addInteraction(this.polygonDraw);
-      this.isInEditingMode = true;
-      this.isEditingFinished = false;
+      this.isInDrawNewMode = true;
+      this.isDrawNewFinished = false;
+    }
+  }
+
+  modifyExisting() {
+    if (this.userDrawSource && this.roadWorkActivityFeat) {
+      this.userDrawSource.clear();
+
+      let poly: Polygon = RoadworkPolygon.convertToOlPoly(this.roadWorkActivityFeat.geometry);
+      let feat: Feature = new Feature();
+      feat.setGeometry(poly);
+      this.userDrawSource.addFeature(feat);
+
+      this.polygonModify = new Modify({
+        source: this.userDrawSource
+      });
+      this.map.addInteraction(this.polygonModify);
+
+      this.polygonSnap = new Snap({
+        source: this.userDrawSource
+      });
+      this.map.addInteraction(this.polygonSnap);
+
+      const modifyVertices: Feature[] = this.getPointsOfPoly(feat);
+      this.userModifyVerticesSource.clear();
+      this.userModifyVerticesSource.addFeatures(modifyVertices);
+
+      this.isInModifyExistingMode = true;
     }
   }
 
   endEditing(status: string) {
-    this.isInEditingMode = false;
-    this.isEditingFinished = true;
+    this.isInDrawNewMode = false;
+    this.isInModifyExistingMode = false;
     if (status == "save")
       this.sendGeometry();
     if (this.polygonDraw !== undefined)
       this.map.removeInteraction(this.polygonDraw);
+    if (this.polygonModify !== undefined)
+      this.map.removeInteraction(this.polygonModify);
+    if (this.polygonSnap !== undefined)
+      this.map.removeInteraction(this.polygonSnap);
+
     this.userDrawSource.clear();
+    this.userModifyVerticesSource.clear();
   }
 
   refreshAddressList() {
@@ -327,12 +406,6 @@ export class EditActivityMapComponent implements OnInit {
       this.map.getView().setCenter([chosenAddress.x, chosenAddress.y]);
       this.map.getView().setZoom(18);
     }
-  }
-
-  showEditHelp() {
-    alert("Klicken Sie in die Karte, um mit dem Zeichnen der Projektfläche zu beginnen. " +
-      "Mit einem Doppelklick beenden Sie den Zeichenvorgang und schliessen die Fläche damit ab. " +
-      "Der Doppelklick zum Abschliessen erfolgt dabei nicht auf den Startpunkt der Fläche.");
   }
 
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
@@ -402,10 +475,10 @@ export class EditActivityMapComponent implements OnInit {
     }
   }
 
-  public setRoadworkActivityFinished(){
-    for(let feature of this.roadWorkActivitySource.getFeatures()){
+  public setRoadworkActivityFinished() {
+    for (let feature of this.roadWorkActivitySource.getFeatures()) {
       let featName: string = feature.get("name");
-      if(featName === "Roadwork activity"){
+      if (featName === "Roadwork activity") {
         feature.set("status", 'coordinated');
         feature.set("dateSksReal", new Date());
         feature.changed()
@@ -431,6 +504,20 @@ export class EditActivityMapComponent implements OnInit {
 
       this.map.setView(view);
     }
+  }
+
+  private getPointsOfPoly(feature: Feature): Feature[] {
+    const result: Feature[] = [];
+    const geom = feature.getGeometry();
+    if (geom && geom.getType() === 'Polygon') {
+      const coords = (geom as Polygon).getCoordinates();
+      if (coords.length != 0) {
+        for (let coord of coords[0]) {
+          result.push(new Feature(new Point(coord)));
+        }
+      }
+    }
+    return result;
   }
 
   refresh() {
