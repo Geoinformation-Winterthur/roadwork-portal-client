@@ -79,6 +79,9 @@ export class ActivityAttributesComponent implements OnInit {
 
   statusHelper: StatusHelper;
 
+  selectedTabIndex = 0;
+  selectedSubTabIndex = 0;
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -220,6 +223,8 @@ export class ActivityAttributesComponent implements OnInit {
                       next: (managementArea) => {
                         if (managementArea) {
                           this.managementArea = managementArea;
+                          if(this.roadWorkActivityFeature)
+                            this.roadWorkActivityFeature.properties.areaManager = managementArea.manager;
                         }
                       },
                       error: (error) => {
@@ -253,6 +258,18 @@ export class ActivityAttributesComponent implements OnInit {
                   this._getAllInvolvedOrgs();
                   this._updateDueDate();
                 }
+
+                this.activatedRoute.queryParams.subscribe(params => {
+                  const tabName = params["open_tab"];
+                  if(tabName=="bedarfsklaerung"){
+                    this.selectedTabIndex = 2;
+                    this.selectedSubTabIndex = 1;
+                  } else if(tabName=="stellungnahme"){
+                    this.selectedTabIndex = 2;
+                    this.selectedSubTabIndex = 2;
+                  }
+                });
+
               },
               error: (error) => {
               }
@@ -720,21 +737,29 @@ export class ActivityAttributesComponent implements OnInit {
         mailText += separator + "subject=Die Stellungnahme zum Bauvorhaben '" +
           this.roadWorkActivityFeature.properties.name +
           "' beginnt. Ihre Meinung ist gefragt.&";
-      mailText += "body=Sehr geehrte Damen und Herren%0A%0A";
+      mailText += "body=Liebe Kolleginnen und Kollegen%0A%0A";
       mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
-      mailText += environment.fullAppPath + "%0A%0A";
+      mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid;
+      if (newStatus == "inconsult")
+        mailText += "?open_tab=bedarfsklaerung";
+      else if (newStatus == "reporting")
+        mailText += "?open_tab=stellungnahme";
+      mailText += "%0A%0A";
+      mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid + "%0A%0A";
       mailText += "Titel/Strasse: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
-      mailText += "Bitte beurteilen Sie, ob in Ihrem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
-      mailText += "Sollte Bedarf vorhanden sein, so bitten wir Sie, den Bedarf genauer zu erläutern und eine Beurteilung aus Ihrer Sicht abzugeben. Sie können auch einen neuen Bedarf via Button erfassen (Hinweis: mit Wählen des Button öffnet sich die Eingabemaske und Sie können einen neuen Bedarf inkl. Perimeter eingeben).%0A%0A";
+      mailText += "Bitte beurteile, ob in deinem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
+      mailText += "Sollte Bedarf vorhanden sein, so bitten wir dich, den Bedarf genauer zu erläutern. Du hilfst uns durch Erfassen eines neuen Bedarfs, dein Anliegen besser zu verstehen.%0A%0A";
       if (newStatus == "inconsult" && this.roadWorkActivityFeature.properties.dateConsultEnd)
         mailText += "Die Bedarfsklärung läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
       else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
         mailText += "Die Stellungnahme läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
-      mailText += "Mit «Speichern» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
+      mailText += "Mit «Senden» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
       mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
+      mailText += this.roadWorkActivityFeature.properties.areaManager.firstName + " " 
+          + this.roadWorkActivityFeature.properties.areaManager.lastName + "%0A%0A";
       mailText += "Tiefbauamt, Abteilung Planung & Koordination%0A%0A";
 
       window.open(mailText, "_blank", "noreferrer");
