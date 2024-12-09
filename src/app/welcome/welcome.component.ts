@@ -4,6 +4,7 @@
  */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
@@ -217,6 +218,10 @@ export class WelcomeComponent implements OnInit {
       }
     }
     return "background-color: rgb(109, 255, 121);";
+  }
+
+  openWinWebGIS(){
+    window.open("http://intramap.winport.net/projekte/tiefbau_info/start_redirect.php", "_blank");
   }
 
   private _calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
