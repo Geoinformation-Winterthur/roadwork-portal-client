@@ -12,7 +12,7 @@
                 *ngIf="roadWorkActivityFeature.properties.isPrivate"
                 style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
         </h1>
-        <mat-tab-group>
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex">
             <mat-tab label="Perimeter">
                 <app-edit-activity-map [roadWorkActivityFeat]="roadWorkActivityFeature"
                     #edit_activity_map></app-edit-activity-map>
@@ -935,7 +935,8 @@
                             userService.getLocalUser().chosenRole == 'territorymanager' || 
                             userService.getLocalUser().chosenRole == 'orderer') && 
                             roadWorkActivityFeature.properties.status !== 'requirement'" label="Vernehmlassung">
-                <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
+                <mat-tab-group [(selectedIndex)]="selectedSubTabIndex"
+                            style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="&Uuml;bersicht">
                         <div>
                             <div style="margin-top: 1em;">
