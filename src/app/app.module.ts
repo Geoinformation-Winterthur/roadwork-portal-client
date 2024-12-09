@@ -23,6 +23,7 @@
  import { MatFormFieldModule } from '@angular/material/form-field';
  import { MatInputModule } from '@angular/material/input';
  import { MatCheckboxModule } from '@angular/material/checkbox';
+ import { MatRadioModule } from '@angular/material/radio';
  import { MatButtonToggleModule } from '@angular/material/button-toggle';
  import { MatDatepickerModule } from '@angular/material/datepicker';
  import { MatNativeDateModule } from '@angular/material/core';
@@ -147,6 +148,7 @@ import deChLocale from '@angular/common/locales/de-CH';
      MatSlideToggleModule,
      MatInputModule,
      MatCheckboxModule,
+     MatRadioModule,
      MatButtonToggleModule,
      ReactiveFormsModule,
      BrowserAnimationsModule,

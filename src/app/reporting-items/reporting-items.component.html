@@ -1,7 +1,7 @@
 <div
     *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager')">
     <div *ngIf="!consultationInputsFromReporting || consultationInputsFromReporting.length == 0
-    && !statusHelper.isStatusLater(roadworkActivityStatus, 'reporting')" style="margin: 2em;">
+    && !statusHelper.isStatusLater(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
         Stellungnahme noch nicht er&ouml;ffnet. Oder es wurden keine Beteiligten vorausgew&auml;hlt
         und es gibt noch keine R&uuml;ckmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
         werden.
@@ -41,7 +41,8 @@
                                 R&uuml;ckmeldung</span>
                         </mat-chip>
                     </mat-chip-list>
-                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">R&uuml;ckmeldung Beteiligte:r:</div>
+                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">R&uuml;ckmeldung Beteiligte:r:
+                    </div>
                     <div *ngIf="consultationInput.feedbackGiven"
                         style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
                         <span *ngIf="consultationInput.ordererFeedback">{{consultationInput.ordererFeedback}}</span>
@@ -154,22 +155,48 @@
         </table>
     </div>
 </div>
-<div *ngIf="roadworkActivityStatus ==='reporting' && userService.getLocalUser().chosenRole != 'administrator'
+<div *ngIf="roadWorkActivity.properties.status=='reporting' && userService.getLocalUser().chosenRole != 'administrator'
              && userService.getLocalUser().chosenRole != 'territorymanager'">
     <h2>Eingabe zur Stellungnahme</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
-        <p>
-            <mat-checkbox [(ngModel)]="consultationInput.decline" (change)="setDecline()" style="margin:10px;">
-                Keine aktive R&uuml;ckmeldung
-            </mat-checkbox>
+        <p>W&auml;hrend der Bedarfskl&auml;rung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.
+            Daraus ergibt sich zum heutigen Zeitpunkt folgender Realisierungszeitraum (Sch&auml;tzung):</p>
+        <p>Baubeginn:
+            <span *ngIf="this.roadWorkActivity.properties.startOfConstruction"
+                style="background-color: lightgray;padding: 0.2em;">
+                {{this.roadWorkActivity.properties.startOfConstruction}}
+            </span>
+            <span *ngIf="!this.roadWorkActivity.properties.startOfConstruction"
+                style="background-color: lightgray;padding: 0.2em;">
+                Datum nicht gesetzt
+            </span>
         </p>
-        <mat-form-field style="width: 100%; margin-top: 2em;">
-            <mat-label>R&uuml;ckmeldung</mat-label>
-            <textarea matInput [(ngModel)]="consultationInput.ordererFeedback" maxlength="40000"
-                placeholder="R&uuml;ckmeldung..." [disabled]="consultationInput.decline"></textarea>
-        </mat-form-field>
+        <p>Bauende:
+            <span *ngIf="this.roadWorkActivity.properties.endOfConstruction"
+                style="background-color: lightgray;padding: 0.2em;">
+                {{this.roadWorkActivity.properties.endOfConstruction}}
+            </span>
+            <span *ngIf="!this.roadWorkActivity.properties.endOfConstruction"
+                style="background-color: lightgray;padding: 0.2em;">
+                Datum nicht gesetzt
+            </span>
+        <p>
+            <mat-radio-group [(ngModel)]="consultationInput.ordererFeedback" aria-label="Wählen Sie eine Option">
+                <mat-radio-button style="margin:10px;" value="no_requirement_anymore">
+                    Kein Bedarf mehr
+                </mat-radio-button>
+                <p>Weiterhin Bedarf vorhanden:</p>
+                <mat-radio-button style="margin:10px;" value="activity_okay">
+                    Ja, das Bauvorhaben inkl. des gesch&auml;tzten Realisierungszeitraums passt
+                </mat-radio-button><br>
+                <mat-radio-button style="margin:10px;" value="activity_not_okay">
+                    Nein, ich bin nicht einverstanden. Bitte um Kontaktaufnahme
+                </mat-radio-button>
+            </mat-radio-group>
+        </p>
         <button mat-button (click)="sendReporting()"
-            style="margin: 1em;border: 1px solid;color: rgb(237,240,255);background-color: rgb(138,71,200);">
+            style="margin: 1em;border: 1px solid;"
+            [disabled]="!consultationInput.ordererFeedback">
             SENDEN
         </button>
     </div>
