@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { StatusHelper } from 'src/helper/status-helper';
 import { ConsultationInput } from 'src/model/consultation-input';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { User } from 'src/model/user';
 import { ConsultationService } from 'src/services/consultation.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
@@ -16,10 +17,7 @@ import { UserService } from 'src/services/user.service';
 export class ReportingItemsComponent implements OnInit {
 
   @Input()
-  roadworkActivityUuid: string = "";
-
-  @Input()
-  roadworkActivityStatus: string = "";
+  roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
 
   consultationInput: ConsultationInput = new ConsultationInput();
 
@@ -60,9 +58,9 @@ export class ReportingItemsComponent implements OnInit {
         }
       });
 
-    this.consultationInput.feedbackPhase = this.roadworkActivityStatus;
+    this.consultationInput.feedbackPhase = this.roadWorkActivity.properties.status;
 
-    this.consultationService.getConsultationInputs(this.roadworkActivityUuid)
+    this.consultationService.getConsultationInputs(this.roadWorkActivity.properties.uuid)
       .subscribe({
         next: (consultationInputs) => {
           let consultationInputsFromReportingTemp: ConsultationInput[] = [];
@@ -75,7 +73,7 @@ export class ReportingItemsComponent implements OnInit {
 
           for (let consultationInput of consultationInputs) {
             if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
-              consultationInput.feedbackPhase === this.roadworkActivityStatus) {
+              consultationInput.feedbackPhase === this.roadWorkActivity.properties.status) {
               this.consultationInput = new ConsultationInput();
               this.consultationInput.uuid = "" + consultationInput.uuid;
               this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
@@ -97,7 +95,7 @@ export class ReportingItemsComponent implements OnInit {
 
   sendReporting() {
     if (this.consultationInput.uuid === "") {
-      this.consultationService.addConsultationInput(this.roadworkActivityUuid,
+      this.consultationService.addConsultationInput(this.roadWorkActivity.properties.uuid,
         this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
@@ -132,7 +130,7 @@ export class ReportingItemsComponent implements OnInit {
           }
         });
     } else {
-      this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
+      this.consultationService.updateConsultationInput(this.roadWorkActivity.properties.uuid,
         this.consultationInput)
         .subscribe({
           next: (consultationInput) => {
@@ -180,7 +178,7 @@ export class ReportingItemsComponent implements OnInit {
   }
 
   updateComment(consultationInput: ConsultationInput) {
-    this.consultationService.updateConsultationInput(this.roadworkActivityUuid,
+    this.consultationService.updateConsultationInput(this.roadWorkActivity.properties.uuid,
       consultationInput)
       .subscribe({
         next: (consultationInput) => {
@@ -204,12 +202,6 @@ export class ReportingItemsComponent implements OnInit {
         }
       });
 
-  }
-
-  setDecline() {
-    if (this.consultationInput.decline) {
-      this.consultationInput.ordererFeedback = "";
-    }
   }
 
 }
