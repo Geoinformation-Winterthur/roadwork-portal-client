@@ -53,6 +53,19 @@ export class ConsultationItemsComponent {
     this.snckBar = snckBar;
     this.router = router;
     this.statusHelper = new StatusHelper();
+  }
+
+  ngOnInit(): void {
+
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
+      .subscribe({
+        next: (user) => {
+          if (user && user.length > 0)
+            this.user = user[0];
+        },
+        error: (error) => {
+        }
+      });
 
     this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
       undefined, undefined, undefined, undefined,
@@ -82,19 +95,6 @@ export class ConsultationItemsComponent {
         }
       });
 
-  }
-
-  ngOnInit(): void {
-
-    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
-      .subscribe({
-        next: (user) => {
-          if (user && user.length > 0)
-            this.user = user[0];
-        },
-        error: (error) => {
-        }
-      });
 
     if (this.roadWorkActivity.properties.uuid) {
       this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.needsOfActivity);
