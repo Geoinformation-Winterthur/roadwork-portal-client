@@ -11,6 +11,7 @@ export class ConsultationInput {
     inputBy: User = new User();
     decline: boolean = false;
     ordererFeedback: string = "";
+    ordererFeedbackText: string = "";
     managerFeedback: string = "";
     valuation: number = 0;
     feedbackPhase: string = "";

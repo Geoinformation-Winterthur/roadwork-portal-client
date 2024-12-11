@@ -23,7 +23,7 @@ export class ReportingItemsComponent implements OnInit {
 
   consultationInputsFromReporting: ConsultationInput[] = [];
 
-  tableDisplayedColumns: string[] = ['name', 'date_last_change', 'has_feedback', 'feedback', 'valuation', 'consult_input'];
+  tableDisplayedColumns: string[] = ['organisation', 'name', 'feedback', 'date_last_change', 'has_feedback', 'no_requirement_anymore', 'activity_okay', 'consult_input'];
 
   user: User;
   userService: UserService;
