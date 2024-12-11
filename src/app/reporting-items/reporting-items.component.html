@@ -32,8 +32,8 @@
                 <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
                     <mat-chip-list>
                         <mat-chip *ngIf="consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
-                                style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung gegeben</span>
+                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
+                                style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung erhalten</span>
                         </mat-chip>
                         <mat-chip *ngIf="!consultationInput.feedbackGiven">
                             <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
@@ -41,12 +41,34 @@
                                 R&uuml;ckmeldung</span>
                         </mat-chip>
                     </mat-chip-list>
+
+                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf vorhanden"
+                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Weiterhin Bedarf vorhanden</span>
+                        </mat-chip>
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Kein Bedarf mehr</span>
+                        </mat-chip>
+                    </mat-chip-list>
+
+                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
+                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Bauvorhaben passt</span>
+                        </mat-chip>
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Nicht einverstanden</span>
+                        </mat-chip>
+                    </mat-chip-list>
                     <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">R&uuml;ckmeldung Beteiligte:r:
                     </div>
                     <div *ngIf="consultationInput.feedbackGiven"
                         style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
-                        <span *ngIf="consultationInput.ordererFeedback">{{consultationInput.ordererFeedback}}</span>
-                        <span *ngIf="!consultationInput.ordererFeedback">Kein Text</span>
+                        <span *ngIf="consultationInput.ordererFeedbackText">{{consultationInput.ordererFeedbackText}}</span>
+                        <span *ngIf="!consultationInput.ordererFeedbackText">Kein Text</span>
                     </div>
                     <p style="margin: 2em;">Bewertung des Bauvorhabens:<br>
                         <mat-button-toggle-group [(ngModel)]="consultationInput.valuation"
@@ -89,8 +111,14 @@
     <div *ngIf="user && user.prefTableView" style="margin-top: 1em;">
         <table mat-table [dataSource]="consultationInputsFromReporting" class="mat-elevation-z2" style="width: 100%">
 
+            <ng-container matColumnDef="organisation">
+                <th mat-header-cell *matHeaderCellDef> Werk </th>
+                <td mat-cell *matCellDef="let consultationInput"> {{consultationInput.inputBy.organisationalUnit.abbreviation}}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <th mat-header-cell *matHeaderCellDef> Vernehmlassende:r </th>
                 <td mat-cell *matCellDef="let consultationInput"> {{consultationInput.inputBy.firstName}}
                     {{consultationInput.inputBy.lastName}}
                 </td>
@@ -109,11 +137,11 @@
             </ng-container>
 
             <ng-container matColumnDef="has_feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung gegeben </th>
+                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung erhalten </th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-chip-list>
                         <mat-chip *ngIf="consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
+                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
                         <mat-chip *ngIf="!consultationInput.feedbackGiven">
@@ -124,18 +152,42 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="no_requirement_anymore">
+                <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf vorhanden"
+                                style="color: green;">check</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="activity_okay">
+                <th mat-header-cell *matHeaderCellDef> Realisierungszeitraum passt </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
+                                style="color: green;">check</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="feedback">
                 <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung </th>
                 <td mat-cell *matCellDef="let consultationInput" style="max-width: 10em; word-wrap:break-word;">
-                    {{consultationInput.ordererFeedback}}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="valuation">
-                <th mat-header-cell *matHeaderCellDef> Bewertung </th>
-                <td mat-cell *matCellDef="let consultationInput">
-                    <span
-                        style="padding: 0.5em;border: 1px solid;background-color: rgb(239, 239, 239);">{{consultationInput.valuation}}</span>
-                </td>
+                    {{consultationInput.ordererFeedbackText}}</td>
             </ng-container>
 
             <ng-container matColumnDef="consult_input">
@@ -194,8 +246,12 @@
                 </mat-radio-button>
             </mat-radio-group>
         </p>
-        <button mat-button (click)="sendReporting()"
-            style="margin: 1em;background-color: rgb(236,236,234);"
+        <mat-form-field style="width: 100%; margin-top: 2em;">
+            <mat-label>R&uuml;ckmeldung</mat-label>
+            <textarea matInput [(ngModel)]="consultationInput.ordererFeedbackText" maxlength="40000"
+                placeholder="R&uuml;ckmeldung..."></textarea>
+        </mat-form-field>
+        <button mat-button (click)="sendReporting()" style="margin: 1em;background-color: rgb(236,236,234);"
             [disabled]="!consultationInput.ordererFeedback">
             SENDEN
         </button>
