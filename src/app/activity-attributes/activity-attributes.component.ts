@@ -755,12 +755,12 @@ export class ActivityAttributesComponent implements OnInit {
       else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
         mailText += "Die Stellungnahme läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
-      mailText += "Mit «Senden» übermitteln Sie uns Ihre Rückmeldung.%0A%0A";
-      mailText += "Vielen Dank für Ihre Teilnahme.%0A%0A";
+      mailText += "Mit «Senden» übermittelst du uns deine Rückmeldung.%0A%0A";
+      mailText += "Vielen Dank für deine Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
       mailText += this.roadWorkActivityFeature.properties.areaManager.firstName + " " 
           + this.roadWorkActivityFeature.properties.areaManager.lastName + "%0A%0A";
-      mailText += "Tiefbauamt, Abteilung Planung & Koordination%0A%0A";
+      mailText += "Tiefbauamt, Abteilung Planung %26 Koordination%0A%0A";
 
       window.open(mailText, "_blank", "noreferrer");
 
