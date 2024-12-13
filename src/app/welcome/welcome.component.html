@@ -45,6 +45,13 @@
         <mat-tab-group>
             <mat-tab label="Aktuelles">
                 <div style="margin: 2em;">
+                    &Uuml;ber das WinWebGIS findest du die graphische Darstellung der Bauvorhaben.<br>
+                    F&uuml;r Details bitte diesen Button klicken:
+                    <div style="text-align: center;margin-bottom: 1em;">
+                        <button mat-button (click)="openWinWebGIS()" style="margin: 1em;background-color: rgb(236,236,234);">
+                            <mat-icon aria-label="Karte">map</mat-icon>&nbsp;Im WinWebGIS &ouml;ffnen
+                        </button>
+                    </div>    
                     <div *ngIf="myRoadWorkActivityFeatures.length === 0 && myRoadWorkNeedFeatures.length === 0"><span
                             style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
                             gibt zurzeit keine Meldungen im Zusammenhang mit deinem pers&ouml;nlichen Login.</span>
@@ -203,11 +210,6 @@
                         </div>
 
                     </div>
-                </div>
-                <div style="text-align: center;">
-                    <button mat-button (click)="openWinWebGIS()" style="margin: 1em;background-color: rgb(236,236,234);">
-                        <mat-icon aria-label="Karte">map</mat-icon>&nbsp;Im WinWebGIS &ouml;ffnen
-                    </button>
                 </div>
             </mat-tab>
             <mat-tab label="Einstellungen">
