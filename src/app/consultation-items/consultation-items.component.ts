@@ -25,7 +25,7 @@ export class ConsultationItemsComponent {
 
   consultationInput: ConsultationInput = new ConsultationInput();
 
-  tableDisplayedColumns: string[] = ['name', 'participant', 'date_last_change', 'has_feedback', 'feedback', 'consult_input'];
+  tableDisplayedColumns: string[] = ['name', 'organisation', 'participant', 'feedback', 'date_last_change', 'has_feedback', 'still_requirement', 'temporal_factor', 'new_requirement',  'consult_input'];
 
   user: User;
   userService: UserService;

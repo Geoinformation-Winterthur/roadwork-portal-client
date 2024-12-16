@@ -30,7 +30,7 @@ export class ErrorMessageDictionary {
              "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
              "Änderung wurde nicht gespeichert, da dem Bauvorhaben kein Bedarf zugeordnet ist.",
              "Löschen/Zuweisen/Anmelden des Bedarfs nicht möglich, da ansonsten einem Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
-             "Bedarf wurde nicht gespeichert, da keine Bewertung angegeben wurde.",
+             "Bedarf wurde nicht gespeichert, da kein Zeit-Faktor angegeben wurde.",
              "Keine Berechtigung, dieses Bauvorhaben zu editieren.",
              "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet",
              "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist",

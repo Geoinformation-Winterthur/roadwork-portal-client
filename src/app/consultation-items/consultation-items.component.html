@@ -40,12 +40,10 @@
                                 gegeben</span>
                         </mat-chip>
                     </mat-chip-list>
-                    <div *ngIf="needOfActivity.properties.comment" style="margin: 1em;">R&uuml;ckmeldung Beteiligte:r:
-                    </div>
                     <div *ngIf="needOfActivity.properties.comment"
                         style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
-                        <span *ngIf="needOfActivity.properties.comment">{{needOfActivity.properties.comment}}</span>
-                        <span *ngIf="!needOfActivity.properties.comment">Kein Text</span>
+                        R&uuml;ckmeldung Beteiligte:r:<br>
+                        {{needOfActivity.properties.comment}}
                     </div>
                 </mat-card-content>
                 <mat-divider></mat-divider>
@@ -66,17 +64,31 @@
             style="width: 100%">
 
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                <th mat-header-cell *matHeaderCellDef> Bedarf </th>
                 <td mat-cell *matCellDef="let needOfActivity">{{ (needOfActivity.properties.name).slice(0,
                     20)
                     }}<span *ngIf="needOfActivity.properties.name.length > 20">...</span>
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="organisation">
+                <th mat-header-cell *matHeaderCellDef> Werk </th>
+                <td mat-cell *matCellDef="let needOfActivity"> {{needOfActivity.properties.orderer.organisationalUnit.abbreviation}}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="participant">
-                <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
+                <th mat-header-cell *matHeaderCellDef> Vernehmlassende:r </th>
                 <td mat-cell *matCellDef="let needOfActivity"> {{needOfActivity.properties.orderer.firstName}}
                     {{needOfActivity.properties.orderer.lastName}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="feedback">
+                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung </th>
+                <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
+                    <span *ngIf="needOfActivity.properties.uuid">{{needOfActivity.properties.comment}}</span>
+                    <span *ngIf="!needOfActivity.properties.uuid">Keine R&uuml;ckmeldung</span>
                 </td>
             </ng-container>
 
@@ -91,14 +103,14 @@
             </ng-container>
 
             <ng-container matColumnDef="has_feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung gegeben </th>
+                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung erhalten </th>
                 <td mat-cell *matCellDef="let needOfActivity">
                     <mat-chip-list>
-                        <mat-chip *ngIf="needOfActivity.properties.uuid || needOfActivity.properties.comment">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
+                        <mat-chip *ngIf="needOfActivity.properties.uuid">
+                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
-                        <mat-chip *ngIf="!needOfActivity.properties.uuid && !needOfActivity.properties.comment">
+                        <mat-chip *ngIf="!needOfActivity.properties.uuid">
                             <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
                                 matTooltip="Noch keine R&uuml;ckmeldung"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>
@@ -107,10 +119,46 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung </th>
+            <ng-container matColumnDef="still_requirement">
+                <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf </th>
                 <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
-                    {{needOfActivity.properties.comment}}</td>
+                    <mat-chip-list>
+                        <mat-chip *ngIf="needOfActivity.properties.uuid">
+                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
+                                style="color: green;">check</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="!needOfActivity.properties.uuid">
+                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
+                                matTooltip="Noch keine R&uuml;ckmeldung"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="temporal_factor">
+                <th mat-header-cell *matHeaderCellDef> Zeit-Faktor </th>
+                <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
+                    <span *ngIf="needOfActivity.properties.timeFactor">{{ needOfActivity.properties.timeFactor }}</span>
+                    <span *ngIf="!needOfActivity.properties.timeFactor">0</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="new_requirement">
+                <th mat-header-cell *matHeaderCellDef> Neuer Bedarf </th>
+                <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
+                    <span *ngIf="!needOfActivity.properties.uuid">keiner</span>
+                    <span *ngIf="needOfActivity.properties.uuid && 
+                        needOfActivity.properties.created && roadWorkActivity.properties.dateStartInconsult && 
+                        needOfActivity.properties.created < roadWorkActivity.properties.dateStartInconsult">
+                        vorhanden
+                    </span>
+                    <span *ngIf="needOfActivity.properties.uuid && 
+                        needOfActivity.properties.created && roadWorkActivity.properties.dateStartInconsult && 
+                        needOfActivity.properties.created > roadWorkActivity.properties.dateStartInconsult">
+                        neu
+                    </span>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="consult_input">

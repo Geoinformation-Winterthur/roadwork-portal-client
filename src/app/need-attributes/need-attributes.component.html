@@ -149,6 +149,36 @@
                                             Priorit&auml;t</mat-chip>
                                     </mat-chip-list>
                                 </div>
+                                <p>Zeit-Faktor&nbsp;*<br>
+                                    <mat-button-toggle-group [(ngModel)]="roadWorkNeedFeature.properties.timeFactor"
+                                        name="time_factor" aria-label="Zeit-Faktor"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor == 1"
+                                        value="1"
+                                        style="background-color: rgb(220, 220, 220);font-weight: bold;border: 1px solid;">1</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor != 1"
+                                        value="1" matTooltip="Zeit-Faktor 1"
+                                        style="background-color: rgb(239, 239, 239);">1</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor == 2"
+                                        value="2"
+                                        style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor != 2"
+                                        value="2" matTooltip="Zeit-Faktor 2"
+                                        style="background-color: rgb(239, 239, 239);">2</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor == 3"
+                                        value="3"
+                                        style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor != 3"
+                                        value="3" matTooltip="Zeit-Faktor 3"
+                                        style="background-color: rgb(239, 239, 239);">3</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor == 4"
+                                        value="4"
+                                        style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
+                                    <mat-button-toggle *ngIf="roadWorkNeedFeature.properties.timeFactor != 4"
+                                        value="4" matTooltip="Zeit-Faktor 4"
+                                        style="background-color: rgb(239, 239, 239);">4</mat-button-toggle>
+                                </mat-button-toggle-group>
+                                </p>
                             </div>
                         </mat-card-content>
                     </mat-card>
