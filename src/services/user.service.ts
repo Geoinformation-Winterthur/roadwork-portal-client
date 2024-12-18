@@ -147,13 +147,15 @@ export class UserService {
       if (role === "administrator" ||
         role === "trafficmanager" ||
         role === "territorymanager" ||
-        role === "orderer")
+        role === "orderer" ||
+        role === "view")
         return true;
     } else if (functionDesc === "see_activities_list") {
       if (role === "administrator" ||
         role === "trafficmanager" ||
         role === "territorymanager" ||
-        role === "orderer")
+        role === "orderer" ||
+        role === "view")
         return true;
     } else if (functionDesc === "see_events_list") {
       if (role === "administrator" ||
@@ -186,7 +188,8 @@ export class UserService {
   }
 
   setRole(user: User, roleName: string) {
-    if (roleName == "projectmanager") user.grantedRoles.projectmanager = true;
+    if (roleName == "view") user.grantedRoles.view = true;
+    else if (roleName == "projectmanager") user.grantedRoles.projectmanager = true;
     else if (roleName == "eventmanager") user.grantedRoles.eventmanager = true;
     else if (roleName == "orderer") user.grantedRoles.orderer = true;
     else if (roleName == "trafficmanager") user.grantedRoles.trafficmanager = true;
@@ -195,7 +198,8 @@ export class UserService {
   }
 
   getRole(user: User): string {
-    if (user.grantedRoles.projectmanager) return "projectmanager";
+    if (user.grantedRoles.view) return "view";
+    else if (user.grantedRoles.projectmanager) return "projectmanager";
     else if (user.grantedRoles.eventmanager) return "eventmanager";
     else if (user.grantedRoles.orderer) return "orderer";
     else if (user.grantedRoles.trafficmanager) return "trafficmanager";
@@ -207,6 +211,7 @@ export class UserService {
 
   roleListToString(user: User): string {
     let result: string = "";
+    if (user.grantedRoles.view) result += "View ";
     if (user.grantedRoles.projectmanager) result += "Projektleitung ";
     if (user.grantedRoles.eventmanager) result += "Eventmanagement ";
     if (user.grantedRoles.orderer) result += "Auslösende:r ";

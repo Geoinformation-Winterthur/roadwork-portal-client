@@ -26,6 +26,8 @@
             <br />
             <div style="margin-bottom: 2em;">
               <p><b>Rollen</b></p>
+              <mat-checkbox [(ngModel)]="user.grantedRoles.view" (change)="updateUser()"
+                style="margin-right: 1em;">View</mat-checkbox>
               <mat-checkbox [(ngModel)]="user.grantedRoles.projectmanager" (change)="updateUser()"
                 style="margin-right: 1em;">Projektleitung</mat-checkbox>
               <mat-checkbox [(ngModel)]="user.grantedRoles.eventmanager" (change)="updateUser()"

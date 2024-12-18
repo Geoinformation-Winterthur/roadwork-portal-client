@@ -217,6 +217,8 @@
                     <p>
                         Sie sind in der Rolle <b>
                             <span
+                                *ngIf="userService.getLocalUser().chosenRole === 'view'">View</span>
+                            <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'eventmanager'">Eventmanagement</span>
                             <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'projectmanager'">Projektleitung</span>
