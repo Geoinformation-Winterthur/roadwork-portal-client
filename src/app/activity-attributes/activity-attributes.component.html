@@ -273,6 +273,17 @@
                                             Ersatz)<br>
                                             <b>Typ C</b>: Koordiniertes Einzelvorhaben (Werk) ohne Beteiligung TBA
                                         </div>
+                                        <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isSksRelevant"
+                                            (change)="onChangeIsStudy()" style="margin:10px;" [disabled]="roadWorkActivityFeature.properties.isAggloprog ||
+                                                    !roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <span *ngIf="roadWorkActivityFeature.properties.isAggloprog"
+                                                matTooltip="Mind. eine Massnahme aus dem Bauvorhaben wird im Aggloprogramm gef&uuml;hrt. Diese m&uuml;ssen der SKS vorgelegt werden.">
+                                                SKS relevant?
+                                            </span>
+                                            <span *ngIf="!roadWorkActivityFeature.properties.isAggloprog">
+                                                SKS relevant?
+                                            </span>
+                                        </mat-checkbox>
                                         <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created |
                                                 date:'dd.MM.yyyy'}}</b>
                                         </p>
@@ -517,7 +528,7 @@
                                             <div>
                                                 <mat-checkbox
                                                     [(ngModel)]="roadWorkActivityFeature.properties.isAggloprog"
-                                                    style="margin:10px;">
+                                                    (change)="onChangeIsAggloprog()" style="margin:10px;">
                                                     Aggloprogramm
                                                 </mat-checkbox>
                                             </div>
@@ -935,8 +946,7 @@
                             userService.getLocalUser().chosenRole == 'territorymanager' || 
                             userService.getLocalUser().chosenRole == 'orderer') && 
                             roadWorkActivityFeature.properties.status !== 'requirement'" label="Vernehmlassung">
-                <mat-tab-group [(selectedIndex)]="selectedSubTabIndex"
-                            style="margin-left: 1em;margin-right: 1em;">
+                <mat-tab-group [(selectedIndex)]="selectedSubTabIndex" style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="&Uuml;bersicht">
                         <div>
                             <div style="margin-top: 1em;">

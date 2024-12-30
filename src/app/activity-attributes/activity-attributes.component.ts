@@ -649,6 +649,12 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  onChangeIsAggloprog() {
+    if (this.roadWorkActivityFeature)
+      if (this.roadWorkActivityFeature.properties.isAggloprog)
+        this.roadWorkActivityFeature.properties.isSksRelevant = true;
+  }
+
   ngOnDestroy() {
     this.activatedRouteSubscription.unsubscribe();
   }
