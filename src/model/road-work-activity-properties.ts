@@ -89,4 +89,5 @@ export class RoadWorkActivityProperties {
     dateStartReporting?: Date;
     dateStartSuspended?: Date;
     dateStartCoordinated?: Date;
+    isSksRelevant?: boolean = true;
 }
