@@ -21,7 +21,7 @@
                 <div style="text-align: right;">
                     <button *ngIf="roadWorkActivityFeature.properties.isEditingAllowed" mat-button (click)="save()"
                         style="margin: 1em;background-color: rgb(236,236,234);">
-                        SPEICHERN
+                        <mat-icon aria-label="Icon zeigt Diskette">save</mat-icon>&nbsp;SPEICHERN
                     </button>
                     <button mat-button *ngIf="roadWorkActivityFeature.properties.isPrivate" (click)="publish()"
                         style="margin: 1em;background-color: rgb(236,236,234);"
@@ -29,6 +29,22 @@
                         <mat-icon
                             aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BAUVORHABEN
                         PUBLIZIEREN
+                    </button>
+                    <button *ngIf="roadWorkActivityFeature.properties.status != 'suspended'"
+                        (click)="update(false, 'suspended')"
+                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status, 'suspended')
+                            || roadWorkActivityFeature.properties.isPrivate
+                            || !roadWorkActivityFeature.properties.isEditingAllowed" mat-button>
+                        <mat-icon aria-label="Icon zeigt Stopp-Knopf">stop_circle</mat-icon>&nbsp;SISTIEREN
+                    </button>
+                    <button *ngIf="roadWorkActivityFeature.properties.isPrivate ||
+                                            userService.getLocalUser().chosenRole == 'administrator'"
+                        (click)="removeRoadworkActivity()" style="background-color: rgb(236,236,234);margin: 0.5em;"
+                        [disabled]="!roadWorkActivityFeature.properties.uuid ||
+                                    (!roadWorkActivityFeature.properties.isPrivate && 
+                                    !(userService.getLocalUser().chosenRole == 'administrator'))" mat-button>
+                        <mat-icon
+                            aria-label="Icon zeigt durchgekreuzten M&uuml;lleimer">delete_forever</mat-icon>&nbsp;L&Ouml;SCHEN
                     </button>
                 </div>
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
@@ -46,17 +62,19 @@
                                         <b *ngIf="!roadWorkActivityFeature.properties.uuid">keine (nicht
                                             er&ouml;ffnet)</b>
                                     </p>
-                                    <p>Strabako-Nummer:
-                                        <b
-                                            *ngIf="roadWorkActivityFeature.properties.strabakoNo">{{roadWorkActivityFeature.properties.strabakoNo}}</b>
-                                        <b *ngIf="!roadWorkActivityFeature.properties.strabakoNo">keine Nummer</b>
-                                    </p>
-                                    <p>Projektnummer:
-                                        <b
-                                            *ngIf="roadWorkActivityFeature.properties.projectNo">{{roadWorkActivityFeature.properties.projectNo}}</b>
-                                        <b *ngIf="!roadWorkActivityFeature.properties.projectNo">keine Nummer</b>
-                                    </p>
                                     <div style="display:flex;flex-direction:column;">
+                                        <mat-form-field>
+                                            <input matInput type="text"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.strabakoNo"
+                                                placeholder="Strabako-Nummer"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input matInput type="text"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.projectNo"
+                                                placeholder="Projektnummer"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
                                         <mat-form-field>
                                             <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.name"
@@ -92,43 +110,6 @@
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                         </mat-form-field>
                                     </div>
-                                    <div style="margin-top: 3em;">
-                                        <h3>Dokumente</h3>
-                                        <mat-form-field style="width: 100%;">
-                                            <input matInput maxlength="2048"
-                                                [(ngModel)]="roadWorkActivityFeature.properties.url"
-                                                placeholder="Link (URL)"
-                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                        </mat-form-field>
-                                        <a *ngIf="roadWorkActivityFeature.properties.url"
-                                            href="{{roadWorkActivityFeature.properties.url}}" target="_blank">Link
-                                            &ouml;ffnen</a>
-                                        <div style="padding: 1em;margin-top: 1em;">
-                                            <p><b>PDF-Dokumente:</b></p>
-                                            <div *ngFor="let documentAtts of roadWorkActivityFeature.properties.documentAtts"
-                                                style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
-                                                <p [matTooltip]="documentAtts.filename!">Dateiname:
-                                                    {{documentAtts.filename!.slice(0, 12)}}...</p>
-                                                <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
-                                                    style="background-color: rgb(236,236,234);margin: 1em;">
-                                                    Herunterladen
-                                                </button>
-                                                <button (click)="deletePdf(documentAtts.uuid!)" mat-button
-                                                    style="background-color: rgb(236,236,234);margin: 1em;"
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    L&ouml;schen
-                                                </button>
-                                            </div>
-                                            <div>
-                                                <p>Hochladen:</p>
-                                                <form method="post" enctype="multipart/form-data">
-                                                    <input type="file" name="pdfFile" accept="application/pdf"
-                                                        (change)="uploadPdf($event)"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"><br>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </mat-card-content>
                             </mat-card>
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
@@ -137,14 +118,61 @@
                                     <div style="display:flex;flex-direction:column;">
                                         <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
                                         </app-status-chip>
-                                        <div>
-                                            <button *ngIf="roadWorkActivityFeature.properties.status != 'suspended'"
-                                                (click)="update(false, 'suspended')"
-                                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                                [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status, 'suspended')
-                                                || roadWorkActivityFeature.properties.isPrivate
-                                                || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                                mat-button>sistieren</button>
+                                        <h4>N&auml;chstm&ouml;gliche Sitzungstermine</h4>
+                                        <div
+                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            Strategische Koordinationssitzung (SKS):<br>
+                                            <b>
+                                                <span *ngIf="roadWorkActivityFeature.properties.dateSks">
+                                                    {{roadWorkActivityFeature.properties.dateSks |
+                                                    date:'dd.MM.yyyy'}}
+                                                </span>
+                                                <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
+                                                    Sitzung konnte nicht ermittelt werden
+                                                </span>
+                                            </b>
+                                        </div>
+                                        <div
+                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            Koordinationsausschuss Projekte (KAP):<br>
+                                            <b>
+                                                <span *ngIf="roadWorkActivityFeature.properties.dateKap">
+                                                    {{roadWorkActivityFeature.properties.dateKap |
+                                                    date:'dd.MM.yyyy'}}
+                                                </span>
+                                                <span *ngIf="!roadWorkActivityFeature.properties.dateKap">
+                                                    Sitzung konnte nicht ermittelt werden
+                                                </span>
+                                            </b>
+                                        </div>
+                                        <div *ngIf="roadWorkActivityFeature.properties.dateGlTba"
+                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                            Gesch&auml;ftsleitung Tiefbau (GL TBA):<br>
+                                            <b>{{roadWorkActivityFeature.properties.dateGlTba | date:'dd.MM.yyyy'}}</b>
+                                        </div>
+                                        <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
+                                            <h4>Realisierung, Phase 5:</h4>
+                                            <p>Baubeginn:&nbsp;
+                                                <span *ngIf="roadWorkActivityFeature.properties.startOfConstruction"
+                                                    style="padding: 0.3em;background-color: rgb(240, 240, 240);">
+                                                    <b>{{roadWorkActivityFeature.properties.startOfConstruction | date:
+                                                        'dd.MM.yyyy'}}</b>
+                                                </span>
+                                                <span *ngIf="!roadWorkActivityFeature.properties.startOfConstruction"
+                                                    style="padding: 0.3em;background-color: rgb(240, 240, 240);">
+                                                    <b>n.a.</b>
+                                                </span>
+                                                Bauende:&nbsp;
+                                                <span *ngIf="roadWorkActivityFeature.properties.endOfConstruction"
+                                                    style="padding: 0.3em;background-color: rgb(240, 240, 240);">
+                                                    <b>{{roadWorkActivityFeature.properties.endOfConstruction | date:
+                                                        'dd.MM.yyyy'}}</b>
+                                                </span>
+                                                <span *ngIf="!roadWorkActivityFeature.properties.endOfConstruction"
+                                                    style="padding: 0.3em;background-color: rgb(240, 240, 240);">
+                                                    <b>n.a.</b>
+                                                </span>
+                                            </p>
                                         </div>
                                         <mat-checkbox [ngModel]="roadWorkActivityFeature.properties.overarchingMeasure"
                                             style="margin:10px;" disabled>
@@ -162,33 +190,6 @@
                                             style="margin:10px;" disabled>
                                             Vorstudie
                                         </mat-checkbox>
-                                        <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
-                                            <h4>Realisierung, Phase 5:</h4>
-                                            <mat-form-field style="margin:10px;">
-                                                <mat-label>von</mat-label>
-                                                <input matInput
-                                                    [ngModel]="roadWorkActivityFeature.properties.finishEarlyTo | date: 'dd.MM.yyyy'"
-                                                    disabled>
-                                            </mat-form-field>
-                                            <mat-form-field style="margin:10px;">
-                                                <mat-label>bis</mat-label>
-                                                <input matInput
-                                                    [ngModel]="roadWorkActivityFeature.properties.finishLateTo | date: 'dd.MM.yyyy'"
-                                                    disabled>
-                                            </mat-form-field>
-                                            <mat-form-field style="margin:10px;">
-                                                <mat-label>Baubeginn</mat-label>
-                                                <input matInput
-                                                    [ngModel]="roadWorkActivityFeature.properties.startOfConstruction | date: 'dd.MM.yyyy'"
-                                                    disabled>
-                                            </mat-form-field>
-                                            <mat-form-field style="margin:10px;">
-                                                <mat-label>Bauende</mat-label>
-                                                <input matInput
-                                                    [ngModel]="roadWorkActivityFeature.properties.endOfConstruction | date: 'dd.MM.yyyy'"
-                                                    disabled>
-                                            </mat-form-field>
-                                        </div>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
@@ -284,63 +285,18 @@
                                                 SKS relevant?
                                             </span>
                                         </mat-checkbox>
-                                        <p>Erstellt: <b>{{roadWorkActivityFeature.properties.created |
-                                                date:'dd.MM.yyyy'}}</b>
+                                        <p>Erstellt:
+                                            <span style="padding: 0.3em;background-color: rgb(240, 240, 240);">
+                                                <b>{{roadWorkActivityFeature.properties.created |
+                                                    date:'dd.MM.yyyy'}}</b>
+                                            </span>
                                         </p>
-                                        <p>
-                                            Zuletzt ge&auml;ndert: <b>{{roadWorkActivityFeature.properties.lastModified
-                                                |
-                                                date:'dd.MM.yyyy'}}</b>
+                                        <p>Zuletzt ge&auml;ndert:
+                                            <span style="padding: 0.3em;background-color: rgb(240, 240, 240);">
+                                                <b>{{roadWorkActivityFeature.properties.lastModified |
+                                                    date:'dd.MM.yyyy'}}</b>
+                                            </span>
                                         </p>
-                                        <div>
-                                            <button *ngIf="roadWorkActivityFeature.properties.isPrivate ||
-                                                        userService.getLocalUser().chosenRole == 'administrator'"
-                                                (click)="removeRoadworkActivity()"
-                                                style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkActivityFeature.properties.isPrivate && 
-                                                !(userService.getLocalUser().chosenRole == 'administrator')"
-                                                mat-button>L&Ouml;SCHEN</button>
-                                        </div>
-                                    </div>
-                                </mat-card-content>
-                            </mat-card>
-                            <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                <mat-card-header>
-                                    <mat-card-title>Voraussichtlicher Termin</mat-card-title>
-                                </mat-card-header>
-                                <mat-card-content>
-                                    <div style="display:flex;flex-direction:column;">
-                                        <div
-                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                            Strategische Koordinationssitzung (SKS):<br>
-                                            <b>
-                                                <span *ngIf="roadWorkActivityFeature.properties.dateSks">
-                                                    {{roadWorkActivityFeature.properties.dateSks |
-                                                    date:'dd.MM.yyyy'}}
-                                                </span>
-                                                <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
-                                                    Sitzung konnte nicht ermittelt werden
-                                                </span>
-                                            </b>
-                                        </div>
-                                        <div
-                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                            Koordinationsausschuss Projekte (KAP):<br>
-                                            <b>
-                                                <span *ngIf="roadWorkActivityFeature.properties.dateKap">
-                                                    {{roadWorkActivityFeature.properties.dateKap |
-                                                    date:'dd.MM.yyyy'}}
-                                                </span>
-                                                <span *ngIf="!roadWorkActivityFeature.properties.dateKap">
-                                                    Sitzung konnte nicht ermittelt werden
-                                                </span>
-                                            </b>
-                                        </div>
-                                        <div *ngIf="roadWorkActivityFeature.properties.dateGlTba"
-                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                            Gesch&auml;ftsleitung Tiefbau (GL TBA):<br>
-                                            <b>{{roadWorkActivityFeature.properties.dateGlTba | date:'dd.MM.yyyy'}}</b>
-                                        </div>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
@@ -928,6 +884,50 @@
                                     </mat-select>
                                 </mat-form-field>
                             </form>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Dokumente" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+                        <div fxLayout="row wrap padding">
+                            <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                <mat-card-content style="min-width: 380px;">
+                                    <h2>Dokumente</h2>
+                                    <mat-form-field style="width: 100%;">
+                                        <input matInput maxlength="2048"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.url"
+                                            placeholder="Link (URL)"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </mat-form-field>
+                                    <a *ngIf="roadWorkActivityFeature.properties.url"
+                                        href="{{roadWorkActivityFeature.properties.url}}" target="_blank">Link
+                                        &ouml;ffnen</a>
+                                    <div>
+                                        <h3>PDF-Dokumente:</h3>
+                                        <div *ngFor="let documentAtts of roadWorkActivityFeature.properties.documentAtts"
+                                            style="width: 100%;padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                            <p [matTooltip]="documentAtts.filename!">Dateiname:
+                                                {{documentAtts.filename!.slice(0, 12)}}...</p>
+                                            <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
+                                                style="background-color: rgb(236,236,234);margin: 1em;">
+                                                Herunterladen
+                                            </button>
+                                            <button (click)="deletePdf(documentAtts.uuid!)" mat-button
+                                                style="background-color: rgb(236,236,234);margin: 1em;"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                L&ouml;schen
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <p>Hochladen:</p>
+                                            <form method="post" enctype="multipart/form-data">
+                                                <input type="file" name="pdfFile" accept="application/pdf"
+                                                    (change)="uploadPdf($event)"
+                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"><br>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
                         </div>
                     </mat-tab>
                     <mat-tab label="Bewertung" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
