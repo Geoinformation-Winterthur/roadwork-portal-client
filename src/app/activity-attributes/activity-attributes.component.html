@@ -942,7 +942,8 @@
                     </mat-tab>
                 </mat-tab-group>
             </mat-tab>
-            <mat-tab *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
+            <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!=='' &&
+                            (userService.getLocalUser().chosenRole == 'administrator' || 
                             userService.getLocalUser().chosenRole == 'territorymanager' || 
                             userService.getLocalUser().chosenRole == 'orderer') && 
                             roadWorkActivityFeature.properties.status !== 'requirement'" label="Vernehmlassung">
@@ -1055,7 +1056,7 @@
                 <app-needs-of-activity [roadWorkActivity]="roadWorkActivityFeature"
                     [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
-            <mat-tab label="Events">
+            <mat-tab label="Events" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                 <app-events-at-activity
                     [roadWorkActivityUuid]="roadWorkActivityFeature.properties.uuid"></app-events-at-activity>
             </mat-tab>
