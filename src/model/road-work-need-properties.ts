@@ -41,5 +41,4 @@ export class RoadWorkNeedProperties {
     documentAtts?: DocumentAttributes[];
     costs?: Costs[];
     isPrimary?: boolean;
-    timeFactor?: number;
 }
