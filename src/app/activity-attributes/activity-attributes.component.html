@@ -342,15 +342,37 @@
                         <div style="margin: 1em;margin-bottom: 4em;">
                             <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
                                 <h2>Wunschtermine</h2>
-                                <p><b>Fr&uuml;hester Baubeginn</b>:
-                                    {{roadWorkActivityFeature.properties.finishEarlyTo | date:
-                                    'dd.MM.yyyy'}}</p>
-                                <p><b>Wunschbaubeginn</b>:
-                                    {{roadWorkActivityFeature.properties.finishOptimumTo | date:
-                                    'dd.MM.yyyy'}}</p>
-                                <p><b>Sp&auml;tester Baubeginn</b>:
-                                    {{roadWorkActivityFeature.properties.finishLateTo | date: 'dd.MM.yyyy'}}
-                                </p>
+                                <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
+                                    class="mat-elevation-z2" style="width: 100%">
+
+                                    <ng-container matColumnDef="name">
+                                        <th mat-header-cell *matHeaderCellDef> Bedarf </th>
+                                        <td mat-cell *matCellDef="let roadworkNeed"> {{roadworkNeed.properties.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="finishEarlyTo">
+                                        <th mat-header-cell *matHeaderCellDef> Fr&uuml;hester Baubeginn </th>
+                                        <td mat-cell *matCellDef="let roadworkNeed">
+                                            {{roadworkNeed.properties.finishEarlyTo | date: 'dd.MM.yyyy'}} </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="finishOptimumTo">
+                                        <th mat-header-cell *matHeaderCellDef> Wunschbaubeginn </th>
+                                        <td mat-cell *matCellDef="let roadworkNeed">
+                                            {{roadworkNeed.properties.finishOptimumTo | date: 'dd.MM.yyyy'}} </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="finishLateTo">
+                                        <th mat-header-cell *matHeaderCellDef> Sp&auml;tester Baubeginn </th>
+                                        <td mat-cell *matCellDef="let roadworkNeed">
+                                            {{roadworkNeed.properties.finishLateTo | date: 'dd.MM.yyyy'}} </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="needsDatesDisplayedColumns"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: needsDatesDisplayedColumns;"></tr>
+
+                                </table>
                             </div>
                             <div *ngIf="roadWorkActivityFeature.properties.overarchingMeasure">
                                 <h2>&Uuml;bergeordnete Massnahme</h2>
@@ -928,6 +950,33 @@
                                     </div>
                                 </mat-card-content>
                             </mat-card>
+                        </div>
+                        <div>
+                            <h3>Dokumente aus den Bedarfen</h3>
+                            <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
+                                class="mat-elevation-z2" style="width: 100%">
+
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef> Bedarf </th>
+                                    <td mat-cell *matCellDef="let roadworkNeed"> {{roadworkNeed.properties.name}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="documents">
+                                    <th mat-header-cell *matHeaderCellDef> Dokumente </th>
+                                    <td mat-cell *matCellDef="let roadworkNeed">
+                                        <a href="javascript:void(0);" (click)="downloadPdf(documentAtts.uuid!)"
+                                            *ngFor="let documentAtts of roadworkNeed.properties.documentAtts"
+                                            style="margin: 1em;">
+                                            {{documentAtts.filename!.slice(0, 12)}}...
+                                        </a>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="needsDocsDisplayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: needsDocsDisplayedColumns;"></tr>
+
+                            </table>
                         </div>
                     </mat-tab>
                     <mat-tab label="Bewertung" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
