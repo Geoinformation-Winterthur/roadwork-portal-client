@@ -82,6 +82,9 @@ export class ActivityAttributesComponent implements OnInit {
   selectedTabIndex = 0;
   selectedSubTabIndex = 0;
 
+  needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
+  needsDocsDisplayedColumns: string[] = ['name', 'documents'];
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
