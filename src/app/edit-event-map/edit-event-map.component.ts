@@ -240,7 +240,8 @@ export class EditEventMapComponent implements OnInit {
   private resizeMap(event: any) {
     let mapElement: HTMLElement | undefined;
     mapElement = document.getElementById("edit_event_map") as HTMLElement;
-    mapElement.style.height = screen.availHeight / 2 + "px";
+    if(mapElement && mapElement.style)
+      mapElement.style.height = screen.availHeight / 2 + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {

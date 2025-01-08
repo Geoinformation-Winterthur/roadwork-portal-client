@@ -491,7 +491,8 @@ export class EditActivityMapComponent implements OnInit {
   private resizeMap(event: any = null) {
     let mapElement: HTMLElement | undefined;
     mapElement = document.getElementById("edit_activity_map") as HTMLElement;
-    mapElement.style.height = screen.availHeight / 2 + "px";
+    if(mapElement && mapElement.style)
+      mapElement.style.height = screen.availHeight / 2 + "px";
   }
 
   private setViewToPolyExtent(polyExtent: Extent) {
