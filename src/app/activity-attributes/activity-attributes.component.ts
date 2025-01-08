@@ -28,6 +28,8 @@ import { EnumType } from 'src/model/enum-type';
 import { DocumentService } from 'src/services/document.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-activity-dialog.component';
+import { ConsultationInput } from 'src/model/consultation-input';
+import { ConsultationService } from 'src/services/consultation.service';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -85,6 +87,8 @@ export class ActivityAttributesComponent implements OnInit {
   needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
   needsDocsDisplayedColumns: string[] = ['name', 'documents'];
 
+  consultationInputsFromReporting: ConsultationInput[] = [];
+
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -94,6 +98,7 @@ export class ActivityAttributesComponent implements OnInit {
   private activatedRouteSubscription: Subscription = new Subscription();
   private documentService: DocumentService;
   private appConfigService: AppConfigService;
+  private consultationService: ConsultationService;
 
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
@@ -101,7 +106,8 @@ export class ActivityAttributesComponent implements OnInit {
   constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    organisationService: OrganisationService, appConfigService: AppConfigService, router: Router,
+    organisationService: OrganisationService, appConfigService: AppConfigService,
+    consultationService: ConsultationService, router: Router,
     snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog) {
     this.activatedRoute = activatedRoute;
     this.roadWorkActivityService = roadWorkActivityService;
@@ -115,6 +121,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.snckBar = snckBar;
     this.statusHelper = new StatusHelper();
     this.documentService = documentService;
+    this.consultationService = consultationService;
     this.dialog = dialog;
   }
 
@@ -226,7 +233,7 @@ export class ActivityAttributesComponent implements OnInit {
                       next: (managementArea) => {
                         if (managementArea) {
                           this.managementArea = managementArea;
-                          if(this.roadWorkActivityFeature)
+                          if (this.roadWorkActivityFeature)
                             this.roadWorkActivityFeature.properties.areaManager = managementArea.manager;
                         }
                       },
@@ -264,14 +271,31 @@ export class ActivityAttributesComponent implements OnInit {
 
                 this.activatedRoute.queryParams.subscribe(params => {
                   const tabName = params["open_tab"];
-                  if(tabName=="bedarfsklaerung"){
+                  if (tabName == "bedarfsklaerung") {
                     this.selectedTabIndex = 2;
                     this.selectedSubTabIndex = 1;
-                  } else if(tabName=="stellungnahme"){
+                  } else if (tabName == "stellungnahme") {
                     this.selectedTabIndex = 2;
                     this.selectedSubTabIndex = 2;
                   }
                 });
+
+                if (this.roadWorkActivityFeature)
+                  this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
+                    .subscribe({
+                      next: (consultationInputs) => {
+                        let consultationInputsFromReportingTemp: ConsultationInput[] = [];
+                        for (let consultationInput of consultationInputs) {
+                          if (consultationInput.feedbackPhase === 'reporting') {
+                            consultationInputsFromReportingTemp.push(consultationInput);
+                          }
+                        }
+                        this.consultationInputsFromReporting = consultationInputsFromReportingTemp;
+
+                      },
+                      error: (error) => {
+                      }
+                    });
 
               },
               error: (error) => {
@@ -544,7 +568,7 @@ export class ActivityAttributesComponent implements OnInit {
         next: (documentAtts) => {
           ErrorMessageEvaluation._evaluateErrorMessage(documentAtts);
           if (documentAtts !== null && documentAtts.errorMessage !== null &&
-                documentAtts.errorMessage.trim().length !== 0) {
+            documentAtts.errorMessage.trim().length !== 0) {
             this.snckBar.open(documentAtts.errorMessage, "", {
               duration: 4000
             });
@@ -567,46 +591,46 @@ export class ActivityAttributesComponent implements OnInit {
   downloadPdf(documentUuid: string) {
     if (this.roadWorkActivityFeature) {
       this.documentService.getDocument(this.roadWorkActivityFeature.properties.uuid, documentUuid, "roadworkactivity")
-      .subscribe({
-        next: (documentData) => {
-          if (documentData === null || documentData.size === 0) {
-            this.snckBar.open("Dieses Bauvorhaben hat kein angehängtes PDF-Dokument.", "", {
+        .subscribe({
+          next: (documentData) => {
+            if (documentData === null || documentData.size === 0) {
+              this.snckBar.open("Dieses Bauvorhaben hat kein angehängtes PDF-Dokument.", "", {
+                duration: 4000
+              });
+            } else {
+              let objUrl = window.URL.createObjectURL(documentData);
+              let newBrowserTab = window.open();
+              if (newBrowserTab)
+                newBrowserTab.location.href = objUrl;
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
               duration: 4000
             });
-          } else {
-            let objUrl = window.URL.createObjectURL(documentData);
-            let newBrowserTab = window.open();
-            if (newBrowserTab)
-              newBrowserTab.location.href = objUrl;
           }
-        },
-        error: (error) => {
-          this.snckBar.open("Fehler beim Download des PDF-Dokuments.", "", {
-            duration: 4000
-          });
-        }
-      });
+        });
     }
   }
 
   deletePdf(documentUuid: string) {
     if (this.roadWorkActivityFeature) {
       this.documentService.deleteDocument(this.roadWorkActivityFeature.properties.uuid, documentUuid, "roadworkactivity")
-      .subscribe({
-        next: (documentData) => {
-          this.roadWorkActivityFeature!.properties.documentAtts = 
+        .subscribe({
+          next: (documentData) => {
+            this.roadWorkActivityFeature!.properties.documentAtts =
               this.roadWorkActivityFeature!.properties.documentAtts?.
-                  filter((docAttr) => docAttr.uuid !== documentUuid);
-          this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
-            duration: 4000
-          });
-        },
-        error: (error) => {
-          this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {
-            duration: 4000
-          });
-        }
-      });
+                filter((docAttr) => docAttr.uuid !== documentUuid);
+            this.snckBar.open("Angehängtes PDF-Dokument wurde gelöscht", "", {
+              duration: 4000
+            });
+          },
+          error: (error) => {
+            this.snckBar.open("Fehler beim Löschen des PDF-Dokuments.", "", {
+              duration: 4000
+            });
+          }
+        });
     }
   }
 
@@ -620,6 +644,55 @@ export class ActivityAttributesComponent implements OnInit {
         );
       }
     }
+  }
+
+  isFirstDateBefore(firstDate: Date, secondDate: Date): boolean {
+    if (firstDate && secondDate) {
+      let firstDateObj = new Date(firstDate);
+      let secondDateObj = new Date(secondDate);
+      return firstDateObj.getTime() < secondDateObj.getTime();
+    }
+    return false;
+  }
+
+  calcTimeFactor(compareNeed: RoadWorkNeedFeature, primaryNeed: RoadWorkNeedFeature): number {
+    if (compareNeed && primaryNeed) {
+      if (compareNeed.properties.finishEarlyTo)
+        compareNeed.properties.finishEarlyTo = new Date(compareNeed.properties.finishEarlyTo);
+      if (compareNeed.properties.finishOptimumTo)
+        compareNeed.properties.finishOptimumTo = new Date(compareNeed.properties.finishOptimumTo);
+      if (compareNeed.properties.finishLateTo)
+        compareNeed.properties.finishLateTo = new Date(compareNeed.properties.finishLateTo);
+
+      if (primaryNeed.properties.finishEarlyTo)
+        primaryNeed.properties.finishEarlyTo = new Date(primaryNeed.properties.finishEarlyTo);
+      if (primaryNeed.properties.finishOptimumTo)
+        primaryNeed.properties.finishOptimumTo = new Date(primaryNeed.properties.finishOptimumTo);
+      if (primaryNeed.properties.finishLateTo)
+        primaryNeed.properties.finishLateTo = new Date(primaryNeed.properties.finishLateTo);
+
+      if (compareNeed.properties.finishEarlyTo.getTime() > primaryNeed.properties.finishLateTo.getTime())
+        return 1;
+      if (compareNeed.properties.finishEarlyTo.getTime() > primaryNeed.properties.finishOptimumTo.getTime()
+        || compareNeed.properties.finishOptimumTo.getTime() > primaryNeed.properties.finishOptimumTo.getTime())
+        return 2;
+      if (compareNeed.properties.finishOptimumTo.getTime() > primaryNeed.properties.finishEarlyTo.getTime()
+        || compareNeed.properties.finishLateTo.getTime() > primaryNeed.properties.finishEarlyTo.getTime())
+        return 3;
+      else
+        return 4;
+    }
+    return 0;
+  }
+
+  getPrimaryNeed(): RoadWorkNeedFeature {
+    if (this.needsOfActivityService.assignedRoadWorkNeeds.length > 0) {
+      for (let roadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
+        if (roadWorkNeed.properties.isPrimary)
+          return roadWorkNeed;
+      }
+    }
+    return new RoadWorkNeedFeature();
   }
 
   private _deleteRoadworkActivity(roadWorkActivityUuid: string) {
@@ -767,8 +840,8 @@ export class ActivityAttributesComponent implements OnInit {
       mailText += "Mit «Senden» übermittelst du uns deine Rückmeldung.%0A%0A";
       mailText += "Vielen Dank für deine Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
-      mailText += this.roadWorkActivityFeature.properties.areaManager.firstName + " " 
-          + this.roadWorkActivityFeature.properties.areaManager.lastName + "%0A%0A";
+      mailText += this.roadWorkActivityFeature.properties.areaManager.firstName + " "
+        + this.roadWorkActivityFeature.properties.areaManager.lastName + "%0A%0A";
       mailText += "Tiefbauamt, Abteilung Planung %26 Koordination%0A%0A";
 
       window.open(mailText, "_blank", "noreferrer");
