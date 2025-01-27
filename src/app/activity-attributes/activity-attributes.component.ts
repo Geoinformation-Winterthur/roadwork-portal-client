@@ -44,6 +44,7 @@ export class ActivityAttributesComponent implements OnInit {
   roadWorkActivityFeature?: RoadWorkActivityFeature;
   managementArea?: ManagementArea;
 
+  currentUser: User = new User();
   orderer: User = new User();
   ordererOrgUnitName: string = "";
   areaManagerName: string = "";
@@ -87,7 +88,10 @@ export class ActivityAttributesComponent implements OnInit {
   needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
   needsDocsDisplayedColumns: string[] = ['name', 'documents'];
 
+  assignedRoadWorkNeedsDisplayedColumns: string[] = ["orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor"];
+
   consultationInputsFromReporting: ConsultationInput[] = [];
+  consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
@@ -131,6 +135,29 @@ export class ActivityAttributesComponent implements OnInit {
         this.availableUsers = users;
       },
       error: (error) => {
+      }
+    });
+
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
+    .subscribe({
+      next: (users) => {
+        if (users && users.length > 0 && users[0]) {
+          let user: User = users[0];
+          ErrorMessageEvaluation._evaluateErrorMessage(user);
+          if (user && user.errorMessage &&
+            user.errorMessage.trim().length !== 0) {
+            this.snckBar.open(user.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.currentUser = user;
+          }
+        }
+      },
+      error: (error) => {
+        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+          duration: 4000
+        });
       }
     });
 

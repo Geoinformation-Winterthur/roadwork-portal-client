@@ -416,7 +416,82 @@
                             </mat-card>
                         </div>
                         <h3>Zeitangaben: Bedarfskl&auml;rung</h3>
-                        <div fxLayout="row wrap padding">
+                        <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
+                            <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
+                                class="mat-elevation-z2" style="width: 100%">
+
+                                <ng-container matColumnDef="orderer_org">
+                                    <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        {{assignedRoadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="contact_person">
+                                    <th mat-header-cell *matHeaderCellDef> Kontaktperson </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        {{assignedRoadWorkNeed.properties.orderer.firstName}}
+                                        {{assignedRoadWorkNeed.properties.orderer.lastName}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="earliest">
+                                    <th mat-header-cell *matHeaderCellDef> Fr&uuml;hester </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                            [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            {{assignedRoadWorkNeed.properties.finishEarlyTo
+                                            | date:'dd.MM.yyyy'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="wish">
+                                    <th mat-header-cell *matHeaderCellDef> Wunsch </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                            [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
+                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            {{assignedRoadWorkNeed.properties.finishOptimumTo
+                                            | date:'dd.MM.yyyy'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="latest">
+                                    <th mat-header-cell *matHeaderCellDef> Sp&auml;tester </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                            [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            {{assignedRoadWorkNeed.properties.finishLateTo
+                                            |
+                                            date:'dd.MM.yyyy'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="time_factor">
+                                    <th mat-header-cell *matHeaderCellDef> Zeit-Faktor </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
+                                            needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="assignedRoadWorkNeedsDisplayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: assignedRoadWorkNeedsDisplayedColumns;"></tr>
+                            </table>
+                        </div>
+                        <div fxLayout="row wrap padding" *ngIf="!currentUser.prefTableView">
                             <ng-container
                                 *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
                                 <mat-card *ngIf="!assignedRoadWorkNeed.properties.isPrimary"
@@ -473,7 +548,55 @@
                             </ng-container>
                         </div>
                         <h3>Zeitangaben: Stellungnahme</h3>
-                        <div fxLayout="row wrap padding">
+                        <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
+                            <table mat-table [dataSource]="consultationInputsFromReporting" class="mat-elevation-z2"
+                                style="width: 100%">
+
+                                <ng-container matColumnDef="orderer_org">
+                                    <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        {{consultationInput.inputBy.organisationalUnit.abbreviation}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="contact_person">
+                                    <th mat-header-cell *matHeaderCellDef> Kontaktperson </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        {{consultationInput.inputBy.firstName}}
+                                        {{consultationInput.inputBy.lastName}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="need">
+                                    <th mat-header-cell *matHeaderCellDef> Bedarf </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        <span
+                                            *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">Bedarf
+                                            vorhanden</span>
+                                        <span *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">Kein
+                                            Bedarf</span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="realisation">
+                                    <th mat-header-cell *matHeaderCellDef> Realisierungszeitraum </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
+                                            <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
+                                                style="color: green;">check</mat-icon>
+                                        </mat-chip>
+                                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
+                                            <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
+                                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                                        </mat-chip>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="consultationInputsDisplayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: consultationInputsDisplayedColumns;"></tr>
+                            </table>
+                        </div>
+                        <div fxLayout="row wrap padding" *ngIf="!currentUser.prefTableView">
                             <mat-card *ngFor="let consultationInput of consultationInputsFromReporting"
                                 style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
@@ -494,15 +617,14 @@
                                                 Bedarf</span>
                                         </p>
                                         <p><b>Realisierungszeitraum</b>:
-                                                <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
-                                                    <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
-                                                        style="color: green;">check</mat-icon>
-                                                </mat-chip>
-                                                <mat-chip
-                                                    *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
-                                                    <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
-                                                        style="color: rgb(225, 74, 74);">close</mat-icon>
-                                                </mat-chip>
+                                            <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
+                                                <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
+                                                    style="color: green;">check</mat-icon>
+                                            </mat-chip>
+                                            <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
+                                                <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
+                                                    style="color: rgb(225, 74, 74);">close</mat-icon>
+                                            </mat-chip>
                                         </p>
                                     </div>
                                 </mat-card-content>
