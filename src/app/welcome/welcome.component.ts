@@ -205,7 +205,7 @@ export class WelcomeComponent implements OnInit {
   getColorDueDate(roadworkActivity: RoadWorkActivityFeature): string {
     if (roadworkActivity) {
       const today: Date = new Date();
-      const dueDate = this._calcDueDate(roadworkActivity);
+      const dueDate = this.calcDueDate(roadworkActivity);
       if (dueDate) {
         let threeDaysBeforeDue: Date = new Date(dueDate);
         threeDaysBeforeDue.setDate(dueDate.getDate() - 3);
@@ -224,7 +224,7 @@ export class WelcomeComponent implements OnInit {
     window.open("http://intramap.winport.net/projekte/tiefbau_info/start_redirect.php", "_blank");
   }
 
-  private _calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
+  calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
     let result = undefined;
     if (roadworkActivity.properties.status == "inconsult" ||
       roadworkActivity.properties.status == "verified") {

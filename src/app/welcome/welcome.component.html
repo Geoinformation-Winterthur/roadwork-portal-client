@@ -197,8 +197,8 @@
                                     <th mat-header-cell *matHeaderCellDef> F&auml;lligkeit </th>
                                     <td mat-cell *matCellDef="let roadWorkActivity">
                                         <mat-chip [style]="getColorDueDate(roadWorkActivity)">
-                                            <span *ngIf="!roadWorkActivity.properties.created">nicht bestimmt</span>
-                                            <span *ngIf="roadWorkActivity.properties.created">{{roadWorkActivity.properties.created | date:
+                                            <span *ngIf="!calcDueDate(roadWorkActivity)">nicht bestimmt</span>
+                                            <span *ngIf="calcDueDate(roadWorkActivity)">{{calcDueDate(roadWorkActivity) | date:
                                                 'dd.MM.yyyy'}}</span>
                                         </mat-chip>
                                      </td>
