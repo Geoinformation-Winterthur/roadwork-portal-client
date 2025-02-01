@@ -12,6 +12,8 @@ export class NeedsOfActivityService {
   public nonAssignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
   public registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
 
+  public assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = [];
+
   private roadWorkNeedService: RoadWorkNeedService;
 
   constructor(roadWorkNeedService: RoadWorkNeedService) {

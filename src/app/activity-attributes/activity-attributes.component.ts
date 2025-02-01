@@ -139,27 +139,27 @@ export class ActivityAttributesComponent implements OnInit {
     });
 
     this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
-    .subscribe({
-      next: (users) => {
-        if (users && users.length > 0 && users[0]) {
-          let user: User = users[0];
-          ErrorMessageEvaluation._evaluateErrorMessage(user);
-          if (user && user.errorMessage &&
-            user.errorMessage.trim().length !== 0) {
-            this.snckBar.open(user.errorMessage, "", {
-              duration: 4000
-            });
-          } else {
-            this.currentUser = user;
+      .subscribe({
+        next: (users) => {
+          if (users && users.length > 0 && users[0]) {
+            let user: User = users[0];
+            ErrorMessageEvaluation._evaluateErrorMessage(user);
+            if (user && user.errorMessage &&
+              user.errorMessage.trim().length !== 0) {
+              this.snckBar.open(user.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.currentUser = user;
+            }
           }
+        },
+        error: (error) => {
+          this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
+            duration: 4000
+          });
         }
-      },
-      error: (error) => {
-        this.snckBar.open("Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.", "", {
-          duration: 4000
-        });
-      }
-    });
+      });
 
     this.appConfigService.getConfigurationData(true)
       .subscribe({
@@ -287,6 +287,17 @@ export class ActivityAttributesComponent implements OnInit {
                           }
                           this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
                           this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
+
+                          let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = []
+                          for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
+                            if (assignedRoadWorkNeed.properties.documentAtts &&
+                              assignedRoadWorkNeed.properties.documentAtts.length != 0
+                            ) {
+                              assignedRoadWorkNeedsWithDocuments.push(assignedRoadWorkNeed);
+                            }
+                          }
+                          this.needsOfActivityService.assignedRoadWorkNeedsWithDocuments = assignedRoadWorkNeedsWithDocuments;
+
                         },
                         error: (error) => {
                         }
