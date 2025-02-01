@@ -302,6 +302,16 @@
                             </mat-card>
                         </div>
                     </mat-tab>
+                    <mat-tab label="Journal" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+                        <div style="margin: 1em;">
+                            Dieser Bereich ist in Plaunung.
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="Eigenschaften" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+                        <div style="margin: 1em;">
+                            Dieser Bereich ist in Plaunung.
+                        </div>
+                    </mat-tab>
                     <mat-tab label="Beteiligte" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;">
                             <div fxLayout="row wrap padding">
@@ -336,299 +346,6 @@
                                     </mat-card-content>
                                 </mat-card>
                             </div>
-                        </div>
-                    </mat-tab>
-                    <mat-tab label="Zeitfaktor" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div fxLayout="row wrap padding">
-                            <mat-card style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                <mat-card-header>
-                                    <mat-card-title>Zeitangaben: Bedarfserfassung</mat-card-title>
-                                </mat-card-header>
-                                <mat-card-content style="min-width: 380px;">
-                                    <div *ngIf="getPrimaryNeed().properties.uuid != ''">
-                                        <h4>Ausl&ouml;ser:
-                                            {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
-                                        </h4>
-                                        <p>
-                                            Fr&uuml;hester:&nbsp;<span
-                                                [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, getPrimaryNeed().properties.finishEarlyTo)"
-                                                [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, getPrimaryNeed().properties.finishEarlyTo)"
-                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{getPrimaryNeed().properties.finishEarlyTo
-                                                | date:'dd.MM.yyyy'}}
-                                            </span>
-                                        </p>
-                                        <p>
-                                            Wunsch:&nbsp;<span
-                                                [class.red-date]="isFirstDateBefore(getPrimaryNeed().properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, needsOfActivityService.assignedRoadWorkNeeds[0].properties.finishOptimumTo)"
-                                                [class.green-date]="!(isFirstDateBefore(getPrimaryNeed().properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, needsOfActivityService.assignedRoadWorkNeeds[0].properties.finishOptimumTo))"
-                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{getPrimaryNeed().properties.finishOptimumTo
-                                                | date:'dd.MM.yyyy'}}
-                                            </span>
-                                        </p>
-                                        <p>
-                                            Sp&auml;tester:&nbsp;<span
-                                                [class.red-date]="isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                                [class.green-date]="!isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{getPrimaryNeed().properties.finishLateTo
-                                                |
-                                                date:'dd.MM.yyyy'}}
-                                            </span>
-                                        </p>
-                                    </div>
-                                </mat-card-content>
-                            </mat-card>
-                            <mat-card style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                <mat-card-header>
-                                    <mat-card-title>Terminsch&auml;tzung Realisierung (aus
-                                        Grob-Terminplanung)</mat-card-title>
-                                </mat-card-header>
-                                <mat-card-content>
-                                    <div>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>Baubeginn</mat-label>
-                                            <input matInput
-                                                [(ngModel)]="roadWorkActivityFeature.properties.finishEarlyTo"
-                                                [matDatepicker]="startOfConstruction"
-                                                [max]="roadWorkActivityFeature.properties.finishLateTo"
-                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-datepicker #startOfConstruction></mat-datepicker>
-                                            <mat-datepicker-toggle matSuffix
-                                                [for]="startOfConstruction"></mat-datepicker-toggle>
-                                        </mat-form-field>
-                                        <mat-form-field style="margin:10px;">
-                                            <mat-label>Bauende</mat-label>
-                                            <input matInput
-                                                [(ngModel)]="roadWorkActivityFeature.properties.finishLateTo"
-                                                [matDatepicker]="endOfConstruction"
-                                                [min]="roadWorkActivityFeature.properties.finishEarlyTo"
-                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-datepicker #endOfConstruction></mat-datepicker>
-                                            <mat-datepicker-toggle matSuffix
-                                                [for]="endOfConstruction"></mat-datepicker-toggle>
-                                        </mat-form-field>
-                                    </div>
-                                </mat-card-content>
-                            </mat-card>
-                        </div>
-                        <h3>Zeitangaben: Bedarfskl&auml;rung</h3>
-                        <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
-                            <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
-                                class="mat-elevation-z2" style="width: 100%">
-
-                                <ng-container matColumnDef="orderer_org">
-                                    <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        {{assignedRoadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="contact_person">
-                                    <th mat-header-cell *matHeaderCellDef> Kontaktperson </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        {{assignedRoadWorkNeed.properties.orderer.firstName}}
-                                        {{assignedRoadWorkNeed.properties.orderer.lastName}}
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="earliest">
-                                    <th mat-header-cell *matHeaderCellDef> Fr&uuml;hester </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                            [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                            {{assignedRoadWorkNeed.properties.finishEarlyTo
-                                            | date:'dd.MM.yyyy'}}
-                                        </span>
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="wish">
-                                    <th mat-header-cell *matHeaderCellDef> Wunsch </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                            [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
-                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                            {{assignedRoadWorkNeed.properties.finishOptimumTo
-                                            | date:'dd.MM.yyyy'}}
-                                        </span>
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="latest">
-                                    <th mat-header-cell *matHeaderCellDef> Sp&auml;tester </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                            [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                            {{assignedRoadWorkNeed.properties.finishLateTo
-                                            |
-                                            date:'dd.MM.yyyy'}}
-                                        </span>
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="time_factor">
-                                    <th mat-header-cell *matHeaderCellDef> Zeit-Faktor </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
-                                            needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
-                                    </td>
-                                </ng-container>
-
-                                <tr mat-header-row *matHeaderRowDef="assignedRoadWorkNeedsDisplayedColumns"></tr>
-                                <tr mat-row *matRowDef="let row; columns: assignedRoadWorkNeedsDisplayedColumns;"></tr>
-                            </table>
-                        </div>
-                        <div fxLayout="row wrap padding" *ngIf="!currentUser.prefTableView">
-                            <ng-container
-                                *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
-                                <mat-card *ngIf="!assignedRoadWorkNeed.properties.isPrimary"
-                                    style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-content style="min-width: 380px;">
-                                        <div *ngIf="assignedRoadWorkNeed">
-                                            <h4>Beteiligte:r:
-                                                {{assignedRoadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
-                                            </h4>
-                                            <p><b>Kontaktperson</b>:
-                                                {{assignedRoadWorkNeed.properties.orderer.firstName}}
-                                                {{assignedRoadWorkNeed.properties.orderer.lastName}}</p>
-                                            <p><b>Bedarf</b>: <i>{{assignedRoadWorkNeed.properties.name}}</i></p>
-                                            <p>
-                                                Fr&uuml;hester:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                                    [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                                    [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{assignedRoadWorkNeed.properties.finishEarlyTo
-                                                    | date:'dd.MM.yyyy'}}
-                                                </span>
-                                            </p>
-                                            <p>
-                                                Wunsch:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                                    [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
-                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{assignedRoadWorkNeed.properties.finishOptimumTo
-                                                    | date:'dd.MM.yyyy'}}
-                                                </span>
-                                            </p>
-                                            <p>
-                                                Sp&auml;tester:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                                    [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{assignedRoadWorkNeed.properties.finishLateTo
-                                                    |
-                                                    date:'dd.MM.yyyy'}}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <b>Zeit-Faktor</b>:&nbsp;<span
-                                                style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
-                                                needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                            </ng-container>
-                        </div>
-                        <h3>Zeitangaben: Stellungnahme</h3>
-                        <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
-                            <table mat-table [dataSource]="consultationInputsFromReporting" class="mat-elevation-z2"
-                                style="width: 100%">
-
-                                <ng-container matColumnDef="orderer_org">
-                                    <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
-                                    <td mat-cell *matCellDef="let consultationInput">
-                                        {{consultationInput.inputBy.organisationalUnit.abbreviation}}
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="contact_person">
-                                    <th mat-header-cell *matHeaderCellDef> Kontaktperson </th>
-                                    <td mat-cell *matCellDef="let consultationInput">
-                                        {{consultationInput.inputBy.firstName}}
-                                        {{consultationInput.inputBy.lastName}}
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="need">
-                                    <th mat-header-cell *matHeaderCellDef> Bedarf </th>
-                                    <td mat-cell *matCellDef="let consultationInput">
-                                        <span
-                                            *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">Bedarf
-                                            vorhanden</span>
-                                        <span *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">Kein
-                                            Bedarf</span>
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="realisation">
-                                    <th mat-header-cell *matHeaderCellDef> Realisierungszeitraum </th>
-                                    <td mat-cell *matCellDef="let consultationInput">
-                                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
-                                            <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
-                                                style="color: green;">check</mat-icon>
-                                        </mat-chip>
-                                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
-                                            <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
-                                                style="color: rgb(225, 74, 74);">close</mat-icon>
-                                        </mat-chip>
-                                    </td>
-                                </ng-container>
-
-                                <tr mat-header-row *matHeaderRowDef="consultationInputsDisplayedColumns"></tr>
-                                <tr mat-row *matRowDef="let row; columns: consultationInputsDisplayedColumns;"></tr>
-                            </table>
-                        </div>
-                        <div fxLayout="row wrap padding" *ngIf="!currentUser.prefTableView">
-                            <mat-card *ngFor="let consultationInput of consultationInputsFromReporting"
-                                style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                <mat-card-content style="min-width: 380px;">
-                                    <div *ngIf="consultationInput">
-                                        <h4>Beteiligte:r:
-                                            {{consultationInput.inputBy.organisationalUnit.abbreviation}}
-                                        </h4>
-                                        <p><b>Kontaktperson</b>:
-                                            {{consultationInput.inputBy.firstName}}
-                                            {{consultationInput.inputBy.lastName}}</p>
-                                        <p><b>Bedarf</b>:
-                                            <span
-                                                *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">Bedarf
-                                                vorhanden</span>
-                                            <span
-                                                *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">Kein
-                                                Bedarf</span>
-                                        </p>
-                                        <p><b>Realisierungszeitraum</b>:
-                                            <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
-                                                <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
-                                                    style="color: green;">check</mat-icon>
-                                            </mat-chip>
-                                            <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
-                                                <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
-                                                    style="color: rgb(225, 74, 74);">close</mat-icon>
-                                            </mat-chip>
-                                        </p>
-                                    </div>
-                                </mat-card-content>
-                            </mat-card>
                         </div>
                     </mat-tab>
                     <mat-tab label="Termine" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
@@ -1201,6 +918,299 @@
                             </form>
                         </div>
                     </mat-tab>
+                    <mat-tab label="Zeitfaktor" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+                        <div fxLayout="row wrap padding">
+                            <mat-card style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                <mat-card-header>
+                                    <mat-card-title>Zeitangaben: Bedarfserfassung</mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content style="min-width: 380px;">
+                                    <div *ngIf="getPrimaryNeed().properties.uuid != ''">
+                                        <h4>Ausl&ouml;ser:
+                                            {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
+                                        </h4>
+                                        <p>
+                                            Fr&uuml;hester:&nbsp;<span
+                                                [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, getPrimaryNeed().properties.finishEarlyTo)"
+                                                [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, getPrimaryNeed().properties.finishEarlyTo)"
+                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{getPrimaryNeed().properties.finishEarlyTo
+                                                | date:'dd.MM.yyyy'}}
+                                            </span>
+                                        </p>
+                                        <p>
+                                            Wunsch:&nbsp;<span
+                                                [class.red-date]="isFirstDateBefore(getPrimaryNeed().properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, needsOfActivityService.assignedRoadWorkNeeds[0].properties.finishOptimumTo)"
+                                                [class.green-date]="!(isFirstDateBefore(getPrimaryNeed().properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, needsOfActivityService.assignedRoadWorkNeeds[0].properties.finishOptimumTo))"
+                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{getPrimaryNeed().properties.finishOptimumTo
+                                                | date:'dd.MM.yyyy'}}
+                                            </span>
+                                        </p>
+                                        <p>
+                                            Sp&auml;tester:&nbsp;<span
+                                                [class.red-date]="isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                                [class.green-date]="!isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{getPrimaryNeed().properties.finishLateTo
+                                                |
+                                                date:'dd.MM.yyyy'}}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                            <mat-card style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                <mat-card-header>
+                                    <mat-card-title>Terminsch&auml;tzung Realisierung (aus
+                                        Grob-Terminplanung)</mat-card-title>
+                                </mat-card-header>
+                                <mat-card-content>
+                                    <div>
+                                        <mat-form-field style="margin:10px;">
+                                            <mat-label>Baubeginn</mat-label>
+                                            <input matInput
+                                                [(ngModel)]="roadWorkActivityFeature.properties.finishEarlyTo"
+                                                [matDatepicker]="startOfConstruction"
+                                                [max]="roadWorkActivityFeature.properties.finishLateTo"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-datepicker #startOfConstruction></mat-datepicker>
+                                            <mat-datepicker-toggle matSuffix
+                                                [for]="startOfConstruction"></mat-datepicker-toggle>
+                                        </mat-form-field>
+                                        <mat-form-field style="margin:10px;">
+                                            <mat-label>Bauende</mat-label>
+                                            <input matInput
+                                                [(ngModel)]="roadWorkActivityFeature.properties.finishLateTo"
+                                                [matDatepicker]="endOfConstruction"
+                                                [min]="roadWorkActivityFeature.properties.finishEarlyTo"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-datepicker #endOfConstruction></mat-datepicker>
+                                            <mat-datepicker-toggle matSuffix
+                                                [for]="endOfConstruction"></mat-datepicker-toggle>
+                                        </mat-form-field>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                        <h3>Zeitangaben: Bedarfskl&auml;rung</h3>
+                        <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
+                            <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
+                                class="mat-elevation-z2" style="width: 100%">
+
+                                <ng-container matColumnDef="orderer_org">
+                                    <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        {{assignedRoadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="contact_person">
+                                    <th mat-header-cell *matHeaderCellDef> Kontaktperson </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        {{assignedRoadWorkNeed.properties.orderer.firstName}}
+                                        {{assignedRoadWorkNeed.properties.orderer.lastName}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="earliest">
+                                    <th mat-header-cell *matHeaderCellDef> Fr&uuml;hester </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                            [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            {{assignedRoadWorkNeed.properties.finishEarlyTo
+                                            | date:'dd.MM.yyyy'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="wish">
+                                    <th mat-header-cell *matHeaderCellDef> Wunsch </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                            [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
+                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            {{assignedRoadWorkNeed.properties.finishOptimumTo
+                                            | date:'dd.MM.yyyy'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="latest">
+                                    <th mat-header-cell *matHeaderCellDef> Sp&auml;tester </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                            [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            {{assignedRoadWorkNeed.properties.finishLateTo
+                                            |
+                                            date:'dd.MM.yyyy'}}
+                                        </span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="time_factor">
+                                    <th mat-header-cell *matHeaderCellDef> Zeit-Faktor </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        <span
+                                            style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
+                                            needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="assignedRoadWorkNeedsDisplayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: assignedRoadWorkNeedsDisplayedColumns;"></tr>
+                            </table>
+                        </div>
+                        <div fxLayout="row wrap padding" *ngIf="!currentUser.prefTableView">
+                            <ng-container
+                                *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                <mat-card *ngIf="!assignedRoadWorkNeed.properties.isPrimary"
+                                    style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-content style="min-width: 380px;">
+                                        <div *ngIf="assignedRoadWorkNeed">
+                                            <h4>Beteiligte:r:
+                                                {{assignedRoadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
+                                            </h4>
+                                            <p><b>Kontaktperson</b>:
+                                                {{assignedRoadWorkNeed.properties.orderer.firstName}}
+                                                {{assignedRoadWorkNeed.properties.orderer.lastName}}</p>
+                                            <p><b>Bedarf</b>: <i>{{assignedRoadWorkNeed.properties.name}}</i></p>
+                                            <p>
+                                                Fr&uuml;hester:&nbsp;<span
+                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                                    [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                                    [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                    {{assignedRoadWorkNeed.properties.finishEarlyTo
+                                                    | date:'dd.MM.yyyy'}}
+                                                </span>
+                                            </p>
+                                            <p>
+                                                Wunsch:&nbsp;<span
+                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
+                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                    {{assignedRoadWorkNeed.properties.finishOptimumTo
+                                                    | date:'dd.MM.yyyy'}}
+                                                </span>
+                                            </p>
+                                            <p>
+                                                Sp&auml;tester:&nbsp;<span
+                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                                    [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                    {{assignedRoadWorkNeed.properties.finishLateTo
+                                                    |
+                                                    date:'dd.MM.yyyy'}}
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <b>Zeit-Faktor</b>:&nbsp;<span
+                                                style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
+                                                needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                            </ng-container>
+                        </div>
+                        <h3>Zeitangaben: Stellungnahme</h3>
+                        <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
+                            <table mat-table [dataSource]="consultationInputsFromReporting" class="mat-elevation-z2"
+                                style="width: 100%">
+
+                                <ng-container matColumnDef="orderer_org">
+                                    <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        {{consultationInput.inputBy.organisationalUnit.abbreviation}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="contact_person">
+                                    <th mat-header-cell *matHeaderCellDef> Kontaktperson </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        {{consultationInput.inputBy.firstName}}
+                                        {{consultationInput.inputBy.lastName}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="need">
+                                    <th mat-header-cell *matHeaderCellDef> Bedarf </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        <span
+                                            *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">Bedarf
+                                            vorhanden</span>
+                                        <span *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">Kein
+                                            Bedarf</span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="realisation">
+                                    <th mat-header-cell *matHeaderCellDef> Realisierungszeitraum </th>
+                                    <td mat-cell *matCellDef="let consultationInput">
+                                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
+                                            <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
+                                                style="color: green;">check</mat-icon>
+                                        </mat-chip>
+                                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
+                                            <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
+                                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                                        </mat-chip>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="consultationInputsDisplayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: consultationInputsDisplayedColumns;"></tr>
+                            </table>
+                        </div>
+                        <div fxLayout="row wrap padding" *ngIf="!currentUser.prefTableView">
+                            <mat-card *ngFor="let consultationInput of consultationInputsFromReporting"
+                                style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                <mat-card-content style="min-width: 380px;">
+                                    <div *ngIf="consultationInput">
+                                        <h4>Beteiligte:r:
+                                            {{consultationInput.inputBy.organisationalUnit.abbreviation}}
+                                        </h4>
+                                        <p><b>Kontaktperson</b>:
+                                            {{consultationInput.inputBy.firstName}}
+                                            {{consultationInput.inputBy.lastName}}</p>
+                                        <p><b>Bedarf</b>:
+                                            <span
+                                                *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">Bedarf
+                                                vorhanden</span>
+                                            <span
+                                                *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">Kein
+                                                Bedarf</span>
+                                        </p>
+                                        <p><b>Realisierungszeitraum</b>:
+                                            <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
+                                                <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
+                                                    style="color: green;">check</mat-icon>
+                                            </mat-chip>
+                                            <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
+                                                <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
+                                                    style="color: rgb(225, 74, 74);">close</mat-icon>
+                                            </mat-chip>
+                                        </p>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </mat-tab>
                     <mat-tab label="Dokumente" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div fxLayout="row wrap padding">
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
@@ -1272,17 +1282,11 @@
                             </table>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Bewertung" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
-                        </div>
-                    </mat-tab>
-                    <mat-tab label="Journal" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
-                        </div>
-                    </mat-tab>
                 </mat-tab-group>
+            </mat-tab>
+            <mat-tab label="Bedarfe" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+                <app-needs-of-activity [roadWorkActivity]="roadWorkActivityFeature"
+                    [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
             <mat-tab *ngIf="roadWorkActivityFeature.properties.uuid!=='' &&
                             (userService.getLocalUser().chosenRole == 'administrator' || 
@@ -1393,10 +1397,6 @@
             <mat-tab label="Historie" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                 <app-activity-history
                     [dataSource]="roadWorkActivityFeature.properties.activityHistory"></app-activity-history>
-            </mat-tab>
-            <mat-tab label="Bedarfe" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                <app-needs-of-activity [roadWorkActivity]="roadWorkActivityFeature"
-                    [isInEditingMode]="roadWorkActivityFeature.properties.isEditingAllowed"></app-needs-of-activity>
             </mat-tab>
             <mat-tab label="Events" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                 <app-events-at-activity
