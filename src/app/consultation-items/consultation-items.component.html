@@ -181,12 +181,6 @@
 <div *ngIf="roadWorkActivity.properties.status ==='inconsult' && userService.getLocalUser().chosenRole == 'orderer'">
     <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="margin-bottom: 2em;">
-        <p>
-            <mat-checkbox [(ngModel)]="consultationInput.decline" (change)="setDecline()" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
-                    hasRequirementAlreadyEntered()" style="margin:10px;">
-                Kein Bedarf f&uuml;r uns
-            </mat-checkbox>
-        </p>
         Bereits ber&uuml;cksichtigte Bedarfe:<span *ngIf="!needsOfActivity || needsOfActivity.length == 0"> Noch keine</span>
         <ul>
             <span *ngFor="let needOfActivity of needsOfActivity">
@@ -199,6 +193,12 @@
                 </li>
             </span>
         </ul>
+        <p>
+            <mat-checkbox [(ngModel)]="consultationInput.decline" (change)="setDecline()" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
+                    hasRequirementAlreadyEntered()" style="margin:10px;">
+                Kein Bedarf f&uuml;r uns
+            </mat-checkbox>
+        </p>
         <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
             [disabled]="consultationInput.decline || roadWorkActivity.properties.status !=='inconsult'">
             Bedarf erfassen

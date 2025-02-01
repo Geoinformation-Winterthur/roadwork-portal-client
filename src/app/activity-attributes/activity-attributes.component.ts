@@ -875,7 +875,8 @@ export class ActivityAttributesComponent implements OnInit {
       else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
         mailText += "Die Stellungnahme läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
-      mailText += "Mit «Senden» übermittelst du uns deine Rückmeldung.%0A%0A";
+      if (newStatus == "reporting")
+        mailText += "Mit «Senden» übermittelst du uns deine Rückmeldung.%0A%0A";
       mailText += "Vielen Dank für deine Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
       mailText += this.roadWorkActivityFeature.properties.areaManager.firstName + " "
