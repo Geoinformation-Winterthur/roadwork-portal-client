@@ -849,26 +849,44 @@ export class ActivityAttributesComponent implements OnInit {
         separator = "&";
       }
 
+      mailText += separator + "subject=Die";
+
       if (newStatus == "inconsult")
-        mailText += separator + "subject=Die Bedarfsklärung zum Bauvorhaben '" +
-          this.roadWorkActivityFeature.properties.name +
-          "' beginnt. Ihre Meinung ist gefragt.&";
+        mailText += " Bedarfsklärung ";
       else if (newStatus == "reporting")
-        mailText += separator + "subject=Die Stellungnahme zum Bauvorhaben '" +
-          this.roadWorkActivityFeature.properties.name +
-          "' beginnt. Ihre Meinung ist gefragt.&";
+        mailText += " Stellungnahme ";
+
+      mailText += "zum Bauvorhaben '" +
+        this.roadWorkActivityFeature.properties.name +
+        "' beginnt. Deine Meinung ist gefragt.&";
+
       mailText += "body=Liebe Kolleginnen und Kollegen%0A%0A";
-      mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
+      if (newStatus == "inconsult")
+        mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
+      else if (newStatus == "reporting")
+        mailText += "Das nachfolgende Bauvorhaben ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
+
       mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid;
       if (newStatus == "inconsult")
         mailText += "?open_tab=bedarfsklaerung";
       else if (newStatus == "reporting")
         mailText += "?open_tab=stellungnahme";
+
       mailText += "%0A%0A";
       mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid + "%0A%0A";
-      mailText += "Titel/Strasse: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
-      mailText += "Bitte beurteile, ob in deinem Bereich Bedarf zum Mitbauen besteht oder nicht.%0A%0A";
-      mailText += "Sollte Bedarf vorhanden sein, so bitten wir dich, den Bedarf genauer zu erläutern. Du hilfst uns durch Erfassen eines neuen Bedarfs, dein Anliegen besser zu verstehen.%0A%0A";
+      mailText += "Bezeichnung: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
+
+      if (newStatus == "inconsult") {
+        mailText += "Bitte beurteile, ob in deinem Bereich Bedarf zum Mitbauen besteht oder nicht. ";
+        mailText += "Mit Klick auf obigen Link gelangst du zum Bauvorhaben.%0A%0A";
+        mailText += "Sollte Bedarf vorhanden sein, so bitten wir dich, den Button «Bedarf erfassen» zu benutzen ";
+        mailText += "(Hinweis: Perimeter und Zeitbedarf sind als Vorschlag bereits hinterlegt und können individuell angepasst werden). ";
+        mailText += "Du hilfst uns durch Erfassen eines neuen Bedarfs, dein Anliegen besser zu verstehen. ";
+        mailText += "Sollte kein Interesse bestehen, dann wähle bitte «Kein Bedarf».%0A%0A";
+      }
+      else if (newStatus == "reporting")
+        mailText += "Mit Klick auf obigen Link kannst du das Bauvorhaben beurteilen und bei Bedarf eine Rückmeldung geben.%0A%0A";
+
       if (newStatus == "inconsult" && this.roadWorkActivityFeature.properties.dateConsultEnd)
         mailText += "Die Bedarfsklärung läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
@@ -888,7 +906,5 @@ export class ActivityAttributesComponent implements OnInit {
     }
 
   }
-
-
 
 }
