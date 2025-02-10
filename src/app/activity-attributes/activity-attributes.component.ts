@@ -55,9 +55,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   availableUsers: User[] = [];
   availableOrganisations: OrganisationalUnit[] = [];
-  chosenOrganisationUuid: string = "";
   usersOfChosenOrganisation: User[] = [];
-  selectedUsersOfChosenOrganisation: User[] = [];
 
   availableCostTypes: EnumType[] = [];
 
@@ -87,6 +85,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
   needsDocsDisplayedColumns: string[] = ['name', 'documents'];
+  chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
   assignedRoadWorkNeedsDisplayedColumns: string[] = ["orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor"];
 
@@ -490,15 +489,6 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  selectUsersOfOrganisation() {
-    let usersOfChosenOrganisationTemp = [];
-    for (let availableUser of this.availableUsers) {
-      if (availableUser.organisationalUnit.uuid == this.chosenOrganisationUuid)
-        usersOfChosenOrganisationTemp.push(availableUser);
-    }
-    this.usersOfChosenOrganisation = usersOfChosenOrganisationTemp;
-  }
-
   checkStatusDisabled(currValue: string, valueToCheck: string): boolean {
     if (currValue === 'review') {
       if (valueToCheck === 'review')
@@ -566,21 +556,33 @@ export class ActivityAttributesComponent implements OnInit {
     return "background-color: rgb(109, 255, 121);";
   }
 
-  changeInvolvedUsers() {
+  changeInvolvedUsers(user: User) {
     if (this.roadWorkActivityFeature) {
-      if (!this.roadWorkActivityFeature.properties.involvedUsers) {
-        this.roadWorkActivityFeature.properties.involvedUsers = [];
-      }
-      if (this.chosenOrganisationUuid) {
-        this.roadWorkActivityFeature.properties.involvedUsers =
-          this.roadWorkActivityFeature.properties.involvedUsers.filter((user) => user.organisationalUnit.uuid != this.chosenOrganisationUuid);
-      }
-      for (let selectedUserOfChosenOrganisation of this.selectedUsersOfChosenOrganisation) {
-        this.roadWorkActivityFeature.properties.involvedUsers.push(selectedUserOfChosenOrganisation);
-      }
+      let involvedUsersCopy = this.roadWorkActivityFeature.properties.involvedUsers.map((x) => x);
+      let filteredUser: User[] =
+          involvedUsersCopy.filter((involvedUser) => involvedUser.uuid == user.uuid);
+      if(filteredUser.length == 0)
+        involvedUsersCopy.push(user);
+      else
+        involvedUsersCopy.splice(
+          involvedUsersCopy.indexOf(user), 1);
+
+      this.roadWorkActivityFeature.properties.involvedUsers = involvedUsersCopy;
+
       this._getAllInvolvedOrgs();
     }
   }
+
+  includesInvolvedUser(user: User): boolean {
+    if (this.roadWorkActivityFeature) {
+      let filteredUser: User[] =
+            this.roadWorkActivityFeature.properties.involvedUsers
+                  .filter((involvedUser) => involvedUser.uuid == user.uuid);
+      return filteredUser.length != 0;
+    }
+    return false;
+  }
+
 
   isInvolvedUserSelected(userUuid: string): boolean {
     if (this.roadWorkActivityFeature) {
