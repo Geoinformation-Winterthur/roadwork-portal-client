@@ -313,38 +313,47 @@
                         </div>
                     </mat-tab>
                     <mat-tab label="Beteiligte" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div style="margin: 1em;">
-                            <div fxLayout="row wrap padding">
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="50" fxFlex.md="50" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-content style="min-width: 380px;">
-                                        Auswahl Organisationseinheit:
-                                        <mat-selection-list [(ngModel)]="chosenOrganisationUuid"
-                                            (click)="selectUsersOfOrganisation()" [multiple]="false">
-                                            <mat-list-option
-                                                *ngFor="let availableOrganisation of availableOrganisations"
-                                                [value]="availableOrganisation.uuid">
-                                                {{availableOrganisation.name}}
-                                            </mat-list-option>
-                                        </mat-selection-list>
-                                    </mat-card-content>
-                                </mat-card>
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="50" fxFlex.md="50" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-content style="min-width: 380px;">
-                                        Auswahl Beteiligte:
-                                        <mat-selection-list [(ngModel)]="selectedUsersOfChosenOrganisation"
-                                            (click)="changeInvolvedUsers()">
-                                            <mat-list-option
-                                                *ngFor="let userOfChosenOrganisation of usersOfChosenOrganisation"
-                                                [value]="userOfChosenOrganisation"
-                                                [selected]="isInvolvedUserSelected(userOfChosenOrganisation.uuid)">
-                                                {{userOfChosenOrganisation.firstName}}
-                                                {{userOfChosenOrganisation.lastName}}
-                                            </mat-list-option>
-                                        </mat-selection-list>
-                                    </mat-card-content>
-                                </mat-card>
+                        <div style="margin: 1em;" style="width: 100%">
+                            <div fxLayout="row wrap padding" style="width: 100%">
+                                <table mat-table [dataSource]="availableUsers" class="mat-elevation-z2"
+                                    style="width: 100%">
+
+                                    <ng-container matColumnDef="org">
+                                        <th mat-header-cell *matHeaderCellDef> Werk </th>
+                                        <td mat-cell *matCellDef="let availableUser">
+                                            {{availableUser.organisationalUnit.name}}
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="abbr">
+                                        <th mat-header-cell *matHeaderCellDef> Kurzzeichen </th>
+                                        <td mat-cell *matCellDef="let availableUser">
+                                            {{availableUser.organisationalUnit.abbreviation}}
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="name">
+                                        <th mat-header-cell *matHeaderCellDef> Ansprechperson </th>
+                                        <td mat-cell *matCellDef="let availableUser">{{availableUser.firstName}}
+                                            {{availableUser.lastName}}
+                                        </td>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="choose">
+                                        <th mat-header-cell *matHeaderCellDef> Beteiligter (ja/nein) </th>
+                                        <td mat-cell *matCellDef="let availableUser">
+                                            <span (click)="changeInvolvedUsers(availableUser)">
+                                                <mat-checkbox name="change_involved_user_{{availableUser.uuid}}"
+                                                    style="margin:10px;" [checked]="includesInvolvedUser(availableUser)">
+                                                </mat-checkbox>
+                                            </span>
+                                        </td>
+                                    </ng-container>
+
+                                    <tr mat-header-row *matHeaderRowDef="chooseInvolvedUserDisplayedColumns"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: chooseInvolvedUserDisplayedColumns;"></tr>
+                                </table>
+
                             </div>
                         </div>
                     </mat-tab>
