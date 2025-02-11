@@ -224,12 +224,12 @@
                                             </b>
                                         </p>
                                         <p>Beteiligte:
-                                            <b *ngIf="!involvedOrgs || involvedOrgs.length == 0">
+                                            <b *ngIf="!getInvolvedOrgsNames() || getInvolvedOrgsNames().length == 0">
                                                 keine
                                             </b>
-                                            <b *ngIf="involvedOrgs && involvedOrgs.length != 0">
-                                                <span *ngFor="let involvedOrg of involvedOrgs">
-                                                    {{involvedOrg.abbreviation}},
+                                            <b *ngIf="getInvolvedOrgsNames() && getInvolvedOrgsNames().length != 0">
+                                                <span *ngFor="let involvedOrgAbbr of getInvolvedOrgsNames()">
+                                                    {{involvedOrgAbbr}},
                                                 </span>
                                             </b>
                                         </p>
@@ -342,11 +342,10 @@
                                     <ng-container matColumnDef="choose">
                                         <th mat-header-cell *matHeaderCellDef> Beteiligter (ja/nein) </th>
                                         <td mat-cell *matCellDef="let availableUser">
-                                            <span (click)="changeInvolvedUsers(availableUser)">
-                                                <mat-checkbox name="change_involved_user_{{availableUser.uuid}}"
-                                                    style="margin:10px;" [checked]="includesInvolvedUser(availableUser)">
-                                                </mat-checkbox>
-                                            </span>
+                                            <mat-checkbox name="change_involved_user"
+                                                (change)="changeInvolvedUsers(availableUser)" style="margin:10px;"
+                                                [checked]="isInvolvedUser(availableUser)">
+                                            </mat-checkbox>
                                         </td>
                                     </ng-container>
 

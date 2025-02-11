@@ -51,7 +51,6 @@ export class ActivityAttributesComponent implements OnInit {
   statusCode: string = "";
   priorityCode: string = "";
   involvedUsers: User[] = [];
-  involvedOrgs: OrganisationalUnit[] = [];
 
   availableUsers: User[] = [];
   availableOrganisations: OrganisationalUnit[] = [];
@@ -302,7 +301,7 @@ export class ActivityAttributesComponent implements OnInit {
                         }
                       });
                   }
-                  this._getAllInvolvedOrgs();
+                  this._updateAllInvolvedUsers();
                   this._updateDueDate();
                 }
 
@@ -569,11 +568,10 @@ export class ActivityAttributesComponent implements OnInit {
 
       this.roadWorkActivityFeature.properties.involvedUsers = involvedUsersCopy;
 
-      this._getAllInvolvedOrgs();
     }
   }
 
-  includesInvolvedUser(user: User): boolean {
+  isInvolvedUser(user: User): boolean {
     if (this.roadWorkActivityFeature) {
       let filteredUser: User[] =
             this.roadWorkActivityFeature.properties.involvedUsers
@@ -775,13 +773,19 @@ export class ActivityAttributesComponent implements OnInit {
     this.activatedRouteSubscription.unsubscribe();
   }
 
-  private _getAllInvolvedOrgs() {
+  getInvolvedOrgsNames(): string[] {
+    let result: string[] = [];
     if (this.roadWorkActivityFeature) {
-      let involvedOrgs: Map<string, OrganisationalUnit> = new Map();
       for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
-        involvedOrgs.set(involvedUser.organisationalUnit.uuid, involvedUser.organisationalUnit);
+        if(!result.includes(involvedUser.organisationalUnit.abbreviation))
+          result.push(involvedUser.organisationalUnit.abbreviation);
       }
-      this.involvedOrgs = Array.from(involvedOrgs.values());
+    }
+    return result;
+  }
+
+  private _updateAllInvolvedUsers() {
+    if (this.roadWorkActivityFeature) {
       this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
         .subscribe({
           next: (roadWorkNeeds) => {
