@@ -41,4 +41,7 @@ export class RoadWorkNeedProperties {
     documentAtts?: DocumentAttributes[];
     costs?: Costs[];
     isPrimary?: boolean;
+    decline?: boolean = false;
+    stillRelevant?: boolean = false;
+    feedbackGiven?: boolean = false;
 }

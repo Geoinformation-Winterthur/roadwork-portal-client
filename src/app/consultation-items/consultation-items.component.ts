@@ -23,18 +23,19 @@ export class ConsultationItemsComponent {
   @Input()
   roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
 
-  consultationInput: ConsultationInput = new ConsultationInput();
-
-  tableDisplayedColumns: string[] = ['name', 'organisation', 'participant', 'feedback', 'date_last_change', 'has_feedback', 'still_requirement', 'temporal_factor', 'new_requirement',  'consult_input'];
+  tableDisplayedColumns: string[] = ['name', 'organisation', 'participant', 'feedback', 'date_last_change', 'has_feedback', 'still_requirement', 'temporal_factor', 'new_requirement', 'consult_input'];
 
   user: User;
   userService: UserService;
 
   needsOfActivity: RoadWorkNeedFeature[] = [];
+  needsOfUser: RoadWorkNeedFeature[] = [];
 
   statusHelper: StatusHelper;
 
-  private consultationService: ConsultationService;
+  decline: boolean = false;
+  stillRelevant: boolean = false;
+
   private roadWorkNeedService: RoadWorkNeedService;
   private needsOfActivityService: NeedsOfActivityService;
   private router: Router;
@@ -45,7 +46,6 @@ export class ConsultationItemsComponent {
     roadWorkNeedService: RoadWorkNeedService,
     router: Router,
     userService: UserService, snckBar: MatSnackBar) {
-    this.consultationService = consultationService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
@@ -72,8 +72,16 @@ export class ConsultationItemsComponent {
       undefined, undefined, this.roadWorkActivity.properties.uuid).subscribe({
         next: (roadWorkNeeds) => {
           let needsOfActivityTemp = [];
+          let needsOfUserTemp = [];
+          this.stillRelevant = true;
           for (let roadWorkNeed of roadWorkNeeds) {
             needsOfActivityTemp.push(roadWorkNeed);
+            if (roadWorkNeed.properties.orderer.uuid == this.user.uuid)
+              needsOfUserTemp.push(roadWorkNeed);
+            if(!roadWorkNeed.properties.stillRelevant){
+              this.stillRelevant = false;
+              break;
+            }
           }
           for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
             let userHasFeedback = false;
@@ -90,6 +98,7 @@ export class ConsultationItemsComponent {
             }
           }
           this.needsOfActivity = needsOfActivityTemp;
+          this.needsOfUser = needsOfUserTemp;
         },
         error: (error) => {
         }
@@ -100,102 +109,41 @@ export class ConsultationItemsComponent {
       this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.needsOfActivity);
     }
 
-    this.consultationInput.feedbackPhase = this.roadWorkActivity.properties.status;
 
-    this.consultationService.getConsultationInputs(this.roadWorkActivity.properties.uuid)
-      .subscribe({
-        next: (consultationInputs) => {
-          for (let consultationInput of consultationInputs) {
-            if (consultationInput.feedbackPhase === 'inconsult') {
-              for (let needOfActivity of this.needsOfActivity) {
-                if (needOfActivity.properties.orderer.uuid == consultationInput.inputBy.uuid) {
-                  needOfActivity.properties.comment = "Kein Bedarf für uns";
+  }
+
+  saveNeedsOfUser() {    
+    if(this.stillRelevant)
+      this.decline = false;
+
+    let messageShown: boolean = false;
+    for (let needOfUser of this.needsOfUser) {
+      needOfUser.properties.stillRelevant = this.stillRelevant;
+      needOfUser.properties.feedbackGiven = true;
+      this.roadWorkNeedService
+        .updateRoadWorkNeed(needOfUser)
+        .subscribe({
+          next: (roadWorkNeedFeature) => {
+            if (roadWorkNeedFeature) {
+              ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
+              if (roadWorkNeedFeature.errorMessage !== "") {
+                if(!messageShown){
+                  this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
+                    duration: 4000
+                  });
+                  messageShown = true;
+                }
+              } else {
+                if(!messageShown){
+                  this.snckBar.open("Rückmeldung gespeichert", "", {
+                    duration: 4000
+                  });
+                  messageShown = true;
                 }
               }
             }
-          }
-
-          for (let consultationInput of consultationInputs) {
-            if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
-              consultationInput.feedbackPhase === this.roadWorkActivity.properties.status) {
-              this.consultationInput = new ConsultationInput();
-              this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
-              this.consultationInput.inputBy = consultationInput.inputBy;
-              this.consultationInput.managerFeedback = "" + consultationInput.managerFeedback;
-              this.consultationInput.lastEdit = consultationInput.lastEdit;
-              this.consultationInput.decline = consultationInput.decline;
-              this.consultationInput.valuation = consultationInput.valuation;
-              this.consultationInput.feedbackPhase = consultationInput.feedbackPhase;
-              break;
-            }
-          }
-
-        },
-        error: (error) => {
-        }
-      });
-  }
-
-  sendInConsult() {
-    this.consultationInput.feedbackGiven = true;
-    if (this.consultationInput.uuid === "") {
-      this.consultationService.addConsultationInput(this.roadWorkActivity.properties.uuid,
-        this.consultationInput)
-        .subscribe({
-          next: (consultationInput) => {
-            if (consultationInput) {
-              ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
-              if (consultationInput.errorMessage.trim().length !== 0) {
-                this.snckBar.open(consultationInput.errorMessage, "", {
-                  duration: 4000
-                });
-              } else {
-                this.snckBar.open("Rückmeldung gespeichert", "", {
-                  duration: 4000
-                });
-              }
-              let consultationInputObj: ConsultationInput = new ConsultationInput();
-              consultationInputObj.uuid = "" + consultationInput.uuid;
-              consultationInputObj.ordererFeedback = "" + consultationInput.ordererFeedback;
-              consultationInputObj.inputBy = consultationInput.inputBy;
-              consultationInputObj.managerFeedback = "" + consultationInput.managerFeedback;
-              consultationInputObj.feedbackPhase = consultationInput.feedbackPhase;
-              consultationInputObj.lastEdit = consultationInput.lastEdit;
-              consultationInputObj.decline = consultationInput.decline;
-              consultationInputObj.valuation = consultationInput.valuation;
-              consultationInputObj.feedbackGiven = consultationInput.feedbackGiven;
-
-            }
           },
           error: (error) => {
-            this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
-              duration: 4000
-            });
-          }
-        });
-    } else {
-      this.consultationService.updateConsultationInput(this.roadWorkActivity.properties.uuid,
-        this.consultationInput)
-        .subscribe({
-          next: (consultationInput) => {
-            if (consultationInput) {
-              ErrorMessageEvaluation._evaluateErrorMessage(consultationInput);
-              if (consultationInput.errorMessage.trim().length !== 0) {
-                this.snckBar.open(consultationInput.errorMessage, "", {
-                  duration: 4000
-                });
-              } else {
-                this.snckBar.open("Rückmeldung gespeichert", "", {
-                  duration: 4000
-                });
-              }
-            }
-          },
-          error: (error) => {
-            this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
-              duration: 4000
-            });
           }
         });
     }
@@ -253,14 +201,6 @@ export class ConsultationItemsComponent {
       };
       this.router.navigate(["/needs/new"], { queryParams: params });
     }
-  }
-
-  setDecline() {
-    if (this.consultationInput.decline) {
-      this.consultationInput.valuation = 0;
-      this.consultationInput.ordererFeedback = "";
-    }
-    this.sendInConsult();
   }
 
 }

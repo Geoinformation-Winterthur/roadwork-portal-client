@@ -59,7 +59,7 @@
             </mat-card>
         </div>
     </div>
-    <div *ngIf="user && user.prefTableView" style="margin-top: 1em;">
+    <div *ngIf="roadWorkActivity.properties.status == 'inconsult'" style="margin-top: 1em;">
         <table id="consultation_items_table" mat-table [dataSource]="needsOfActivity" class="mat-elevation-z2"
             style="width: 100%">
 
@@ -106,11 +106,11 @@
                 <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung erhalten </th>
                 <td mat-cell *matCellDef="let needOfActivity">
                     <mat-chip-list>
-                        <mat-chip *ngIf="needOfActivity.properties.uuid">
+                        <mat-chip *ngIf="needOfActivity.properties.feedbackGiven">
                             <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
-                        <mat-chip *ngIf="!needOfActivity.properties.uuid">
+                        <mat-chip *ngIf="!needOfActivity.properties.feedbackGiven">
                             <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
                                 matTooltip="Noch keine R&uuml;ckmeldung"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>
@@ -123,13 +123,14 @@
                 <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf </th>
                 <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
                     <mat-chip-list>
-                        <mat-chip *ngIf="needOfActivity.properties.uuid">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
+                        <mat-chip *ngIf="needOfActivity.properties.stillRelevant">
+                            <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf"
+                                matTooltip="Weiterhin Bedarf"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
-                        <mat-chip *ngIf="!needOfActivity.properties.uuid">
-                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
-                                matTooltip="Noch keine R&uuml;ckmeldung"
+                        <mat-chip *ngIf="!needOfActivity.properties.stillRelevant">
+                            <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
+                                matTooltip="Kein Bedarf mehr"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>
                         </mat-chip>
                     </mat-chip-list>
@@ -194,13 +195,19 @@
             </span>
         </ul>
         <p>
-            <mat-checkbox [(ngModel)]="consultationInput.decline" (change)="setDecline()" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
-                    hasRequirementAlreadyEntered()" style="margin:10px;">
+            <mat-checkbox name="decline_checkbox" [(ngModel)]="decline" (change)="saveNeedsOfUser()" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
+                    hasRequirementAlreadyEntered() || stillRelevant" style="margin:10px;">
                 Kein Bedarf f&uuml;r uns
+            </mat-checkbox>
+            <br>
+            <mat-checkbox name="still_relevant_checkbox" [(ngModel)]="stillRelevant" (change)="saveNeedsOfUser()"
+                        [disabled]="roadWorkActivity.properties.status !=='inconsult'"
+                        style="margin:10px;">
+                Bedarf weiterhin vorhanden
             </mat-checkbox>
         </p>
         <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
-            [disabled]="consultationInput.decline || roadWorkActivity.properties.status !=='inconsult'">
+            [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
             Bedarf erfassen
         </button>
     </div>
