@@ -223,11 +223,7 @@ export class ActivityAttributesComponent implements OnInit {
 
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
           this.roadWorkActivityFeature.properties.status = "review";
-          this.roadWorkActivityFeature.properties.finishEarlyTo = new Date();
           this.roadWorkActivityFeature.properties.isPrivate = true;
-          let plus50Years: Date = new Date();
-          plus50Years.setFullYear(plus50Years.getFullYear() + 50);
-          this.roadWorkActivityFeature.properties.finishLateTo = plus50Years;
           this.roadWorkActivityFeature.properties.costsType = "municipal";
           this.roadWorkActivityFeature.properties.isEditingAllowed = true;
           this.roadWorkActivityFeature.properties.created = new Date();
@@ -684,7 +680,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  isFirstDateBefore(firstDate: Date, secondDate: Date): boolean {
+  isFirstDateBefore(firstDate?: Date, secondDate?: Date): boolean {
     if (firstDate && secondDate) {
       let firstDateObj = new Date(firstDate);
       let secondDateObj = new Date(secondDate);
