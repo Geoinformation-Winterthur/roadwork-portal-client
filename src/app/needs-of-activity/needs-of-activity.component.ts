@@ -15,7 +15,8 @@ import { UserService } from 'src/services/user.service';
 })
 export class NeedsOfActivityComponent {
 
-  displayedColumns: string[] = ['name', 'orderer', 'dateCreated', 'optRealYears', 'action'];
+  assignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'dateCreated', 'optRealYears', 'isOrigin', 'action'];
+  nonAssignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'dateCreated', 'optRealYears', 'action'];
 
   @Input()
   roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
@@ -51,25 +52,25 @@ export class NeedsOfActivityComponent {
 
   ngOnInit(): void {
     this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
-      undefined, undefined, undefined, undefined, undefined, undefined, 
-          this.roadWorkActivity.properties.uuid).subscribe({
-      next: (roadWorkNeeds) => {
-        this.allRoadWorkNeedFeatures = roadWorkNeeds;
-        if (this.needsOfActivityService.assignedRoadWorkNeeds.length != 0) {
-          this.allRoadWorkNeedFeatures =
-            this.allRoadWorkNeedFeatures
-              .filter((roadWorkNeed) => this.needsOfActivityService.assignedRoadWorkNeeds.some(assignedNeed => assignedNeed.properties.uuid !== roadWorkNeed.properties.uuid));
-        }
-        if (this.needsOfActivityService.registeredRoadWorkNeeds.length != 0) {
-          this.allRoadWorkNeedFeatures =
-            this.allRoadWorkNeedFeatures
-              .filter((roadWorkNeed) => this.needsOfActivityService.registeredRoadWorkNeeds.some(registeredNeed => registeredNeed.properties.uuid !== roadWorkNeed.properties.uuid));
-        }
+      undefined, undefined, undefined, undefined, undefined, undefined,
+      this.roadWorkActivity.properties.uuid).subscribe({
+        next: (roadWorkNeeds) => {
+          this.allRoadWorkNeedFeatures = roadWorkNeeds;
+          if (this.needsOfActivityService.assignedRoadWorkNeeds.length != 0) {
+            this.allRoadWorkNeedFeatures =
+              this.allRoadWorkNeedFeatures
+                .filter((roadWorkNeed) => this.needsOfActivityService.assignedRoadWorkNeeds.some(assignedNeed => assignedNeed.properties.uuid !== roadWorkNeed.properties.uuid));
+          }
+          if (this.needsOfActivityService.registeredRoadWorkNeeds.length != 0) {
+            this.allRoadWorkNeedFeatures =
+              this.allRoadWorkNeedFeatures
+                .filter((roadWorkNeed) => this.needsOfActivityService.registeredRoadWorkNeeds.some(registeredNeed => registeredNeed.properties.uuid !== roadWorkNeed.properties.uuid));
+          }
 
-      },
-      error: (error) => {
-      }
-    });
+        },
+        error: (error) => {
+        }
+      });
     if (this.roadWorkActivity.properties.uuid) {
       this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.allRoadWorkNeedFeatures);
     }
@@ -79,6 +80,11 @@ export class NeedsOfActivityComponent {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
     roadWorkNeed.properties.activityRelationType = "assignedneed";
     roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivity.properties.uuid as string;
+    let isFirstNeed: boolean = false;
+    if(this.needsOfActivityService.assignedRoadWorkNeeds &&
+        this.needsOfActivityService.assignedRoadWorkNeeds.length == 0)
+          isFirstNeed = true;
+
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
         next: (errorMessage) => {
@@ -101,11 +107,13 @@ export class NeedsOfActivityComponent {
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             assignedRoadWorkNeeds.push(roadWorkNeed);
             this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
-            for(let assignedRoadWorkNeed of assignedRoadWorkNeeds){
+            for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
               this.roadWorkActivity.properties.finishEarlyTo = assignedRoadWorkNeed.properties.finishEarlyTo;
               this.roadWorkActivity.properties.finishOptimumTo = assignedRoadWorkNeed.properties.finishOptimumTo;
               this.roadWorkActivity.properties.finishLateTo = assignedRoadWorkNeed.properties.finishLateTo;
             }
+            if(isFirstNeed)
+              this.setAsPrimaryNeed(roadWorkNeed);
           }
         },
         error: (error) => {
@@ -115,6 +123,7 @@ export class NeedsOfActivityComponent {
 
   unAssignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
+
     this.roadWorkNeedService.deleteRoadWorkNeed(roadWorkNeed.properties.uuid, true)
       .subscribe({
         next: (errorMessage) => {
@@ -131,6 +140,16 @@ export class NeedsOfActivityComponent {
               this.needsOfActivityService.assignedRoadWorkNeeds
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             this.allRoadWorkNeedFeatures.push(roadWorkNeed);
+
+            if(roadWorkNeed.properties.isPrimary){
+              for (let assignedRoadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
+                if (assignedRoadWorkNeed.properties.uuid != roadWorkNeed.properties.uuid) {
+                  this.setAsPrimaryNeed(assignedRoadWorkNeed);
+                  break;
+                }
+              }  
+            }        
+
             if (this.roadWorkActivity.properties.uuid) {
               this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid);
             }
@@ -142,6 +161,36 @@ export class NeedsOfActivityComponent {
           });
         }
       });
+  }
+
+  setAsPrimaryNeed(roadWorkNeed: RoadWorkNeedFeature) {
+    for (let assignedRoadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
+      if (assignedRoadWorkNeed.properties.uuid == roadWorkNeed.properties.uuid) {
+        if (!assignedRoadWorkNeed.properties.isPrimary) {
+          assignedRoadWorkNeed.properties.isPrimary = true;
+          this.roadWorkNeedService
+            .updateRoadWorkNeed(assignedRoadWorkNeed)
+            .subscribe({
+              next: (roadWorkNeedFeature) => {
+              },
+              error: (error) => {
+              }
+            });
+        }
+      } else {
+        if (assignedRoadWorkNeed.properties.isPrimary == true) {
+          assignedRoadWorkNeed.properties.isPrimary = false;
+          this.roadWorkNeedService
+            .updateRoadWorkNeed(assignedRoadWorkNeed)
+            .subscribe({
+              next: (roadWorkNeedFeature) => {
+              },
+              error: (error) => {
+              }
+            });
+        }
+      }
+    }
   }
 
   registerRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
@@ -214,15 +263,15 @@ export class NeedsOfActivityComponent {
       this.allRoadWorkNeedFeatures
         .filter(roadWorkNeedFeature => {
           if (roadWorkNeedFeature.properties && roadWorkNeedFeature.properties.name
-                && roadWorkNeedFeature.properties.status) {
+            && roadWorkNeedFeature.properties.status) {
             let roadWorkNeedNameToSeaarch: string = "";
             if (this.roadWorkNeedSearchControl.value)
               roadWorkNeedNameToSeaarch = this.roadWorkNeedSearchControl.value.trim().toLowerCase();
             let roadWorkNeedName: string = roadWorkNeedFeature.properties.name.trim().toLowerCase();
             let isNameEqual: boolean = roadWorkNeedName.includes(roadWorkNeedNameToSeaarch);
             let isPrivate: boolean = roadWorkNeedFeature.properties.isPrivate;
-            let isAlive: boolean = roadWorkNeedFeature.properties.status !== "coordinated" && 
-                    roadWorkNeedFeature.properties.status !== "suspended";
+            let isAlive: boolean = roadWorkNeedFeature.properties.status !== "coordinated" &&
+              roadWorkNeedFeature.properties.status !== "suspended";
             return (roadWorkNeedNameToSeaarch === '' || isNameEqual) && !isPrivate && isAlive;
           } else {
             return false;
