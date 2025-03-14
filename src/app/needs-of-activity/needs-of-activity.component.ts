@@ -107,11 +107,6 @@ export class NeedsOfActivityComponent {
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);
             assignedRoadWorkNeeds.push(roadWorkNeed);
             this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
-            for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
-              this.roadWorkActivity.properties.finishEarlyTo = assignedRoadWorkNeed.properties.finishEarlyTo;
-              this.roadWorkActivity.properties.finishOptimumTo = assignedRoadWorkNeed.properties.finishOptimumTo;
-              this.roadWorkActivity.properties.finishLateTo = assignedRoadWorkNeed.properties.finishLateTo;
-            }
             if(isFirstNeed)
               this.setAsPrimaryNeed(roadWorkNeed);
           }
