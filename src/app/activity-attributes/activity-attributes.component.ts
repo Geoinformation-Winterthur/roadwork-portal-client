@@ -304,10 +304,10 @@ export class ActivityAttributesComponent implements OnInit {
                 this.activatedRoute.queryParams.subscribe(params => {
                   const tabName = params["open_tab"];
                   if (tabName == "bedarfsklaerung") {
-                    this.selectedTabIndex = 2;
+                    this.selectedTabIndex = 3;
                     this.selectedSubTabIndex = 1;
                   } else if (tabName == "stellungnahme") {
-                    this.selectedTabIndex = 2;
+                    this.selectedTabIndex = 3;
                     this.selectedSubTabIndex = 2;
                   }
                 });
