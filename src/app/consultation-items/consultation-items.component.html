@@ -73,7 +73,8 @@
 
             <ng-container matColumnDef="organisation">
                 <th mat-header-cell *matHeaderCellDef> Werk </th>
-                <td mat-cell *matCellDef="let needOfActivity"> {{needOfActivity.properties.orderer.organisationalUnit.abbreviation}}
+                <td mat-cell *matCellDef="let needOfActivity">
+                    {{needOfActivity.properties.orderer.organisationalUnit.abbreviation}}
                 </td>
             </ng-container>
 
@@ -125,13 +126,11 @@
                     <mat-chip-list>
                         <mat-chip *ngIf="needOfActivity.properties.stillRelevant">
                             <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf"
-                                matTooltip="Weiterhin Bedarf"
-                                style="color: green;">check</mat-icon>
+                                matTooltip="Weiterhin Bedarf" style="color: green;">check</mat-icon>
                         </mat-chip>
                         <mat-chip *ngIf="!needOfActivity.properties.stillRelevant">
                             <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
-                                matTooltip="Kein Bedarf mehr"
-                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                                matTooltip="Kein Bedarf mehr" style="color: rgb(225, 74, 74);">close</mat-icon>
                         </mat-chip>
                     </mat-chip-list>
                 </td>
@@ -182,7 +181,8 @@
 <div *ngIf="roadWorkActivity.properties.status ==='inconsult' && userService.getLocalUser().chosenRole == 'orderer'">
     <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="margin-bottom: 2em;">
-        Bereits ber&uuml;cksichtigte Bedarfe:<span *ngIf="!needsOfActivity || needsOfActivity.length == 0"> Noch keine</span>
+        Bereits ber&uuml;cksichtigte Bedarfe:<span *ngIf="!needsOfActivity || needsOfActivity.length == 0"> Noch
+            keine</span>
         <ul>
             <span *ngFor="let needOfActivity of needsOfActivity">
                 <li *ngIf="needOfActivity.properties.uuid">
@@ -194,21 +194,33 @@
                 </li>
             </span>
         </ul>
+        <div>
+            <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
+                [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
+                Bedarf erfassen
+            </button>
+        </div>
         <p>
-            <mat-checkbox name="decline_checkbox" [(ngModel)]="decline" (change)="saveNeedsOfUser()" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
+            <mat-checkbox name="decline_checkbox" [(ngModel)]="decline" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
                     hasRequirementAlreadyEntered() || stillRelevant" style="margin:10px;">
                 Kein Bedarf f&uuml;r uns
             </mat-checkbox>
             <br>
-            <mat-checkbox name="still_relevant_checkbox" [(ngModel)]="stillRelevant" (change)="saveNeedsOfUser()"
-                        [disabled]="roadWorkActivity.properties.status !=='inconsult'"
-                        style="margin:10px;">
+            <mat-checkbox name="still_relevant_checkbox" [(ngModel)]="stillRelevant"
+                [disabled]="roadWorkActivity.properties.status !=='inconsult'" style="margin:10px;">
                 Bedarf weiterhin vorhanden
             </mat-checkbox>
         </p>
-        <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
-            [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
-            Bedarf erfassen
-        </button>
+        <div>
+            <mat-form-field style="width: 100%; margin-top: 2em;">
+                <mat-label>R&uuml;ckmeldung</mat-label>
+                <textarea matInput [(ngModel)]="ordererFeedbackText" maxlength="40000"
+                    placeholder="R&uuml;ckmeldung..."></textarea>
+            </mat-form-field>
+            <button mat-button style="background-color: lightgray;" (click)="saveNeedsOfUser()"
+                [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
+                SENDEN
+            </button>
+        </div>
     </div>
 </div>

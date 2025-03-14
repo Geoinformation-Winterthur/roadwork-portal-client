@@ -35,6 +35,8 @@ export class ConsultationItemsComponent {
   decline: boolean = false;
   stillRelevant: boolean = false;
 
+  ordererFeedbackText: string = "";
+
   private roadWorkNeedService: RoadWorkNeedService;
   private needsOfActivityService: NeedsOfActivityService;
   private router: Router;
@@ -117,6 +119,7 @@ export class ConsultationItemsComponent {
     for (let needOfUser of this.needsOfUser) {
       needOfUser.properties.stillRelevant = this.stillRelevant;
       needOfUser.properties.feedbackGiven = true;
+      needOfUser.properties.comment = this.ordererFeedbackText;
       this.roadWorkNeedService
         .updateRoadWorkNeed(needOfUser)
         .subscribe({
