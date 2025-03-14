@@ -230,11 +230,13 @@
                                         style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
                                         Kanton (AfM) muss einbezogen werden
                                     </div>
-                                    <mat-form-field>
-                                        <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
-                                            placeholder="Kostensch&auml;tzung (CHF) *" step="1000"
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                    </mat-form-field>
+                                    <div>
+                                        <mat-form-field>
+                                            <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
+                                                placeholder="Kostensch&auml;tzung (CHF) *" step="1000"
+                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                    </div>
                                     <div style="color:grey;margin-bottom: 2em;">({{
                                         costObj.costs
                                         | number }} CHF)</div>
