@@ -1,9 +1,8 @@
-import { AfterContentInit, AfterViewInit, Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { StatusHelper } from 'src/helper/status-helper';
-import { ConsultationInput } from 'src/model/consultation-input';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
@@ -41,8 +40,7 @@ export class ConsultationItemsComponent {
   private router: Router;
   private snckBar: MatSnackBar;
 
-  constructor(consultationService: ConsultationService,
-    needsOfActivityService: NeedsOfActivityService,
+  constructor(needsOfActivityService: NeedsOfActivityService,
     roadWorkNeedService: RoadWorkNeedService,
     router: Router,
     userService: UserService, snckBar: MatSnackBar) {
@@ -80,7 +78,6 @@ export class ConsultationItemsComponent {
               needsOfUserTemp.push(roadWorkNeed);
             if(!roadWorkNeed.properties.stillRelevant){
               this.stillRelevant = false;
-              break;
             }
           }
           for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
