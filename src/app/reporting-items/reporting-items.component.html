@@ -210,8 +210,8 @@
         </table>
     </div>
 </div>
-<div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager'"
-            && roadWorkActivity.properties.status == 'reporting'>
+<div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager'
+            && roadWorkActivity.properties.status == 'reporting'">
     <h2>Eingabe zur Stellungnahme</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
         <p>W&auml;hrend der Bedarfskl&auml;rung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.
