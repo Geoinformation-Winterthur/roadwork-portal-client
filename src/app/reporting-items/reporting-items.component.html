@@ -1,11 +1,14 @@
+<div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
+    Stellungnahme noch nicht er&ouml;ffnet. Oder es wurden keine Beteiligten vorausgew&auml;hlt
+    und es gibt noch keine R&uuml;ckmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
+    werden.
+</div>
+<div *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
+    Die Stellungnahme ist abgeschlossen.
+</div>
 <div
-    *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager')">
-    <div *ngIf="!consultationInputsFromReporting || consultationInputsFromReporting.length == 0
-    && !statusHelper.isStatusLater(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
-        Stellungnahme noch nicht er&ouml;ffnet. Oder es wurden keine Beteiligten vorausgew&auml;hlt
-        und es gibt noch keine R&uuml;ckmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
-        werden.
-    </div>
+    *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager')
+                && statusHelper.isStatusLater(roadWorkActivity.properties.status, 'verified')">
     <div *ngIf="!user || !user.prefTableView">
         <div fxLayout="row wrap padding">
             <mat-card class="maincard mat-elevation-z2"
@@ -207,8 +210,8 @@
         </table>
     </div>
 </div>
-<div *ngIf="roadWorkActivity.properties.status=='reporting' && userService.getLocalUser().chosenRole != 'administrator'
-             && userService.getLocalUser().chosenRole != 'territorymanager'">
+<div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager'"
+            && roadWorkActivity.properties.status == 'reporting'>
     <h2>Eingabe zur Stellungnahme</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
         <p>W&auml;hrend der Bedarfskl&auml;rung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.

@@ -7,7 +7,6 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { User } from 'src/model/user';
-import { ConsultationService } from 'src/services/consultation.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';

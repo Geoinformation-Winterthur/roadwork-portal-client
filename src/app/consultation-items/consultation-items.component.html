@@ -1,9 +1,13 @@
+<div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'inconsult')" style="margin: 2em;">
+    Bedarfskl&auml;rung noch nicht er&ouml;ffnet. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
+    werden.
+</div>
+<div *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'inconsult')" style="margin: 2em;">
+    Die Bedarfskl&auml;rung ist abgeschlossen.
+</div>
 <div
-    *ngIf="userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager'">
-    <div *ngIf="roadWorkActivity.properties.status !== 'inconsult'" style="margin: 2em;">
-        Bedarfskl&auml;rung noch nicht er&ouml;ffnet. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
-        werden.
-    </div>
+    *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager')
+                && statusHelper.isStatusLater(roadWorkActivity.properties.status, 'requirement')">
     <div *ngIf="!user || !user.prefTableView">
         <div fxLayout="row wrap padding">
             <mat-card class="maincard mat-elevation-z2" *ngFor="let needOfActivity of needsOfActivity" fxFlex.xs="100"
@@ -59,7 +63,7 @@
             </mat-card>
         </div>
     </div>
-    <div *ngIf="roadWorkActivity.properties.status == 'inconsult'" style="margin-top: 1em;">
+    <div *ngIf="user && user.prefTableView" style="margin-top: 1em;">
         <table id="consultation_items_table" mat-table [dataSource]="needsOfActivity" class="mat-elevation-z2"
             style="width: 100%">
 
@@ -178,7 +182,7 @@
         </table>
     </div>
 </div>
-<div *ngIf="roadWorkActivity.properties.status ==='inconsult' && userService.getLocalUser().chosenRole == 'orderer'">
+<div *ngIf="userService.getLocalUser().chosenRole == 'orderer' && roadWorkActivity.properties.status === 'inconsult'">
     <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="margin-bottom: 2em;">
         Bereits ber&uuml;cksichtigte Bedarfe:<span *ngIf="!needsOfActivity || needsOfActivity.length == 0"> Noch
