@@ -15,8 +15,8 @@ import { UserService } from 'src/services/user.service';
 })
 export class NeedsOfActivityComponent {
 
-  assignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'dateCreated', 'optRealYears', 'isOrigin', 'action'];
-  nonAssignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'dateCreated', 'optRealYears', 'action'];
+  assignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'optRealYears', 'isOrigin', 'dateCreated', 'action'];
+  nonAssignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'optRealYears', 'dateCreated', 'action'];
 
   @Input()
   roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
