@@ -120,7 +120,9 @@
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
         <td mat-cell *matCellDef="let roadWorkNeed"> <a [routerLink]="['/needs', roadWorkNeed.properties.uuid]">
-            {{ roadWorkNeed.properties.name.slice(0, 20) }}
+            <span matTooltip="{{roadWorkNeed.properties.name}} {{roadWorkNeed.properties.section}}">
+              {{ roadWorkNeed.properties.name.slice(0, 20) }}
+            </span>
             <span *ngIf="roadWorkNeed.properties.name.length > 20">...</span></a>
         </td>
       </ng-container>

@@ -9,7 +9,7 @@
                [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <mat-option *ngFor="let roadWorkNeedFeature of chooseNeedComponent.roadWorkNeedFeatures" [value]="roadWorkNeedFeature.properties.name">
-            {{roadWorkNeedFeature.properties.name}}
+            {{roadWorkNeedFeature.properties.name}} {{roadWorkNeedFeature.properties.section}}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
