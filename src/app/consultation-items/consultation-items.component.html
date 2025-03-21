@@ -6,8 +6,7 @@
     Die Bedarfskl&auml;rung ist abgeschlossen.
 </div>
 <div
-    *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager')
-                && statusHelper.isStatusLater(roadWorkActivity.properties.status, 'requirement')">
+    *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'requirement')">
     <div *ngIf="!user || !user.prefTableView">
         <div fxLayout="row wrap padding">
             <mat-card class="maincard mat-elevation-z2" *ngFor="let needOfActivity of needsOfActivity" fxFlex.xs="100"
@@ -69,9 +68,12 @@
 
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef> Bedarf </th>
-                <td mat-cell *matCellDef="let needOfActivity">{{ (needOfActivity.properties.name).slice(0,
-                    20)
-                    }}<span *ngIf="needOfActivity.properties.name.length > 20">...</span>
+                <td mat-cell *matCellDef="let needOfActivity">
+                    <a routerLink="/needs/{{needOfActivity.properties.uuid}}"
+                            matTooltip="{{roadWorkActivity.properties.name}} {{roadWorkActivity.properties.section}}">
+                        {{ (needOfActivity.properties.name).slice(0, 20)
+                        }}<span *ngIf="needOfActivity.properties.name.length > 20">...</span>
+                    </a>
                 </td>
             </ng-container>
 
@@ -182,22 +184,10 @@
         </table>
     </div>
 </div>
-<div *ngIf="userService.getLocalUser().chosenRole == 'orderer' && roadWorkActivity.properties.status === 'inconsult'">
+<div *ngIf="userService.getLocalUser().chosenRole == 'orderer' && roadWorkActivity.properties.status === 'inconsult'"
+    style="margin-top: 2em;">
     <h2>Eingabe zur Bedarfskl&auml;rung</h2>
     <div style="margin-bottom: 2em;">
-        Bereits ber&uuml;cksichtigte Bedarfe:<span *ngIf="!needsOfActivity || needsOfActivity.length == 0"> Noch
-            keine</span>
-        <ul>
-            <span *ngFor="let needOfActivity of needsOfActivity">
-                <li *ngIf="needOfActivity.properties.uuid">
-                    <a routerLink="/needs/{{needOfActivity.properties.uuid}}">
-                        {{needOfActivity.properties.name}}</a>
-                    ({{needOfActivity.properties.orderer.organisationalUnit.abbreviation}},
-                    {{needOfActivity.properties.orderer.firstName}}
-                    {{needOfActivity.properties.orderer.lastName}})
-                </li>
-            </span>
-        </ul>
         <div>
             <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
                 [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
