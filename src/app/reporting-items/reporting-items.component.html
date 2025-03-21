@@ -7,8 +7,7 @@
     Die Stellungnahme ist abgeschlossen.
 </div>
 <div
-    *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || userService.getLocalUser().chosenRole == 'territorymanager')
-                && statusHelper.isStatusLater(roadWorkActivity.properties.status, 'verified')">
+    *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'verified')">
     <div *ngIf="!user || !user.prefTableView">
         <div fxLayout="row wrap padding">
             <mat-card class="maincard mat-elevation-z2"
@@ -211,7 +210,7 @@
     </div>
 </div>
 <div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager'
-            && roadWorkActivity.properties.status == 'reporting'">
+            && roadWorkActivity.properties.status == 'reporting'" style="margin-top: 3em;">
     <h2>Eingabe zur Stellungnahme</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
         <p>W&auml;hrend der Bedarfskl&auml;rung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.
