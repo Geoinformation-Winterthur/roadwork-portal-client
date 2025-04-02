@@ -198,19 +198,19 @@
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
                                         <p>Ausl&ouml;sendes Werk:
-                                            <b *ngIf="involvedUsers && involvedUsers.length > 0">
-                                                {{involvedUsers[0].organisationalUnit.abbreviation}}
+                                            <b *ngIf="getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation != ''">
+                                                {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
                                             </b>
-                                            <b *ngIf="!(involvedUsers && involvedUsers.length > 0)">
+                                            <b *ngIf="getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation == ''">
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
                                         <p>Ausl&ouml;sende:r:
-                                            <b *ngIf="involvedUsers && involvedUsers.length > 0">
-                                                {{involvedUsers[0].firstName}}
-                                                {{involvedUsers[0].lastName}}
+                                            <b *ngIf="getPrimaryNeed().properties.orderer.uuid != ''">
+                                                {{getPrimaryNeed().properties.orderer.firstName}}
+                                                {{getPrimaryNeed().properties.orderer.lastName}}
                                             </b>
-                                            <b *ngIf="!(involvedUsers && involvedUsers.length > 0)">
+                                            <b *ngIf="getPrimaryNeed().properties.orderer.uuid == ''">
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
