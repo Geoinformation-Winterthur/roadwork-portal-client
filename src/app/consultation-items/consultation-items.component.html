@@ -145,8 +145,8 @@
             <ng-container matColumnDef="temporal_factor">
                 <th mat-header-cell *matHeaderCellDef> Zeit-Faktor </th>
                 <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
-                    <span *ngIf="needOfActivity.properties.timeFactor">{{ needOfActivity.properties.timeFactor }}</span>
-                    <span *ngIf="!needOfActivity.properties.timeFactor">0</span>
+                    <span style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(needOfActivity,
+                        needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
                 </td>
             </ng-container>
 

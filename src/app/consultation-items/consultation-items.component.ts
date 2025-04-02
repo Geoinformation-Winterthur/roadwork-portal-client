@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { StatusHelper } from 'src/helper/status-helper';
+import { TimeFactorHelper } from 'src/helper/time-factor-helper';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
@@ -36,8 +37,8 @@ export class ConsultationItemsComponent {
 
   ordererFeedbackText: string = "";
 
+  needsOfActivityService: NeedsOfActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
-  private needsOfActivityService: NeedsOfActivityService;
   private router: Router;
   private snckBar: MatSnackBar;
 
@@ -77,7 +78,7 @@ export class ConsultationItemsComponent {
             needsOfActivityTemp.push(roadWorkNeed);
             if (roadWorkNeed.properties.orderer.uuid == this.user.uuid)
               needsOfUserTemp.push(roadWorkNeed);
-            if(!roadWorkNeed.properties.stillRelevant){
+            if (!roadWorkNeed.properties.stillRelevant) {
               this.stillRelevant = false;
             }
           }
@@ -110,8 +111,8 @@ export class ConsultationItemsComponent {
 
   }
 
-  saveNeedsOfUser() {    
-    if(this.stillRelevant)
+  saveNeedsOfUser() {
+    if (this.stillRelevant)
       this.decline = false;
 
     let messageShown: boolean = false;
@@ -126,14 +127,14 @@ export class ConsultationItemsComponent {
             if (roadWorkNeedFeature) {
               ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeedFeature);
               if (roadWorkNeedFeature.errorMessage !== "") {
-                if(!messageShown){
+                if (!messageShown) {
                   this.snckBar.open(roadWorkNeedFeature.errorMessage, "", {
                     duration: 4000
                   });
                   messageShown = true;
                 }
               } else {
-                if(!messageShown){
+                if (!messageShown) {
                   this.snckBar.open("Rückmeldung gespeichert", "", {
                     duration: 4000
                   });
@@ -200,6 +201,10 @@ export class ConsultationItemsComponent {
       };
       this.router.navigate(["/needs/new"], { queryParams: params });
     }
+  }
+
+  calcTimeFactor(compareNeed: RoadWorkNeedFeature, primaryNeed: RoadWorkNeedFeature): number {
+    return TimeFactorHelper.calcTimeFactor(compareNeed, primaryNeed);
   }
 
 }
