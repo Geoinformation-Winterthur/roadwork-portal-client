@@ -87,7 +87,7 @@ export class ActivityAttributesComponent implements OnInit {
   needsDocsDisplayedColumns: string[] = ['name', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
-  assignedRoadWorkNeedsDisplayedColumns: string[] = ["orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor"];
+  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor"];
 
   consultationInputsFromReporting: ConsultationInput[] = [];
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];

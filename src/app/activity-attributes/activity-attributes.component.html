@@ -1008,6 +1008,13 @@
                             <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
                                 class="mat-elevation-z2" style="width: 100%">
 
+                                <ng-container matColumnDef="name">
+                                    <th mat-header-cell *matHeaderCellDef> Titel & Abschnitt </th>
+                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                                        {{assignedRoadWorkNeed.properties.name}} {{assignedRoadWorkNeed.properties.section}}
+                                    </td>
+                                </ng-container>
+
                                 <ng-container matColumnDef="orderer_org">
                                     <th mat-header-cell *matHeaderCellDef> Beteiligte:r </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
