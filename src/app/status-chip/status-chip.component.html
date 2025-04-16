@@ -1,34 +1,34 @@
 <div style="margin: 0.3em;margin-bottom: 1em;">
   <mat-chip-list>
       <mat-chip *ngIf="statusCode === 'requirement'" class="chip-phase-1">
-        <span *ngIf="short">Bedarf</span>
+        <span *ngIf="short">11/Bedarf</span>
         <span *ngIf="!short">Bedarf (Phase 11)</span>        
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'review'" class="chip-phase-1">
-        <span *ngIf="short">Pr&uuml;fung</span>
+        <span *ngIf="short">12/Pr&uuml;fung</span>
         <span *ngIf="!short">in Pr&uuml;fung (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'verified'" class="chip-phase-1">
-        <span *ngIf="short">verifiziert</span>
+        <span *ngIf="short">12/verifiziert</span>
         <span *ngIf="!short">verifiziert (Phase 12)</span>        
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'inconsult'" class="chip-phase-1">
-        <span *ngIf="short">Bedarfskl&auml;rung</span>
+        <span *ngIf="short">12/Bedarfskl&auml;rung</span>
         <span *ngIf="!short">in Bedarfskl&auml;rung (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'reporting'"
         class="chip-phase-1">
-        <span *ngIf="short">Stellungnahme</span>
+        <span *ngIf="short">12/Stellungnahme</span>
         <span *ngIf="!short">Stellungnahme (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'coordinated'"
         class="chip-phase-1">
-        <span *ngIf="short">koordiniert</span>
+        <span *ngIf="short">12/koordiniert</span>
         <span *ngIf="!short">koordiniert (Phase 12)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'prestudy'"
         class="chip-phase-2">
-        <span *ngIf="short">Vorstudie</span>
+        <span *ngIf="short">21/Vorstudie</span>
         <span *ngIf="!short">Vorstudie (Phase 21)</span>
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'suspended'"
