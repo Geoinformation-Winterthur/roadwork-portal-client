@@ -61,70 +61,89 @@
 
                         <div *ngIf="myRoadWorkNeedFeatures.length !== 0" style="margin-top: 2em;">
                             <h3>Bedarfe</h3>
-                            <table mat-table [dataSource]="myRoadWorkNeedFeatures" class="mat-elevation-z2"
-                                style="width: 100%; margin-top:1em;">
-                                <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed">
-                                        <a routerLink="/needs/{{roadWorkNeed.properties.uuid}}">
-                                            {{roadWorkNeed.properties.name}} {{roadWorkNeed.properties.section}}
-                                        </a>
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="territorymanager">
-                                    <th mat-header-cell *matHeaderCellDef><span matTooltip="Gebietsmanagement">GM</span>
-                                    </th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed">
-                                        {{roadWorkNeed.properties.managementArea?.manager?.firstName}}
-                                        {{roadWorkNeed.properties.managementArea?.manager?.lastName}} </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="orderer">
-                                    <th mat-header-cell *matHeaderCellDef>Ausl&ouml;sende:r</th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed">
-                                        {{roadWorkNeed.properties.orderer.firstName}}
-                                        {{roadWorkNeed.properties.orderer.lastName}} </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="orderer_org">
-                                    <th mat-header-cell *matHeaderCellDef>Ausl&ouml;sendes Werk</th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed">
-                                        {{roadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
-                                    </td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="description">
-                                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;segrund </th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.description}}
-                                    </td>
-                                </ng-container>
+                            <table mat-table [dataSource]="myRoadWorkNeedFeatures" class="mat-elevation-z2" style="width: 100%">
 
                                 <ng-container matColumnDef="status">
-                                    <th mat-header-cell *matHeaderCellDef> Status </th>
-                                    <td mat-cell *matCellDef="let roadWorkActivity">
-                                        <app-status-chip [statusCode]="roadWorkActivity.properties.status"
-                                            [short]="true"></app-status-chip>
-                                    </td>
+                                  <th mat-header-cell *matHeaderCellDef> Phase/Status </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed">
+                                    <app-status-chip [statusCode]="roadWorkNeed.properties.status" [short]="true"></app-status-chip>
+                                  </td>
                                 </ng-container>
-
-                                <ng-container matColumnDef="created">
-                                    <th mat-header-cell *matHeaderCellDef> Erstellt am </th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed">{{roadWorkNeed.properties.created |
-                                        date:
-                                        'dd.MM.yyyy'}}</td>
+                          
+                                <ng-container matColumnDef="areaman">
+                                  <th mat-header-cell *matHeaderCellDef><span matTooltip="Gebietsmanagement">GM</span></th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed"><span
+                                      *ngIf="roadWorkNeed.properties.managementArea">{{roadWorkNeed.properties.managementArea?.manager?.firstName}}
+                                      {{roadWorkNeed.properties.managementArea?.manager?.lastName}}</span> </td>
                                 </ng-container>
-
+                          
+                                <ng-container matColumnDef="title">
+                                  <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed"> <a [routerLink]="['/needs', roadWorkNeed.properties.uuid]">
+                                      <span matTooltip="{{roadWorkNeed.properties.name}} {{roadWorkNeed.properties.section}}">
+                                        {{ roadWorkNeed.properties.name }}
+                                      </span></a>
+                                  </td>
+                                </ng-container>
+                          
+                                <ng-container matColumnDef="person">
+                                  <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.orderer.firstName}}
+                                    {{roadWorkNeed.properties.orderer.lastName}} </td>
+                                </ng-container>
+                          
+                                <ng-container matColumnDef="org">
+                                  <th mat-header-cell *matHeaderCellDef> Auslösendes Werk </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed">
+                                    {{roadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}
+                                  </td>
+                                </ng-container>
+                          
+                                <ng-container matColumnDef="description">
+                                  <th mat-header-cell *matHeaderCellDef> Auslösegrund </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed">
+                                    {{roadWorkNeed.properties.description}}
+                                  </td>
+                                </ng-container>
+                          
+                                <ng-container matColumnDef="optRealYears">
+                                  <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed">
+                                    {{roadWorkNeed.properties.finishOptimumTo | date:'MM.yyyy'}}
+                                  </td>
+                                </ng-container>
+                          
+                                <ng-container matColumnDef="create_date">
+                                  <th mat-header-cell *matHeaderCellDef> Bedarf erfasst </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed"><span
+                                      *ngIf="roadWorkNeed.properties.created">{{roadWorkNeed.properties.created | date:'dd.MM.yyyy'}}</span> </td>
+                                </ng-container>
+                          
                                 <ng-container matColumnDef="last_modified">
-                                    <th mat-header-cell *matHeaderCellDef> Letzte &Auml;nderung </th>
-                                    <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.lastModified
-                                        |
-                                        date: 'dd.MM.yyyy'}} </td>
+                                  <th mat-header-cell *matHeaderCellDef> Letzte Änderung </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.lastModified |
+                                    date:'dd.MM.yyyy'}} </td>
                                 </ng-container>
-
+                          
+                                <ng-container matColumnDef="link_cityplan">
+                                  <th mat-header-cell *matHeaderCellDef> Stadtplan-Link </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed">
+                                    <a href="https://stadtplan.winterthur.ch?topic=Grundkarte&scale=1000&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}&back=Hintergrundkarte_LK_AV_Situationsplan"
+                                      target="_blank">Im Stadtplan</a>
+                                  </td>
+                                </ng-container>
+                          
+                                <ng-container matColumnDef="link_wwg">
+                                  <th mat-header-cell *matHeaderCellDef> WinWebGIS-Link </th>
+                                  <td mat-cell *matCellDef="let roadWorkNeed">
+                                    <a href="http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x={{ roadWorkNeed.geometry.coordinates[0].x }}&y={{ roadWorkNeed.geometry.coordinates[0].y }}"
+                                      target="_blank" style="margin: 1em;">Im WinWebGIS</a>
+                                  </td>
+                                </ng-container>
+                          
                                 <tr mat-header-row *matHeaderRowDef="roadWorkNeedColumns"></tr>
                                 <tr mat-row *matRowDef="let row; columns: roadWorkNeedColumns;"></tr>
-                            </table>
+                              </table>
                         </div>
 
                         <div *ngIf="myRoadWorkActivityFeatures.length !== 0" style="margin-top: 2em;">

@@ -21,9 +21,9 @@ export class RoadWorkNeedService {
     this.http = http;
   }
 
-  getRoadWorkNeeds(ids: string[] = [], year?: number, name: string = "",
-    areaManagerUuid?: string, onlyMyNeeds?: boolean,
-    filterWithDeleteComment?: boolean, relevance?: number,
+  getRoadWorkNeeds(ids: string[] = [], year?: number, filterFinishOptimumTo?: Date,
+    name: string = "", areaManagerUuid?: string, ordererUuid?: string,
+    onlyMyNeeds?: boolean, filterWithDeleteComment?: boolean, relevance?: number,
     dateOfCreation?: Date, status: string[] = [],
     roadWorkActivityUuid?: string,
     summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
@@ -81,6 +81,16 @@ export class RoadWorkNeedService {
       queryString += "areamanageruuid=" + areaManagerUuid;
     }
 
+    if (ordererUuid) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "ordereruuid=" + ordererUuid;
+    }
+
     if (onlyMyNeeds) {
       if (hasParameters) {
         queryString += "&";
@@ -119,6 +129,16 @@ export class RoadWorkNeedService {
       }
       hasParameters = true;
       queryString += "dateofcreation=" + dateOfCreation.toISOString();
+    }
+
+    if (filterFinishOptimumTo) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      hasParameters = true;
+      queryString += "filterfinishoptimumto=" + filterFinishOptimumTo.toISOString();
     }
 
     if (status !== null && status.length !== 0

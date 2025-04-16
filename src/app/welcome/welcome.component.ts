@@ -30,7 +30,7 @@ export class WelcomeComponent implements OnInit {
   myRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
   myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
 
-  roadWorkNeedColumns: string[] = ['name', 'territorymanager', 'orderer', 'orderer_org', 'description', 'status', 'created', 'last_modified'];
+  roadWorkNeedColumns: string[] = ['status', 'areaman', 'title', 'person', 'org', 'description', 'optRealYears', 'create_date', 'last_modified', 'link_cityplan', 'link_wwg'];
   roadWorkActivityColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
 
   user: User = new User();

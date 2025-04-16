@@ -26,18 +26,21 @@ export class ChooseNeedComponent implements OnInit {
   filterNeedYearOptFrom?: number;
   filterRelevance?: number;
   filterDateOfCreation?: Date;
+  filterFinishOptimumTo?: Date;
   filterMyNeeds?: boolean = false;
   filterWithDeleteComment?: boolean = false;
   filterAreaManager?: User;
+  filterOrderer?: User;
 
   user: User = new User();
   userService: UserService;
 
   areaManagers: User[] = [];
+  orderers: User[] = [];
 
   statusFilterCodes: string[] = ["requirement"];
 
-  tableDisplayedColumns: string[] = ['title', 'areaman', 'create_date', 'link_cityplan', 'link_wwg'];
+  tableDisplayedColumns: string[] = ['status', 'areaman', 'title', 'person', 'org', 'description', 'optRealYears', 'create_date', 'last_modified', 'link_cityplan', 'link_wwg'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -87,16 +90,17 @@ export class ChooseNeedComponent implements OnInit {
       this.roadWorkNeedFeatures = [];
     } else {
       this.roadWorkNeedService
-        .getRoadWorkNeeds([], this.filterNeedYearOptFrom,
-          roadWorkNeedName, this.filterAreaManager?.uuid,
-          this.filterMyNeeds, this.filterWithDeleteComment, this.filterRelevance, this.filterDateOfCreation,
-          this.statusFilterCodes).subscribe({
+        .getRoadWorkNeeds([], this.filterNeedYearOptFrom, this.filterFinishOptimumTo,
+          roadWorkNeedName, this.filterAreaManager?.uuid, this.filterOrderer?.uuid,
+          this.filterMyNeeds, this.filterWithDeleteComment, this.filterRelevance,
+          this.filterDateOfCreation, this.statusFilterCodes).subscribe({
             next: (roadWorkNeeds) => {
 
               for (let roadWorkNeed of roadWorkNeeds) {
                 let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
                 blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
                 roadWorkNeed.geometry = blowUpPoly;
+                this._addOrderer(roadWorkNeed.properties.orderer)
                 this.managementAreaService.getIntersectingManagementArea(roadWorkNeed.geometry)
                   .subscribe({
                     next: (managementArea) => {
@@ -132,6 +136,21 @@ export class ChooseNeedComponent implements OnInit {
 
     if (!containsAlready)
       this.areaManagers.push(areaManager);
+
+  }
+
+  private _addOrderer(orderer: User) {
+
+    let containsAlready: boolean = false;
+    for (let ordererThis of this.orderers) {
+      if (ordererThis.uuid === orderer.uuid) {
+        containsAlready = true;
+        break;
+      }
+    }
+
+    if (!containsAlready)
+      this.orderers.push(orderer);
 
   }
 
