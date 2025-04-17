@@ -5,9 +5,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
-import { Point, Polygon } from 'ol/geom';
+import { Geometry, Point, Polygon } from 'ol/geom';
 import Tile from 'ol/layer/Tile';
 import View from 'ol/View';
+import Select from 'ol/interaction/Select';
+import { SelectEvent } from 'ol/interaction/Select';
 import TileWMS from 'ol/source/TileWMS';
 import VectorSource from 'ol/source/Vector';
 import Draw from 'ol/interaction/Draw';
@@ -55,6 +57,10 @@ export class EditActivityMapComponent implements OnInit {
   addresses: Address[] = [];
   addressSearchString: string = "";
 
+  isInCopyExistingMode = false;
+  copySelect?: Select;
+
+  roadWorkNeedLayer!: VectorLayer<VectorSource<Geometry>>;
   userDrawSource: VectorSource = new VectorSource();
   userModifyVerticesSource: VectorSource = new VectorSource();
   roadWorkActivitySource: VectorSource = new VectorSource();
@@ -148,7 +154,7 @@ export class EditActivityMapComponent implements OnInit {
     }
 
     this.roadWorkNeedSource = new VectorSource({ wrapX: false });
-    let roadWorkNeedLayer = new VectorLayer({
+    this.roadWorkNeedLayer = new VectorLayer({
       source: this.roadWorkNeedSource,
       style: roadWorkNeedLayerStyleFunc
     });
@@ -227,7 +233,7 @@ export class EditActivityMapComponent implements OnInit {
             serverType: 'mapserver',
           })
         }),
-        roadWorkNeedLayer,
+        this.roadWorkNeedLayer,
         roadWorkActivityLayer,
         userDrawLayer,
         userModifyVerticesLayer
@@ -369,6 +375,15 @@ export class EditActivityMapComponent implements OnInit {
   endEditing(status: string) {
     this.isInDrawNewMode = false;
     this.isInModifyExistingMode = false;
+
+    if (this.isInCopyExistingMode) {
+      this.isInCopyExistingMode = false;
+      if (this.copySelect) {
+        this.map.removeInteraction(this.copySelect);
+        this.copySelect = undefined;
+      }
+    }
+
     if (status == "save")
       this.sendGeometry();
     if (this.polygonDraw !== undefined)
@@ -380,6 +395,40 @@ export class EditActivityMapComponent implements OnInit {
 
     this.userDrawSource.clear();
     this.userModifyVerticesSource.clear();
+  }
+
+  copyExisting() {
+    this.isInCopyExistingMode = true;
+    this.userDrawSource.clear();   // eventuell alte Skizze entfernen
+
+    // Select‑Interaction nur auf Need‑Layer
+    this.copySelect = new Select({
+      layers: [this.roadWorkNeedLayer],
+      hitTolerance: 5   // etwas Fehlertoleranz
+    });
+    this.map.addInteraction(this.copySelect);
+
+    // Einmaliges Auswählen beobachten
+    const onSelect = (e: SelectEvent) => {
+      if (e.selected.length) {
+        const needFeat = e.selected[0] as Feature<Polygon>;
+        const cloned = (needFeat.getGeometry() as Polygon).clone();
+
+        // aufs Zeichen‑Layer legen, damit die roten "User‑Vertices" erscheinen
+        const draft = new Feature({ geometry: cloned });
+        this.userDrawSource.addFeature(draft);
+
+        // Geometrie in das Vorhaben schreiben
+        if (this.roadWorkActivityFeat) {
+          this.roadWorkActivityFeat.geometry = RoadworkPolygon.convertFromOlPolygon(cloned);
+        }
+
+        // gleich speichern – oder dem Nutzer die Save‑Schaltfläche lassen
+        this.endEditing('save');
+      }
+    };
+
+    this.copySelect.once('select', onSelect);
   }
 
   refreshAddressList() {
@@ -491,7 +540,7 @@ export class EditActivityMapComponent implements OnInit {
   private resizeMap(event: any = null) {
     let mapElement: HTMLElement | undefined;
     mapElement = document.getElementById("edit_activity_map") as HTMLElement;
-    if(mapElement && mapElement.style)
+    if (mapElement && mapElement.style)
       mapElement.style.height = screen.availHeight / 2 + "px";
   }
 
