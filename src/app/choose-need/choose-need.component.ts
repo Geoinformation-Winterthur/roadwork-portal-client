@@ -124,6 +124,11 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
+  getQuarter(date: Date | string): number {
+    const d = new Date(date);
+    return Math.floor(d.getMonth() / 3) + 1;
+  }
+
   private _addAreaManager(areaManager: User) {
 
     let containsAlready: boolean = false;

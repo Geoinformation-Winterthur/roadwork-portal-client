@@ -37,9 +37,8 @@ export class ChooseActivityComponent implements OnInit {
 
   statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated", "prestudy"];
 
-  tableDisplayedColumns: string[] = ['title', 'status', 'area_man', 'project_man', 'lead',
-    'realisation_date', 'due_date', 'link_cityplan', 'link_wwg',
-    'relevance', 'relevance_sks'];
+  tableDisplayedColumns: string[] = ['status', 'area_man', 'title', 'involved', 'lead', 'project_man',
+    'realisation_date', 'due_date', 'link_cityplan', 'link_wwg'];
 
   user: User = new User();
   userService: UserService;
@@ -118,7 +117,7 @@ export class ChooseActivityComponent implements OnInit {
 
   filterActivities() {
 
-    if(this.statusFilterCodes.includes("all")){
+    if (this.statusFilterCodes.includes("all")) {
       let chooseAll = [];
       chooseAll.push('all');
       chooseAll.push('review');
@@ -129,7 +128,7 @@ export class ChooseActivityComponent implements OnInit {
       chooseAll.push('suspended');
       chooseAll.push('prestudy');
       this.statusFilterCodes = chooseAll;
-    } else if(this.statusFilterCodes.length == 7){
+    } else if (this.statusFilterCodes.length == 7) {
       this.statusFilterCodes = [];
     }
 
@@ -211,6 +210,59 @@ export class ChooseActivityComponent implements OnInit {
         resultUuids.push(roadWorkActivityFeature.properties.areaManager.uuid);
         result.push(roadWorkActivityFeature.properties.areaManager);
       }
+    }
+    return result;
+  }
+
+  getInvolvedOrgsNames(roadWorkActivity: RoadWorkActivityFeature): string[] {
+    let result: string[] = [];
+    if (roadWorkActivity) {
+      for (let involvedUser of roadWorkActivity.properties.involvedUsers) {
+        if (!result.includes(involvedUser.organisationalUnit.abbreviation))
+          result.push(involvedUser.organisationalUnit.abbreviation);
+      }
+    }
+    return result;
+  }
+
+  getQuarter(date: Date | string): number {
+    const d = new Date(date);
+    return Math.floor(d.getMonth() / 3) + 1;
+  }
+
+  getColorDueDate(roadworkActivity: RoadWorkActivityFeature): string {
+    if (roadworkActivity) {
+      const today: Date = new Date();
+      const dueDate = this.calcDueDate(roadworkActivity);
+      if (dueDate) {
+        let threeDaysBeforeDue: Date = new Date(dueDate);
+        threeDaysBeforeDue.setDate(dueDate.getDate() - 3);
+        let oneDayAfterDue = new Date(dueDate);
+        oneDayAfterDue.setDate(dueDate.getDate() + 1);
+        if (today >= oneDayAfterDue)
+          return "background-color: rgb(255, 109, 109);";
+        else if (today >= threeDaysBeforeDue)
+          return "background-color: rgb(255, 194, 109);";
+      }
+    }
+    return "background-color: rgb(109, 255, 121);";
+  }
+
+  calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
+    let result = undefined;
+    if (roadworkActivity.properties.status == "inconsult" ||
+      roadworkActivity.properties.status == "verified") {
+      if (roadworkActivity.properties.dateConsultEnd)
+        result = new Date(roadworkActivity.properties.dateConsultEnd);
+    } else if (roadworkActivity.properties.status == "reporting") {
+      if (roadworkActivity.properties.dateReportEnd)
+        result = new Date(roadworkActivity.properties.dateReportEnd);
+    } else if (roadworkActivity.properties.status == "coordinated") {
+      if (roadworkActivity.properties.dateInfoEnd)
+        result = new Date(roadworkActivity.properties.dateInfoEnd);
+    } else {
+      result = new Date();
+      result.setDate(result.getDate() + 7);
     }
     return result;
   }

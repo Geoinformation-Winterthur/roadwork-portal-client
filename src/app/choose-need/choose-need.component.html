@@ -178,7 +178,9 @@
       <ng-container matColumnDef="optRealYears">
         <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
         <td mat-cell *matCellDef="let roadWorkNeed">
-          {{roadWorkNeed.properties.finishOptimumTo | date:'MM.yyyy'}}
+          <span *ngIf="roadWorkNeed.properties.finishOptimumTo as finishDate">
+            {{ getQuarter(finishDate) }}.Q {{ finishDate | date:'yyyy' }}
+          </span>
         </td>
       </ng-container>
 

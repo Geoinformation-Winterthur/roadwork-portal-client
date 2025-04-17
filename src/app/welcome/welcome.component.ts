@@ -31,7 +31,8 @@ export class WelcomeComponent implements OnInit {
   myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
 
   roadWorkNeedColumns: string[] = ['status', 'areaman', 'title', 'person', 'org', 'description', 'optRealYears', 'create_date', 'last_modified', 'link_cityplan', 'link_wwg'];
-  roadWorkActivityColumns: string[] = ['name', 'territorymanager', 'lead', 'involved', 'status', 'optimum_date', 'due_date'];
+  roadWorkActivityColumns: string[] = ['status', 'area_man', 'title', 'involved', 'lead', 'project_man',
+    'realisation_date', 'due_date', 'link_cityplan', 'link_wwg'];
 
   user: User = new User();
   userService: UserService;
@@ -241,6 +242,22 @@ export class WelcomeComponent implements OnInit {
       result.setDate(result.getDate() + 7);
     }
     return result;
+  }
+
+  getInvolvedOrgsNames(roadWorkActivity: RoadWorkActivityFeature): string[] {
+    let result: string[] = [];
+    if (roadWorkActivity) {
+      for (let involvedUser of roadWorkActivity.properties.involvedUsers) {
+        if (!result.includes(involvedUser.organisationalUnit.abbreviation))
+          result.push(involvedUser.organisationalUnit.abbreviation);
+      }
+    }
+    return result;
+  }
+
+  getQuarter(date: Date | string): number {
+    const d = new Date(date);
+    return Math.floor(d.getMonth() / 3) + 1;
   }
 
 
