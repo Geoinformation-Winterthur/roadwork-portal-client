@@ -3,23 +3,30 @@
         style="margin: 1em;background-color: rgb(236,236,234);">
         <mat-icon aria-label="Icon zeigt Stift mit Zeichenlinie">draw</mat-icon>&nbsp;FL&Auml;CHE NEU ZEICHNEN
     </button>
-    <button *ngIf="!isInDrawNewMode && !isInModifyExistingMode" mat-button class="edit_geom_button" (click)="modifyExisting()"
-        style="margin: 1em;background-color: rgb(236,236,234);">
+    <button *ngIf="!isInDrawNewMode && !isInModifyExistingMode" mat-button class="edit_geom_button"
+        (click)="modifyExisting()" style="margin: 1em;background-color: rgb(236,236,234);">
         <mat-icon aria-label="Icon zeigt Pfeile im Kreis">flip_camera_android</mat-icon>&nbsp;FL&Auml;CHE &Auml;NDERN
     </button>
-    <button *ngIf="isInDrawNewMode || isInModifyExistingMode" mat-button class="edit_geom_button" (click)="endEditing('cancel')"
-        style="margin: 1em;background-color: rgb(236,236,234);">
-        <mat-icon aria-label="Icon zeigt durchgestrichenen Stift">edit_off</mat-icon>&nbsp;ABBRECHEN
+    <button *ngIf="isInDrawNewMode || isInModifyExistingMode || isInCopyExistingMode" mat-button
+        class="edit_geom_button" (click)="endEditing('cancel')" style="margin:1em;background-color:rgb(236,236,234);">
+        <mat-icon aria-label="Icon zeigt durchgestrichenen Stift">edit_off</mat-icon>
+        &nbsp;ABBRECHEN
     </button>
     <button *ngIf="(isInDrawNewMode && isDrawNewFinished) || isInModifyExistingMode" mat-button class="edit_geom_button"
         (click)="endEditing('save')" style="margin: 1em;background-color: rgb(236,236,234);">
         <mat-icon aria-label="Icon zeigt Hacken im Kreis">check_circle</mat-icon>&nbsp;FL&Auml;CHE &Uuml;BERNEHMEN
     </button>
+    <button *ngIf="!isInDrawNewMode && !isInModifyExistingMode && !isInCopyExistingMode" mat-button
+        class="edit_geom_button" (click)="copyExisting()" style="margin:1em;background-color:rgb(236,236,234);">
+        <mat-icon aria-label="Icon zeigt zwei überlappende Flächen">content_copy</mat-icon>
+        &nbsp;GEOMETRIE ÜBERNEHMEN
+    </button>
     <mat-form-field *ngIf="!isInDrawNewMode && !isInModifyExistingMode" style="margin-left: 1em;margin-top: 0.5em;">
         <input matInput maxlength="4" placeholder="Bedarf Real. von (Jahr)..." type="number" [(ngModel)]="chosenYear"
             (change)="onChangeYear()" />
     </mat-form-field>
-    <mat-form-field *ngIf="!roadWorkActivityFeat?.properties?.uuid && (!isInDrawNewMode && !isInModifyExistingMode)" class="address-filter" style="margin-left: 1em;">
+    <mat-form-field *ngIf="!roadWorkActivityFeat?.properties?.uuid && (!isInDrawNewMode && !isInModifyExistingMode)"
+        class="address-filter" style="margin-left: 1em;">
         <input type="text" name="address_input" maxlength="150" placeholder="Adresse suchen" aria-label="Adresse suchen"
             matInput [(ngModel)]="addressSearchString" [matAutocomplete]="auto" (focusout)="zoomToAddress()"
             (keyup)="refreshAddressList()">
