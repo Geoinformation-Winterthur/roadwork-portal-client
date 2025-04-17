@@ -68,7 +68,7 @@ export class ConsultationItemsComponent {
       });
 
     this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
-      undefined, undefined, undefined, undefined,
+      undefined, undefined, undefined, undefined, undefined, undefined,
       undefined, undefined, this.roadWorkActivity.properties.uuid).subscribe({
         next: (roadWorkNeeds) => {
           let needsOfActivityTemp = [];

@@ -175,17 +175,6 @@
   <div *ngIf="user.prefTableView">
     <table mat-table [dataSource]="roadWorkActivityFeaturesFiltered" class="mat-elevation-z2" style="width: 100%">
 
-      <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef> Titel/Strasse </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"> <a
-            [routerLink]="['/activities', roadWorkActivity.properties.uuid]">
-            <span matTooltip="{{roadWorkActivity.properties.name}} {{roadWorkActivity.properties.section}}">
-              {{ roadWorkActivity.properties.name.slice(0, 20) }}
-            </span>
-            <span *ngIf="roadWorkActivity.properties.name.length > 20">...</span></a>
-        </td>
-      </ng-container>
-
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef> Status </th>
         <td mat-cell *matCellDef="let roadWorkActivity">
@@ -200,6 +189,32 @@
             {{roadWorkActivity.properties.areaManager.lastName}}</span> </td>
       </ng-container>
 
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
+        <td mat-cell *matCellDef="let roadWorkActivity"> <a
+            [routerLink]="['/activities', roadWorkActivity.properties.uuid]">
+            <span matTooltip="{{roadWorkActivity.properties.name}} {{roadWorkActivity.properties.section}}">
+              {{ roadWorkActivity.properties.name.slice(0, 20) }}
+            </span>
+            <span *ngIf="roadWorkActivity.properties.name.length > 20">...</span></a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="involved">
+        <th mat-header-cell *matHeaderCellDef> Mitwirkende </th>
+        <td mat-cell *matCellDef="let roadWorkActivity">
+          <span *ngFor="let involvedOrgAbbr of getInvolvedOrgsNames(roadWorkActivity)">
+            {{involvedOrgAbbr}},
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lead">
+        <th mat-header-cell *matHeaderCellDef> Lead Realisierung </th>
+        <td mat-cell *matCellDef="let roadWorkActivity"><span
+            *ngIf="roadWorkActivity.properties.kind">{{roadWorkActivity.properties.kind.name}}</span> </td>
+      </ng-container>
+
       <ng-container matColumnDef="project_man">
         <th mat-header-cell *matHeaderCellDef><span matTooltip="Projektleitung">PL</span></th>
         <td mat-cell *matCellDef="let roadWorkActivity"><span
@@ -207,23 +222,25 @@
             {{roadWorkActivity.properties.projectManager.lastName}}</span> </td>
       </ng-container>
 
-      <ng-container matColumnDef="lead">
-        <th mat-header-cell *matHeaderCellDef> Lead </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"><span
-            *ngIf="roadWorkActivity.properties.kind">{{roadWorkActivity.properties.kind.name}}</span> </td>
-      </ng-container>
-
       <ng-container matColumnDef="realisation_date">
-        <th mat-header-cell *matHeaderCellDef> Realisierung (Grobplanung) </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"><span *ngIf="roadWorkActivity.properties.finishOptimumTo">{{
-            roadWorkActivity.properties.finishOptimumTo | date:"dd.MM.yyyy" }}</span> </td>
+        <th mat-header-cell *matHeaderCellDef> Voraussichtliche Realisierung </th>
+        <td mat-cell *matCellDef="let roadWorkActivity">
+          <span *ngIf="roadWorkActivity.properties.startOfConstruction as startOfConstruction">
+            {{ getQuarter(startOfConstruction) }}.Q {{ startOfConstruction | date:'yyyy' }}
+          </span>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="due_date">
-        <th mat-header-cell *matHeaderCellDef> Wunschtermin </th>
-        <td mat-cell *matCellDef="let roadWorkActivity"><span *ngIf="roadWorkActivity.properties.finishOptimumTo">{{
-            roadWorkActivity.properties.finishOptimumTo | date:"dd.MM.yyyy" }}</span> </td>
-      </ng-container>
+        <th mat-header-cell *matHeaderCellDef> F&auml;lligkeit </th>
+        <td mat-cell *matCellDef="let roadWorkActivity">
+            <mat-chip [style]="getColorDueDate(roadWorkActivity)">
+                <span *ngIf="!calcDueDate(roadWorkActivity)">nicht bestimmt</span>
+                <span *ngIf="calcDueDate(roadWorkActivity)">{{calcDueDate(roadWorkActivity) | date:
+                    'dd.MM.yyyy'}}</span>
+            </mat-chip>
+         </td>
+    </ng-container>
 
       <ng-container matColumnDef="link_cityplan">
         <th mat-header-cell *matHeaderCellDef> Stadtplan-Link </th>
@@ -238,26 +255,6 @@
         <td mat-cell *matCellDef="let roadWorkActivity">
           <a href="http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x={{ roadWorkActivity.geometry.coordinates[0].x }}&y={{ roadWorkActivity.geometry.coordinates[0].y }}"
             target="_blank" style="margin: 1em;">Im WinWebGIS</a>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="relevance">
-        <th mat-header-cell *matHeaderCellDef> Beurteilung (Endwert) </th>
-        <td mat-cell *matCellDef="let roadWorkActivity">
-          <span
-            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
-            {{roadWorkActivity.properties.evaluation}}
-          </span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="relevance_sks">
-        <th mat-header-cell *matHeaderCellDef> Beurteilung (Prio. SKS) </th>
-        <td mat-cell *matCellDef="let roadWorkActivity">
-          <span
-            style="background-color: rgb(239, 239, 239);font-weight: bold;border: 1px solid;margin: 0.5em;padding: 0.5em;">
-            {{roadWorkActivity.properties.evaluationSks}}
-          </span>
         </td>
       </ng-container>
 

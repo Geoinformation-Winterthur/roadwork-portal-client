@@ -267,8 +267,8 @@ export class ActivityAttributesComponent implements OnInit {
                   this.projectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
 
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
-                    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
-                      undefined, undefined, undefined, undefined, undefined, undefined,
+                    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined, undefined,
+                      undefined, undefined, undefined, undefined, undefined, undefined, undefined,
                       this.roadWorkActivityFeature?.properties.uuid)
                       .subscribe({
                         next: (roadWorkNeeds) => {
