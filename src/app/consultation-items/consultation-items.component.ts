@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
@@ -17,7 +17,7 @@ import { UserService } from 'src/services/user.service';
   templateUrl: './consultation-items.component.html',
   styleUrls: ['./consultation-items.component.css']
 })
-export class ConsultationItemsComponent {
+export class ConsultationItemsComponent implements OnInit, OnChanges {
 
   @Input()
   roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
@@ -55,60 +55,12 @@ export class ConsultationItemsComponent {
     this.statusHelper = new StatusHelper();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this._rebuildLists();
+  }
 
-    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
-      .subscribe({
-        next: (user) => {
-          if (user && user.length > 0)
-            this.user = user[0];
-        },
-        error: (error) => {
-        }
-      });
-
-    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
-      undefined, undefined, undefined, undefined, undefined, undefined,
-      undefined, undefined, this.roadWorkActivity.properties.uuid).subscribe({
-        next: (roadWorkNeeds) => {
-          let needsOfActivityTemp = [];
-          let needsOfUserTemp = [];
-          this.stillRelevant = true;
-          for (let roadWorkNeed of roadWorkNeeds) {
-            needsOfActivityTemp.push(roadWorkNeed);
-            if (roadWorkNeed.properties.orderer.uuid == this.user.uuid)
-              needsOfUserTemp.push(roadWorkNeed);
-            if (!roadWorkNeed.properties.stillRelevant) {
-              this.stillRelevant = false;
-            }
-          }
-          for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
-            let userHasFeedback = false;
-            for (let needOfActivity of needsOfActivityTemp) {
-              if (involvedUser.uuid == needOfActivity.properties.orderer.uuid) {
-                userHasFeedback = true;
-                break;
-              }
-            }
-            if (!userHasFeedback) {
-              let dummyRoadWorkNeed = new RoadWorkNeedFeature();
-              dummyRoadWorkNeed.properties.orderer = involvedUser;
-              needsOfActivityTemp.push(dummyRoadWorkNeed);
-            }
-          }
-          this.needsOfActivity = needsOfActivityTemp;
-          this.needsOfUser = needsOfUserTemp;
-        },
-        error: (error) => {
-        }
-      });
-
-
-    if (this.roadWorkActivity.properties.uuid) {
-      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.needsOfActivity);
-    }
-
-
+  ngOnChanges(_: SimpleChanges) {
+    this._rebuildLists();
   }
 
   saveNeedsOfUser() {
@@ -205,6 +157,58 @@ export class ConsultationItemsComponent {
 
   calcTimeFactor(compareNeed: RoadWorkNeedFeature, primaryNeed: RoadWorkNeedFeature): number {
     return TimeFactorHelper.calcTimeFactor(compareNeed, primaryNeed);
+  }
+
+  private _rebuildLists() {
+    this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
+      .subscribe({
+        next: (user) => {
+          if (user && user.length > 0)
+            this.user = user[0];
+        },
+        error: (error) => {
+        }
+      });
+
+    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
+      undefined, undefined, undefined, undefined, undefined, undefined,
+      undefined, undefined, this.roadWorkActivity.properties.uuid).subscribe({
+        next: (roadWorkNeeds) => {
+          let needsOfActivityTemp = [];
+          let needsOfUserTemp = [];
+          this.stillRelevant = true;
+          for (let roadWorkNeed of roadWorkNeeds) {
+            needsOfActivityTemp.push(roadWorkNeed);
+            if (roadWorkNeed.properties.orderer.uuid == this.user.uuid)
+              needsOfUserTemp.push(roadWorkNeed);
+            if (!roadWorkNeed.properties.stillRelevant) {
+              this.stillRelevant = false;
+            }
+          }
+          for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
+            let userHasFeedback = false;
+            for (let needOfActivity of needsOfActivityTemp) {
+              if (involvedUser.uuid == needOfActivity.properties.orderer.uuid) {
+                userHasFeedback = true;
+                break;
+              }
+            }
+            if (!userHasFeedback) {
+              let dummyRoadWorkNeed = new RoadWorkNeedFeature();
+              dummyRoadWorkNeed.properties.orderer = involvedUser;
+              needsOfActivityTemp.push(dummyRoadWorkNeed);
+            }
+          }
+          this.needsOfActivity = needsOfActivityTemp;
+          this.needsOfUser = needsOfUserTemp;
+        },
+        error: (error) => {
+        }
+      });
+
+    if (this.roadWorkActivity.properties.uuid) {
+      this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.needsOfActivity);
+    }
   }
 
 }
