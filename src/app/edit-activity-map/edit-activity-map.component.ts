@@ -483,6 +483,9 @@ export class EditActivityMapComponent implements OnInit {
   }
 
   private _putRoadworksOnMap(refreshExtent: boolean) {
+    // Layer leeren, bevor wir neue Features hinzufügen:
+    this.roadWorkNeedSource.clear();
+    
     let i: number = 0;
     for (let roadWorkNeedFeature of this.needsOnMap) {
       let needPoly: Polygon = RoadworkPolygon.convertToOlPoly(roadWorkNeedFeature.geometry);
