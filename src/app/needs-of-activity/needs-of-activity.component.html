@@ -22,14 +22,14 @@
                 </ng-container>
 
                 <ng-container matColumnDef="reason">
-                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;segrund </th>
+                    <th mat-header-cell *matHeaderCellDef> Auslösegrund </th>
                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                         {{assignedRoadWorkNeed.properties.description}}
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="orderer">
-                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+                    <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                         {{assignedRoadWorkNeed.properties.orderer.firstName}}
                         {{assignedRoadWorkNeed.properties.orderer.lastName}} </td>
@@ -50,7 +50,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="isOrigin">
-                    <th mat-header-cell *matHeaderCellDef> ausl&ouml;send </th>
+                    <th mat-header-cell *matHeaderCellDef> auslösend </th>
                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                         <mat-checkbox [checked]="assignedRoadWorkNeed.properties.isPrimary"
                             (change)="setAsPrimaryNeed(assignedRoadWorkNeed)"
@@ -70,7 +70,7 @@
                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                         <mat-icon *ngIf="isInEditingMode" (click)="unAssignRoadWorkNeed(assignedRoadWorkNeed)"
                             aria-label="Zuweisung aufheben" class="arrow_button">arrow_downward</mat-icon>
-                        <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht m&ouml;glich"
+                        <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht möglich"
                             style="color: rgb(155, 155, 155);">block</mat-icon>
                     </td>
                 </ng-container>
@@ -81,15 +81,15 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Nicht zugewiesen">link_off</mat-icon>
-            NICHT ZUGEWIESENE BEDARFE IN VORHABENFL&Auml;CHE
+            NICHT ZUGEWIESENE BEDARFE IN VORHABENFLÄCHE
         </h2>
         <div>
-            Hier werden alle Bedarfe gelistet, die zwar r&auml;umlich in diesem Vorhaben liegen,
+            Hier werden alle Bedarfe gelistet, die zwar räumlich in diesem Vorhaben liegen,
             jedoch dem Vorhaben nicht explizit zugeordnet sind.
         </div>
         <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Bei diesem Vorhaben liegen keine Bedarfe in der Vorhabenfl&auml;che
+            Bei diesem Vorhaben liegen keine Bedarfe in der Vorhabenfläche
             vor (die nicht bereits zugewiesen sind).
         </div>
         <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
@@ -104,14 +104,14 @@
                 </ng-container>
 
                 <ng-container matColumnDef="reason">
-                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;segrund </th>
+                    <th mat-header-cell *matHeaderCellDef> Auslösegrund </th>
                     <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
                         {{nonAssignedRoadWorkNeed.properties.description}}
                     </td>
                 </ng-container>
 
                 <ng-container matColumnDef="orderer">
-                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+                    <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
                     <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
                         {{nonAssignedRoadWorkNeed.properties.orderer.firstName}}
                         {{nonAssignedRoadWorkNeed.properties.orderer.lastName}}</td>
@@ -144,8 +144,8 @@
                         <mat-icon *ngIf="isInEditingMode" matTooltip="Diesen Bedarf dem Vorhaben zuweisen"
                             (click)="assignRoadWorkNeed(nonAssignedRoadWorkNeed)" aria-label="Zuweisung entfernen"
                             class="arrow_button">arrow_upward</mat-icon>
-                        <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht m&ouml;glich"
-                            matTooltip="Keine Berechtigung f&uuml;r eine Aktion"
+                        <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht möglich"
+                            matTooltip="Keine Berechtigung für eine Aktion"
                             style="color: rgb(155, 155, 155);">block</mat-icon>
                     </td>
                 </ng-container>
@@ -159,11 +159,11 @@
             <mat-icon aria-label="Angemeldet">app_registration</mat-icon>
             MANUELL ANGEMELDETE BEDARFE
         </h2>
-        <div>Diese Bedarfe liegen r&auml;umlich ausserhalb der Vorhabenfl&auml;che, wurden
-            jedoch trotzdem f&uuml;r dieses Vorhaben angemeldet.</div>
+        <div>Diese Bedarfe liegen räumlich ausserhalb der Vorhabenfläche, wurden
+            jedoch trotzdem für dieses Vorhaben angemeldet.</div>
         <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Aktuell liegen keine weiteren angemeldeten Bedarfe f&uuml;r dieses Vorhaben vor.
+            Aktuell liegen keine weiteren angemeldeten Bedarfe für dieses Vorhaben vor.
         </div>
         <div *ngIf="needsOfActivityService.registeredRoadWorkNeeds.length !== 0">
             <table mat-table [dataSource]="needsOfActivityService.registeredRoadWorkNeeds" class="mat-elevation-z2"
@@ -177,7 +177,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="orderer">
-                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+                    <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
                     <td mat-cell *matCellDef="let registeredRoadWorkNeed">
                         {{registeredRoadWorkNeed.properties.orderer.firstName}}
                         {{registeredRoadWorkNeed.properties.orderer.lastName}}</td>
@@ -210,7 +210,7 @@
                             class="arrow_button">arrow_downward</mat-icon>
                         <mat-icon
                             *ngIf="!isInEditingMode && userService.getLocalUser().uuid != registeredRoadWorkNeed.properties.orderer.uuid"
-                            aria-label="Zuweisung aufheben nicht m&ouml;glich"
+                            aria-label="Zuweisung aufheben nicht möglich"
                             style="color: rgb(155, 155, 155);">block</mat-icon>
                     </td>
                 </ng-container>
@@ -223,7 +223,7 @@
     <div style="margin-top: 3em;">
         <h2 style="color: rgb(100, 100, 100);font-size: 1.2em;">
             <mat-icon aria-label="Angemeldet">add_task</mat-icon>
-            BEDARF F&Uuml;R DIESES VORHABEN ANMELDEN
+            BEDARF FÜR DIESES VORHABEN ANMELDEN
         </h2>
         <mat-accordion>
             <mat-expansion-panel style="margin-bottom:2em;" expanded>
@@ -277,7 +277,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="orderer">
-                    <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+                    <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
                     <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.orderer.firstName}}
                         {{roadWorkNeed.properties.orderer.lastName}}</td>
                 </ng-container>

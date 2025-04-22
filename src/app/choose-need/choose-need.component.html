@@ -120,7 +120,7 @@
       <mat-divider></mat-divider>
       <mat-card-actions style="margin: 0.5em;">
         <button style="background-color: rgb(236,236,234);margin-top: 1em;" mat-button
-          [routerLink]="['/needs', roadWorkNeed.properties.uuid]">&Ouml;FFNEN</button>
+          [routerLink]="['/needs', roadWorkNeed.properties.uuid]">ÖFFNEN</button>
         <div *ngIf="roadWorkNeed.properties.roadWorkActivityUuid" style="padding-top: 1em;padding-bottom: 1em;">
           <mat-icon aria-label="Willkommen">handyman</mat-icon>&nbsp;<a
             routerLink='/activities/{{roadWorkNeed.properties.roadWorkActivityUuid}}' style="font-size: larger;">Zum
@@ -156,7 +156,7 @@
       </ng-container>
 
       <ng-container matColumnDef="person">
-        <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+        <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
         <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.orderer.firstName}}
           {{roadWorkNeed.properties.orderer.lastName}} </td>
       </ng-container>

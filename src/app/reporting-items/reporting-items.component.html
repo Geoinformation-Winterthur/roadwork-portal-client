@@ -1,6 +1,6 @@
 <div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
-    Stellungnahme noch nicht er&ouml;ffnet. Oder es wurden keine Beteiligten vorausgew&auml;hlt
-    und es gibt noch keine R&uuml;ckmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
+    Stellungnahme noch nicht eröffnet. Oder es wurden keine Beteiligten vorausgewählt
+    und es gibt noch keine Rückmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
     werden.
 </div>
 <div *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
@@ -21,7 +21,7 @@
                             }}<span
                                 *ngIf="consultationInput.inputBy.firstName.length + consultationInput.inputBy.lastName.length > 20">...</span>
                         </mat-card-title>
-                        <mat-card-subtitle>Letzte &Auml;nderung:
+                        <mat-card-subtitle>Letzte Änderung:
                             <span *ngIf="consultationInput.lastEdit">
                                 {{consultationInput.lastEdit | date:'dd.MM.yyyy'}}
                             </span>
@@ -34,13 +34,13 @@
                 <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
                     <mat-chip-list>
                         <mat-chip *ngIf="consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
-                                style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung erhalten</span>
+                            <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung erhalten"
+                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Rückmeldung erhalten</span>
                         </mat-chip>
                         <mat-chip *ngIf="!consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
+                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine Rückmeldung"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Noch keine
-                                R&uuml;ckmeldung</span>
+                                Rückmeldung</span>
                         </mat-chip>
                     </mat-chip-list>
 
@@ -65,7 +65,7 @@
                                 style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Nicht einverstanden</span>
                         </mat-chip>
                     </mat-chip-list>
-                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">R&uuml;ckmeldung Beteiligte:r:
+                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">Rückmeldung Beteiligte:r:
                     </div>
                     <div *ngIf="consultationInput.feedbackGiven"
                         style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
@@ -127,7 +127,7 @@
             </ng-container>
 
             <ng-container matColumnDef="date_last_change">
-                <th mat-header-cell *matHeaderCellDef> Letzte &Auml;nderung </th>
+                <th mat-header-cell *matHeaderCellDef> Letzte Änderung </th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <span *ngIf="consultationInput.lastEdit">
                         {{consultationInput.lastEdit | date: 'dd.MM.yyyy' }}
@@ -139,15 +139,15 @@
             </ng-container>
 
             <ng-container matColumnDef="has_feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung erhalten </th>
+                <th mat-header-cell *matHeaderCellDef> Rückmeldung erhalten </th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-chip-list>
                         <mat-chip *ngIf="consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
+                            <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung erhalten"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
                         <mat-chip *ngIf="!consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
+                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine Rückmeldung"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>
                         </mat-chip>
                     </mat-chip-list>
@@ -187,7 +187,7 @@
             </ng-container>
 
             <ng-container matColumnDef="feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung </th>
+                <th mat-header-cell *matHeaderCellDef> Rückmeldung </th>
                 <td mat-cell *matCellDef="let consultationInput" style="max-width: 10em; word-wrap:break-word;">
                     {{consultationInput.ordererFeedbackText}}</td>
             </ng-container>
@@ -213,8 +213,8 @@
             && roadWorkActivity.properties.status == 'reporting'" style="margin-top: 3em;">
     <h2>Eingabe zur Stellungnahme</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
-        <p>W&auml;hrend der Bedarfskl&auml;rung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.
-            Daraus ergibt sich zum heutigen Zeitpunkt folgender Realisierungszeitraum (Sch&auml;tzung):</p>
+        <p>Während der Bedarfsklärung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.
+            Daraus ergibt sich zum heutigen Zeitpunkt folgender Realisierungszeitraum (Schätzung):</p>
         <p>Baubeginn:
             <span *ngIf="this.roadWorkActivity.properties.startOfConstruction"
                 style="background-color: lightgray;padding: 0.2em;">
@@ -241,7 +241,7 @@
                 </mat-radio-button>
                 <p>Weiterhin Bedarf vorhanden:</p>
                 <mat-radio-button style="margin:10px;" value="activity_okay">
-                    Ja, das Bauvorhaben inkl. des gesch&auml;tzten Realisierungszeitraums passt
+                    Ja, das Bauvorhaben inkl. des geschätzten Realisierungszeitraums passt
                 </mat-radio-button><br>
                 <mat-radio-button style="margin:10px;" value="activity_not_okay">
                     Nein, ich bin nicht einverstanden. Bitte um Kontaktaufnahme
@@ -249,9 +249,9 @@
             </mat-radio-group>
         </p>
         <mat-form-field style="width: 100%; margin-top: 2em;">
-            <mat-label>R&uuml;ckmeldung</mat-label>
+            <mat-label>Rückmeldung</mat-label>
             <textarea matInput [(ngModel)]="consultationInput.ordererFeedbackText" maxlength="40000"
-                placeholder="R&uuml;ckmeldung..."></textarea>
+                placeholder="Rückmeldung..."></textarea>
         </mat-form-field>
         <button mat-button (click)="sendReporting()" style="margin: 1em;background-color: rgb(236,236,234);"
             [disabled]="!consultationInput.ordererFeedback">

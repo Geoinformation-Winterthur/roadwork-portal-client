@@ -7,7 +7,7 @@
         <div>Hier werden Events gelistet, die <i>zur gleichen Zeit am gleichen Ort</i> stattfinden.</div>
         <div *ngIf="eventsWithSpatioTemporalConflict.length === 0"
             style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Es sind zurzeit <i>keine</i> Events registriert, die sowohl <i>r&auml;umlich als
+            Es sind zurzeit <i>keine</i> Events registriert, die sowohl <i>räumlich als
                 auch zeitlich im Konflikt</i> stehen zu diesem Bauvorhaben.
         </div>
         <div *ngIf="eventsWithSpatioTemporalConflict.length !== 0">
@@ -37,7 +37,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="lastModified">
-                    <th mat-header-cell *matHeaderCellDef> Zuletzt ver&auml;ndert </th>
+                    <th mat-header-cell *matHeaderCellDef> Zuletzt verändert </th>
                     <td mat-cell *matCellDef="let eventWithSpatioTemporalConflict">
                         {{eventWithSpatioTemporalConflict.properties.lastModified | date:'dd.MM.yyyy'}} </td>
                 </ng-container>
@@ -55,7 +55,7 @@
         <div>Hier werden Events gelistet, die zwar <i>im gleichen Raum</i> liegen, wie dieses Bauvorhaben,
             jedoch <i>zu einem anderen Zeitpunkt</i> stattfinden.</div>
         <div *ngIf="eventsWithSpatialConflict.length === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
-            Es sind zurzeit <i>keine Events</i> registriert, die <i>nur r&auml;umlich</i>,
+            Es sind zurzeit <i>keine Events</i> registriert, die <i>nur räumlich</i>,
             jedoch <i>nicht zeitlich im Konflikt</i> stehen zu diesem Bauvorhaben.
         </div>
         <div *ngIf="eventsWithSpatialConflict.length !== 0">
@@ -85,7 +85,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="lastModified">
-                    <th mat-header-cell *matHeaderCellDef> Zuletzt ver&auml;ndert </th>
+                    <th mat-header-cell *matHeaderCellDef> Zuletzt verändert </th>
                     <td mat-cell *matCellDef="let eventWithSpatialConflict">
                         {{eventWithSpatialConflict.properties.lastModified | date:'dd.MM.yyyy'}} </td>
                 </ng-container>
@@ -104,7 +104,7 @@
             Bauvorhaben, sich jedoch <i>an einem anderen Ort</i> befinden.</div>
         <div *ngIf="eventsWithTemporalConflict.length === 0" style="margin-top: 2em;padding: 1em;background-color: rgb(232, 255, 234);">
             Es sind zurzeit <i>keine</i> Events registriert, die nur <i>zeitlich</i>,
-            jedoch <i>nicht r&auml;umlich</i> im Konflikt stehen zu diesem Bauvorhaben.
+            jedoch <i>nicht räumlich</i> im Konflikt stehen zu diesem Bauvorhaben.
         </div>
         <div *ngIf="eventsWithTemporalConflict.length !== 0">
             <table mat-table [dataSource]="eventsWithTemporalConflict" class="mat-elevation-z2"
@@ -133,7 +133,7 @@
                 </ng-container>
 
                 <ng-container matColumnDef="lastModified">
-                    <th mat-header-cell *matHeaderCellDef> Zuletzt ver&auml;ndert </th>
+                    <th mat-header-cell *matHeaderCellDef> Zuletzt verändert </th>
                     <td mat-cell *matCellDef="let eventWithTemporalConflict">
                         {{eventWithTemporalConflict.properties.lastModified | date:'dd.MM.yyyy'}} </td>
                 </ng-container>

@@ -1,9 +1,9 @@
 <div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'inconsult')" style="margin: 2em;">
-    Bedarfskl&auml;rung noch nicht er&ouml;ffnet. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
+    Bedarfsklärung noch nicht eröffnet. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
     werden.
 </div>
 <div *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'inconsult')" style="margin: 2em;">
-    Die Bedarfskl&auml;rung ist abgeschlossen.
+    Die Bedarfsklärung ist abgeschlossen.
 </div>
 <div
     *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'requirement')">
@@ -20,7 +20,7 @@
                             }}<span
                                 *ngIf="(needOfActivity.properties.orderer.firstName + needOfActivity.properties.orderer.lastName).length > 20">...</span>
                         </mat-card-title>
-                        <mat-card-subtitle>Letzte &Auml;nderung:
+                        <mat-card-subtitle>Letzte Änderung:
                             <span *ngIf="needOfActivity.properties.lastModified">
                                 {{needOfActivity.properties.lastModified | date:'dd.MM.yyyy'}}
                             </span>
@@ -34,18 +34,18 @@
                     </p>
                     <mat-chip-list>
                         <mat-chip *ngIf="needOfActivity.properties.uuid">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
-                                style="color: green;">check</mat-icon>&nbsp;<span i18n>R&uuml;ckmeldung gegeben</span>
+                            <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung gegeben"
+                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Rückmeldung gegeben</span>
                         </mat-chip>
                         <mat-chip *ngIf="!needOfActivity.properties.uuid">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung gegeben"
-                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Keine R&uuml;ckmeldung
+                            <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung gegeben"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Keine Rückmeldung
                                 gegeben</span>
                         </mat-chip>
                     </mat-chip-list>
                     <div *ngIf="needOfActivity.properties.comment"
                         style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
-                        R&uuml;ckmeldung Beteiligte:r:<br>
+                        Rückmeldung Beteiligte:r:<br>
                         {{needOfActivity.properties.comment}}
                     </div>
                 </mat-card-content>
@@ -92,15 +92,15 @@
             </ng-container>
 
             <ng-container matColumnDef="feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung </th>
+                <th mat-header-cell *matHeaderCellDef> Rückmeldung </th>
                 <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
                     <span *ngIf="needOfActivity.properties.uuid">{{needOfActivity.properties.comment}}</span>
-                    <span *ngIf="!needOfActivity.properties.uuid">Keine R&uuml;ckmeldung</span>
+                    <span *ngIf="!needOfActivity.properties.uuid">Keine Rückmeldung</span>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="date_last_change">
-                <th mat-header-cell *matHeaderCellDef> Letzte &Auml;nderung </th>
+                <th mat-header-cell *matHeaderCellDef> Letzte Änderung </th>
                 <td mat-cell *matCellDef="let needOfActivity">
                     <span *ngIf="needOfActivity.properties.lastModified">
                         {{needOfActivity.properties.lastModified | date:'dd.MM.yyyy'}}
@@ -110,16 +110,16 @@
             </ng-container>
 
             <ng-container matColumnDef="has_feedback">
-                <th mat-header-cell *matHeaderCellDef> R&uuml;ckmeldung erhalten </th>
+                <th mat-header-cell *matHeaderCellDef> Rückmeldung erhalten </th>
                 <td mat-cell *matCellDef="let needOfActivity">
                     <mat-chip-list>
                         <mat-chip *ngIf="needOfActivity.properties.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="R&uuml;ckmeldung erhalten"
+                            <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung erhalten"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
                         <mat-chip *ngIf="!needOfActivity.properties.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine R&uuml;ckmeldung"
-                                matTooltip="Noch keine R&uuml;ckmeldung"
+                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine Rückmeldung"
+                                matTooltip="Noch keine Rückmeldung"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>
                         </mat-chip>
                     </mat-chip-list>
@@ -186,7 +186,7 @@
 </div>
 <div *ngIf="userService.getLocalUser().chosenRole == 'orderer' && roadWorkActivity.properties.status === 'inconsult'"
     style="margin-top: 2em;">
-    <h2>Eingabe zur Bedarfskl&auml;rung</h2>
+    <h2>Eingabe zur Bedarfsklärung</h2>
     <div style="margin-bottom: 2em;">
         <div>
             <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
@@ -197,7 +197,7 @@
         <p>
             <mat-checkbox name="decline_checkbox" [(ngModel)]="decline" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
                     hasRequirementAlreadyEntered() || stillRelevant" style="margin:10px;">
-                Kein Bedarf f&uuml;r uns
+                Kein Bedarf für uns
             </mat-checkbox>
             <br>
             <mat-checkbox name="still_relevant_checkbox" [(ngModel)]="stillRelevant"
@@ -207,9 +207,9 @@
         </p>
         <div>
             <mat-form-field style="width: 100%; margin-top: 2em;">
-                <mat-label>R&uuml;ckmeldung</mat-label>
+                <mat-label>Rückmeldung</mat-label>
                 <textarea matInput [(ngModel)]="ordererFeedbackText" maxlength="40000"
-                    placeholder="R&uuml;ckmeldung..."></textarea>
+                    placeholder="Rückmeldung..."></textarea>
             </mat-form-field>
             <button mat-button style="background-color: lightgray;" (click)="saveNeedsOfUser()"
                 [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">

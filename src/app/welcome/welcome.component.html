@@ -4,60 +4,60 @@
 -->
 <div *ngIf="!userService.isUserLoggedIn()" style="color: white;padding: 2em;background-color: rgb(196, 30, 30);">
     <h1>Tiefbauamt Winterthur</h1><br />
-    <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Departement Bau und Mobilit&auml;t</h2>
+    <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Departement Bau und Mobilität</h2>
 </div>
 <div style="margin: 2em;color: rgb(90, 90, 90);">
     <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
-        Willkommen im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool f&uuml;r <b>I</b>nfrastrukturvorhaben
+        Willkommen im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool für <b>I</b>nfrastrukturvorhaben
         im
-        &ouml;ffentlichen <b>S</b>trassenraum) des Tiefbauamts Winterthur.
+        öffentlichen <b>S</b>trassenraum) des Tiefbauamts Winterthur.
     </h3>
     <div i18n *ngIf="!userService.isUserLoggedIn()">
-        <p>Gem&auml;ss Verordnung &uuml;ber die Koordination von Bauarbeiten
-            im &ouml;ffentlichen Strassenraum der Stadt Winterthur (Baukoordinationsverordnung) sind alle
-            st&auml;dtischen
-            Abteilungen, privatrechtliche und &ouml;ffentlich-rechtliche Unternehmen der Stadt, des Kantons und des
+        <p>Gemäss Verordnung über die Koordination von Bauarbeiten
+            im öffentlichen Strassenraum der Stadt Winterthur (Baukoordinationsverordnung) sind alle
+            städtischen
+            Abteilungen, privatrechtliche und öffentlich-rechtliche Unternehmen der Stadt, des Kantons und des
             Bundes
-            sowie sonstige Private im &ouml;ffentlichen Strassenraum (Eigentum der Stadt Winterthur) zum koordinierten
+            sowie sonstige Private im öffentlichen Strassenraum (Eigentum der Stadt Winterthur) zum koordinierten
             Bauen
             verpflichtet.</p>
         <p>
             Die Abteilung Planung & Koordination des Tiefbauamts der Stadt Winterthur nimmt diese Aufgabe im Rahmen der
             dazu
             vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe von WiKIS soll die Eingabe von
-            W&uuml;nschen
+            Wünschen
             (Bedarf) vereinfacht und die Koordination der Bauvorhaben zentralisiert werden.</p>
         <p>
             Der Zugriff auf WiKIS ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
             rechten oberen Ecke.
-            Bitte wenden Sie sich f&uuml;r die erstmalige Erfassung Ihrer Daten an
+            Bitte wenden Sie sich für die erstmalige Erfassung Ihrer Daten an
             <a href="mailto:planung.koordination@win.ch">planung.koordination&#64;win.ch</a>
         </p>
         <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
     </div>
     <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
         Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool
-        f&uuml;r
-        <b>I</b>nfrastrukturvorhaben im &ouml;ffentlichen <b>S</b>trassenraum)
+        für
+        <b>I</b>nfrastrukturvorhaben im öffentlichen <b>S</b>trassenraum)
         des Tiefbauamts Winterthur.
     </h3>
     <div *ngIf="userService.isUserLoggedIn()">
         <mat-tab-group>
             <mat-tab label="Aktuelles">
                 <div style="margin: 2em;">
-                    &Uuml;ber das WinWebGIS findest du die graphische Darstellung der Bauvorhaben.<br>
-                    F&uuml;r Details bitte diesen Button klicken:
+                    Über das WinWebGIS findest du die graphische Darstellung der Bauvorhaben.<br>
+                    Für Details bitte diesen Button klicken:
                     <div style="text-align: center;margin-bottom: 1em;">
                         <button mat-button (click)="openWinWebGIS()" style="margin: 1em;background-color: rgb(236,236,234);">
-                            <mat-icon aria-label="Karte">map</mat-icon>&nbsp;Im WinWebGIS &ouml;ffnen
+                            <mat-icon aria-label="Karte">map</mat-icon>&nbsp;Im WinWebGIS öffnen
                         </button>
                     </div>    
                     <div *ngIf="myRoadWorkActivityFeatures.length === 0 && myRoadWorkNeedFeatures.length === 0"><span
                             style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
-                            gibt zurzeit keine Meldungen im Zusammenhang mit deinem pers&ouml;nlichen Login.</span>
+                            gibt zurzeit keine Meldungen im Zusammenhang mit deinem persönlichen Login.</span>
                     </div>
                     <div *ngIf="myRoadWorkActivityFeatures.length !== 0 || myRoadWorkNeedFeatures.length !== 0">
-                        Folgende Eintr&auml;ge stehen im Zusammenhang mit deinem <b>pers&ouml;nlichen Login</b>:
+                        Folgende Einträge stehen im Zusammenhang mit deinem <b>persönlichen Login</b>:
 
                         <div *ngIf="myRoadWorkNeedFeatures.length !== 0" style="margin-top: 2em;">
                             <h3>Bedarfe</h3>
@@ -87,7 +87,7 @@
                                 </ng-container>
                           
                                 <ng-container matColumnDef="person">
-                                  <th mat-header-cell *matHeaderCellDef> Ausl&ouml;sende:r </th>
+                                  <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
                                   <td mat-cell *matCellDef="let roadWorkNeed"> {{roadWorkNeed.properties.orderer.firstName}}
                                     {{roadWorkNeed.properties.orderer.lastName}} </td>
                                 </ng-container>
@@ -208,7 +208,7 @@
                                 </ng-container>
                           
                                 <ng-container matColumnDef="due_date">
-                                  <th mat-header-cell *matHeaderCellDef> F&auml;lligkeit </th>
+                                  <th mat-header-cell *matHeaderCellDef> Fälligkeit </th>
                                   <td mat-cell *matCellDef="let roadWorkActivity">
                                       <mat-chip [style]="getColorDueDate(roadWorkActivity)">
                                           <span *ngIf="!calcDueDate(roadWorkActivity)">nicht bestimmt</span>
@@ -253,7 +253,7 @@
                                 *ngIf="userService.getLocalUser().chosenRole === 'eventmanager'">Eventmanagement</span>
                             <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'projectmanager'">Projektleitung</span>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'orderer'">Ausl&ouml;sende:r</span>
+                            <span *ngIf="userService.getLocalUser().chosenRole === 'orderer'">Auslösende:r</span>
                             <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'territorymanager'">Gebietsmanagement</span>
                             <span
@@ -263,7 +263,7 @@
                         style="padding: 1em;margin-bottom: 1em;border: 1px solid lightgray;display:flex;flex-direction:column;">
                         <p>Ansicht:</p>
                         <mat-slide-toggle [(ngModel)]="user.prefTableView" (focusout)="update()">Tabellenansicht
-                            bevorzugen (nicht mobile-f&auml;hig)
+                            bevorzugen (nicht mobile-fähig)
                         </mat-slide-toggle>
                     </div>
                     <div style="padding: 1em;border: 1px solid lightgray;">
@@ -272,7 +272,7 @@
                             <input matInput [(ngModel)]="user.passPhrase" type="text" placeholder="Neue Passphrase"
                                 type="password">
                         </mat-form-field>
-                        <button mat-button (click)="update(true)" style="margin:1em;">&Auml;NDERN</button>
+                        <button mat-button (click)="update(true)" style="margin:1em;">ÄNDERN</button>
                     </div>
                 </div>
             </mat-tab>

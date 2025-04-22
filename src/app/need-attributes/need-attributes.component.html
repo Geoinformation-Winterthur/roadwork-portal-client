@@ -27,7 +27,7 @@
                                 userService.getLocalUser().chosenRole == 'administrator')"
                         (click)="openDeleteDialog(roadWorkNeedFeature.properties.uuid)"
                         style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkNeedFeature.properties.isPrivate && 
-                        userService.getLocalUser().chosenRole != 'administrator'" mat-button>L&Ouml;SCHEN</button>
+                        userService.getLocalUser().chosenRole != 'administrator'" mat-button>LÖSCHEN</button>
                     <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate" (click)="publish()"
                         style="margin: 1em;background-color: rgb(236,236,234);">
                         <mat-icon aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BEDARF
@@ -37,7 +37,7 @@
                 <h2 style="font-weight: normal;">Wunschtermine</h2>
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
                     <div style="margin: 0.5em;">
-                        Fr&uuml;hester:&nbsp;<span
+                        Frühester:&nbsp;<span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
                             {{writeOutQuartal("finishEarlyTo")}}
                         </span>
@@ -59,7 +59,7 @@
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Sp&auml;tester:&nbsp;<span
+                        Spätester:&nbsp;<span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
                             {{writeOutQuartal("finishLateTo")}}
                         </span>
@@ -85,7 +85,7 @@
                 </div>
                 <mat-checkbox style="margin: 1em;" [(ngModel)]="roadWorkNeedFeature.properties.overarchingMeasure"
                     [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                    &Uuml;bergeordnete Massnahme
+                    Übergeordnete Massnahme
                 </mat-checkbox>
                 <div fxLayout="row wrap padding" style="width:100%;">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
@@ -94,7 +94,7 @@
                             <p *ngIf="roadWorkNeedFeature.properties.uuid">UUID:
                                 <b>{{roadWorkNeedFeature.properties.uuid}}</b>
                             </p>
-                            <p *ngIf="!roadWorkNeedFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
+                            <p *ngIf="!roadWorkNeedFeature.properties.uuid">UUID: <b>keine (nicht eröffnet)</b></p>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" maxlength="80"
@@ -103,7 +103,7 @@
                                 </mat-form-field>
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des Bedarfs
+                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen des Bedarfs
                                     ein Titel automatisch aus der geographischen Lage ermittelt.
                                 </div>
                                 <mat-form-field>
@@ -112,10 +112,10 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <mat-form-field>
-                                    <mat-label>Ausl&ouml;segrund</mat-label>
+                                    <mat-label>Auslösegrund</mat-label>
                                     <textarea matInput maxlength="255"
                                         [(ngModel)]="roadWorkNeedFeature.properties.description"
-                                        placeholder="Ausl&ouml;segrund..." required
+                                        placeholder="Auslösegrund..." required
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
@@ -137,16 +137,16 @@
                                     [short]="false"></app-status-chip>
                                 <p *ngIf="roadWorkNeedFeature.properties.status == 'suspended'
                                         && roadWorkNeedFeature.properties.deleteReason">
-                                    <b>L&ouml;schbegr&uuml;ndung:</b>
+                                    <b>Löschbegründung:</b>
                                     {{roadWorkNeedFeature.properties.deleteReason}}
                                 </p>
                                 <div style="margin: 1em;">
                                     <mat-chip-list>
                                         <mat-chip *ngIf="priorityCode === 'high'" style="background-color: red;">Hohe
-                                            Priorit&auml;t</mat-chip>
+                                            Priorität</mat-chip>
                                         <mat-chip *ngIf="priorityCode === 'low'"
                                             style="background-color: green;">Niedrige
-                                            Priorit&auml;t</mat-chip>
+                                            Priorität</mat-chip>
                                     </mat-chip-list>
                                 </div>
                             </div>
@@ -156,10 +156,10 @@
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Ausl&ouml;sende:r: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
+                                <p>Auslösende:r: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
                                         {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
                                 </p>
-                                <p>Ausl&ouml;sendes Werk:
+                                <p>Auslösendes Werk:
                                     <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
                                 </p>
                                 <p>Gebietsmanagement:
@@ -169,7 +169,7 @@
                                 </p>
                                 <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
                                 <p>
-                                    Zuletzt ge&auml;ndert: <b>{{roadWorkNeedFeature.properties.lastModified |
+                                    Zuletzt geändert: <b>{{roadWorkNeedFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
                             </div>
@@ -180,13 +180,13 @@
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
                             <mat-card-title><mat-icon
-                                    aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostensch&auml;tzung</mat-card-title>
+                                    aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostenschätzung</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
                             <button (click)="addCostsEstimation()" mat-button
                                 [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
                                 style="background-color: lightgrey;margin-bottom: 1em;">
-                                +Hinzuf&uuml;gen
+                                +Hinzufügen
                             </button><br>
                             <div *ngFor="let costObj of roadWorkNeedFeature.properties.costs"
                                 style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
@@ -216,11 +216,11 @@
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                             <mat-option value="street_municipal">Strasse kommunal</mat-option>
                                             <mat-option value="street_supramunicipal">Strasse
-                                                &uuml;berkommunal</mat-option>
+                                                überkommunal</mat-option>
                                             <mat-option value="channel">Kanal</mat-option>
-                                            <mat-option value="waters">Gew&auml;sser</mat-option>
+                                            <mat-option value="waters">Gewässer</mat-option>
                                             <mat-option value="lsa">LSA</mat-option>
-                                            <mat-option value="mobility">Mobilit&auml;t</mat-option>
+                                            <mat-option value="mobility">Mobilität</mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                     <div *ngIf="costObj.projectType == 'street_supramunicipal' ||
@@ -232,7 +232,7 @@
                                     <div>
                                         <mat-form-field>
                                             <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
-                                                placeholder="Kostensch&auml;tzung (CHF) *" step="1000"
+                                                placeholder="Kostenschätzung (CHF) *" step="1000"
                                                 [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         </mat-form-field>
                                     </div>
@@ -264,7 +264,7 @@
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
                                 <a *ngIf="roadWorkNeedFeature.properties.url"
-                                    href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link &ouml;ffnen</a>
+                                    href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link öffnen</a>
                                 <div style="padding: 1em;margin-top: 1em;">
                                     <p><b>PDF-Dokumente:</b></p>
                                     <div *ngFor="let documentAtts of roadWorkNeedFeature.properties.documentAtts"
@@ -278,7 +278,7 @@
                                         <button (click)="deletePdf(documentAtts.uuid!)" mat-button
                                             style="background-color: rgb(236,236,234);margin: 1em;"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                            L&ouml;schen
+                                            Löschen
                                         </button>
                                     </div>
                                     <div>

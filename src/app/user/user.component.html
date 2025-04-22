@@ -33,7 +33,7 @@
               <mat-checkbox [(ngModel)]="user.grantedRoles.eventmanager" (change)="updateUser()"
                 style="margin-right: 1em;">Eventmanagement</mat-checkbox>
               <mat-checkbox [(ngModel)]="user.grantedRoles.orderer" (change)="updateUser()"
-                style="margin-right: 1em;">Ausl&ouml;sende:r</mat-checkbox>
+                style="margin-right: 1em;">Auslösende:r</mat-checkbox>
               <mat-checkbox [(ngModel)]="user.grantedRoles.trafficmanager" (change)="updateUser()"
                 style="margin-right: 1em;">Verkehrsmanagement</mat-checkbox>
               <mat-checkbox [(ngModel)]="user.grantedRoles.territorymanager" (change)="updateUser()"
@@ -68,9 +68,9 @@
             <br />
             <div *ngIf="user && user.uuid">
               <button mat-button (click)="changePassphrase()"
-                style="background-color: rgb(236,236,234);margin:1em;">PASSPHRASE &Auml;NDERN</button>
+                style="background-color: rgb(236,236,234);margin:1em;">PASSPHRASE ÄNDERN</button>
               <button mat-button (click)="deleteUser()" style="background-color: rgb(236,236,234);margin:1em;">BENUTZER
-                L&Ouml;SCHEN</button>
+                LÖSCHEN</button>
             </div>
           </div>
         </mat-card-content>

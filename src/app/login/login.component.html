@@ -6,7 +6,7 @@
     <form class="signin-form" #loginForm="ngForm" (ngSubmit)="loginUser(loginForm)">
         <div>
             <h2>Anmeldung</h2>
-            <div *ngIf="loginInvalid" class="error_message">Benutzername oder Passphrase ung&uuml;ltig.</div>
+            <div *ngIf="loginInvalid" class="error_message">Benutzername oder Passphrase ungültig.</div>
             <br />
             <mat-form-field>
                 <input matInput type="text" id="loginname" name="loginname" ngModel placeholder="Benutzername"
@@ -25,7 +25,7 @@
                     <mat-option value="view">View</mat-option>
                     <mat-option value="projectmanager">Projektleitung</mat-option>
                     <mat-option value="eventmanager">Eventmanagement</mat-option>
-                    <mat-option value="orderer">Ausl&ouml;sende:r</mat-option>
+                    <mat-option value="orderer">Auslösende:r</mat-option>
                     <mat-option value="trafficmanager">Verkehrsmanagement</mat-option>
                     <mat-option value="territorymanager">Gebietsmanagement</mat-option>
                     <mat-option value="administrator">Administration</mat-option>

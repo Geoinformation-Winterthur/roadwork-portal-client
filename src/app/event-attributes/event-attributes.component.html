@@ -14,7 +14,7 @@
                 <button mat-button
                     style="margin: 1em;border: 1px solid;background-color: rgb(236,236,234);"
                     *ngIf="!eventFeature.properties.uuid" (click)="add()">
-                    EVENT ER&Ouml;FFNEN
+                    EVENT ERÖFFNEN
                 </button>
                 <div fxLayout="row wrap padding">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
@@ -23,7 +23,7 @@
                             <p *ngIf="eventFeature.properties.uuid" style="margin-bottom:2em;">UUID:
                                 <b>{{eventFeature.properties.uuid}}</b>
                             </p>
-                            <p *ngIf="!eventFeature.properties.uuid">UUID: <b>keine (nicht er&ouml;ffnet)</b></p>
+                            <p *ngIf="!eventFeature.properties.uuid">UUID: <b>keine (nicht eröffnet)</b></p>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="eventFeature.properties.name"
@@ -42,7 +42,7 @@
                             <div style="display:flex;flex-direction:column;">
                                 <p>Erstellt: <b>{{eventFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
                                 <p>
-                                    Zuletzt ge&auml;ndert: <b>{{eventFeature.properties.lastModified |
+                                    Zuletzt geändert: <b>{{eventFeature.properties.lastModified |
                                         date:'dd.MM.yyyy'}}</b>
                                 </p>
                             </div>

@@ -1,7 +1,7 @@
 <div style="margin: 1em;">
     <h2>Organisationen bearbeiten</h2>
-    <p>Bitte w&auml;hlen Sie eine Organisation aus der Auflistung aus, um diese zu bearbeiten. Oder
-        w&auml;hlen Sie den Men&uuml;punkt "NEUE ORGANISATION" aus der Auflistung,
+    <p>Bitte wählen Sie eine Organisation aus der Auflistung aus, um diese zu bearbeiten. Oder
+        wählen Sie den Menüpunkt "NEUE ORGANISATION" aus der Auflistung,
         um eine neue Organisation anzulegen.
     </p>
     <mat-form-field appearance="fill" style="margin: 1em;">
@@ -18,7 +18,7 @@
     </mat-form-field>
     <mat-form-field style="margin: 1em;">
         <input matInput [(ngModel)]="chosenOrganisation.abbreviation" name="organisationAbbreviation" type="text"
-            placeholder="Organisationsk&uuml;rzel" required>
+            placeholder="Organisationskürzel" required>
     </mat-form-field>
     <mat-checkbox [(ngModel)]="chosenOrganisation.isCivilEngineering" *ngIf="chosenOrganisation.uuid || chosenOrganisation.isNew"
         style="margin:10px;">
@@ -27,12 +27,12 @@
     <p>
         <button mat-button *ngIf="!chosenOrganisation.isNew" (click)="updateOrganisation()"
             style="background-color: rgb(236,236,234);margin: 1em;">
-            &Auml;NDERN
+            ÄNDERN
         </button>
         <button mat-button *ngIf="chosenOrganisation.isNew" (click)="addOrganisation()"
             style="background-color: rgb(236,236,234);margin: 1em;"
             [disabled]="chosenOrganisation.name.trim() === ''">
-            HINZUF&Uuml;GEN
+            HINZUFÜGEN
         </button>
     </p>
 </div>

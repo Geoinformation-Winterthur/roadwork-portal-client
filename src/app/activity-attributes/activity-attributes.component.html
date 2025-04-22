@@ -44,11 +44,11 @@
                                     (!roadWorkActivityFeature.properties.isPrivate && 
                                     !(userService.getLocalUser().chosenRole == 'administrator'))" mat-button>
                         <mat-icon
-                            aria-label="Icon zeigt durchgekreuzten M&uuml;lleimer">delete_forever</mat-icon>&nbsp;L&Ouml;SCHEN
+                            aria-label="Icon zeigt durchgekreuzten Mülleimer">delete_forever</mat-icon>&nbsp;LÖSCHEN
                     </button>
                 </div>
                 <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
-                    <mat-tab label="&Uuml;bersicht">
+                    <mat-tab label="Übersicht">
                         <div fxLayout="row wrap padding">
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
@@ -60,7 +60,7 @@
                                         <b
                                             *ngIf="roadWorkActivityFeature.properties.uuid">{{roadWorkActivityFeature.properties.uuid}}</b>
                                         <b *ngIf="!roadWorkActivityFeature.properties.uuid">keine (nicht
-                                            er&ouml;ffnet)</b>
+                                            eröffnet)</b>
                                     </p>
                                     <div style="display:flex;flex-direction:column;">
                                         <mat-form-field>
@@ -83,7 +83,7 @@
                                         </mat-form-field>
                                         <div *ngIf="!roadWorkActivityFeature.properties.name"
                                             style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                            Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Er&ouml;ffnen des
+                                            Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen des
                                             Bauvorhabens eine Bezeichnung automatisch aus der geographischen Lage
                                             ermittelt.
                                         </div>
@@ -93,10 +93,10 @@
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
                                         <mat-form-field>
-                                            <mat-label>Ausl&ouml;segrund</mat-label>
+                                            <mat-label>Auslösegrund</mat-label>
                                             <textarea matInput maxlength="255"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.description"
-                                                placeholder="Ausl&auml;segrund..."
+                                                placeholder="Ausläsegrund..."
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                 required>
                                             </textarea>
@@ -118,7 +118,7 @@
                                     <div style="display:flex;flex-direction:column;">
                                         <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
                                         </app-status-chip>
-                                        <h4>N&auml;chstm&ouml;gliche Sitzungstermine</h4>
+                                        <h4>Nächstmögliche Sitzungstermine</h4>
                                         <div
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                             Strategische Koordinationssitzung (SKS):<br>
@@ -147,7 +147,7 @@
                                         </div>
                                         <div *ngIf="roadWorkActivityFeature.properties.dateGlTba"
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                            Gesch&auml;ftsleitung Tiefbau (GL TBA):<br>
+                                            Geschäftsleitung Tiefbau (GL TBA):<br>
                                             <b>{{roadWorkActivityFeature.properties.dateGlTba | date:'dd.MM.yyyy'}}</b>
                                         </div>
                                         <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
@@ -176,7 +176,7 @@
                                         </div>
                                         <mat-checkbox [ngModel]="roadWorkActivityFeature.properties.overarchingMeasure"
                                             style="margin:10px;" disabled>
-                                            &Uuml;bergeordnete Massnahme
+                                            Übergeordnete Massnahme
                                         </mat-checkbox>
                                         <div *ngIf="roadWorkActivityFeature.properties.overarchingMeasure">
                                             <p>Wunschjahr von:
@@ -197,7 +197,7 @@
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
-                                        <p>Ausl&ouml;sendes Werk:
+                                        <p>Auslösendes Werk:
                                             <b *ngIf="getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation != ''">
                                                 {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
                                             </b>
@@ -205,7 +205,7 @@
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
-                                        <p>Ausl&ouml;sende:r:
+                                        <p>Auslösende:r:
                                             <b *ngIf="getPrimaryNeed().properties.orderer.uuid != ''">
                                                 {{getPrimaryNeed().properties.orderer.firstName}}
                                                 {{getPrimaryNeed().properties.orderer.lastName}}
@@ -269,8 +269,8 @@
                                         </form>
                                         <div *ngIf="showProjectTypeInfo"
                                             style="background-color: rgb(236,236,234);padding: 1em;">
-                                            <b>Typ A</b>: mit geplanter Ver&auml;nderung an der Oberfl&auml;che<br>
-                                            <b>Typ B</b>: ohne geplante Ver&auml;nderung an der Oberfl&auml;che (1:1
+                                            <b>Typ A</b>: mit geplanter Veränderung an der Oberfläche<br>
+                                            <b>Typ B</b>: ohne geplante Veränderung an der Oberfläche (1:1
                                             Ersatz)<br>
                                             <b>Typ C</b>: Koordiniertes Einzelvorhaben (Werk) ohne Beteiligung TBA
                                         </div>
@@ -278,7 +278,7 @@
                                             (change)="onChangeIsStudy()" style="margin:10px;" [disabled]="roadWorkActivityFeature.properties.isAggloprog ||
                                                     !roadWorkActivityFeature.properties.isEditingAllowed">
                                             <span *ngIf="roadWorkActivityFeature.properties.isAggloprog"
-                                                matTooltip="Mind. eine Massnahme aus dem Bauvorhaben wird im Aggloprogramm gef&uuml;hrt. Diese m&uuml;ssen der SKS vorgelegt werden.">
+                                                matTooltip="Mind. eine Massnahme aus dem Bauvorhaben wird im Aggloprogramm geführt. Diese müssen der SKS vorgelegt werden.">
                                                 SKS relevant?
                                             </span>
                                             <span *ngIf="!roadWorkActivityFeature.properties.isAggloprog">
@@ -291,7 +291,7 @@
                                                     date:'dd.MM.yyyy'}}</b>
                                             </span>
                                         </p>
-                                        <p>Zuletzt ge&auml;ndert:
+                                        <p>Zuletzt geändert:
                                             <span style="padding: 0.3em;background-color: rgb(240, 240, 240);">
                                                 <b>{{roadWorkActivityFeature.properties.lastModified |
                                                     date:'dd.MM.yyyy'}}</b>
@@ -370,7 +370,7 @@
                                     </ng-container>
 
                                     <ng-container matColumnDef="finishEarlyTo">
-                                        <th mat-header-cell *matHeaderCellDef> Fr&uuml;hester Baubeginn </th>
+                                        <th mat-header-cell *matHeaderCellDef> Frühester Baubeginn </th>
                                         <td mat-cell *matCellDef="let roadworkNeed">
                                             {{roadworkNeed.properties.finishEarlyTo | date: 'dd.MM.yyyy'}} </td>
                                     </ng-container>
@@ -382,7 +382,7 @@
                                     </ng-container>
 
                                     <ng-container matColumnDef="finishLateTo">
-                                        <th mat-header-cell *matHeaderCellDef> Sp&auml;tester Baubeginn </th>
+                                        <th mat-header-cell *matHeaderCellDef> Spätester Baubeginn </th>
                                         <td mat-cell *matCellDef="let roadworkNeed">
                                             {{roadworkNeed.properties.finishLateTo | date: 'dd.MM.yyyy'}} </td>
                                     </ng-container>
@@ -393,7 +393,7 @@
                                 </table>
                             </div>
                             <div *ngIf="roadWorkActivityFeature.properties.overarchingMeasure">
-                                <h2>&Uuml;bergeordnete Massnahme</h2>
+                                <h2>Übergeordnete Massnahme</h2>
                                 <p><b>Umsetzungsjahr von</b>:
                                     {{roadWorkActivityFeature.properties.desiredYearFrom | date:
                                     'dd.MM.yyyy'}}</p>
@@ -571,7 +571,7 @@
                                             </div>
                                             <form>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
+                                                    <mat-label>Geschäftsleitung Tiefbau (GL TBA)</mat-label>
                                                     <input matInput name="dateGlTba"
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
                                                         [matDatepicker]="dateGlTba"
@@ -636,7 +636,7 @@
                                                     </mat-select>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Gesch&auml;ftsleitung Tiefbau (GL TBA)</mat-label>
+                                                    <mat-label>Geschäftsleitung Tiefbau (GL TBA)</mat-label>
                                                     <input matInput name="dateGlTbaReal"
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
                                                         [matDatepicker]="dateGlTbaReal"
@@ -657,18 +657,18 @@
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
-                                        <mat-card-title>Begehrens&auml;usserung §&nbsp;45</mat-card-title>
+                                        <mat-card-title>Begehrensäusserung §&nbsp;45</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isDesire"
                                                     style="margin:10px;">
-                                                    Begehrens&auml;usserung §&nbsp;45
+                                                    Begehrensäusserung §&nbsp;45
                                                 </mat-checkbox>
                                                 <br>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Begehrens&auml;usserung Start</mat-label>
+                                                    <mat-label>Begehrensäusserung Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateDesireStart"
                                                         [matDatepicker]="dateDesireStart"
@@ -678,7 +678,7 @@
                                                         [for]="dateDesireStart"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Begehrens&auml;usserung Ende</mat-label>
+                                                    <mat-label>Begehrensäusserung Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateDesireEnd"
                                                         [matDatepicker]="dateDesireEnd"
@@ -775,13 +775,13 @@
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
-                                        <mat-card-title>Bedarfskl&auml;rung</mat-card-title>
+                                        <mat-card-title>Bedarfsklärung</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Bedarfskl&auml;rung Start</mat-label>
+                                                    <mat-label>Bedarfsklärung Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart"
                                                         [matDatepicker]="dateConsultStart"
@@ -791,7 +791,7 @@
                                                         [for]="dateConsultStart"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Bedarfskl&auml;rung Ende</mat-label>
+                                                    <mat-label>Bedarfsklärung Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd"
                                                         [matDatepicker]="dateConsultEnd"
@@ -801,7 +801,7 @@
                                                         [for]="dateConsultEnd"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Bedarfskl&auml;rung Abschluss</mat-label>
+                                                    <mat-label>Bedarfsklärung Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
                                                         [matDatepicker]="dateConsultClose"
@@ -906,7 +906,7 @@
                             <mat-form-field style="margin-bottom: -0.8em;">
                                 <input matInput type="number" min="0"
                                     [(ngModel)]="roadWorkActivityFeature.properties.costs"
-                                    placeholder="Kostensch&auml;tzung (CHF)"
+                                    placeholder="Kostenschätzung (CHF)"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                             </mat-form-field>
                             <div style="color:grey;margin-bottom: 2em;">({{ roadWorkActivityFeature.properties.costs |
@@ -935,11 +935,11 @@
                                 </mat-card-header>
                                 <mat-card-content style="min-width: 380px;">
                                     <div *ngIf="getPrimaryNeed().properties.uuid != ''">
-                                        <h4>Ausl&ouml;ser:
+                                        <h4>Auslöser:
                                             {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
                                         </h4>
                                         <p>
-                                            Fr&uuml;hester:&nbsp;<span
+                                            Frühester:&nbsp;<span
                                                 [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, getPrimaryNeed().properties.finishEarlyTo)"
                                                 [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, getPrimaryNeed().properties.finishEarlyTo)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
@@ -957,7 +957,7 @@
                                             </span>
                                         </p>
                                         <p>
-                                            Sp&auml;tester:&nbsp;<span
+                                            Spätester:&nbsp;<span
                                                 [class.red-date]="isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
                                                 [class.green-date]="!isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
@@ -972,7 +972,7 @@
                             <mat-card style="padding:20px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                 <mat-card-header>
-                                    <mat-card-title>Terminsch&auml;tzung Realisierung (aus
+                                    <mat-card-title>Terminschätzung Realisierung (aus
                                         Grob-Terminplanung)</mat-card-title>
                                 </mat-card-header>
                                 <mat-card-content>
@@ -1003,7 +1003,7 @@
                                 </mat-card-content>
                             </mat-card>
                         </div>
-                        <h3>Zeitangaben: Bedarfskl&auml;rung</h3>
+                        <h3>Zeitangaben: Bedarfsklärung</h3>
                         <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
                             <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
                                 class="mat-elevation-z2" style="width: 100%">
@@ -1031,7 +1031,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="earliest">
-                                    <th mat-header-cell *matHeaderCellDef> Fr&uuml;hester </th>
+                                    <th mat-header-cell *matHeaderCellDef> Frühester </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <span
                                             [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
@@ -1059,7 +1059,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="latest">
-                                    <th mat-header-cell *matHeaderCellDef> Sp&auml;tester </th>
+                                    <th mat-header-cell *matHeaderCellDef> Spätester </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <span
                                             [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
@@ -1102,7 +1102,7 @@
                                                 {{assignedRoadWorkNeed.properties.orderer.lastName}}</p>
                                             <p><b>Bedarf</b>: <i>{{assignedRoadWorkNeed.properties.name}}</i></p>
                                             <p>
-                                                Fr&uuml;hester:&nbsp;<span
+                                                Frühester:&nbsp;<span
                                                     [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
                                                     [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
                                                     [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
@@ -1122,7 +1122,7 @@
                                                 </span>
                                             </p>
                                             <p>
-                                                Sp&auml;tester:&nbsp;<span
+                                                Spätester:&nbsp;<span
                                                     [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
                                                     [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
                                                     [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
@@ -1244,7 +1244,7 @@
                                     </mat-form-field>
                                     <a *ngIf="roadWorkActivityFeature.properties.url"
                                         href="{{roadWorkActivityFeature.properties.url}}" target="_blank">Link
-                                        &ouml;ffnen</a>
+                                        öffnen</a>
                                     <div>
                                         <h3>PDF-Dokumente:</h3>
                                         <div *ngFor="let documentAtts of roadWorkActivityFeature.properties.documentAtts"
@@ -1258,7 +1258,7 @@
                                             <button (click)="deletePdf(documentAtts.uuid!)" mat-button
                                                 style="background-color: rgb(236,236,234);margin: 1em;"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                L&ouml;schen
+                                                Löschen
                                             </button>
                                         </div>
                                         <div>
@@ -1313,10 +1313,10 @@
                             userService.getLocalUser().chosenRole == 'orderer') && 
                             roadWorkActivityFeature.properties.status !== 'requirement'" label="Vernehmlassung">
                 <mat-tab-group [(selectedIndex)]="selectedSubTabIndex" style="margin-left: 1em;margin-right: 1em;">
-                    <mat-tab label="&Uuml;bersicht">
+                    <mat-tab label="Übersicht">
                         <div>
                             <div style="margin-top: 1em;">
-                                N&auml;chste F&auml;lligkeit:
+                                Nächste Fälligkeit:
                                 <mat-chip [style]="getColorDueDate()">
                                     <span *ngIf="!dueDate">nicht bestimmt</span>
                                     <span *ngIf="dueDate">{{dueDate | date:
@@ -1328,7 +1328,7 @@
                                 [disabled]="roadWorkActivityFeature.properties.status != 'review' 
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Bedarfskl&auml;rung durchf&uuml;hren</button>
+                                mat-button>Bedarfsklärung durchführen</button>
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult'"
                                 (click)="openMail('inconsult')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1347,7 +1347,7 @@
                                 [disabled]="roadWorkActivityFeature.properties.status != 'verified'
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Stellungnahme durchf&uuml;hren</button>
+                                mat-button>Stellungnahme durchführen</button>
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
                                 (click)="openMail('reporting')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1363,7 +1363,7 @@
                             </span><br>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Bedarfskl&auml;rung">
+                    <mat-tab label="Bedarfsklärung">
                         <div style="margin: 2em;">
                             <span
                                 *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult')"
@@ -1382,7 +1382,7 @@
                                     roadWorkActivityFeature.properties.status == 'verified'"
                                 (click)="update(false, 'inconsult')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                mat-button>WIEDERER&Ouml;FFNEN</button>
+                                mat-button>WIEDERERÖFFNEN</button>
                         </div>
                         <app-consultation-items [roadWorkActivity]="roadWorkActivityFeature">
                         </app-consultation-items>
@@ -1406,7 +1406,7 @@
                                 roadWorkActivityFeature.properties.status == 'coordinated'"
                                 (click)="update(false, 'reporting')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                mat-button>WIEDERER&Ouml;FFNEN</button>
+                                mat-button>WIEDERERÖFFNEN</button>
                         </div>
                         <app-reporting-items [roadWorkActivity]="roadWorkActivityFeature">
                         </app-reporting-items>

@@ -1,13 +1,13 @@
-<h1 mat-dialog-title><mat-icon aria-label="Mülleimer-Icon">delete</mat-icon>&nbsp;Bauvorhaben l&ouml;schen</h1>
+<h1 mat-dialog-title><mat-icon aria-label="Mülleimer-Icon">delete</mat-icon>&nbsp;Bauvorhaben löschen</h1>
 <div mat-dialog-content>
-    <p>Sie sind gerade dabei, ein Bauvorhaben zu l&ouml;schen. Sind Sie sicher?</p>
-    <p>Wenn Sie sich sicher sind, geben Sie bitte hier eine Begr&uuml;ndung f&uuml;r die L&ouml;schung an:</p>
+    <p>Sie sind gerade dabei, ein Bauvorhaben zu löschen. Sind Sie sicher?</p>
+    <p>Wenn Sie sich sicher sind, geben Sie bitte hier eine Begründung für die Löschung an:</p>
     <mat-form-field style="width: 100%;">
-        <textarea matInput [(ngModel)]="deleteReason" name="reason_for_delete" placeholder="Begr&uuml;ndung"
+        <textarea matInput [(ngModel)]="deleteReason" name="reason_for_delete" placeholder="Begründung"
             maxlength="255"></textarea>
     </mat-form-field>
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="closeDialog()">Abbrechen</button>
-    <button mat-button (click)="deleteRoadworkActivity()" cdkFocusInitial>Ja, L&ouml;schen</button>
+    <button mat-button (click)="deleteRoadworkActivity()" cdkFocusInitial>Ja, Löschen</button>
 </div>
