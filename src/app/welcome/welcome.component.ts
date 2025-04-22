@@ -4,7 +4,6 @@
  */
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
@@ -39,7 +38,7 @@ export class WelcomeComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
-  appVersion: string = "2025.8";
+  appVersion: string = "2025.9";
 
   involvedOrgs: Map<string, OrganisationalUnit>;
 
