@@ -195,39 +195,21 @@
                                     style="background-color: lightgrey;margin-bottom: 1em;">
                                     Entfernen
                                 </button><br>
-                                <mat-form-field appearance="fill">
-                                    <mat-label>Finanzierungs-Kategorie *</mat-label>
-                                    <mat-select [(ngModel)]="costObj.workTitle" name="work_title"
-                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        <mat-option value="new_construction">Neu</mat-option>
-                                        <mat-option value="replacement">Unterhalt</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <div *ngIf="costObj.workTitle"
-                                    style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
-                                    <span *ngIf="costObj.workTitle == 'new_construction'">mind. 1 Teil ungebundene
-                                        Ausgabe</span>
-                                    <span *ngIf="costObj.workTitle == 'replacement'">alles gebundene Ausgaben</span>
-                                </div>
-                                <div *ngIf="costObj.workTitle">
+                                <div>
                                     <mat-form-field appearance="fill">
                                         <mat-label>Kostentstelle (Name) *</mat-label>
                                         <mat-select [(ngModel)]="costObj.projectType" name="project_type"
                                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                            <mat-option value="street_municipal">Strasse kommunal</mat-option>
-                                            <mat-option value="street_supramunicipal">Strasse
-                                                überkommunal</mat-option>
-                                            <mat-option value="channel">Kanal</mat-option>
-                                            <mat-option value="waters">Gewässer</mat-option>
-                                            <mat-option value="lsa">LSA</mat-option>
-                                            <mat-option value="mobility">Mobilität</mat-option>
+                                            <mat-option value="streets">Strassen (501000/501011/501012)</mat-option>
+                                            <mat-option value="waters">Wasserbau (502000/502011/502012)</mat-option>
+                                            <mat-option value="channel">Kanalisation (503031/503032)</mat-option>
+                                            <mat-option value="others">Übrige</mat-option>
+                                            <mat-option value="third_parties">Im Auftrag Dritter</mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <div *ngIf="costObj.projectType == 'street_supramunicipal' ||
-                                            costObj.projectType == 'lsa' ||
-                                            costObj.projectType == 'mobility'"
+                                    <div *ngIf="costObj.projectType == 'streets'"
                                         style="margin-bottom: 2em;background-color: rgb(236,236,234);padding: 1em;">
-                                        Kanton (AfM) muss einbezogen werden
+                                        Bei überkommunalen Strassen muss Kanton (AfM) einbezogen werden
                                     </div>
                                     <div>
                                         <mat-form-field>
