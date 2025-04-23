@@ -90,4 +90,6 @@ export class RoadWorkActivityProperties {
     dateStartSuspended?: Date;
     dateStartCoordinated?: Date;
     isSksRelevant?: boolean = true;
+    costLastModified?: Date
+    costLastModifiedBy?: User
 }
