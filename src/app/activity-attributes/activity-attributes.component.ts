@@ -10,6 +10,7 @@ import { User } from 'src/model/user';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { FormControl } from '@angular/forms';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { Costs } from 'src/model/costs';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
@@ -57,6 +58,7 @@ export class ActivityAttributesComponent implements OnInit {
   availableUsers: User[] = [];
   availableOrganisations: OrganisationalUnit[] = [];
   usersOfChosenOrganisation: User[] = [];
+  costsOfAssignedNeeds: Costs[] = [];
 
   availableCostTypes: EnumType[] = [];
 
@@ -92,6 +94,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   consultationInputsFromReporting: ConsultationInput[] = [];
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
+
+  roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
 
   PdfDocumentHelper = PdfDocumentHelper;
 
@@ -286,8 +290,12 @@ export class ActivityAttributesComponent implements OnInit {
                           this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
                           this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
 
-                          let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = []
+                          let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = [];
+                          let costsOfAssignedNeedsTemp: Costs[] = [];
                           for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
+                            if (assignedRoadWorkNeed.properties.costs)
+                              for (let costs of assignedRoadWorkNeed.properties.costs)
+                                costsOfAssignedNeedsTemp.push(costs);
                             if (assignedRoadWorkNeed.properties.documentAtts &&
                               assignedRoadWorkNeed.properties.documentAtts.length != 0
                             ) {
@@ -295,7 +303,7 @@ export class ActivityAttributesComponent implements OnInit {
                             }
                           }
                           this.needsOfActivityService.assignedRoadWorkNeedsWithDocuments = assignedRoadWorkNeedsWithDocuments;
-
+                          this.costsOfAssignedNeeds = costsOfAssignedNeedsTemp;
                         },
                         error: (error) => {
                         }
@@ -559,8 +567,8 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature) {
       let involvedUsersCopy = this.roadWorkActivityFeature.properties.involvedUsers.map((x) => x);
       let filteredUser: User[] =
-          involvedUsersCopy.filter((involvedUser) => involvedUser.uuid == user.uuid);
-      if(filteredUser.length == 0)
+        involvedUsersCopy.filter((involvedUser) => involvedUser.uuid == user.uuid);
+      if (filteredUser.length == 0)
         involvedUsersCopy.push(user);
       else
         involvedUsersCopy.splice(
@@ -574,8 +582,8 @@ export class ActivityAttributesComponent implements OnInit {
   isInvolvedUser(user: User): boolean {
     if (this.roadWorkActivityFeature) {
       let filteredUser: User[] =
-            this.roadWorkActivityFeature.properties.involvedUsers
-                  .filter((involvedUser) => involvedUser.uuid == user.uuid);
+        this.roadWorkActivityFeature.properties.involvedUsers
+          .filter((involvedUser) => involvedUser.uuid == user.uuid);
       return filteredUser.length != 0;
     }
     return false;
@@ -707,25 +715,9 @@ export class ActivityAttributesComponent implements OnInit {
     return new RoadWorkNeedFeature();
   }
 
-  private _deleteRoadworkActivity(roadWorkActivityUuid: string) {
-    this.roadWorkActivityService.deleteRoadWorkActivity(roadWorkActivityUuid).subscribe({
-      next: (errorMessage) => {
-        if (errorMessage != null && errorMessage.errorMessage != null &&
-          errorMessage.errorMessage.trim().length !== 0) {
-          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
-          this.snckBar.open(errorMessage.errorMessage, "", {
-            duration: 4000
-          });
-        } else {
-          this.router.navigate(["/activities/"]);
-          this.snckBar.open("Bauvorhaben wurde gelöscht", "", {
-            duration: 4000,
-          });
-        }
-      },
-      error: (error) => {
-      }
-    });
+  get totalCosts(): number {
+    return this.costsOfAssignedNeeds
+      .reduce((sum, c) => sum + (c?.costs ?? 0), 0);
   }
 
   onChangeIsStudy() {
@@ -751,11 +743,32 @@ export class ActivityAttributesComponent implements OnInit {
     let result: string[] = [];
     if (this.roadWorkActivityFeature) {
       for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
-        if(!result.includes(involvedUser.organisationalUnit.abbreviation))
+        if (!result.includes(involvedUser.organisationalUnit.abbreviation))
           result.push(involvedUser.organisationalUnit.abbreviation);
       }
     }
     return result;
+  }
+
+  private _deleteRoadworkActivity(roadWorkActivityUuid: string) {
+    this.roadWorkActivityService.deleteRoadWorkActivity(roadWorkActivityUuid).subscribe({
+      next: (errorMessage) => {
+        if (errorMessage != null && errorMessage.errorMessage != null &&
+          errorMessage.errorMessage.trim().length !== 0) {
+          ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
+          this.snckBar.open(errorMessage.errorMessage, "", {
+            duration: 4000
+          });
+        } else {
+          this.router.navigate(["/activities/"]);
+          this.snckBar.open("Bauvorhaben wurde gelöscht", "", {
+            duration: 4000,
+          });
+        }
+      },
+      error: (error) => {
+      }
+    });
   }
 
   private _updateAllInvolvedUsers() {
@@ -804,6 +817,23 @@ export class ActivityAttributesComponent implements OnInit {
         this.dueDate.setDate(this.dueDate.getDate() + 7);
       }
     }
+  }
+
+  getAssignedNeedForCost(cost: Costs): RoadWorkNeedFeature {
+    for (let assignedRoadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds)
+      if (assignedRoadWorkNeed.properties.costs)
+        for (let tempCost of assignedRoadWorkNeed.properties.costs)
+          if (tempCost.uuid == cost.uuid)
+            return assignedRoadWorkNeed;
+    return new RoadWorkNeedFeature();
+  }
+
+  sumUpCosts(costs: Costs[]): number {
+    let result: number = 0;
+    for (let cost of costs)
+      if (cost && cost.costs)
+        result += cost.costs;
+    return result;
   }
 
   public openMail(newStatus: string) {
