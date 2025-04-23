@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
+import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
 import { StatusHelper } from 'src/helper/status-helper';
 import { ConsultationInput } from 'src/model/consultation-input';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
@@ -31,6 +32,7 @@ export class ReportingItemsComponent implements OnInit {
   needsOfActivityService: NeedsOfActivityService;
 
   statusHelper: StatusHelper;
+  PdfDocumentHelper = PdfDocumentHelper;
 
   private consultationService: ConsultationService;
   private snckBar: MatSnackBar;

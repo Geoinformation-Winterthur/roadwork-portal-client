@@ -31,7 +31,7 @@ import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-
 import { ConsultationInput } from 'src/model/consultation-input';
 import { ConsultationService } from 'src/services/consultation.service';
 import { TimeFactorHelper } from 'src/helper/time-factor-helper';
-import { jsPDF } from 'jspdf';
+import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -92,6 +92,8 @@ export class ActivityAttributesComponent implements OnInit {
 
   consultationInputsFromReporting: ConsultationInput[] = [];
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
+
+  PdfDocumentHelper = PdfDocumentHelper;
 
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
@@ -883,37 +885,6 @@ export class ActivityAttributesComponent implements OnInit {
 
     }
 
-  }
-
-  generatePDF(): void {
-    if(this.roadWorkActivityFeature){
-      const doc = new jsPDF();
-  
-      doc.setFontSize(16);
-      doc.text('Projekt-Dokument', 20, 20);
-  
-  
-      doc.setFontSize(11);
-      doc.text('UUID: ' + this.roadWorkActivityFeature.properties.uuid, 20, 40);
-      doc.text('Projektnummer: ' + this.roadWorkActivityFeature.properties.projectNo, 20, 45);
-      doc.text('Titel: ' + this.roadWorkActivityFeature.properties.name, 20, 50);
-      doc.text('Abschnitt: ' + this.roadWorkActivityFeature.properties.section, 20, 55);
-      doc.text('Auslösegrund: ' + this.roadWorkActivityFeature.properties.description, 20, 60);
-      doc.text('Bemerkung: ' + this.roadWorkActivityFeature.properties.comment, 20, 65);
-      const dateCreated: Date = new Date(this.roadWorkActivityFeature.properties.created);
-      const dateCreatedFormatted = `${String(dateCreated.getDate()).padStart(2, '0')}.${String(dateCreated.getMonth() + 1).padStart(2, '0')}.${dateCreated.getFullYear()}`;
-      doc.text('Erstellt am: ' + dateCreatedFormatted, 20, 80);
-
-      const text = `Dies ist ein sehr langer Text, der automatisch in mehrere Zeilen umgebrochen wird, wenn er zu lang ist, um in eine einzige Zeile zu passen. So können bequem längere Absätze oder Beschreibungen in ein PDF eingefügt werden.`;
-    
-      const lines = doc.splitTextToSize(text, 170);  // Zeilenbreite 170 ist ungefähr A4-Seite mit 20 mm Rand
-      doc.text(lines, 20, 100);
-
-      doc.addPage();
-      doc.text(lines, 20, 20);
-  
-      doc.save('projekt-dokument.pdf');  
-    }
   }
 
 }
