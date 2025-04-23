@@ -213,38 +213,23 @@
             && roadWorkActivity.properties.status == 'reporting'" style="margin-top: 3em;">
     <h2>Eingabe zur Stellungnahme</h2>
     <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
-        <p>Während der Bedarfsklärung wurde das Gesamtvorhaben mit einem Standarttermin berechnet.
-            Daraus ergibt sich zum heutigen Zeitpunkt folgender Realisierungszeitraum (Schätzung):</p>
-        <p>Baubeginn:
-            <span *ngIf="this.roadWorkActivity.properties.startOfConstruction"
-                style="background-color: lightgray;padding: 0.2em;">
-                {{this.roadWorkActivity.properties.startOfConstruction}}
-            </span>
-            <span *ngIf="!this.roadWorkActivity.properties.startOfConstruction"
-                style="background-color: lightgray;padding: 0.2em;">
-                Datum nicht gesetzt
-            </span>
-        </p>
-        <p>Bauende:
-            <span *ngIf="this.roadWorkActivity.properties.endOfConstruction"
-                style="background-color: lightgray;padding: 0.2em;">
-                {{this.roadWorkActivity.properties.endOfConstruction}}
-            </span>
-            <span *ngIf="!this.roadWorkActivity.properties.endOfConstruction"
-                style="background-color: lightgray;padding: 0.2em;">
-                Datum nicht gesetzt
-            </span>
+        <p>Während der Bedarfsklärung wurde das Gesamtvorhaben geprüft und sowohl zeitlich wie
+            auch räumlich koordiniert.</p>
+        <p>Nachfolgend der Link auf das geplante Vorgehen:</p>
+        <p><button mat-button (click)="PdfDocumentHelper.generatePDF(roadWorkActivity)" style="margin: 1em;background-color: rgb(236,236,234);">
+            Projekt-PDF generieren
+        </button></p>
         <p>
             <mat-radio-group [(ngModel)]="consultationInput.ordererFeedback" aria-label="Wählen Sie eine Option">
                 <mat-radio-button style="margin:10px;" value="no_requirement_anymore">
-                    Kein Bedarf mehr
+                    Kein Bedarf/Kein Bedarf mehr
                 </mat-radio-button>
-                <p>Weiterhin Bedarf vorhanden:</p>
+                <p>Bedarf vorhanden/Bedarf weiterhin vorhanden:</p>
                 <mat-radio-button style="margin:10px;" value="activity_okay">
-                    Ja, das Bauvorhaben inkl. des geschätzten Realisierungszeitraums passt
+                    Ja, ich bin mit dem Vorgehen einverstanden
                 </mat-radio-button><br>
                 <mat-radio-button style="margin:10px;" value="activity_not_okay">
-                    Nein, ich bin nicht einverstanden. Bitte um Kontaktaufnahme
+                    Nein, ich bin nicht ganz einverstanden und bitte um Kontaktaufnahme
                 </mat-radio-button>
             </mat-radio-group>
         </p>
