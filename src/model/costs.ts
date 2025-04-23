@@ -5,7 +5,6 @@
 export class Costs {
     public uuid?: string;
     public costs?: number;
-    public workTitle?: string;
     public projectType?: string;
     public costsComment?: string;
     public errorMessage?: string = "";
