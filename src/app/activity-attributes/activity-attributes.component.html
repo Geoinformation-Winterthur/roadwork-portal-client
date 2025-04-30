@@ -1058,7 +1058,8 @@
                                                 [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                 [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                 class="date-chip">
-                                                {{ roadWorkActivityFeature.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
+                                                {{ roadWorkActivityFeature.properties.finishEarlyTo | date:'dd.MM.yyyy'
+                                                }}
                                             </span>
                                         </p>
                                         <p>
@@ -1066,7 +1067,8 @@
                                                 [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo)"
                                                 [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo)"
                                                 class="date-chip">
-                                                {{ roadWorkActivityFeature.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
+                                                {{ roadWorkActivityFeature.properties.finishOptimumTo |
+                                                date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
@@ -1215,33 +1217,27 @@
                                             <p><b>Bedarf</b>: <i>{{assignedRoadWorkNeed.properties.name}}</i></p>
                                             <p>
                                                 Frühester:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                                    [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                                    [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{assignedRoadWorkNeed.properties.finishEarlyTo
-                                                    | date:'dd.MM.yyyy'}}
+                                                    [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                                    [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                                    class="date-chip">
+                                                    {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
                                                 </span>
                                             </p>
                                             <p>
                                                 Wunsch:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                                    [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
-                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{assignedRoadWorkNeed.properties.finishOptimumTo
-                                                    | date:'dd.MM.yyyy'}}
+                                                    [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    class="date-chip">
+                                                    {{ assignedRoadWorkNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
                                                 </span>
                                             </p>
                                             <p>
                                                 Spätester:&nbsp;<span
                                                     [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                                    [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                    [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{assignedRoadWorkNeed.properties.finishLateTo
-                                                    |
-                                                    date:'dd.MM.yyyy'}}
+                                                    {{assignedRoadWorkNeed.properties.finishLateTo | date:'dd.MM.yyyy'}}
                                                 </span>
                                             </p>
                                         </div>
