@@ -199,20 +199,20 @@
                                     <div style="display:flex;flex-direction:column;">
                                         <p>Auslösendes Werk:
                                             <b
-                                                *ngIf="getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation != ''">
-                                                {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
+                                                *ngIf="primaryNeed.properties.orderer.organisationalUnit.abbreviation != ''">
+                                                {{primaryNeed.properties.orderer.organisationalUnit.abbreviation}}
                                             </b>
                                             <b
-                                                *ngIf="getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation == ''">
+                                                *ngIf="primaryNeed.properties.orderer.organisationalUnit.abbreviation == ''">
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
                                         <p>Auslösende:r:
-                                            <b *ngIf="getPrimaryNeed().properties.orderer.uuid != ''">
-                                                {{getPrimaryNeed().properties.orderer.firstName}}
-                                                {{getPrimaryNeed().properties.orderer.lastName}}
+                                            <b *ngIf="primaryNeed.properties.orderer.uuid != ''">
+                                                {{primaryNeed.properties.orderer.firstName}}
+                                                {{primaryNeed.properties.orderer.lastName}}
                                             </b>
-                                            <b *ngIf="getPrimaryNeed().properties.orderer.uuid == ''">
+                                            <b *ngIf="primaryNeed.properties.orderer.uuid == ''">
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
@@ -1049,34 +1049,32 @@
                                     <mat-card-title>Zeitangaben: Bedarfserfassung</mat-card-title>
                                 </mat-card-header>
                                 <mat-card-content style="min-width: 380px;">
-                                    <div *ngIf="getPrimaryNeed().properties.uuid != ''">
-                                        <h4>Auslöser:
-                                            {{getPrimaryNeed().properties.orderer.organisationalUnit.abbreviation}}
+                                    <div *ngIf="primaryNeed.properties.uuid != ''">
+                                        <h4>Auslösend:
+                                            {{primaryNeed.properties.orderer.organisationalUnit.abbreviation}}
                                         </h4>
                                         <p>
                                             Frühester:&nbsp;<span
-                                                [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
-                                                [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
-                                                class="date-chip">
-                                                {{ roadWorkActivityFeature.properties.finishEarlyTo | date:'dd.MM.yyyy'
-                                                }}
+                                                [class.green-date]="isDateWithinConstruction(primaryNeed.properties.finishEarlyTo)"
+                                                [class.red-date]="!isDateWithinConstruction(primaryNeed.properties.finishEarlyTo)"
+                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{ primaryNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
                                             Wunsch:&nbsp;<span
-                                                [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo)"
-                                                [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo)"
-                                                class="date-chip">
-                                                {{ roadWorkActivityFeature.properties.finishOptimumTo |
-                                                date:'dd.MM.yyyy' }}
+                                                [class.green-date]="isDateWithinConstruction(primaryNeed.properties.finishOptimumTo)"
+                                                [class.red-date]="!isDateWithinConstruction(primaryNeed.properties.finishOptimumTo)"
+                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{ primaryNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
                                             Spätester:&nbsp;<span
-                                                [class.red-date]="isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                                [class.green-date]="!isFirstDateBefore(getPrimaryNeed().properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                [class.red-date]="isFirstDateBefore(primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                [class.green-date]="!isFirstDateBefore(primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{getPrimaryNeed().properties.finishLateTo | date:'dd.MM.yyyy'}}
+                                                {{primaryNeed.properties.finishLateTo | date:'dd.MM.yyyy'}}
                                             </span>
                                         </p>
                                     </div>
@@ -1093,9 +1091,9 @@
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Baubeginn</mat-label>
                                             <input matInput
-                                                [(ngModel)]="roadWorkActivityFeature.properties.finishEarlyTo"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [matDatepicker]="startOfConstruction"
-                                                [max]="roadWorkActivityFeature.properties.finishLateTo"
+                                                [max]="roadWorkActivityFeature.properties.isEditingAllowed"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                             <mat-datepicker #startOfConstruction></mat-datepicker>
                                             <mat-datepicker-toggle matSuffix
@@ -1104,9 +1102,9 @@
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Bauende</mat-label>
                                             <input matInput
-                                                [(ngModel)]="roadWorkActivityFeature.properties.finishLateTo"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
                                                 [matDatepicker]="endOfConstruction"
-                                                [min]="roadWorkActivityFeature.properties.finishEarlyTo"
+                                                [min]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                             <mat-datepicker #endOfConstruction></mat-datepicker>
                                             <mat-datepicker-toggle matSuffix
@@ -1148,12 +1146,11 @@
                                     <th mat-header-cell *matHeaderCellDef> Frühester </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                            [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishEarlyTo, assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                            [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
                                             style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                            {{assignedRoadWorkNeed.properties.finishEarlyTo
-                                            | date:'dd.MM.yyyy'}}
+                                            {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
                                         </span>
                                     </td>
                                 </ng-container>
@@ -1162,12 +1159,11 @@
                                     <th mat-header-cell *matHeaderCellDef> Wunsch </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                            [class.green-date]="!(isFirstDateBefore(assignedRoadWorkNeed.properties.finishOptimumTo, roadWorkActivityFeature.properties.finishEarlyTo) || isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, assignedRoadWorkNeed.properties.finishOptimumTo))"
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                            [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                            [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
                                             style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                            {{assignedRoadWorkNeed.properties.finishOptimumTo
-                                            | date:'dd.MM.yyyy'}}
+                                            {{ assignedRoadWorkNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
                                         </span>
                                     </td>
                                 </ng-container>
@@ -1176,13 +1172,11 @@
                                     <th mat-header-cell *matHeaderCellDef> Spätester </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
-                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
-                                            [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.finishLateTo)"
+                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                            [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                             style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                            {{assignedRoadWorkNeed.properties.finishLateTo
-                                            |
-                                            date:'dd.MM.yyyy'}}
+                                            {{ assignedRoadWorkNeed.properties.finishLateTo | date:'dd.MM.yyyy' }}
                                         </span>
                                     </td>
                                 </ng-container>
@@ -1191,8 +1185,7 @@
                                     <th mat-header-cell *matHeaderCellDef> Zeit-Faktor </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <span
-                                            style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
-                                            needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
+                                            style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed)}}</span>
                                     </td>
                                 </ng-container>
 
@@ -1217,23 +1210,25 @@
                                             <p><b>Bedarf</b>: <i>{{assignedRoadWorkNeed.properties.name}}</i></p>
                                             <p>
                                                 Frühester:&nbsp;<span
-                                                    [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                                    [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                                    class="date-chip">
+                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                                    [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
+                                                    [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
+                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
                                                     {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
                                                 </span>
                                             </p>
                                             <p>
                                                 Wunsch:&nbsp;<span
-                                                    [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
                                                     [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                                    class="date-chip">
+                                                    [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    style="padding: 0.3em;background-color:rgb(240, 240, 240);">
                                                     {{ assignedRoadWorkNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
                                                 </span>
                                             </p>
                                             <p>
                                                 Spätester:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed, needsOfActivityService.assignedRoadWorkNeeds[0]) != 4"
+                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
                                                     [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                     [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
@@ -1243,8 +1238,7 @@
                                         </div>
                                         <div>
                                             <b>Zeit-Faktor</b>:&nbsp;<span
-                                                style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed,
-                                                needsOfActivityService.assignedRoadWorkNeeds[0])}}</span>
+                                                style="padding: 0.3em;padding-left: 1em;padding-right: 1em;background-color:rgb(240, 240, 240);">{{calcTimeFactor(assignedRoadWorkNeed)}}</span>
                                         </div>
                                     </mat-card-content>
                                 </mat-card>

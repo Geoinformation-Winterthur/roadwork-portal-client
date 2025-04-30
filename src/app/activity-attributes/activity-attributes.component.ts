@@ -701,25 +701,25 @@ export class ActivityAttributesComponent implements OnInit {
     return false;
   }
 
-  calcTimeFactor(compareNeed: RoadWorkNeedFeature, primaryNeed: RoadWorkNeedFeature): number {
-    return TimeFactorHelper.calcTimeFactor(compareNeed, primaryNeed);
+  calcTimeFactor(compareNeed: RoadWorkNeedFeature): number {
+    return TimeFactorHelper.calcTimeFactor(compareNeed, this.primaryNeed);
   }
 
   isDateWithinConstruction(dateToCheck?: Date): boolean {
     if (!dateToCheck ||
-        !this.roadWorkActivityFeature?.properties.startOfConstruction ||
-        !this.roadWorkActivityFeature?.properties.endOfConstruction) {
+      !this.roadWorkActivityFeature?.properties.startOfConstruction ||
+      !this.roadWorkActivityFeature?.properties.endOfConstruction) {
       return true;                 // neutral "kein Urteil möglich"
     }
-  
+
     const start = new Date(this.roadWorkActivityFeature.properties.startOfConstruction);
-    const end   = new Date(this.roadWorkActivityFeature.properties.endOfConstruction);
-    const d     = new Date(dateToCheck);
-  
+    const end = new Date(this.roadWorkActivityFeature.properties.endOfConstruction);
+    const d = new Date(dateToCheck);
+
     return d >= start && d <= end; // true = innerhalb ⇒ grün
   }
 
-  getPrimaryNeed(): RoadWorkNeedFeature {
+  get primaryNeed(): RoadWorkNeedFeature {
     if (this.needsOfActivityService.assignedRoadWorkNeeds.length > 0) {
       for (let roadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
         if (roadWorkNeed.properties.isPrimary)
