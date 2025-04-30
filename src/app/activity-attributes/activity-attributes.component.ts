@@ -705,6 +705,20 @@ export class ActivityAttributesComponent implements OnInit {
     return TimeFactorHelper.calcTimeFactor(compareNeed, primaryNeed);
   }
 
+  isDateWithinConstruction(dateToCheck?: Date): boolean {
+    if (!dateToCheck ||
+        !this.roadWorkActivityFeature?.properties.startOfConstruction ||
+        !this.roadWorkActivityFeature?.properties.endOfConstruction) {
+      return true;                 // neutral "kein Urteil möglich"
+    }
+  
+    const start = new Date(this.roadWorkActivityFeature.properties.startOfConstruction);
+    const end   = new Date(this.roadWorkActivityFeature.properties.endOfConstruction);
+    const d     = new Date(dateToCheck);
+  
+    return d >= start && d <= end; // true = innerhalb ⇒ grün
+  }
+
   getPrimaryNeed(): RoadWorkNeedFeature {
     if (this.needsOfActivityService.assignedRoadWorkNeeds.length > 0) {
       for (let roadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
