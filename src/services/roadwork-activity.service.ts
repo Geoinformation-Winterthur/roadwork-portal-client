@@ -47,12 +47,6 @@ export class RoadWorkActivityService {
     return result;
   }
 
-  getCostTypes(): Observable<EnumType[]> {
-    let result: Observable<EnumType[]> =
-      this.http.get(environment.apiUrl + "/roadworkactivity/costtypes/") as Observable<EnumType[]>;
-    return result;
-  }
-
   getProjectTypes(): Observable<EnumType[]> {
     let result: Observable<EnumType[]> =
       this.http.get(environment.apiUrl + "/roadworkactivity/projecttypes/") as Observable<EnumType[]>;

@@ -60,12 +60,9 @@ export class ActivityAttributesComponent implements OnInit {
   usersOfChosenOrganisation: User[] = [];
   costsOfAssignedNeeds: Costs[] = [];
 
-  availableCostTypes: EnumType[] = [];
-
   userService: UserService;
 
   projectManagerControl: FormControl = new FormControl();
-  costTypesControl: FormControl = new FormControl();
   projectTypeEnumControl: FormControl = new FormControl();
   availableProjectTypes: EnumType[] = [];
   dateSksControl: FormControl = new FormControl();
@@ -202,14 +199,6 @@ export class ActivityAttributesComponent implements OnInit {
         error: (error) => {
         }
       });
-
-    this.roadWorkActivityService.getCostTypes().subscribe({
-      next: (costTypes) => {
-        this.availableCostTypes = costTypes;
-      },
-      error: (error) => {
-      }
-    });
 
     this.roadWorkActivityService.getProjectTypes().subscribe({
       next: (projectTypes) => {
