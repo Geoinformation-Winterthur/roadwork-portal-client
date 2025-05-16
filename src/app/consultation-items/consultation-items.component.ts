@@ -36,6 +36,8 @@ export class ConsultationItemsComponent implements OnInit, OnChanges {
   stillRelevant: boolean = false;
 
   ordererFeedbackText: string = "";
+  
+  isEditingForRoleNotAllowed: boolean = false;
 
   needsOfActivityService: NeedsOfActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
@@ -53,6 +55,7 @@ export class ConsultationItemsComponent implements OnInit, OnChanges {
     this.snckBar = snckBar;
     this.router = router;
     this.statusHelper = new StatusHelper();
+    this.isEditingForRoleNotAllowed = this.userService.getLocalUser().chosenRole != 'administrator' && this.userService.getLocalUser().chosenRole != 'territorymanager';
   }
 
   ngOnInit() {
