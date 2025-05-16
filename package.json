@@ -7,7 +7,11 @@
     "build": "ng build",
     "test": "ng test",
     "watch": "ng build --watch --configuration development",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "docker:build":      "docker compose build",
+    "docker:up":         "docker compose up -d",
+    "docker:dev":        "docker compose up --build",
+    "docker:stop":       "docker compose down"
   },
   "private": true,
   "dependencies": {

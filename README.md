@@ -21,6 +21,12 @@ Example command to build for production environment (DO NOT USE THIS WITH GIT BA
 Example command to build for test environment (DO NOT USE THIS WITH GIT BASH):
 `ng build --configuration test --aot --outputHashing=all`
 
+### Develop in container
+
+1.  `npm run docker:dev`  
+2.  Browser: `http://localhost:4200`  
+3.  Stop: `npm run docker:stop`
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
