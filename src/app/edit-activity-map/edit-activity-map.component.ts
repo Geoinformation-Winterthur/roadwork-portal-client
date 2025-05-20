@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Geoinformation Winterthur. All rights reserved.
  */
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import Map from 'ol/Map';
 import Feature from 'ol/Feature';
 import { Geometry, Point, Polygon } from 'ol/geom';
@@ -35,6 +35,7 @@ import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { Address } from 'src/model/address';
 import { AddressService } from 'src/services/address.service';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -43,6 +44,9 @@ import { AddressService } from 'src/services/address.service';
 })
 export class EditActivityMapComponent implements OnInit {
 
+  @ViewChild('edit_activity_map', { static: true }) edit_activity_map!: ElementRef;
+  imageDataUrl: string | null = null;
+  
   @Input()
   roadWorkActivityFeat?: RoadWorkActivityFeature;
 
@@ -100,7 +104,12 @@ export class EditActivityMapComponent implements OnInit {
     proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs");
     register(proj4);
     this.initializeMap();
-    this.resizeMap();
+    this.resizeMap();     
+
+    this.map.on('moveend', () => {
+      this.captureMap();
+    });
+ 
   }
 
   ngOnDestroy() {
@@ -224,6 +233,7 @@ export class EditActivityMapComponent implements OnInit {
             url: 'http://wms.zh.ch/upwms',
             params: { 'LAYERS': 'upwms', 'TILED': true },
             serverType: 'mapserver',
+             crossOrigin: 'anonymous'
           })
         }),
         new Tile({
@@ -231,6 +241,7 @@ export class EditActivityMapComponent implements OnInit {
             url: 'http://wms.zh.ch/OGDCMS3ZH',
             params: { 'LAYERS': 'OGDCMS3ZH', 'TILED': true },
             serverType: 'mapserver',
+            crossOrigin: 'anonymous'
           })
         }),
         this.roadWorkNeedLayer,
@@ -575,6 +586,26 @@ export class EditActivityMapComponent implements OnInit {
 
   refresh() {
     this.map.getLayers().changed();
+  }
+
+  captureMap(): void {
+    let mapElement = document.getElementById("edit_activity_map") as HTMLElement;
+
+    console.log("wILL CAPTURE MAP:", this.edit_activity_map, mapElement);
+    this.map.once('rendercomplete', () => {
+      
+      html2canvas(mapElement, { scale: 2, useCORS: false }).then((canvas) => {
+        console.log(canvas.width, canvas.height, canvas.getBoundingClientRect().x, canvas.getBoundingClientRect().y);
+        this.imageDataUrl = canvas.toDataURL('image/png');
+        localStorage.setItem('mapScreenshot', this.imageDataUrl);
+        this.snackBar.open("Screenshot gespeichert", "", {
+          duration: 4000,
+        });
+      });
+
+      this.map.renderSync();
+
+    })
   }
 
 }

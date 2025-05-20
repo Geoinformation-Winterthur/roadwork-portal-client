@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      target: dev       # nimmt den dev-Layer
+    container_name: "${COMPOSE_PROJECT_NAME:-angular}_app"
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules # maskiert evtl. hostseitige node_modules
+    ports:
+      - "${HOST_PORT:-4210}:4200"   # jeder Entwickler => andere Zahl
+    environment:
+      - NG_CLI_ANALYTICS=false
+    restart: unless-stopped

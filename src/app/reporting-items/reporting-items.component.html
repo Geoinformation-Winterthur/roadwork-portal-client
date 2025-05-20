@@ -1,3 +1,4 @@
+<div #reportContainer style="position: fixed; left: -9999px; top: 0; visibility: hidden;"></div>
 <div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
     Stellungnahme noch nicht eröffnet. Oder es wurden keine Beteiligten vorausgewählt
     und es gibt noch keine Rückmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
@@ -171,7 +172,7 @@
             </ng-container>
 
             <ng-container matColumnDef="activity_okay">
-                <th mat-header-cell *matHeaderCellDef> Realisierungszeitraum passt </th>
+                <th mat-header-cell *matHeaderCellDef> Vorgehen passt </th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-chip-list *ngIf="consultationInput.feedbackGiven">
                         <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
@@ -216,8 +217,9 @@
         <p>Während der Bedarfsklärung wurde das Gesamtvorhaben geprüft und sowohl zeitlich wie
             auch räumlich koordiniert.</p>
         <p>Nachfolgend der Link auf das geplante Vorgehen:</p>
-        <p><button mat-button (click)="PdfDocumentHelper.generatePDF(roadWorkActivity)" style="margin: 1em;background-color: rgb(236,236,234);">
-            Projekt-PDF generieren
+
+        <p><button mat-button (click)="generatePDF2()" style="margin: 1em;background-color: rgb(236,236,234);">
+            Projekt-PDF generieren (2)
         </button></p>
         <p>
             <mat-radio-group [(ngModel)]="consultationInput.ordererFeedback" aria-label="Wählen Sie eine Option">

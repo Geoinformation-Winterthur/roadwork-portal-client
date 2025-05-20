@@ -1,3 +1,4 @@
+<div #reportContainer style="position: fixed; left: -9999px; top: 0; visibility: hidden;"></div>
 <div *ngIf="roadWorkActivityFeat?.properties?.isEditingAllowed">
     <button *ngIf="!isInDrawNewMode && !isInModifyExistingMode" mat-button class="edit_geom_button" (click)="drawNew()"
         style="margin: 1em;background-color: rgb(236,236,234);">

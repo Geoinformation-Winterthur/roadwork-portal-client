@@ -55,6 +55,7 @@
                         <mat-label>Bemerkung GM</mat-label>
                         <textarea name="note_of_area_manager_{{needOfActivity.properties.uuid}}" matInput
                             maxlength="255" (focusout)="updateComment(needOfActivity)"
+                            [disabled] = "isEditingForRoleNotAllowed"
                             [(ngModel)]="needOfActivity.properties.noteOfAreaManager" placeholder="Bemerkung GM...">
                     </textarea>
                     </mat-form-field>
@@ -173,6 +174,7 @@
                     <mat-form-field style="width: 100%;">
                         <mat-label>Bemerkung GM</mat-label>
                         <textarea matInput maxlength="255" (focusout)="updateComment(needOfActivity)"
+                            [disabled] = "isEditingForRoleNotAllowed"
                             [(ngModel)]="needOfActivity.properties.noteOfAreaManager" placeholder="Bemerkung GM...">
                 </textarea>
                     </mat-form-field>

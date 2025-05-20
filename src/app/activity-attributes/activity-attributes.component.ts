@@ -4,7 +4,7 @@
  */
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
@@ -552,31 +552,32 @@ export class ActivityAttributesComponent implements OnInit {
     return "background-color: rgb(109, 255, 121);";
   }
 
-  changeInvolvedUsers(user: User) {
+  changeInvolvedUsers(user: User) {    
     if (this.roadWorkActivityFeature) {
-      let involvedUsersCopy = this.roadWorkActivityFeature.properties.involvedUsers.map((x) => x);
-      let filteredUser: User[] =
-        involvedUsersCopy.filter((involvedUser) => involvedUser.uuid == user.uuid);
-      if (filteredUser.length == 0)
+      let involvedUsersCopy = [...this.roadWorkActivityFeature.properties.involvedUsers];
+
+      const index = involvedUsersCopy.findIndex((involvedUser) => involvedUser.uuid === user.uuid);
+
+      if (index === -1) {
+        // Not involved yet, add
         involvedUsersCopy.push(user);
-      else
-        involvedUsersCopy.splice(
-          involvedUsersCopy.indexOf(user), 1);
+      } else {
+        // Already involved, remove
+        involvedUsersCopy.splice(index, 1);
+      }
 
       this.roadWorkActivityFeature.properties.involvedUsers = involvedUsersCopy;
-
     }
   }
+
 
   isInvolvedUser(user: User): boolean {
-    if (this.roadWorkActivityFeature) {
-      let filteredUser: User[] =
-        this.roadWorkActivityFeature.properties.involvedUsers
-          .filter((involvedUser) => involvedUser.uuid == user.uuid);
-      return filteredUser.length != 0;
-    }
-    return false;
+  return this.roadWorkActivityFeature ? this.roadWorkActivityFeature.properties.involvedUsers.some(
+        (involvedUser) => involvedUser.uuid === user.uuid
+      )
+    : false;
   }
+
 
 
   isInvolvedUserSelected(userUuid: string): boolean {
@@ -839,12 +840,18 @@ export class ActivityAttributesComponent implements OnInit {
     return result;
   }
 
-  public openMail(newStatus: string) {
+  public async openMail(newStatus: string) {
 
     let mailText = "mailto:";
 
     if (this.roadWorkActivityFeature &&
       (newStatus == "inconsult" || newStatus == "reporting")) {
+
+      if (this.roadWorkActivityFeature.geometry 
+          && !this.roadWorkActivityFeature.properties.areaManager) {
+        let geometry = this.roadWorkActivityFeature.geometry;
+        await this.getAreaManager(geometry);
+      }    
 
       if (this.involvedUsers.length > 0) {
         mailText += this.involvedUsers[0].mailAddress + ";"
@@ -919,5 +926,23 @@ export class ActivityAttributesComponent implements OnInit {
     }
 
   }
+
+  async getAreaManager(geometry: any): Promise<void> {
+    try {
+      const result = await firstValueFrom(
+        this.managementAreaService.getIntersectingManagementArea(geometry)
+      );
+
+      const areaManager = result?.manager;
+
+      if (this.roadWorkActivityFeature && areaManager) {
+        this.roadWorkActivityFeature.properties.areaManager = areaManager;
+      }
+    } catch (error) {
+      console.error('Error getting area manager:', error);
+    }
+  }
+
+
 
 }
