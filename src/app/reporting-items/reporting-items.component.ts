@@ -219,8 +219,8 @@ export class ReportingItemsComponent implements OnInit {
 
       let placeholders: any = {};
 
-      let mapScreenshot = localStorage.getItem('mapScreenshot');       
-      placeholders.MAP_PERIMETER = mapScreenshot;
+      let projectPerimeter = localStorage.getItem('projectPerimeter');       
+      placeholders.PROJECT_PERIMETER = projectPerimeter;
 
       const today = new Date();      
       placeholders.DATE = today.toLocaleDateString();
@@ -255,16 +255,13 @@ export class ReportingItemsComponent implements OnInit {
 
       const htmlTable = this.generateHtmlTable(assignedRoadWorkNeeds);
              
-      
-      console.log("htmlTable=",  this.needsOfActivityService.assignedRoadWorkNeeds.length, htmlTable);
-
        
 
       let filledHtml = this.fillPlaceholders(String(htmlTemplate), {
         'DATE': "***"+placeholders.DATE+"***",
         'DATE_NEXT_SKS': "***"+placeholders.DATE_NEXT_SKS+"***",
         'DATE_LAST_SKS': "***"+placeholders.DATE_LAST_SKS+"***",
-        'MAP_PERIMETER': placeholders.MAP_PERIMETER,
+        'PROJECT_PERIMETER': placeholders.PROJECT_PERIMETER,
         'TITEL_ADRESSE_ABSCHNITT': "***"+placeholders.Titel+"***",
         'TITEL_ADRESSE': "***"+placeholders.Titel+"***",
         'ABSCHNITT': "***"+placeholders.Abschnitt+"***",

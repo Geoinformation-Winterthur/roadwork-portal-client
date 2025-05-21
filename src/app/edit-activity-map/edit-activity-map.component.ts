@@ -590,17 +590,12 @@ export class EditActivityMapComponent implements OnInit {
 
   captureMap(): void {
     let mapElement = document.getElementById("edit_activity_map") as HTMLElement;
-
-    console.log("wILL CAPTURE MAP:", this.edit_activity_map, mapElement);
+    
     this.map.once('rendercomplete', () => {
       
-      html2canvas(mapElement, { scale: 2, useCORS: false }).then((canvas) => {
-        console.log(canvas.width, canvas.height, canvas.getBoundingClientRect().x, canvas.getBoundingClientRect().y);
+      html2canvas(mapElement, { scale: 2, useCORS: false }).then((canvas) => {        
         this.imageDataUrl = canvas.toDataURL('image/png');
-        localStorage.setItem('mapScreenshot', this.imageDataUrl);
-        this.snackBar.open("Screenshot gespeichert", "", {
-          duration: 4000,
-        });
+        localStorage.setItem('ProjectPerimeter', this.imageDataUrl);        
       });
 
       this.map.renderSync();

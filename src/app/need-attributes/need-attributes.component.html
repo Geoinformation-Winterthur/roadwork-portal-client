@@ -37,7 +37,7 @@
                 <h2 style="font-weight: normal;">Wunschtermine</h2>
                 <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
                     <div style="margin: 0.5em;">
-                        Frühester:&nbsp;<span
+                        <div>Frühester Baubeginn:&nbsp;</div><span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
                             {{writeOutQuartal("finishEarlyTo")}}
                         </span>
@@ -48,7 +48,7 @@
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Wunsch:&nbsp;&nbsp;&nbsp;&nbsp;<span
+                        <div>Wunsch Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;</div><span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
                             {{writeOutQuartal("finishOptimumTo")}}
                         </span>
@@ -59,7 +59,7 @@
                         </mat-slider>
                     </div>
                     <div style="margin: 0.5em;">
-                        Spätester:&nbsp;<span
+                        <div>Späteste Inbetriebnahme:&nbsp;</div><span
                             style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
                             {{writeOutQuartal("finishLateTo")}}
                         </span>
@@ -83,10 +83,10 @@
                             [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                     </mat-form-field>
                 </div>
-                <mat-checkbox style="margin: 1em;" [(ngModel)]="roadWorkNeedFeature.properties.overarchingMeasure"
+                <!-- <mat-checkbox style="margin: 1em;" [(ngModel)]="roadWorkNeedFeature.properties.overarchingMeasure"
                     [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                     Übergeordnete Massnahme
-                </mat-checkbox>
+                </mat-checkbox> -->
                 <div fxLayout="row wrap padding" style="width:100%;">
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
