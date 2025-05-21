@@ -1385,13 +1385,22 @@
                                 class="mat-elevation-z2" style="width: 100%">
 
                                 <ng-container matColumnDef="name">
-                                    <th mat-header-cell *matHeaderCellDef> Bedarf </th>
+                                    <th mat-header-cell *matHeaderCellDef style="width: 30%;"> Bedarf </th>
                                     <td mat-cell *matCellDef="let roadworkNeed"> {{roadworkNeed.properties.name}}
                                     </td>
                                 </ng-container>
 
+                                <ng-container matColumnDef="url">
+                                    <th mat-header-cell *matHeaderCellDef style="width: 20%;"> Link (URL) </th>
+                                    <td mat-cell *matCellDef="let roadworkNeed"> {{roadworkNeed.properties.url}}                                        
+                                        (<a *ngIf="roadworkNeed.properties.url"
+                                            href="{{roadworkNeed.properties.url}}" target="_blank">Link
+                                            öffnen</a>)                                                                                
+                                    </td>
+                                </ng-container> 
+
                                 <ng-container matColumnDef="documents">
-                                    <th mat-header-cell *matHeaderCellDef> Dokumente </th>
+                                    <th mat-header-cell *matHeaderCellDef style="width: 50%;"> Dokumente </th>
                                     <td mat-cell *matCellDef="let roadworkNeed">
                                         <a href="javascript:void(0);" (click)="downloadPdf(documentAtts.uuid!)"
                                             *ngFor="let documentAtts of roadworkNeed.properties.documentAtts"

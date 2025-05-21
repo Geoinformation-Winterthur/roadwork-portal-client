@@ -84,7 +84,7 @@ export class ActivityAttributesComponent implements OnInit {
   selectedSubTabIndex = 0;
 
   needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
-  needsDocsDisplayedColumns: string[] = ['name', 'documents'];
+  needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
   assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor"];
@@ -285,8 +285,9 @@ export class ActivityAttributesComponent implements OnInit {
                             if (assignedRoadWorkNeed.properties.costs)
                               for (let costs of assignedRoadWorkNeed.properties.costs)
                                 costsOfAssignedNeedsTemp.push(costs);
-                            if (assignedRoadWorkNeed.properties.documentAtts &&
-                              assignedRoadWorkNeed.properties.documentAtts.length != 0
+                            if ((assignedRoadWorkNeed.properties.documentAtts &&
+                              assignedRoadWorkNeed.properties.documentAtts.length != 0) 
+                              || assignedRoadWorkNeed.properties.url 
                             ) {
                               assignedRoadWorkNeedsWithDocuments.push(assignedRoadWorkNeed);
                             }
