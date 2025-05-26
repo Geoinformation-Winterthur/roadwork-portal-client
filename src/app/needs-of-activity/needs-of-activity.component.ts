@@ -77,9 +77,12 @@ export class NeedsOfActivityComponent {
   }
 
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
-    let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
+    let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;    
+    let originalNeedIsEditingAllowed: boolean = roadWorkNeed.properties.isEditingAllowed;    
     roadWorkNeed.properties.activityRelationType = "assignedneed";
     roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivity.properties.uuid as string;
+    // Assigned needs are not editable
+    roadWorkNeed.properties.isEditingAllowed = false;
     let isFirstNeed: boolean = false;
     if(this.needsOfActivityService.assignedRoadWorkNeeds &&
         this.needsOfActivityService.assignedRoadWorkNeeds.length == 0)
@@ -92,6 +95,7 @@ export class NeedsOfActivityComponent {
             errorMessage.errorMessage.trim().length !== 0) {
             roadWorkNeed.properties.activityRelationType = originalActivityRelationType;
             roadWorkNeed.properties.roadWorkActivityUuid = "";
+            roadWorkNeed.properties.isEditingAllowed = originalNeedIsEditingAllowed;
             ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
             this.snckBar.open(errorMessage.errorMessage, "", {
               duration: 4000
@@ -125,12 +129,14 @@ export class NeedsOfActivityComponent {
           if (errorMessage != null && errorMessage.errorMessage != null &&
             errorMessage.errorMessage.trim().length !== 0) {
             roadWorkNeed.properties.activityRelationType = originalActivityRelationType;
+            roadWorkNeed.properties.isEditingAllowed = false;
             ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
             this.snckBar.open(errorMessage.errorMessage, "", {
               duration: 4000
             });
           } else {
             roadWorkNeed.properties.activityRelationType = "";
+            roadWorkNeed.properties.isEditingAllowed = true;
             this.needsOfActivityService.assignedRoadWorkNeeds =
               this.needsOfActivityService.assignedRoadWorkNeeds
                 .filter((roadWorkNeedIt) => roadWorkNeedIt.properties.uuid !== roadWorkNeed.properties.uuid);

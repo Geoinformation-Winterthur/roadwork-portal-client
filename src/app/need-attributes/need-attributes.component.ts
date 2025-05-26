@@ -216,11 +216,12 @@ export class NeedAttributesComponent implements OnInit {
                 });
               } else {
                 this.roadWorkNeedFeature = roadWorkNeedFeature;
+                              
 
-                // editing is not allowed anymore when the need goes public (is not private):
-                if (!this.roadWorkNeedFeature?.properties.isPrivate &&
-                  this.userService.getLocalUser().chosenRole != 'administrator') {
-                  this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
+                // editing is not allowed anymore when the need got assigned to roadwork activity
+                if (this.roadWorkNeedFeature?.properties.activityRelationType === "assignedneed"
+                      && this.userService.getLocalUser().chosenRole != 'administrator') {
+                      this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                 }
 
                 this.snckBar.open("Bedarf wurde erfolgreich erstellt", "", {
@@ -295,9 +296,9 @@ export class NeedAttributesComponent implements OnInit {
                         }
                         this.roadWorkNeedFeature = roadWorkNeedFeature;
 
-                        // editing is not allowed anymore when the need goes public (is not private):
-                        if (!this.roadWorkNeedFeature?.properties.isPrivate &&
-                          this.userService.getLocalUser().chosenRole != 'administrator') {
+                        // editing is not allowed anymore when the need got assigned to roadwork activity
+                        if (this.roadWorkNeedFeature?.properties.activityRelationType === "assignedneed"
+                            && this.userService.getLocalUser().chosenRole != 'administrator') {
                           this.roadWorkNeedFeature!.properties.isEditingAllowed = false;
                         }
 
