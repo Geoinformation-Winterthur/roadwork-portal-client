@@ -28,9 +28,8 @@ export class ChooseActivityComponent implements OnInit {
   chosenActivityName: string = "";
   chosenActivityYearFrom?: number;
   filterMyActivities?: boolean = false;
-  filterFinishOptimumTo?: Date;
-  filterDateOfAcceptance?: Date;
-  filterEvaluation?: number;
+  filterDueDate?: Date;
+  filterStartOfConstruction?: Date;
   filterEvaluationSks?: number;
   filterAreaManagerControl: FormControl = new FormControl();
   filterProjectManagerControl: FormControl = new FormControl();
@@ -161,22 +160,31 @@ export class ChooseActivityComponent implements OnInit {
               }
             }
 
-            if (showActivity && this.filterEvaluation && roadWorkActivity.properties.evaluation !== undefined) {
-              showActivity = this.filterEvaluation === roadWorkActivity.properties.evaluation;
+            if (showActivity && this.filterStartOfConstruction && roadWorkActivity.properties.startOfConstruction !== undefined) {
+              let startOfConstruction: Date = new Date(roadWorkActivity.properties.startOfConstruction);
+              startOfConstruction.setHours(0, 0, 0, 0);
+
+              let filterStartOfConstruction: Date = new Date(this.filterStartOfConstruction);
+              filterStartOfConstruction.setHours(0, 0, 0, 0);
+
+              showActivity = filterStartOfConstruction.valueOf() === startOfConstruction.valueOf();
+             
             }
 
             if (showActivity && this.filterEvaluationSks && roadWorkActivity.properties.evaluationSks !== undefined) {
               showActivity = this.filterEvaluationSks === roadWorkActivity.properties.evaluationSks;
             }
 
-            if (showActivity && roadWorkActivity.properties.finishOptimumTo && this.filterFinishOptimumTo) {
-              let finishOptimumTo: Date = new Date(roadWorkActivity.properties.finishOptimumTo);
-              finishOptimumTo.setHours(0, 0, 0, 0);
+            if (showActivity && this.filterDueDate) {
+              let dueDate = this.calcDueDate(roadWorkActivity)
+              if (dueDate) {
+                dueDate.setHours(0, 0, 0, 0);
 
-              let filterFinishOptimumTo: Date = new Date(this.filterFinishOptimumTo);
-              filterFinishOptimumTo.setHours(0, 0, 0, 0);
+                let filterDueDate: Date = new Date(this.filterDueDate);
+                filterDueDate.setHours(0, 0, 0, 0);
 
-              showActivity = filterFinishOptimumTo.valueOf() === finishOptimumTo.valueOf();
+                showActivity = filterDueDate.valueOf() === dueDate.valueOf();
+              }
             }
 
             let filterAreaManager: User | undefined;

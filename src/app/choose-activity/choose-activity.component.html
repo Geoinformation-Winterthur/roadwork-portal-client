@@ -46,42 +46,19 @@
           </mat-form-field>
         </span>
         <mat-form-field style="margin: 1em;">
-          <mat-label>Realisierung (Grobplanung)</mat-label>
-          <input matInput (dateChange)="filterActivities()" name="finish_optimum_to" [(ngModel)]="filterFinishOptimumTo"
-            [matDatepicker]="finish_optimum_to">
-          <mat-datepicker #finish_optimum_to></mat-datepicker>
-          <mat-datepicker-toggle matSuffix [for]="finish_optimum_to"></mat-datepicker-toggle>
-        </mat-form-field>
+          <mat-label>Voraussichtliche Realisierung</mat-label>
+          <input matInput (dateChange)="filterActivities()" name="date_start_of_construction" [(ngModel)]="filterStartOfConstruction"
+            [matDatepicker]="date_start_of_construction">
+          <mat-datepicker #date_start_of_construction></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="date_start_of_construction"></mat-datepicker-toggle>
+        </mat-form-field>       
         <mat-form-field style="margin: 1em;">
-          <mat-label>Wunschtermin</mat-label>
-          <input matInput (dateChange)="filterActivities()" name="date_of_acceptance"
-            [(ngModel)]="filterDateOfAcceptance" [matDatepicker]="date_of_acceptance">
-          <mat-datepicker #date_of_acceptance></mat-datepicker>
-          <mat-datepicker-toggle matSuffix [for]="date_of_acceptance"></mat-datepicker-toggle>
-        </mat-form-field>
-        <mat-form-field style="margin: 1em;">
-          <input type="number" placeholder="Beurteilung (Endwert)" aria-label="Beurteilung (Endwert)"
-            (change)="filterActivities()" [(ngModel)]="filterEvaluation" matInput name="filter_evaluation" min="0"
-            max="4">
-        </mat-form-field>
-        <mat-form-field style="margin: 1em;">
-          <input type="number" placeholder="Beurteilung (Prio. SKS)" aria-label="Beurteilung (Prio. SKS)"
-            (change)="filterActivities()" [(ngModel)]="filterEvaluationSks" matInput name="filter_evaluation_sks"
-            min="0" max="4">
-        </mat-form-field>
-        <mat-form-field appearance="fill">
-          <mat-label>Status</mat-label>
-          <mat-select [(ngModel)]="statusFilterCodes" (ngModelChange)="filterActivities()" multiple required>
-            <mat-option value="all">alle</mat-option>
-            <mat-option value="review">In Prüfung (Phase 12)</mat-option>
-            <mat-option value="inconsult">In Bedarfsklärung (Phase 12)</mat-option>
-            <mat-option value="verified">verfiziert (Phase 12)</mat-option>
-            <mat-option value="reporting">In Stellungnahme (Phase 12)</mat-option>
-            <mat-option value="coordinated">koordiniert (Phase 12)</mat-option>
-            <mat-option value="suspended">sistiert</mat-option>
-            <mat-option value="prestudy">Vorstudie (Phase 21)</mat-option>
-          </mat-select>
-        </mat-form-field>
+          <mat-label>Fälligkeit</mat-label>
+          <input matInput (dateChange)="filterActivities()" name="date_due_date"
+            [(ngModel)]="filterDueDate" [matDatepicker]="date_due_date">
+          <mat-datepicker #date_due_date></mat-datepicker>
+          <mat-datepicker-toggle matSuffix [for]="date_due_date"></mat-datepicker-toggle>
+        </mat-form-field>         
       </mat-expansion-panel>
     </mat-accordion>
     <mat-divider></mat-divider>
