@@ -1057,26 +1057,26 @@
                                         </h4>
                                         <p>
                                             Frühester:&nbsp;<span
-                                                [class.green-date]="isDateWithinConstruction(primaryNeed.properties.finishEarlyTo)"
-                                                [class.red-date]="!isDateWithinConstruction(primaryNeed.properties.finishEarlyTo)"
+                                                [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
+                                                [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{ primaryNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
+                                                {{ roadWorkActivityFeature.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
                                             Wunsch:&nbsp;<span
-                                                [class.green-date]="isDateWithinConstruction(primaryNeed.properties.finishOptimumTo)"
-                                                [class.red-date]="!isDateWithinConstruction(primaryNeed.properties.finishOptimumTo)"
+                                                [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo)"
+                                                [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{ primaryNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
+                                                {{ roadWorkActivityFeature.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
                                             Spätester:&nbsp;<span
-                                                [class.red-date]="isFirstDateBefore(primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                                [class.green-date]="!isFirstDateBefore(primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{primaryNeed.properties.finishLateTo | date:'dd.MM.yyyy'}}
+                                                {{roadWorkActivityFeature.properties.finishLateTo | date:'dd.MM.yyyy'}}
                                             </span>
                                         </p>
                                     </div>

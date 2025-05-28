@@ -82,7 +82,7 @@ export class NeedsOfActivityComponent {
     roadWorkNeed.properties.activityRelationType = "assignedneed";
     roadWorkNeed.properties.roadWorkActivityUuid = this.roadWorkActivity.properties.uuid as string;
     // Assigned needs are not editable
-    roadWorkNeed.properties.isEditingAllowed = false;
+    roadWorkNeed.properties.isEditingAllowed = this.userService.getLocalUser().chosenRole == 'administrator' ? true :false;
     let isFirstNeed: boolean = false;
     if(this.needsOfActivityService.assignedRoadWorkNeeds &&
         this.needsOfActivityService.assignedRoadWorkNeeds.length == 0)
@@ -121,7 +121,7 @@ export class NeedsOfActivityComponent {
   }
 
   unAssignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
-    let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;
+    let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;    
 
     this.roadWorkNeedService.deleteRoadWorkNeed(roadWorkNeed.properties.uuid, true)
       .subscribe({
@@ -129,7 +129,7 @@ export class NeedsOfActivityComponent {
           if (errorMessage != null && errorMessage.errorMessage != null &&
             errorMessage.errorMessage.trim().length !== 0) {
             roadWorkNeed.properties.activityRelationType = originalActivityRelationType;
-            roadWorkNeed.properties.isEditingAllowed = false;
+            roadWorkNeed.properties.isEditingAllowed = this.userService.getLocalUser().chosenRole == 'administrator' ? true :false;
             ErrorMessageEvaluation._evaluateErrorMessage(errorMessage);
             this.snckBar.open(errorMessage.errorMessage, "", {
               duration: 4000
