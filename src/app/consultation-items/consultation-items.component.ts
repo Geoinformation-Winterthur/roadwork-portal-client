@@ -39,10 +39,13 @@ export class ConsultationItemsComponent implements OnInit, OnChanges {
   
   isEditingForRoleNotAllowed: boolean = false;
 
+  selectedNeedOption: 'stillRelevant' | 'decline' = 'decline';
+  canCreateNeed: boolean = false;
+
   needsOfActivityService: NeedsOfActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private router: Router;
-  private snckBar: MatSnackBar;
+  private snckBar: MatSnackBar;  
 
   constructor(needsOfActivityService: NeedsOfActivityService,
     roadWorkNeedService: RoadWorkNeedService,
@@ -67,12 +70,20 @@ export class ConsultationItemsComponent implements OnInit, OnChanges {
   }
 
   saveNeedsOfUser() {
-    if (this.stillRelevant)
+    if (this.selectedNeedOption == "decline") {
+      this.decline = true;
+      this.stillRelevant = false;
+    } 
+
+    if (this.selectedNeedOption == "stillRelevant") {
+      this.stillRelevant = true;
       this.decline = false;
+    }    
 
     let messageShown: boolean = false;
     for (let needOfUser of this.needsOfUser) {
-      needOfUser.properties.stillRelevant = this.stillRelevant;
+      needOfUser.properties.decline = this.decline;
+      needOfUser.properties.stillRelevant = this.stillRelevant;      
       needOfUser.properties.feedbackGiven = true;
       needOfUser.properties.comment = this.ordererFeedbackText;
       this.roadWorkNeedService
@@ -212,6 +223,14 @@ export class ConsultationItemsComponent implements OnInit, OnChanges {
     if (this.roadWorkActivity.properties.uuid) {
       this.needsOfActivityService.updateIntersectingRoadWorkNeeds(this.roadWorkActivity.properties.uuid, this.needsOfActivity);
     }
+  }
+
+  onSendClicked(): void {
+    
+    this.saveNeedsOfUser();    
+
+    this.canCreateNeed = true;
+
   }
 
 }

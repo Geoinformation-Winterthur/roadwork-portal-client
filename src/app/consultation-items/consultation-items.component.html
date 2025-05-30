@@ -187,36 +187,39 @@
     </div>
 </div>
 <div *ngIf="userService.getLocalUser().chosenRole == 'orderer' && roadWorkActivity.properties.status === 'inconsult'"
-    style="margin-top: 2em;">
-    <h2>Eingabe zur Bedarfsklärung</h2>
-    <div style="margin-bottom: 2em;">
-        <div>
-            <button mat-button style="background-color: lightgray;" (click)="createNewNeed()"
-                [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
-                Bedarf erfassen
-            </button>
-        </div>
-        <p>
-            <mat-checkbox name="decline_checkbox" [(ngModel)]="decline" [disabled]="roadWorkActivity.properties.status !=='inconsult' ||
-                    hasRequirementAlreadyEntered() || stillRelevant" style="margin:10px;">
-                Kein Bedarf für uns
-            </mat-checkbox>
-            <br>
-            <mat-checkbox name="still_relevant_checkbox" [(ngModel)]="stillRelevant"
-                [disabled]="roadWorkActivity.properties.status !=='inconsult'" style="margin:10px;">
-                Bedarf weiterhin vorhanden
-            </mat-checkbox>
-        </p>
-        <div>
-            <mat-form-field style="width: 100%; margin-top: 2em;">
-                <mat-label>Rückmeldung</mat-label>
-                <textarea matInput [(ngModel)]="ordererFeedbackText" maxlength="40000"
-                    placeholder="Rückmeldung..."></textarea>
-            </mat-form-field>
-            <button mat-button style="background-color: lightgray;" (click)="saveNeedsOfUser()"
-                [disabled]="decline || roadWorkActivity.properties.status !=='inconsult'">
-                SENDEN
-            </button>
-        </div>
+     style="margin-top: 2em;">
+  <h2>Eingabe zur Bedarfsklärung</h2>
+
+  <div style="margin-bottom: 2em;">    
+    <mat-radio-group [(ngModel)]="selectedNeedOption" required>
+        <mat-radio-button value="decline" style="margin: 10px;">
+            Kein Bedarf für uns
+        </mat-radio-button>
+        <br />
+        <mat-radio-button value="stillRelevant" style="margin: 10px;">
+            Bedarf weiterhin vorhanden
+        </mat-radio-button>
+        <br />              
+    </mat-radio-group>
+    
+    <mat-form-field style="width: 100%; margin-top: 2em;">
+      <mat-label>Rückmeldung</mat-label>
+      <textarea matInput [(ngModel)]="ordererFeedbackText" maxlength="40000" placeholder="Rückmeldung..."></textarea>
+    </mat-form-field>
+    
+    <button mat-button color="primary"
+            (click)="onSendClicked()"
+            [disabled]="!selectedNeedOption"
+            style="background-color: lightgray;">
+    SENDEN
+    </button>
+
+    <div *ngIf="canCreateNeed" style="margin-top: 1em;">
+        <label style="display: block; margin-bottom: 0.5em;">
+            Sie haben nun die Möglichkeit, einen Bedarf zu diesem Bauvorhaben zu erfassen:
+        </label>
+        <button mat-button style="background-color: lightgray;" (click)="createNewNeed()">
+            Bedarf erfassen
+        </button>
     </div>
 </div>
