@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
@@ -11,6 +11,10 @@ import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
+import { ColDef } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
+
 
 @Component({
   selector: 'app-choose-need',
@@ -44,7 +48,194 @@ export class ChooseNeedComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
-  private snckBar: MatSnackBar;
+  private snckBar: MatSnackBar;    
+
+  localeText = AG_GRID_LOCALE_DE;
+
+  defaultColDef: ColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
+  columnDefs: ColDef[] = [    
+    {
+      headerName: 'Phase/Status',
+      field: 'properties.status',
+      sortable: true,
+      filter: true,
+      valueGetter: ({ data }: any) => data?.properties?.status ?? '',
+      cellRenderer: ({ value }: any) => {
+        const map: { [key: string]: { label: string; color: string } } = {
+          requirement: { label: '11/Bedarf', color: '#b3e5fc' },
+          review: { label: '12/Prüfung', color: '#90caf9' },
+          verified: { label: '12/verifiziert', color: '#64b5f6' },
+          inconsult: { label: '12/Bedarfsklärung', color: '#4fc3f7' },
+          reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
+          coordinated: { label: '12/koordiniert', color: '#0288d1' },
+          prestudy: { label: '21/Vorstudie', color: '#81c784' },
+          suspended: { label: 'sistiert', color: '#e0e0e0' }
+        };
+
+        const entry = map[value];
+        if (!entry) return value;
+
+        return `
+          <span style="
+            background-color:${entry.color};
+            color: black;
+            padding: 4px 30px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 400;
+            white-space: nowrap;
+            display: inline-block;">
+            ${entry.label}
+          </span>
+        `;
+      }
+    },
+    {
+      headerName: 'GM',
+      field: 'dummy',
+      sortable: true,
+      filter: true,
+      valueGetter: ({ data }) => {
+        const manager = data?.properties?.managementArea?.manager;
+        return manager
+          ? `${manager.firstName} ${manager.lastName}`
+          : '';
+      },
+      cellRenderer: ({ value }: any) => {
+        return value || '–';
+      }
+    },    
+    {
+      headerName: 'Bezeichnung',
+      sortable: true,
+      filter: true,
+      valueGetter: (params: any) => {
+        const name = params.data?.properties?.name;
+        return name || '';
+      },
+      cellRenderer: (params: any) => {
+        const name = params.data?.properties?.name;
+        const section = params.data?.properties?.section;
+        const uuid = params.data?.properties?.uuid;
+        const tooltip = `${name} ${section || ''}`;
+        return `<a href="/civil-engineering/roadworks-portal//needs/${uuid}" title="${tooltip}">${name}</a>`;
+      }
+    },
+    {
+      headerName: 'Auslösende:r',
+      valueGetter: ({ data }) =>
+        `${data.properties.orderer.firstName} ${data.properties.orderer.lastName}`
+    },
+    {
+      headerName: 'Auslösendes Werk',
+      field: 'properties.orderer.organisationalUnit.abbreviation'
+    },
+    {
+      headerName: 'Auslösegrund',
+      field: 'properties.description'
+    },
+    {
+      headerName: 'Wunschtermin',
+      valueGetter: ({ data }) => {
+        const finish = data.properties.finishOptimumTo;
+        if (!finish) return '';
+        const date = new Date(finish);
+        const month = date.getMonth();
+        const quarter = Math.floor(month / 3) + 1;
+        return `${quarter}.Q ${date.getFullYear()}`;
+      }
+    },
+    {
+      headerName: 'Bedarf erfasst',
+      field: 'properties.created',
+      sortable: true,
+      filter: 'agDateColumnFilter',
+      valueGetter: ({ data }) => {
+        const raw = data?.properties?.created;
+        return raw ? new Date(raw) : null;
+      },
+      valueFormatter: ({ value }) => {
+        return value instanceof Date
+          ? value.toLocaleDateString('de-CH')
+          : '';
+      },
+      filterParams: {
+        comparator: (filterLocalDateAtMidnight: Date, cellValue: Date) => {
+          if (!(cellValue instanceof Date)) return -1;
+          const cellDate = new Date(
+            cellValue.getFullYear(),
+            cellValue.getMonth(),
+            cellValue.getDate()
+          );
+          if (cellDate < filterLocalDateAtMidnight) return -1;
+          if (cellDate > filterLocalDateAtMidnight) return 1;
+          return 0;
+        },
+        browserDatePicker: true
+      }
+    },   
+    {
+      headerName: 'Letzte Änderung',
+      field: 'properties.lastModified',
+      sortable: true,
+      filter: 'agDateColumnFilter',
+      valueGetter: ({ data }) => {
+        const raw = data?.properties?.lastModified;
+        return raw ? new Date(raw) : null;
+      },
+      valueFormatter: ({ value }) =>
+        value instanceof Date ? value.toLocaleDateString('de-CH') : '',
+      filterParams: {
+        comparator: (filterDate: Date, cellValue: Date) => {
+          if (!(cellValue instanceof Date)) return -1;
+
+          const cellDate = new Date(
+            cellValue.getFullYear(),
+            cellValue.getMonth(),
+            cellValue.getDate()
+          );
+
+          if (cellDate < filterDate) return -1;
+          if (cellDate > filterDate) return 1;
+          return 0;
+        },
+        browserDatePicker: true,
+        buttons: ['reset', 'apply'],
+        closeOnApply: true
+      }
+    },
+    {
+      headerName: 'Stadtplan-Link',
+      sortable: false,
+      filter: false,
+      cellRenderer: ({ data } : any) => {
+        const x = data.geometry.coordinates[0].x;
+        const y = data.geometry.coordinates[0].y;
+        const href = `https://stadtplan.winterthur.ch?topic=Grundkarte&scale=1000&x=${x}&y=${y}&back=Hintergrundkarte_LK_AV_Situationsplan`;
+        return `<a href="${href}" target="_blank">Im Stadtplan</a>`;
+      }
+    },
+    {
+      headerName: 'WinWebGIS-Link',
+      sortable: false,
+      filter: false,
+      cellRenderer: ({ data }: any) => {
+        const x = data.geometry.coordinates[0].x;
+        const y = data.geometry.coordinates[0].y;
+        const href = `http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x=${x}&y=${y}`;
+        return `<a href="${href}" target="_blank">Im WinWebGIS</a>`;
+      }
+    }
+  ];
+  
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+
+ 
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
@@ -116,6 +307,11 @@ export class ChooseNeedComponent implements OnInit {
               }
 
               this.roadWorkNeedFeatures = roadWorkNeeds;
+
+              setTimeout(() => {
+              this.agGrid.api.refreshCells({ force: true });  
+              }, 1000);
+              
             },
             error: (error) => {
             }

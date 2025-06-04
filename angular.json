@@ -30,7 +30,9 @@
               "src/.htaccess"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/ag-grid-community/styles/ag-grid.css",
+              "node_modules/ag-grid-community/styles/ag-theme-alpine.css"          
             ],
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json"
@@ -121,7 +123,9 @@
               "src/.htaccess"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/ag-grid-community/styles/ag-grid.css",
+              "node_modules/ag-grid-community/styles/ag-theme-alpine.css"              
             ],
             "scripts": []
           }

@@ -80,6 +80,7 @@ import { ConsultationItemsComponent } from './consultation-items/consultation-it
 import { ReportingItemsComponent } from './reporting-items/reporting-items.component';
 import { registerLocaleData } from '@angular/common';
 import deChLocale from '@angular/common/locales/de-CH';
+import { AgGridModule } from 'ag-grid-angular';
  
  
  export function getToken(){
@@ -174,7 +175,8 @@ import deChLocale from '@angular/common/locales/de-CH';
          allowedDomains: [environment.apiDomain],
          disallowedRoutes: []
        }
-     })
+     }),
+      AgGridModule
    ],
    providers: [UserService, MatDatepickerModule,
      {provide: LOCALE_ID, useValue: 'de-CH'}

@@ -595,7 +595,7 @@ export class EditActivityMapComponent implements OnInit {
       
       html2canvas(mapElement, { scale: 2, useCORS: false }).then((canvas) => {        
         this.imageDataUrl = canvas.toDataURL('image/png');
-        localStorage.setItem('ProjectPerimeter', this.imageDataUrl);        
+        //localStorage.setItem('ProjectPerimeter', this.imageDataUrl);        
       });
 
       this.map.renderSync();
