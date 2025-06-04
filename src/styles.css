@@ -16,11 +16,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     visibility: hidden;
 }
 
-
-.ag-theme-alpine {
-  font-size: 16px;
-}
-
 .ag-theme-alpine .ag-row {
   height: 50px !important; 
 }

@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature';
@@ -12,6 +12,10 @@ import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { FormControl } from '@angular/forms';
+import { ColDef } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
+
 
 @Component({
   selector: 'app-choose-activity',
@@ -45,6 +49,201 @@ export class ChooseActivityComponent implements OnInit {
   private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
+
+  localeText = AG_GRID_LOCALE_DE;
+
+  defaultColDef: ColDef = {
+    sortable: true,
+    filter: true,
+    resizable: true,
+  };
+
+  columnDefs: ColDef[] = [
+    {
+      headerName: 'Status',
+      field: 'properties.status',
+      sortable: true,
+      filter: true,
+      valueGetter: ({ data }) => data?.properties?.status ?? '',
+      cellRenderer: ({ value }: any) => {
+        const map: { [key: string]: { label: string; color: string } } = {
+          requirement: { label: '11/Bedarf', color: '#b3e5fc' },
+          review: { label: '12/Prüfung', color: '#90caf9' },
+          verified: { label: '12/verifiziert', color: '#64b5f6' },
+          inconsult: { label: '12/Bedarfsklärung', color: '#4fc3f7' },
+          reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
+          coordinated: { label: '12/koordiniert', color: '#0288d1' },
+          prestudy: { label: '21/Vorstudie', color: '#81c784' },
+          suspended: { label: 'sistiert', color: '#e0e0e0' }
+        };
+
+        const entry = map[value];
+        if (!entry) return value;
+        
+          return `
+            <span style="
+              background-color: ${entry.color};
+              color: black;
+              padding: 3px 10px;
+              border-radius: 10px;
+              font-size: 0.9rem;
+              font-weight: 500;
+              display: inline-block;
+              white-space: nowrap;
+              line-height: 1.5;
+            ">
+              ${entry.label}
+            </span>
+          `;         
+      }
+    },
+    {
+      headerName: 'GM',
+      valueGetter: ({ data }) => {
+        const m = data?.properties?.areaManager;
+        return m ? `${m.firstName} ${m.lastName}` : '';
+      },
+      cellRenderer: ({ value }: any) => value || '–',
+      sortable: true,
+      filter: true
+    },
+    {
+      headerName: 'Bezeichnung',
+      minWidth: 400, 
+      valueGetter: ({ data }) => data?.properties?.name || '',
+      cellRenderer: ({ data }: any) => {
+        const name = data?.properties?.name ?? '';
+        const section = data?.properties?.section ?? '';
+        const uuid = data?.properties?.uuid ?? '';
+        const tooltip = `${name} ${section}`;
+        return `
+          <a href="/civil-engineering/roadworks-portal/activities/${uuid}" title="${tooltip}" style="
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            max-width: 100%;
+          ">
+            ${name}
+          </a>`;
+      },
+      sortable: true,
+      filter: true
+    },
+    {
+      headerName: 'Mitwirkende',
+      field: 'properties', // lub dowolne pole, potrzebne by przypisać kolumnę
+      minWidth: 150,
+      maxWidth: 300, // kontrolowana szerokość kolumny
+      valueGetter: ({ data }) => {
+        if (typeof this.getInvolvedOrgsNames === 'function') {
+          return this.getInvolvedOrgsNames(data).join(', ');
+        }
+        return '';
+      },
+      cellRenderer: ({ value }: any) => {
+        return `
+          <div title="${value}" style="
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+          ">
+            ${value}
+          </div>`;
+      },
+      sortable: true,
+      filter: true
+    },
+    {
+      headerName: 'Lead Realisierung',
+      valueGetter: ({ data }) => data?.properties?.kind?.name ?? '',
+      sortable: true,
+      filter: true
+    },
+    {
+      headerName: 'PL',
+      valueGetter: ({ data }) => {
+        const m = data?.properties?.projectManager;
+        return m ? `${m.firstName} ${m.lastName}` : '';
+      },
+      sortable: true,
+      filter: true
+    },
+    {
+      headerName: 'Voraussichtliche Realisierung',
+      width:230,
+      valueGetter: ({ data }) => {
+        const raw = data?.properties?.startOfConstruction;
+        if (!raw) return '';
+        const date = new Date(raw);
+        const q = Math.floor(date.getMonth() / 3) + 1;
+        return `${q}.Q ${date.getFullYear()}`;
+      },
+      sortable: true,
+      filter: true
+    },
+   {
+      headerName: 'Fälligkeit',
+      width: 130,
+      valueGetter: ({ data }) => {
+        return this.calcDueDate(data) || null; // surowa data lub null
+      },
+      cellRenderer: ({ value, data }: any) => {
+        const style = this.getColorDueDate(data);
+        const text = value ? new Date(value).toLocaleDateString('de-CH') : 'nicht bestimmt';
+        return `<mat-chip style="${style}">${text}</mat-chip>`;
+      },
+      sortable: true,
+      filter: 'agDateColumnFilter',
+      valueFormatter: ({ value }) => {
+        return value instanceof Date ? value.toLocaleDateString('de-CH') : '';
+      },
+      filterParams: {
+        comparator: (filterDate: Date, cellValue: Date) => {
+          if (!(cellValue instanceof Date)) return -1;
+          const cell = new Date(cellValue.getFullYear(), cellValue.getMonth(), cellValue.getDate());
+          const filter = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate());
+
+          return cell < filter ? -1 : cell > filter ? 1 : 0;
+        },
+        browserDatePicker: true,
+        buttons: ['reset', 'apply'],
+        closeOnApply: true
+      }
+    },
+    {
+      headerName: 'Stadtplan-Link',
+      sortable: false,
+      filter: false,
+      maxWidth: 150,
+      cellRenderer: ({ data }: any) => {
+        const x = data?.geometry?.coordinates?.[0]?.x;
+        const y = data?.geometry?.coordinates?.[0]?.y;
+        if (!x || !y) return '';
+        const href = `https://stadtplan.winterthur.ch?topic=Grundkarte&scale=1000&x=${x}&y=${y}&back=Hintergrundkarte_LK_AV_Situationsplan`;
+        return `<a href="${href}" target="_blank">Im Stadtplan</a>`;
+      }
+    },
+    {
+      headerName: 'WinWebGIS-Link',
+      sortable: false,
+      filter: false,
+      maxWidth: 160,
+      cellRenderer: ({ data }: any) => {
+        const x = data?.geometry?.coordinates?.[0]?.x;
+        const y = data?.geometry?.coordinates?.[0]?.y;
+        if (!x || !y) return '';
+        const href = `http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x=${x}&y=${y}`;
+        return `<a href="${href}" target="_blank" style="margin:1em;">Im WinWebGIS</a>`;
+      }
+    }
+  ];
+
+
+  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
   constructor(roadWorkActivityService: RoadWorkActivityService,
     userService: UserService, managementAreaService: ManagementAreaService,
@@ -202,6 +401,10 @@ export class ChooseActivityComponent implements OnInit {
             }
 
           }
+
+          setTimeout(() => {
+            this.agGrid.api.refreshCells({ force: true });
+          }, 1000);
 
           return showActivity;
         });
