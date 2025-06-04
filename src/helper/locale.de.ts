@@ -57,4 +57,7 @@ export const AG_GRID_LOCALE_DE: { [key: string]: string } = {
   paste: 'Einfügen',
   ctrlV: 'Ctrl+V',
   chartRange: 'Diagrammbereich',
+
+  applyFilter: 'Anwenden',
+  resetFilter: 'Zurücksetzen',
 };
