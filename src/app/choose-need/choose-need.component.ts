@@ -61,6 +61,7 @@ export class ChooseNeedComponent implements OnInit {
   columnDefs: ColDef[] = [    
     {
       headerName: 'Phase/Status',
+      minWidth: 130,
       field: 'properties.status',
       sortable: true,
       filter: true,
@@ -84,15 +85,17 @@ export class ChooseNeedComponent implements OnInit {
           <span style="
             background-color:${entry.color};
             color: black;
-            padding: 4px 30px;
-            border-radius: 20px;
+            padding: 3px 10px;
+            border-radius: 10px;
             font-size: 1rem;
-            font-weight: 400;
+            font-weight: 500;
             white-space: nowrap;
-            display: inline-block;">
+            display: inline-block;
+            line-height: 1.5">
             ${entry.label}
           </span>
-        `;
+        `;        
+
       }
     },
     {
@@ -112,6 +115,7 @@ export class ChooseNeedComponent implements OnInit {
     },    
     {
       headerName: 'Bezeichnung',
+      minWidth: 400, 
       sortable: true,
       filter: true,
       valueGetter: (params: any) => {
@@ -141,6 +145,7 @@ export class ChooseNeedComponent implements OnInit {
     },
     {
       headerName: 'Wunschtermin',
+      width: 160,
       valueGetter: ({ data }) => {
         const finish = data.properties.finishOptimumTo;
         if (!finish) return '';
@@ -152,6 +157,7 @@ export class ChooseNeedComponent implements OnInit {
     },
     {
       headerName: 'Bedarf erfasst',
+      width: 150,
       field: 'properties.created',
       sortable: true,
       filter: 'agDateColumnFilter',
@@ -181,6 +187,7 @@ export class ChooseNeedComponent implements OnInit {
     },   
     {
       headerName: 'Letzte Änderung',
+      width: 160,
       field: 'properties.lastModified',
       sortable: true,
       filter: 'agDateColumnFilter',
@@ -213,6 +220,7 @@ export class ChooseNeedComponent implements OnInit {
       headerName: 'Stadtplan-Link',
       sortable: false,
       filter: false,
+      maxWidth: 150,
       cellRenderer: ({ data } : any) => {
         const x = data.geometry.coordinates[0].x;
         const y = data.geometry.coordinates[0].y;
@@ -224,6 +232,7 @@ export class ChooseNeedComponent implements OnInit {
       headerName: 'WinWebGIS-Link',
       sortable: false,
       filter: false,
+      maxWidth: 160,
       cellRenderer: ({ data }: any) => {
         const x = data.geometry.coordinates[0].x;
         const y = data.geometry.coordinates[0].y;
