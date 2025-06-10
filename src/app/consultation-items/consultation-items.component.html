@@ -128,12 +128,12 @@
             </ng-container>
 
             <ng-container matColumnDef="still_requirement">
-                <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf </th>
-                <td mat-cell *matCellDef="let needOfActivity" style="max-width: 10em; word-wrap:break-word;">
+                <th mat-header-cell *matHeaderCellDef> Bedarf vorhanden/Bedarf weiterhin vorhanden </th>
+                <td mat-cell *matCellDef="let needOfActivity" style="word-wrap:break-word;">
                     <mat-chip-list>
                         <mat-chip *ngIf="needOfActivity.properties.stillRelevant">
-                            <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf"
-                                matTooltip="Weiterhin Bedarf" style="color: green;">check</mat-icon>
+                            <mat-icon style="font-size: 1.5;" aria-label="Bedarf vorhanden/Bedarf weiterhin vorhanden"
+                                matTooltip="Bedarf vorhanden/Bedarf weiterhin vorhanden" style="color: green;">check</mat-icon>
                         </mat-chip>
                         <mat-chip *ngIf="!needOfActivity.properties.stillRelevant">
                             <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
@@ -193,11 +193,11 @@
   <div style="margin-bottom: 2em;">    
     <mat-radio-group [(ngModel)]="selectedNeedOption" required>
         <mat-radio-button value="decline" style="margin: 10px;">
-            Kein Bedarf für uns
+            Kein Bedarf
         </mat-radio-button>
         <br />
         <mat-radio-button value="stillRelevant" style="margin: 10px;">
-            Bedarf weiterhin vorhanden
+            Bedarf vorhanden/Bedarf weiterhin vorhanden
         </mat-radio-button>
         <br />              
     </mat-radio-group>
