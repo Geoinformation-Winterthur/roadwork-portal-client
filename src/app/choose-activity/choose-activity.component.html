@@ -11,9 +11,7 @@
       <mat-icon aria-label="Icon shows tools">handyman</mat-icon>
     </button>
   </div>
-  <div style="margin-bottom: 2em;">    
-  
-    <div *ngIf="user.prefTableView">
+  <div style="margin-bottom: 2em;">      
       <ag-grid-angular
         class="ag-theme-alpine"
         [rowData]="roadWorkActivityFeaturesFiltered"
@@ -21,7 +19,6 @@
         [defaultColDef]="defaultColDef"
         [localeText]="localeText"
         style="width: 100%; height: 1000px;">
-      </ag-grid-angular>
-    </div>    
+      </ag-grid-angular>    
   </div>    
 </div>

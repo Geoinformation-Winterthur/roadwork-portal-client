@@ -55,6 +55,8 @@ export class ActivityAttributesComponent implements OnInit {
   priorityCode: string = "";
   involvedUsers: User[] = [];
 
+  isEditingForRoleNotAllowed: boolean = false;
+
   availableUsers: User[] = [];
   availableOrganisations: OrganisationalUnit[] = [];
   usersOfChosenOrganisation: User[] = [];
@@ -87,7 +89,7 @@ export class ActivityAttributesComponent implements OnInit {
   needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
-  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor"];
+  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor", "consult_input"];
 
   consultationInputsFromReporting: ConsultationInput[] = [];
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
@@ -130,6 +132,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.documentService = documentService;
     this.consultationService = consultationService;
     this.dialog = dialog;
+    this.isEditingForRoleNotAllowed = this.userService.getLocalUser().chosenRole != 'administrator' && this.userService.getLocalUser().chosenRole != 'territorymanager';
   }
 
   ngOnInit() {
@@ -942,6 +945,32 @@ export class ActivityAttributesComponent implements OnInit {
     } catch (error) {
       console.error('Error getting area manager:', error);
     }
+  }
+
+  updateComment(roadWorkNeed: RoadWorkNeedFeature) {
+    this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
+      .subscribe({
+        next: (roadWorkNeed) => {
+          if (roadWorkNeed) {
+            ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeed);
+            if (roadWorkNeed.errorMessage.trim().length !== 0) {
+              this.snckBar.open(roadWorkNeed.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.snckBar.open("Bemerkung gespeichert", "", {
+                duration: 4000
+              });
+            }
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Unbekannter Fehler beim Speichern der Bemerkung", "", {
+            duration: 4000
+          });
+        }
+      });
+
   }
 
 
