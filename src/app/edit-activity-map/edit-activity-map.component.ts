@@ -36,6 +36,7 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { Address } from 'src/model/address';
 import { AddressService } from 'src/services/address.service';
 import html2canvas from 'html2canvas';
+import { StorageService } from 'src/services/storage.service';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -81,19 +82,22 @@ export class EditActivityMapComponent implements OnInit {
   private snackBar: MatSnackBar;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
+  private storageService: StorageService;
 
   public constructor(snackBar: MatSnackBar,
     roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService,
     roadWorkNeedService: RoadWorkNeedService,
     managementAreaService: ManagementAreaService,
-    addressService: AddressService) {
+    addressService: AddressService,
+    storageService: StorageService) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.managementAreaService = managementAreaService;
     this.addressService = addressService;
-    this.snackBar = snackBar;
+    this.storageService = storageService;
+    this.snackBar = snackBar;    
   }
 
   ngOnInit() {
@@ -588,14 +592,17 @@ export class EditActivityMapComponent implements OnInit {
     this.map.getLayers().changed();
   }
 
-  captureMap(): void {
+  captureMap() {
     let mapElement = document.getElementById("edit_activity_map") as HTMLElement;
     
     this.map.once('rendercomplete', () => {
       
       html2canvas(mapElement, { scale: 2, useCORS: false }).then((canvas) => {        
-        this.imageDataUrl = canvas.toDataURL('image/png');
-        //localStorage.setItem('ProjectPerimeter', this.imageDataUrl);        
+        this.imageDataUrl = canvas.toDataURL('image/png');        
+        try {
+              this.storageService.save('ProjectPerimeter', this.imageDataUrl);              
+            } catch (error) {                            
+            }
       });
 
       this.map.renderSync();
