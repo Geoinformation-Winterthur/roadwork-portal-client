@@ -133,9 +133,9 @@ export class ChooseActivityComponent implements OnInit {
     },
     {
       headerName: 'Mitwirkende',
-      field: 'properties', // lub dowolne pole, potrzebne by przypisać kolumnę
+      field: 'properties', 
       minWidth: 150,
-      maxWidth: 300, // kontrolowana szerokość kolumny
+      maxWidth: 300,
       valueGetter: ({ data }) => {
         if (typeof this.getInvolvedOrgsNames === 'function') {
           return this.getInvolvedOrgsNames(data).join(', ');
@@ -189,7 +189,7 @@ export class ChooseActivityComponent implements OnInit {
       headerName: 'Fälligkeit',
       width: 130,
       valueGetter: ({ data }) => {
-        return this.calcDueDate(data) || null; // surowa data lub null
+        return this.calcDueDate(data) || null; 
       },
       cellRenderer: ({ value, data }: any) => {
         const style = this.getColorDueDate(data);
