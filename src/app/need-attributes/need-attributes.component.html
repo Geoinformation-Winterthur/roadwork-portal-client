@@ -264,7 +264,7 @@
                                         <form method="post" enctype="multipart/form-data">
                                             <input type="file" name="pdfFile" accept="application/pdf"
                                                 (change)="uploadPdf($event)"
-                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"><br>
+                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed || !roadWorkNeedFeature.properties.uuid"><br>
                                         </form>
                                     </div>
                                 </div>
