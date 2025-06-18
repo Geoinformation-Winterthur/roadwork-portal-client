@@ -20,3 +20,8 @@ mat-selection-list {
     border-width: 1px;
     border-color: black;
 }
+
+.tab-content.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

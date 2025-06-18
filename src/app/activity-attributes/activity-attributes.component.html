@@ -408,7 +408,7 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Projekttermine</h2>
-                            <div fxLayout="row wrap padding">
+                            <div fxLayout="row wrap padding" class="tab-content" [class.disabled]="isScheduleEditingDisabled">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
@@ -657,7 +657,7 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Auflageverfahren</h2>
-                            <div fxLayout="row wrap padding">
+                            <div fxLayout="row wrap padding"  class="tab-content" [class.disabled]="isScheduleEditingDisabled">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
@@ -775,7 +775,7 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Vernehmlassungen</h2>
-                            <div fxLayout="row wrap padding">
+                            <div fxLayout="row wrap padding" class="tab-content" [class.disabled]="isScheduleEditingDisabled">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>

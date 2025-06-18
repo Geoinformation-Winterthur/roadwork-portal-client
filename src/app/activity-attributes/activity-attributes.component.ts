@@ -55,6 +55,8 @@ export class ActivityAttributesComponent implements OnInit {
   priorityCode: string = "";
   involvedUsers: User[] = [];
 
+  isScheduleEditingDisabled = true;
+
   isEditingForRoleNotAllowed: boolean = false;
 
   availableUsers: User[] = [];
