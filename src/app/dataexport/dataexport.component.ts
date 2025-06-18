@@ -29,14 +29,14 @@ export class DataexportComponent implements OnInit {
   startDownload() {
     let today: Date = new Date();
     this.roadWorkNeedService.downloadRoadWorkNeeds().subscribe({
-      next: (roadWorkNeedsCsv) => {
-        let csvData: Blob = new Blob([roadWorkNeedsCsv],
-          {
+      next: (roadWorkNeedsCsv: string) => {
+        const utf8BOM  = '\uFEFF';
+        let csvData: Blob = new Blob([utf8BOM + roadWorkNeedsCsv],
+        {
             type: "text/csv;charset=utf-8"
-          });
-        saveAs(csvData, "Bauvorhaben_Export" +
-          today.getFullYear() + "" + (today.getMonth() + 1) + "" + today.getDate() +
-          ".csv");
+        });
+        const filename = `Bauvorhaben_Export${today.getFullYear()}${today.getMonth() + 1}${today.getDate()}.csv`;
+        saveAs(csvData, filename);
       },
       error: (error) => {
       }
