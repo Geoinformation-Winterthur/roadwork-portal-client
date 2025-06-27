@@ -3,7 +3,7 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-  <h1>Bedarfe<span *ngIf="filterNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
+  <h1>Bedarfe ({{roadWorkNeedFeatures?.length}})<span *ngIf="filterNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{filterNeedYearOptFrom}}</span></h1>
   <div class="add-need-button-container">
     <button mat-fab [routerLink]="['/needs', 'new']" style="background-color: rgb(255, 25, 0);" class="fab-button">
@@ -19,7 +19,7 @@
         [columnDefs]="columnDefs"
         [defaultColDef]="defaultColDef"  
         [localeText]="localeText"
-        style="width: 100%; height: 600px;">
+        style="width: 100%; height: 70vh;">
       </ag-grid-angular>
   </div>
 </div>

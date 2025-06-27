@@ -323,7 +323,7 @@ export class ChooseNeedComponent implements OnInit {
                 if (this.agGrid?.api?.refreshCells) {
                   this.agGrid.api.refreshCells({ force: true });  
                 }
-              }, 1000);
+              }, 2000);
               
             },
             error: (error) => {

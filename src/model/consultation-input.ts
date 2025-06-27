@@ -8,7 +8,8 @@ import { User } from "./user";
 export class ConsultationInput {
     uuid: string = "";
     lastEdit?: Date;
-    inputBy: User = new User();
+    lastEditBy: string = "";
+    inputBy: User = new User();    
     decline: boolean = false;
     ordererFeedback: string = "";
     ordererFeedbackText: string = "";

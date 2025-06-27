@@ -35,7 +35,8 @@
             <ng-container matColumnDef="date_last_change">
                 <th mat-header-cell *matHeaderCellDef> Letzte Änderung </th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <span *ngIf="consultationInput.lastEdit">
+                    <span *ngIf="consultationInput.lastEdit" 
+                           matTooltip="{{consultationInput.lastEditBy}}">
                         {{consultationInput.lastEdit | date: 'dd.MM.yyyy' }}
                     </span>
                     <span *ngIf="!consultationInput.lastEdit">
@@ -197,15 +198,15 @@
 
         <div style="width: 100%;table-layout: fixed;">                                                   
             <div>
-                <div style="min-width: 300px; margin-top: 10px; margin-bottom: 1em;">
+                <div style="min-width: 300px; margin-top: 50px; margin-bottom: 1em;">
                     <button mat-button style="background-color: rgb(236,236,234);margin-top: 1em;margin-bottom: 1em;padding: 0.5em;padding-left:1em; padding-right: 1em" 
                         [disabled]="!isSelectionInvolvedUsersAllowed"
                            (click)="isSelectionInvolvedUsersVisible=!isSelectionInvolvedUsersVisible">
-                            Beteiligte für Stellungnahme auswählen 
+                            Beteiligte auswählen 
                     </button>                    
                     <div *ngIf="isSelectionInvolvedUsersVisible">
                         <ag-grid-angular
-                            style="width: 100%; height: 300px;"
+                            style="width: 100%; height: 35vh;"
                             class="ag-theme-alpine"
                             [rowData]="availableUsers"
                             [columnDefs]="columnDefs"
