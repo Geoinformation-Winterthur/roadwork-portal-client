@@ -23,6 +23,8 @@ import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 })
 export class ChooseNeedComponent implements OnInit {
 
+  isDataLoading = false;
+
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
 
   filterPanelOpen: boolean = false;
@@ -254,6 +256,7 @@ export class ChooseNeedComponent implements OnInit {
     this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.snckBar = snckBar;
+    this.isDataLoading = true;
   }
 
   ngOnInit(): void {
@@ -322,11 +325,13 @@ export class ChooseNeedComponent implements OnInit {
               setTimeout(() => {
                 if (this.agGrid?.api?.refreshCells) {
                   this.agGrid.api.refreshCells({ force: true });  
+                  this.isDataLoading = false;
                 }
-              }, 2000);
+              }, 1200);
               
             },
             error: (error) => {
+              this.isDataLoading = false;
             }
           });
     }

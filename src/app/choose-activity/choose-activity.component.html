@@ -11,7 +11,8 @@
       <mat-icon aria-label="Icon shows tools">handyman</mat-icon>
     </button>
   </div>
-  <div style="margin-bottom: 2em;">      
+  <div style="margin-bottom: 2em;">
+      <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
       <ag-grid-angular
         class="ag-theme-alpine"
         [rowData]="roadWorkActivityFeaturesFiltered"
