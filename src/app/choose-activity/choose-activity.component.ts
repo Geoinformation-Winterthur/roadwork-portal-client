@@ -38,7 +38,7 @@ export class ChooseActivityComponent implements OnInit {
   filterAreaManagerControl: FormControl = new FormControl();
   filterProjectManagerControl: FormControl = new FormControl();
 
-  statusFilterCodes: string[] = ["review", "inconsult", "verified", "reporting", "coordinated", "prestudy"];
+  statusFilterCodes: string[] = ["review", "inconsult1", "inconsult2", "verified1", "verified2", "reporting", "coordinated", "prestudy"];
 
   tableDisplayedColumns: string[] = ['status', 'area_man', 'title', 'involved', 'lead', 'project_man',
     'realisation_date', 'due_date', 'link_cityplan', 'link_wwg'];
@@ -69,8 +69,10 @@ export class ChooseActivityComponent implements OnInit {
         const map: { [key: string]: { label: string; color: string } } = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
           review: { label: '12/Prüfung', color: '#90caf9' },
-          verified: { label: '12/verifiziert', color: '#64b5f6' },
-          inconsult: { label: '12/Bedarfsklärung', color: '#4fc3f7' },
+          verified1: { label: '12/verifiziert-1', color: '#64b5f6' },
+          verified2: { label: '12/verifiziert-2', color: '#64b5f6' },
+          inconsult1: { label: '12/Bedarfsklärung-1', color: '#4fc3f7' },
+          inconsult2: { label: '12/Bedarfsklärung-2', color: '#4fc3f7' },
           reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
           coordinated: { label: '12/koordiniert', color: '#0288d1' },
           prestudy: { label: '21/Vorstudie', color: '#81c784' },
@@ -319,8 +321,10 @@ export class ChooseActivityComponent implements OnInit {
       let chooseAll = [];
       chooseAll.push('all');
       chooseAll.push('review');
-      chooseAll.push('inconsult');
-      chooseAll.push('verified');
+      chooseAll.push('inconsult1');
+      chooseAll.push('inconsult2');
+      chooseAll.push('verified2');
+      chooseAll.push('verified2');
       chooseAll.push('reporting');
       chooseAll.push('coordinated');
       chooseAll.push('suspended');
@@ -403,7 +407,9 @@ export class ChooseActivityComponent implements OnInit {
           }
 
           setTimeout(() => {
-            this.agGrid.api.refreshCells({ force: true });
+            if (this.agGrid?.api?.refreshCells) {
+              this.agGrid.api.refreshCells({ force: true });
+            }
           }, 1000);
 
           return showActivity;
@@ -461,8 +467,10 @@ export class ChooseActivityComponent implements OnInit {
 
   calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
     let result = undefined;
-    if (roadworkActivity.properties.status == "inconsult" ||
-      roadworkActivity.properties.status == "verified") {
+    if (roadworkActivity.properties.status == "inconsult1" ||
+        roadworkActivity.properties.status == "verified1"  ||
+        roadworkActivity.properties.status == "inconsult2" ||
+        roadworkActivity.properties.status == "verified2") {
       if (roadworkActivity.properties.dateConsultEnd)
         result = new Date(roadworkActivity.properties.dateConsultEnd);
     } else if (roadworkActivity.properties.status == "reporting") {

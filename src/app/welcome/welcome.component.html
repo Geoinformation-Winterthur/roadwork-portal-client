@@ -105,14 +105,7 @@
                                 *ngIf="userService.getLocalUser().chosenRole === 'territorymanager'">Gebietsmanagement</span>
                             <span
                                 *ngIf="userService.getLocalUser().chosenRole === 'administrator'">Administration</span></b>.
-                    </p>
-                    <div
-                        style="padding: 1em;margin-bottom: 1em;border: 1px solid lightgray;display:flex;flex-direction:column;">
-                        <p>Ansicht:</p>
-                        <mat-slide-toggle [(ngModel)]="user.prefTableView" (focusout)="update()">Tabellenansicht
-                            bevorzugen (nicht mobile-fähig)
-                        </mat-slide-toggle>
-                    </div>
+                    </p>                    
                     <div style="padding: 1em;border: 1px solid lightgray;">
                         <p>Passphrase neu setzen:</p>
                         <mat-form-field>

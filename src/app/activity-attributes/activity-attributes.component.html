@@ -316,50 +316,6 @@
                             Dieser Bereich ist in Plaunung.
                         </div>
                     </mat-tab>
-                    <mat-tab label="Beteiligte" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div style="margin: 1em;" style="width: 100%">
-                            <div fxLayout="row wrap padding" style="width: 100%">
-                                <table mat-table [dataSource]="availableUsers" class="mat-elevation-z2"
-                                    style="width: 100%">
-
-                                    <ng-container matColumnDef="org">
-                                        <th mat-header-cell *matHeaderCellDef> Werk </th>
-                                        <td mat-cell *matCellDef="let availableUser">
-                                            {{availableUser.organisationalUnit.name}}
-                                        </td>
-                                    </ng-container>
-
-                                    <ng-container matColumnDef="abbr">
-                                        <th mat-header-cell *matHeaderCellDef> Kurzzeichen </th>
-                                        <td mat-cell *matCellDef="let availableUser">
-                                            {{availableUser.organisationalUnit.abbreviation}}
-                                        </td>
-                                    </ng-container>
-
-                                    <ng-container matColumnDef="name">
-                                        <th mat-header-cell *matHeaderCellDef> Ansprechperson </th>
-                                        <td mat-cell *matCellDef="let availableUser">{{availableUser.firstName}}
-                                            {{availableUser.lastName}}
-                                        </td>
-                                    </ng-container>
-
-                                    <ng-container matColumnDef="choose">
-                                        <th mat-header-cell *matHeaderCellDef> Beteiligter (ja/nein) </th>
-                                        <td mat-cell *matCellDef="let availableUser">
-                                            <mat-checkbox name="change_involved_user"
-                                                (change)="changeInvolvedUsers(availableUser)" style="margin:10px;"
-                                                [checked]="isInvolvedUser(availableUser)">
-                                            </mat-checkbox>
-                                        </td>
-                                    </ng-container>
-
-                                    <tr mat-header-row *matHeaderRowDef="chooseInvolvedUserDisplayedColumns"></tr>
-                                    <tr mat-row *matRowDef="let row; columns: chooseInvolvedUserDisplayedColumns;"></tr>
-                                </table>
-
-                            </div>
-                        </div>
-                    </mat-tab>
                     <mat-tab label="Termine" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;margin-bottom: 4em;">
                             <div *ngIf="!roadWorkActivityFeature.properties.overarchingMeasure">
@@ -1369,31 +1325,58 @@
                                         'dd.MM.yyyy'}}</span>
                                 </mat-chip>
                             </div>
-                            <button (click)="update(false, 'inconsult')"
+
+                            <!-- Bedarfsklärung-1 -->
+                            <button (click)="update(false, 'inconsult1')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 [disabled]="roadWorkActivityFeature.properties.status != 'review' 
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Bedarfsklärung durchführen</button>
-                            <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult'"
-                                (click)="openMail('inconsult')"
+                                mat-button>Bedarfsklärung-1 durchführen</button>
+                                        
+                            <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult1'"
+                                (click)="openMail('inconsult1')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
                                 [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
                                 mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
                             <span
-                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult')"
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')"
                                 style="margin: 2em;color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
                             <span *ngIf="roadWorkActivityFeature.properties.dateStartReporting">
                                 ({{roadWorkActivityFeature.properties.dateStartReporting | date:'dd.MM.yyyy'}})
                             </span><br>
-                            <button (click)="update(false, 'reporting')"
+
+                            <!--Bedarfsklärung-2 -->
+                            <button (click)="update(false, 'inconsult2')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                [disabled]="roadWorkActivityFeature.properties.status != 'verified'
+                                [disabled]="roadWorkActivityFeature.properties.status != 'verified1' 
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Stellungnahme durchführen</button>
+                                mat-button>Bedarfsklärung-2 durchführen</button>
+                            <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult2'"
+                                (click)="openMail('inconsult2')"
+                                style="background-color: white;margin-top: 1em;margin-right: 1em;"
+                                [disabled]="roadWorkActivityFeature.properties.isPrivate || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                mat-button><mat-icon aria-label="Main anzeigen">mail</mat-icon></button>
+                            <span
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult2')"
+                                style="margin: 2em;color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
+                                ABGESCHLOSSEN
+                            </span>
+                            <span *ngIf="roadWorkActivityFeature.properties.dateStartVerified1">
+                                ({{roadWorkActivityFeature.properties.dateStartVerified1 | date:'dd.MM.yyyy'}})
+                            </span><br>
+
+
+                            <!--Stellungnahme-->
+                            <button (click)="update(false, 'reporting')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                [disabled]="roadWorkActivityFeature.properties.status != 'verified2'
+                                        || roadWorkActivityFeature.properties.isPrivate
+                                        || !roadWorkActivityFeature.properties.isEditingAllowed"
+                                mat-button>Stellungnahme durchführen&nbsp;&nbsp;&nbsp;&nbsp;</button>
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
                                 (click)="openMail('reporting')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1409,10 +1392,10 @@
                             </span><br>
                         </div>
                     </mat-tab>
-                    <mat-tab label="Bedarfsklärung">
+                    <!-- <mat-tab label="Bedarfsklärung">
                         <div style="margin: 2em;">
                             <span
-                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult')"
+                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')"
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -1420,25 +1403,79 @@
                         <div style="text-align: right;">
                             <button *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
                                                 userService.getLocalUser().chosenRole == 'territorymanager') &&
-                                                roadWorkActivityFeature.properties.status == 'inconsult'"
-                                (click)="update(false, 'verified')"
+                                                roadWorkActivityFeature.properties.status == 'inconsult1'"
+                                (click)="update(false, 'verified0')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>ABSCHLIESSEN</button>
                             <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
-                                    roadWorkActivityFeature.properties.status == 'verified'"
-                                (click)="update(false, 'inconsult')"
+                                    roadWorkActivityFeature.properties.status == 'verified0'"
+                                (click)="update(false, 'inconsult1')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
                         <app-consultation-items [roadWorkActivity]="roadWorkActivityFeature">
                         </app-consultation-items>
-                    </mat-tab>
-                    <mat-tab label="Stellungnahme">
-                        <div style="margin: 2em;">
-                            <span
-                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'reporting')"
+                    </mat-tab> -->
+                     <mat-tab label="Bedarfsklärung-1">
+                         <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')" style="margin: 2em;">
+                            <span                                
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
+                            </span>
+                            <span style="display: block;margin-top: 2em;">
+                                Bedarfsklärung-1 ist abgeschlossen.
+                            </span>
+                        </div>
+                        <div style="text-align: right;">
+                            <button *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
+                                                userService.getLocalUser().chosenRole == 'territorymanager') &&
+                                                roadWorkActivityFeature.properties.status == 'inconsult1'"
+                                (click)="update(false, 'verified1')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                mat-button>ABSCHLIESSEN</button>
+                            <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
+                                    roadWorkActivityFeature.properties.status == 'verified1'"
+                                (click)="update(false, 'inconsult1')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                mat-button>WIEDERERÖFFNEN</button>
+                        </div>
+                        <app-reporting-items #reportingItemsInconsult1 [feedbackPhaseName]="'Bedarfsklärung-1'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult1'" [feedbackPhaseAccomplished]="'review'">
+                        </app-reporting-items>
+                    </mat-tab>
+                    <mat-tab label="Bedarfsklärung-2">
+                         <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult2')" style="margin: 2em;">
+                            <span                                
+                                style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
+                                ABGESCHLOSSEN
+                            </span>
+                            <span style="display: block;margin-top: 2em;">
+                                Bedarfsklärung-2 ist abgeschlossen.
+                            </span>
+                        </div>
+                        <div style="text-align: right;">
+                            <button *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
+                                                userService.getLocalUser().chosenRole == 'territorymanager') &&
+                                                roadWorkActivityFeature.properties.status == 'inconsult2'"
+                                (click)="update(false, 'verified2')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                mat-button>ABSCHLIESSEN</button>
+                            <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
+                                    roadWorkActivityFeature.properties.status == 'verified2'"
+                                (click)="update(false, 'inconsult2')"
+                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                                mat-button>WIEDERERÖFFNEN</button>
+                        </div>
+                        <app-reporting-items #reportingItemsInconsult2 [feedbackPhaseName]="'Bedarfsklärung-2'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult2'" [feedbackPhaseAccomplished]="'verified1'">
+                        </app-reporting-items>
+                    </mat-tab>
+                    <mat-tab label="Stellungnahme">
+                        <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'reporting')" style="margin: 2em;">
+                            <span                                
+                                style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
+                                ABGESCHLOSSEN
+                            </span>
+                           <span style="display: block;margin-top: 2em;">
+                                Stellungnahme ist abgeschlossen.
                             </span>
                         </div>
                         <div style="text-align: right;">
@@ -1454,7 +1491,7 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
-                        <app-reporting-items [roadWorkActivity]="roadWorkActivityFeature">
+                        <app-reporting-items #reportingItemsReporting [feedbackPhaseName]="'Stellungnahme'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'reporting'" [feedbackPhaseAccomplished]="'verified2'">
                         </app-reporting-items>
                     </mat-tab>
                 </mat-tab-group>

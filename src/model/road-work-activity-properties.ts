@@ -84,8 +84,10 @@ export class RoadWorkActivityProperties {
     isAggloprog: boolean = false;
     url: string = "";
     documentAtts?: DocumentAttributes[];
-    dateStartInconsult?: Date;
-    dateStartVerified?: Date; 
+    dateStartInconsult1?: Date;
+    dateStartVerified1?: Date; 
+    dateStartInconsult2?: Date;
+    dateStartVerified2?: Date; 
     dateStartReporting?: Date;
     dateStartSuspended?: Date;
     dateStartCoordinated?: Date;

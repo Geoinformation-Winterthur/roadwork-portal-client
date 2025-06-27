@@ -3,8 +3,10 @@ export class StatusHelper {
     private static statusOrder = [
         "requirement",
         "review",
-        "inconsult",
-        "verified",
+        "inconsult1",        
+        "verified1",
+        "inconsult2",
+        "verified2",
         "reporting",
         "prestudy",
         "coordinated",
@@ -16,7 +18,7 @@ export class StatusHelper {
      * compared to a reference status (`referenceStatus`).
      *
      * The statuses are evaluated based on a predefined order:
-     * ["requirement", "review", "inconsult", "verified", "reporting", "prestudy", "coordinated", "suspended"].
+     * ["requirement", "review", "inconsult1", "verified1", "inconsult2", "verified2", "reporting", "prestudy", "coordinated", "suspended"].
      *
      * If `realStatus` appears later in this sequence than `referenceStatus`, the method returns `true`.
      * Otherwise, it returns `false`.

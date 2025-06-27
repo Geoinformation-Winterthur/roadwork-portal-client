@@ -43,6 +43,11 @@ export class ReportLoaderService {
 
     }
 
+    generateReport(uuid: string) {
+        this.loadRoadWorkActivity(uuid);
+        this.loadReport("report_roadwork_activity", { "uuid": uuid });
+    }
+
 
     async loadReport(templateName: string, values: { [key: string]: string }): Promise<string> {
         
@@ -54,9 +59,7 @@ export class ReportLoaderService {
             return `<pre style="color:red;">Error: Template name not provided.</pre>`;
         }
       
-
-        this.loadRoadWorkActivity(values["uuid"]);
-
+       
         if (!this.roadWorkActivity || !this.primaryNeed || !this.managementArea) {
             return `<pre style="color:red;">Error: RoadWorkActivity, PrimaryNeed or ManagementArea not set.</pre>`;
         }
@@ -84,9 +87,9 @@ export class ReportLoaderService {
                 'DATUM': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'DATUM_LETZTE_SKS': this.wrapPlaceholder('?DATUM_LETZTE_SKS?'),
-                'DATUM_VERSAND_BEDARFSKLAERUNG': this.wrapPlaceholder('?DATUM_VERSAND_BEDARFSKLAERUNG?'),
-                'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder('?DATUM_VERSAND_STELLUNGNAHME?'),
-                'DATUM_SKS': this.wrapPlaceholder('?DATUM_SKS?'),
+                'DATUM_VERSAND_BEDARFSKLAERUNG': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateConsultStart)),
+                'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateReportStart)),
+                'DATUM_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'MAP_PERIMETER': projectPerimeterMap,
                 'TITEL_ADRESSE_ABSCHNITT': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.name??"-"} / ${this.roadWorkActivity?.properties?.section??"-"}`),
                 'TITEL_ADRESSE': this.wrapPlaceholder(this.roadWorkActivity?.properties?.name?? "-"),
@@ -192,24 +195,24 @@ export class ReportLoaderService {
 
 
     loadRoadWorkActivity(uuid: string): void {
-    this.roadWorkActivityService.getRoadWorkActivities(uuid).subscribe({
-        next: (activities: RoadWorkActivityFeature[]) => {
-            if (activities.length !== 1) {
-                console.warn(`Expected one RoadWorkActivity for UUID ${uuid}, got ${activities.length}`);
-                return;
+        this.roadWorkActivityService.getRoadWorkActivities(uuid).subscribe({
+            next: (activities: RoadWorkActivityFeature[]) => {
+                if (activities.length !== 1) {
+                    console.warn(`Expected one RoadWorkActivity for UUID ${uuid}, got ${activities.length}`);
+                    return;
+                }
+
+                const activity = activities[0];
+                this.roadWorkActivity = activity;
+                this.primaryNeed = this.getPrimaryNeed();
+                this.loadManagementArea(activity.geometry);
+
+                this.loadAssociatedNeeds(activity);
+                
+            },
+            error: (err) => {
+                console.error("Failed to load RoadWorkActivity:", err);
             }
-
-            const activity = activities[0];
-            this.roadWorkActivity = activity;
-            this.primaryNeed = this.getPrimaryNeed();
-            this.loadManagementArea(activity.geometry);
-
-            this.loadAssociatedNeeds(activity);
-            
-        },
-        error: (err) => {
-            console.error("Failed to load RoadWorkActivity:", err);
-        }
         });
     }
 

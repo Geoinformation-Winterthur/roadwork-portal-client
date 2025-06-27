@@ -70,8 +70,10 @@ export class ChooseNeedComponent implements OnInit {
         const map: { [key: string]: { label: string; color: string } } = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
           review: { label: '12/Prüfung', color: '#90caf9' },
-          verified: { label: '12/verifiziert', color: '#64b5f6' },
-          inconsult: { label: '12/Bedarfsklärung', color: '#4fc3f7' },
+          verified1: { label: '12/verifiziert-1', color: '#64b5f6' },
+          verified2: { label: '12/verifiziert-2', color: '#64b5f6' },
+          inconsult1: { label: '12/Bedarfsklärung-1', color: '#4fc3f7' },
+          inconsult2: { label: '12/Bedarfsklärung-2', color: '#4fc3f7' },
           reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
           coordinated: { label: '12/koordiniert', color: '#0288d1' },
           prestudy: { label: '21/Vorstudie', color: '#81c784' },
@@ -318,7 +320,9 @@ export class ChooseNeedComponent implements OnInit {
               this.roadWorkNeedFeatures = roadWorkNeeds;
 
               setTimeout(() => {
-              this.agGrid.api.refreshCells({ force: true });  
+                if (this.agGrid?.api?.refreshCells) {
+                  this.agGrid.api.refreshCells({ force: true });  
+                }
               }, 1000);
               
             },

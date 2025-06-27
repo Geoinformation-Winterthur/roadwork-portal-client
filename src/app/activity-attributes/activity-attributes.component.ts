@@ -29,10 +29,10 @@ import { EnumType } from 'src/model/enum-type';
 import { DocumentService } from 'src/services/document.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-activity-dialog.component';
-import { ConsultationInput } from 'src/model/consultation-input';
 import { ConsultationService } from 'src/services/consultation.service';
 import { TimeFactorHelper } from 'src/helper/time-factor-helper';
 import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
+import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -43,6 +43,9 @@ import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
 export class ActivityAttributesComponent implements OnInit {
 
   @ViewChild("edit_activity_map") editActivityMap: any;
+  @ViewChild("reportingItemsInconsult1") reportingItemsInconsult1 !: ReportingItemsComponent;
+  @ViewChild("reportingItemsInconsult2") reportingItemsInconsult2 !: ReportingItemsComponent;
+  @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
   managementArea?: ManagementArea;
@@ -93,7 +96,6 @@ export class ActivityAttributesComponent implements OnInit {
 
   assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor", "consult_input"];
 
-  consultationInputsFromReporting: ConsultationInput[] = [];
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
 
   roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
@@ -310,32 +312,18 @@ export class ActivityAttributesComponent implements OnInit {
 
                 this.activatedRoute.queryParams.subscribe(params => {
                   const tabName = params["open_tab"];
-                  if (tabName == "bedarfsklaerung") {
+                  if (tabName == "bedarfsklaerung1") {
                     this.selectedTabIndex = 3;
                     this.selectedSubTabIndex = 1;
+                  } else if (tabName == "bedarfsklaerung2") {
+                    this.selectedTabIndex = 3;
+                    this.selectedSubTabIndex = 2;                  
                   } else if (tabName == "stellungnahme") {
                     this.selectedTabIndex = 3;
-                    this.selectedSubTabIndex = 2;
+                    this.selectedSubTabIndex = 3;
                   }
                 });
-
-                if (this.roadWorkActivityFeature)
-                  this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
-                    .subscribe({
-                      next: (consultationInputs) => {
-                        let consultationInputsFromReportingTemp: ConsultationInput[] = [];
-                        for (let consultationInput of consultationInputs) {
-                          if (consultationInput.feedbackPhase === 'reporting') {
-                            consultationInputsFromReportingTemp.push(consultationInput);
-                          }
-                        }
-                        this.consultationInputsFromReporting = consultationInputsFromReportingTemp;
-
-                      },
-                      error: (error) => {
-                      }
-                    });
-
+                
               },
               error: (error) => {
               }
@@ -433,6 +421,9 @@ export class ActivityAttributesComponent implements OnInit {
                         }
 
                         this._updateDueDate();
+                        this.reportingItemsInconsult1.ngOnInit();
+                        this.reportingItemsInconsult2.ngOnInit();
+                        this.reportingItemsReporting.ngOnInit();
 
                         let successMassage: string = "Bauvorhaben wurde erfolgreich gespeichert";
                         if (publish) successMassage += " und publiziert";
@@ -497,28 +488,44 @@ export class ActivityAttributesComponent implements OnInit {
         return true;
       else
         return false;
-    } else if (currValue === 'inconsult') {
+    } else if (currValue === 'inconsult1') {
       if (valueToCheck === 'review')
         return true;
-      else if (valueToCheck === 'inconsult')
+      else if (valueToCheck === 'inconsult1')
         return true;
       else
         return false;
-    } else if (currValue === 'verified') {
+    } else if (currValue === 'verified1') {
       if (valueToCheck === 'review')
         return true;
-      else if (valueToCheck === 'inconsult')
+      else if (valueToCheck === 'inconsult1')
         return true;
-      else if (valueToCheck === 'verified')
+      else if (valueToCheck === 'verified1')
+        return true;
+      else
+        return false;    
+    } else if (currValue === 'inconsult2') {
+      if (valueToCheck === 'review')
+        return true;
+      else if (valueToCheck === 'inconsult2')
+        return true;
+      else
+        return false;
+    } else if (currValue === 'verified2') {
+      if (valueToCheck === 'review')
+        return true;
+      else if (valueToCheck === 'inconsult2')
+        return true;
+      else if (valueToCheck === 'verified2')
         return true;
       else
         return false;
     } else if (currValue === 'reporting') {
       if (valueToCheck === 'review')
         return true;
-      else if (valueToCheck === 'inconsult')
+      else if (valueToCheck === 'inconsult1')
         return true;
-      else if (valueToCheck === 'verified')
+      else if (valueToCheck === 'verified1')
         return true;
       else if (valueToCheck === 'reporting')
         return true;
@@ -528,9 +535,13 @@ export class ActivityAttributesComponent implements OnInit {
       currValue === 'suspended') {
       if (valueToCheck === 'review')
         return true;
-      else if (valueToCheck === 'inconsult')
+      else if (valueToCheck === 'inconsult1')
         return true;
-      else if (valueToCheck === 'verified')
+      else if (valueToCheck === 'verified1')
+        return true;
+      else if (valueToCheck === 'inconsult2')
+        return true;
+      else if (valueToCheck === 'verified2')
         return true;
       else if (valueToCheck === 'reporting')
         return true;
@@ -812,8 +823,10 @@ export class ActivityAttributesComponent implements OnInit {
 
   private _updateDueDate() {
     if (this.roadWorkActivityFeature) {
-      if (this.roadWorkActivityFeature.properties.status == "inconsult" ||
-        this.roadWorkActivityFeature.properties.status == "verified") {
+      if (this.roadWorkActivityFeature.properties.status == "inconsult1" ||
+          this.roadWorkActivityFeature.properties.status == "verified1" ||
+          this.roadWorkActivityFeature.properties.status == "inconsult2" ||
+          this.roadWorkActivityFeature.properties.status == "verified2") {
         if (this.roadWorkActivityFeature.properties.dateConsultEnd)
           this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd);
       } else if (this.roadWorkActivityFeature.properties.status == "reporting") {
@@ -851,7 +864,7 @@ export class ActivityAttributesComponent implements OnInit {
     let mailText = "mailto:";
 
     if (this.roadWorkActivityFeature &&
-      (newStatus == "inconsult" || newStatus == "reporting")) {
+      (newStatus == "inconsult1" || newStatus == "inconsult2" || newStatus == "reporting")) {
 
       if (this.roadWorkActivityFeature.geometry 
           && !this.roadWorkActivityFeature.properties.areaManager) {
@@ -877,8 +890,10 @@ export class ActivityAttributesComponent implements OnInit {
 
       mailText += separator + "subject=Die";
 
-      if (newStatus == "inconsult")
-        mailText += " Bedarfsklärung ";
+      if (newStatus == "inconsult1")
+        mailText += " Bedarfsklärung-1 ";      
+      else if (newStatus == "inconsult2")
+        mailText += " Bedarfsklärung-2 ";
       else if (newStatus == "reporting")
         mailText += " Stellungnahme ";
 
@@ -887,14 +902,16 @@ export class ActivityAttributesComponent implements OnInit {
         "' beginnt. Deine Meinung ist gefragt.&";
 
       mailText += "body=Liebe Kolleginnen und Kollegen%0A%0A";
-      if (newStatus == "inconsult")
+      if (newStatus == "inconsult1" || newStatus == "inconsult2")
         mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
       else if (newStatus == "reporting")
         mailText += "Das nachfolgende Bauvorhaben ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
 
       mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid;
-      if (newStatus == "inconsult")
-        mailText += "?open_tab=bedarfsklaerung";
+      if (newStatus == "inconsult1")
+        mailText += "?open_tab=bedarfsklaerung1";
+      else if (newStatus == "inconsult2")
+        mailText += "?open_tab=bedarfsklaerung2";
       else if (newStatus == "reporting")
         mailText += "?open_tab=stellungnahme";
 
@@ -902,7 +919,7 @@ export class ActivityAttributesComponent implements OnInit {
       mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid + "%0A%0A";
       mailText += "Bezeichnung: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
 
-      if (newStatus == "inconsult") {
+      if (newStatus == "inconsult1" || newStatus == "inconsult2") {
         mailText += "Bitte beurteile, ob in deinem Bereich Bedarf zum Mitbauen besteht oder nicht. ";
         mailText += "Mit Klick auf obigen Link gelangst du zum Bauvorhaben.%0A%0A";
         mailText += "Sollte Bedarf vorhanden sein, so bitten wir dich, den Button «Bedarf erfassen» zu benutzen ";
@@ -913,7 +930,7 @@ export class ActivityAttributesComponent implements OnInit {
       else if (newStatus == "reporting")
         mailText += "Mit Klick auf obigen Link kannst du das Bauvorhaben beurteilen und bei Bedarf eine Rückmeldung geben.%0A%0A";
 
-      if (newStatus == "inconsult" && this.roadWorkActivityFeature.properties.dateConsultEnd)
+      if ((newStatus == "inconsult1" || newStatus == "inconsult2") && this.roadWorkActivityFeature.properties.dateConsultEnd)
         mailText += "Die Bedarfsklärung läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
       else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)

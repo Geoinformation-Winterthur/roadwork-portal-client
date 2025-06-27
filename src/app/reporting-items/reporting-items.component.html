@@ -1,118 +1,23 @@
-<div #reportContainer style="position: fixed; left: -9999px; top: 0; visibility: hidden;"></div>
-<div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
-    Stellungnahme noch nicht eröffnet. Oder es wurden keine Beteiligten vorausgewählt
+<div *ngIf="statusHelper.isStatusEarlier(roadWorkActivity.properties.status, feedbackPhase)" style="margin: 2em;">
+    {{feedbackPhaseName}} noch nicht eröffnet. Oder es wurden keine Beteiligten vorausgewählt
     und es gibt noch keine Rückmeldungen. Evtl. muss zur korrekten Darstellung das Bauvorhaben neu geladen
     werden.
 </div>
-<div *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'reporting')" style="margin: 2em;">
-    Die Stellungnahme ist abgeschlossen.
-</div>
 <div
-    *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, 'verified')">
-    <div *ngIf="!user || !user.prefTableView">
-        <div fxLayout="row wrap padding">
-            <mat-card class="maincard mat-elevation-z2"
-                *ngFor="let consultationInput of consultationInputsFromReporting" fxFlex.xs="100" fxFlex="31"
-                fxFlex.md="31" fxFlex.sm="50">
-                <mat-card-header style="margin: 0.5em;">
-                    <div style="width: 80%; margin-right: 1em;">
-                        <mat-card-title>
-                            {{ (consultationInput.inputBy.firstName + " " + consultationInput.inputBy.lastName).slice(0,
-                            20)
-                            }}<span
-                                *ngIf="consultationInput.inputBy.firstName.length + consultationInput.inputBy.lastName.length > 20">...</span>
-                        </mat-card-title>
-                        <mat-card-subtitle>Letzte Änderung:
-                            <span *ngIf="consultationInput.lastEdit">
-                                {{consultationInput.lastEdit | date:'dd.MM.yyyy'}}
-                            </span>
-                            <span *ngIf="!consultationInput.lastEdit">
-                                -
-                            </span>
-                        </mat-card-subtitle>
-                    </div>
-                </mat-card-header>
-                <mat-card-content style="margin: 0.5em;padding-bottom: 1em;">
-                    <mat-chip-list>
-                        <mat-chip *ngIf="consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung erhalten"
-                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Rückmeldung erhalten</span>
-                        </mat-chip>
-                        <mat-chip *ngIf="!consultationInput.feedbackGiven">
-                            <mat-icon style="font-size: 1.5;" aria-label="Noch keine Rückmeldung"
-                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Noch keine
-                                Rückmeldung</span>
-                        </mat-chip>
-                    </mat-chip-list>
-
-                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
-                        <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
-                            <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf vorhanden"
-                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Weiterhin Bedarf vorhanden</span>
-                        </mat-chip>
-                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">
-                            <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
-                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Kein Bedarf mehr</span>
-                        </mat-chip>
-                    </mat-chip-list>
-
-                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
-                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
-                            <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
-                                style="color: green;">check</mat-icon>&nbsp;<span i18n>Bauvorhaben passt</span>
-                        </mat-chip>
-                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_not_okay'">
-                            <mat-icon style="font-size: 1.5;" aria-label="Nicht einverstanden"
-                                style="color: rgb(225, 74, 74);">close</mat-icon>&nbsp;<span i18n>Nicht einverstanden</span>
-                        </mat-chip>
-                    </mat-chip-list>
-                    <div *ngIf="consultationInput.feedbackGiven" style="margin: 1em;">Rückmeldung Beteiligte:r:
-                    </div>
-                    <div *ngIf="consultationInput.feedbackGiven"
-                        style="margin: 1em;padding: 0.5em;background-color: rgb(231, 231, 231);font-style: italic;font-size: 1.2em;">
-                        <span *ngIf="consultationInput.ordererFeedbackText">{{consultationInput.ordererFeedbackText}}</span>
-                        <span *ngIf="!consultationInput.ordererFeedbackText">Kein Text</span>
-                    </div>
-                    <p style="margin: 2em;">Bewertung des Bauvorhabens:<br>
-                        <mat-button-toggle-group [(ngModel)]="consultationInput.valuation"
-                            aria-label="Bewertung des Bauvorhabens" disabled>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 0" value="0"
-                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">0</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 0" value="0"
-                                style="background-color: rgb(239, 239, 239);">0</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 1" value="1"
-                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">1</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 1" value="1"
-                                style="background-color: rgb(239, 239, 239);">1</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 2" value="2"
-                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">2</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 2" value="2"
-                                style="background-color: rgb(239, 239, 239);">2</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 3" value="3"
-                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">3</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 3" value="3"
-                                style="background-color: rgb(239, 239, 239);">3</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation == 4" value="4"
-                                style="background-color: rgb(220, 220, 220); font-weight: bold;border: 1px solid;">4</mat-button-toggle>
-                            <mat-button-toggle *ngIf="consultationInput && consultationInput.valuation != 4" value="4"
-                                style="background-color: rgb(239, 239, 239);">4</mat-button-toggle>
-                        </mat-button-toggle-group>
-                    </p>
-                </mat-card-content>
-                <mat-divider></mat-divider>
-                <mat-card-actions style="margin: 0.5em;">
-                    <mat-form-field style="width: 100%;">
-                        <mat-label>Bemerkung GM</mat-label>
-                        <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
-                            [(ngModel)]="consultationInput.managerFeedback" placeholder="Bemerkung GM...">
-                    </textarea>
-                    </mat-form-field>
-                </mat-card-actions>
-            </mat-card>
-        </div>
-    </div>
+    *ngIf="statusHelper.isStatusLater(roadWorkActivity.properties.status, feedbackPhaseAccomplished)">
     <div *ngIf="user && user.prefTableView" style="margin-top: 1em;">
         <table mat-table [dataSource]="consultationInputsFromReporting" class="mat-elevation-z2" style="width: 100%">
+
+             <ng-container matColumnDef="need_link">
+                <th mat-header-cell *matHeaderCellDef> Bedarf </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <a routerLink="/needs/{{consultationInput.roadworkNeedUuid}}"
+                            matTooltip="{{roadWorkActivity.properties.name}} {{roadWorkActivity.properties.section}}">
+                        {{ (consultationInput.roadworkNeedName).slice(0, 20)
+                        }}<span *ngIf="consultationInput.roadworkNeedName.length > 20">...</span>
+                    </a>
+                </td>
+            </ng-container>
 
             <ng-container matColumnDef="organisation">
                 <th mat-header-cell *matHeaderCellDef> Werk </th>
@@ -187,11 +92,55 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="feedback">
-                <th mat-header-cell *matHeaderCellDef> Rückmeldung </th>
-                <td mat-cell *matCellDef="let consultationInput" style="max-width: 10em; word-wrap:break-word;">
-                    {{consultationInput.ordererFeedbackText}}</td>
-            </ng-container>
+            <ng-container matColumnDef="feedback_input">
+            <th mat-header-cell *matHeaderCellDef> Rückmeldung </th>
+            <td mat-cell *matCellDef="let consultationInput">
+                <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
+                <mat-form-field appearance="fill" style="width: 150px">
+                    <mat-select [(ngModel)]="consultationInput.ordererFeedback">                    
+                    <mat-select-trigger>
+                        <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
+                        {{
+                            consultationInput.ordererFeedback === 'no_requirement_anymore' ? 'Kein Berdarf' :
+                            consultationInput.ordererFeedback === 'activity_okay' ? 'Ja' :
+                            consultationInput.ordererFeedback === 'activity_not_okay' ? 'Nein' :
+                            'Bitte wählen'
+                        }}
+                        </span>
+                    </mat-select-trigger>
+                    
+                    <mat-option [value]="'no_requirement_anymore'">
+                        Kein Bedarf/Kein Bedarf mehr
+                    </mat-option>
+                    <mat-option [value]="'activity_okay'">
+                        ✔ Ja, ich bin mit dem Vorgehen einverstanden
+                    </mat-option>
+                    <mat-option [value]="'activity_not_okay'">
+                        ✖ Nein, ich bin nicht ganz einverstanden und bitte um Kontaktaufnahme
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                </ng-container>
+                
+                <ng-template #noFeedback>
+                <span style="color: gray; font-style: italic;">Keine Rückmeldung</span>
+                </ng-template>
+            </td>
+          </ng-container>
+
+
+            <ng-container matColumnDef="feedback_input_text">
+                <th mat-header-cell *matHeaderCellDef>Kommentar zur Rückmeldung</th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-form-field style="width: 95%;">
+                        <mat-label>	Kommentar zur Rückmeldung</mat-label>
+                        <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
+                            [(ngModel)]="consultationInput.ordererFeedbackText" placeholder="Ihre Rückmeldung bitte hier eingeben..">
+                        </textarea>
+                    </mat-form-field>
+                </td>
+            </ng-container> 
+
 
             <ng-container matColumnDef="consult_input">
                 <th mat-header-cell *matHeaderCellDef> Bemerkung GM </th>
@@ -205,44 +154,70 @@
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="tableDisplayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: tableDisplayedColumns;"></tr>
-        </table>
-    </div>
-</div>
-<div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager'
-            && roadWorkActivity.properties.status == 'reporting'" style="margin-top: 3em;">
-    <h2>Eingabe zur Stellungnahme</h2>
-    <div style="border: 2px solid;border-color: lightgrey;padding: 1em;">
-        <p>Während der Bedarfsklärung wurde das Gesamtvorhaben geprüft und sowohl zeitlich wie
-            auch räumlich koordiniert.</p>
-        <p>Nachfolgend der Link auf das geplante Vorgehen:</p>
+            <ng-container matColumnDef="consult_delete">
+                <th mat-header-cell *matHeaderCellDef> Zuweisung aufheben </th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-icon *ngIf="isEditingAllowed" style="margin-left:35px;font-size:1.3em" (click)="deleteConsultation(consultationInput?.inputBy?.uuid ?? '')"
+                              aria-label="Zuweisung aufheben" class="arrow_button">🡇</mat-icon>        
+                    <mat-icon *ngIf="!isEditingAllowed" style="margin-left:35px;font-size:1.3em;font-family:Arial, Helvetica, sans-serif" 
+                              aria-label="Zuweisung aufheben">X</mat-icon>                    
+                </td>
+            </ng-container>
 
-        <p><button mat-button (click)="generatePDF2()" style="margin: 1em;background-color: rgb(236,236,234);">
-            Projekt-PDF generieren (2)
-        </button></p>
-        <p>
-            <mat-radio-group [(ngModel)]="consultationInput.ordererFeedback" aria-label="Wählen Sie eine Option">
-                <mat-radio-button style="margin:10px;" value="no_requirement_anymore">
-                    Kein Bedarf/Kein Bedarf mehr
-                </mat-radio-button>
-                <p>Bedarf vorhanden/Bedarf weiterhin vorhanden:</p>
-                <mat-radio-button style="margin:10px;" value="activity_okay">
-                    Ja, ich bin mit dem Vorgehen einverstanden
-                </mat-radio-button><br>
-                <mat-radio-button style="margin:10px;" value="activity_not_okay">
-                    Nein, ich bin nicht ganz einverstanden und bitte um Kontaktaufnahme
-                </mat-radio-button>
-            </mat-radio-group>
-        </p>
-        <mat-form-field style="width: 100%; margin-top: 2em;">
-            <mat-label>Rückmeldung</mat-label>
-            <textarea matInput [(ngModel)]="consultationInput.ordererFeedbackText" maxlength="40000"
-                placeholder="Rückmeldung..."></textarea>
-        </mat-form-field>
-        <button mat-button (click)="sendReporting()" style="margin: 1em;background-color: rgb(236,236,234);"
-            [disabled]="!consultationInput.ordererFeedback">
-            SENDEN
-        </button>
+            <tr mat-header-row *matHeaderRowDef="['need_link', 'organisation', 'name', 'feedback_input', 'feedback_input_text', 'date_last_change', 'has_feedback', 'no_requirement_anymore', 'activity_okay', 'consult_input', 'consult_delete']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['need_link', 'organisation', 'name', 'feedback_input', 'feedback_input_text',  'date_last_change', 'has_feedback', 'no_requirement_anymore', 'activity_okay', 'consult_input', 'consult_delete'];"></tr>
+        </table>
+
+        <div *ngIf="userService.getLocalUser().chosenRole == 'orderer' 
+            && roadWorkActivity.properties.status === 'inconsult1' && feedbackPhase==='inconsult1'"
+            style="margin-top: 2em;">
+            <p>Bitte geben Sie eine Rückmeldung zu Ihrer Bedarfsklärung-1.</p>
+        </div>
+
+        <div *ngIf="userService.getLocalUser().chosenRole == 'orderer' 
+                    && roadWorkActivity.properties.status === 'inconsult2' && feedbackPhase==='inconsult2'"
+            style="margin-top: 2em;">
+            <p>Bitte geben Sie eine Rückmeldung zu Ihrer Bedarfsklärung-2.</p>
+        </div>
+
+        <div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager' 
+                    && roadWorkActivity.properties.status == 'reporting' && feedbackPhase==='reporting'" 
+                style="margin-top: 2em;margin-left:2em">
+                                        
+                <p>
+                    Während der Bedarfsklärung wurde das Gesamtvorhaben geprüft und sowohl zeitlich wie auch räumlich koordiniert.
+                </p>    
+
+                <p>
+                    <button mat-button (click)="generatePDF2()" style="margin-top: 1em;margin-bottom: 1em;background-color: rgb(236,236,234);">
+                    Projekt-PDF generieren (2)
+                    </button>
+                </p>                        
+        </div>
+
+        <div style="width: 100%;table-layout: fixed;">                                                   
+            <div>
+                <div style="min-width: 300px; margin-top: 10px; margin-bottom: 1em;">
+                    <button mat-button style="background-color: rgb(236,236,234);margin-top: 1em;margin-bottom: 1em;padding: 0.5em;padding-left:1em; padding-right: 1em" 
+                        [disabled]="!isSelectionInvolvedUsersAllowed"
+                           (click)="isSelectionInvolvedUsersVisible=!isSelectionInvolvedUsersVisible">
+                            Beteiligte für Stellungnahme auswählen 
+                    </button>                    
+                    <div *ngIf="isSelectionInvolvedUsersVisible">
+                        <ag-grid-angular
+                            style="width: 100%; height: 300px;"
+                            class="ag-theme-alpine"
+                            [rowData]="availableUsers"
+                            [columnDefs]="columnDefs"
+                            [defaultColDef]="defaultColDef"
+                            [domLayout]="'normal'" 
+                            [suppressHorizontalScroll]="false"
+                            >
+                        </ag-grid-angular>
+                    </div>                     
+                </div>
+            </div>                            
+        </div>
+
     </div>
 </div>

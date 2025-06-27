@@ -68,8 +68,10 @@ export class WelcomeComponent implements OnInit {
         const map: { [key: string]: { label: string; color: string } } = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
           review: { label: '12/Prüfung', color: '#90caf9' },
-          verified: { label: '12/verifiziert', color: '#64b5f6' },
-          inconsult: { label: '12/Bedarfsklärung', color: '#4fc3f7' },
+          verified1: { label: '12/verifiziert-1', color: '#64b5f6' },
+          verified2: { label: '12/verifiziert-2', color: '#64b5f6' },
+          inconsult1: { label: '12/Bedarfsklärung-1', color: '#4fc3f7' },
+          inconsult2: { label: '12/Bedarfsklärung-2', color: '#4fc3f7' },
           reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
           coordinated: { label: '12/koordiniert', color: '#0288d1' },
           prestudy: { label: '21/Vorstudie', color: '#81c784' },
@@ -251,8 +253,10 @@ export class WelcomeComponent implements OnInit {
         const map: { [key: string]: { label: string; color: string } } = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
           review: { label: '12/Prüfung', color: '#90caf9' },
-          verified: { label: '12/verifiziert', color: '#64b5f6' },
-          inconsult: { label: '12/Bedarfsklärung', color: '#4fc3f7' },
+          verified1: { label: '12/verifiziert-1', color: '#64b5f6' },
+          verified2: { label: '12/verifiziert-2', color: '#64b5f6' },
+          inconsult1: { label: '12/Bedarfsklärung-1', color: '#4fc3f7' },
+          inconsult2: { label: '12/Bedarfsklärung-2', color: '#4fc3f7' },
           reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
           coordinated: { label: '12/koordiniert', color: '#0288d1' },
           prestudy: { label: '21/Vorstudie', color: '#81c784' },
@@ -454,7 +458,9 @@ export class WelcomeComponent implements OnInit {
                   if (managementArea) {
                     roadWorkNeed.properties.managementArea = managementArea;
                      setTimeout(() => {
-                      this.agGridNeed.api.refreshCells({ force: true });
+                      if (this.agGridNeed?.api?.refreshCells) {
+                        this.agGridNeed.api.refreshCells({ force: true });
+                      }
                     }, 1000);
                   }
                 },
@@ -473,7 +479,7 @@ export class WelcomeComponent implements OnInit {
       });
 
       this.roadWorkActivityService
-        .getRoadWorkActivities("", "requirement,review,inconsult,reporting,verified").subscribe({
+        .getRoadWorkActivities("", "requirement,review,inconsult1,inconsult2,reporting,verified1,verified2").subscribe({
           next: (roadWorkActivities) => {
             for (let activeRoadWorkAct of roadWorkActivities) {
               this.managementAreaService.getIntersectingManagementArea(activeRoadWorkAct.geometry)
@@ -482,7 +488,9 @@ export class WelcomeComponent implements OnInit {
                     if (managementArea) {
                       activeRoadWorkAct.properties.areaManager = managementArea.manager;
                       setTimeout(() => {
-                        this.agGridActivity.api.refreshCells({ force: true });  
+                        if (this.agGridActivity?.api?.refreshCells) {
+                          this.agGridActivity.api.refreshCells({ force: true });  
+                        }
                       }, 1000);
                     }
                   },
@@ -615,8 +623,11 @@ export class WelcomeComponent implements OnInit {
 
   calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
     let result = undefined;
-    if (roadworkActivity.properties.status == "inconsult" ||
-      roadworkActivity.properties.status == "verified") {
+    if (roadworkActivity.properties.status == "inconsult1" ||
+        roadworkActivity.properties.status == "verified1" ||
+        roadworkActivity.properties.status == "inconsult2" ||
+        roadworkActivity.properties.status == "verified2"
+    ) {
       if (roadworkActivity.properties.dateConsultEnd)
         result = new Date(roadworkActivity.properties.dateConsultEnd);
     } else if (roadworkActivity.properties.status == "reporting") {
