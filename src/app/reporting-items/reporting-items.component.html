@@ -98,7 +98,7 @@
             <td mat-cell *matCellDef="let consultationInput">
                 <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
                 <mat-form-field appearance="fill" style="width: 150px">
-                    <mat-select [(ngModel)]="consultationInput.ordererFeedback">                    
+                    <mat-select  [disabled]="!isConsultationInputAllowed" [(ngModel)]="consultationInput.ordererFeedback">                    
                     <mat-select-trigger>
                         <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
                         {{
@@ -135,7 +135,7 @@
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-form-field style="width: 95%;">
                         <mat-label>	Kommentar zur Rückmeldung</mat-label>
-                        <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
+                        <textarea [disabled]="!isConsultationInputAllowed" matInput maxlength="255" (focusout)="updateComment(consultationInput)"
                             [(ngModel)]="consultationInput.ordererFeedbackText" placeholder="Ihre Rückmeldung bitte hier eingeben..">
                         </textarea>
                     </mat-form-field>
@@ -148,7 +148,7 @@
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-form-field style="width: 100%;">
                         <mat-label>Bemerkung GM</mat-label>
-                        <textarea matInput maxlength="255" (focusout)="updateComment(consultationInput)"
+                        <textarea [disabled]="!isAssigningUsersAllowed" matInput maxlength="255" (focusout)="updateComment(consultationInput)"
                             [(ngModel)]="consultationInput.managerFeedback" placeholder="Bemerkung GM...">
                 </textarea>
                     </mat-form-field>
@@ -158,9 +158,9 @@
             <ng-container matColumnDef="consult_delete">
                 <th mat-header-cell *matHeaderCellDef> Zuweisung aufheben </th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <mat-icon *ngIf="isEditingAllowed" style="margin-left:35px;font-size:1.3em" (click)="deleteConsultation(consultationInput?.inputBy?.uuid ?? '')"
+                    <mat-icon *ngIf="isAssigningUsersAllowed" style="margin-left:35px;font-size:1.3em" (click)="deleteConsultation(consultationInput?.inputBy?.uuid ?? '')"
                               aria-label="Zuweisung aufheben" class="arrow_button">🡇</mat-icon>        
-                    <mat-icon *ngIf="!isEditingAllowed" style="margin-left:35px;font-size:1.3em;font-family:Arial, Helvetica, sans-serif" 
+                    <mat-icon *ngIf="!isAssigningUsersAllowed" style="margin-left:35px;font-size:1.3em;font-family:Arial, Helvetica, sans-serif" 
                               aria-label="Zuweisung aufheben">X</mat-icon>                    
                 </td>
             </ng-container>
@@ -200,11 +200,11 @@
             <div>
                 <div style="min-width: 300px; margin-top: 50px; margin-bottom: 1em;">
                     <button mat-button style="background-color: rgb(236,236,234);margin-top: 1em;margin-bottom: 1em;padding: 0.5em;padding-left:1em; padding-right: 1em" 
-                        [disabled]="!isSelectionInvolvedUsersAllowed"
-                           (click)="isSelectionInvolvedUsersVisible=!isSelectionInvolvedUsersVisible">
+                        [disabled]="!isAssigningUsersAllowed"
+                           (click)="isAssigningUsersVisible=!isAssigningUsersVisible">
                             Beteiligte auswählen 
                     </button>                    
-                    <div *ngIf="isSelectionInvolvedUsersVisible">
+                    <div *ngIf="isAssigningUsersVisible">
                         <ag-grid-angular
                             style="width: 100%; height: 35vh;"
                             class="ag-theme-alpine"

@@ -38,9 +38,9 @@ export class ReportingItemsComponent implements OnInit {
   user: User;
   userService: UserService;
 
-  isEditingAllowed: boolean = false;
-  isSelectionInvolvedUsersAllowed: boolean = false;
-  isSelectionInvolvedUsersVisible: boolean = false;
+  isConsultationInputAllowed: boolean = false;
+  isAssigningUsersAllowed: boolean = false;
+  isAssigningUsersVisible: boolean = false;
 
   availableUsers: User[] = [];
 
@@ -90,7 +90,7 @@ export class ReportingItemsComponent implements OnInit {
         button.style.margin = '10px';
         button.style.border = 'none';
         button.style.background = 'transparent';        
-        if (this.isEditingAllowed) {          
+        if (this.isAssigningUsersAllowed) {          
           button.textContent =  '🡅';
           button.style.cursor = 'pointer';
           button.addEventListener('click', () => {            
@@ -135,18 +135,18 @@ export class ReportingItemsComponent implements OnInit {
 
     if (this.userService.getLocalUser().chosenRole === 'orderer' ||
         this.userService.getLocalUser().chosenRole === 'administrator') {        
-        this.isEditingAllowed = true;        
+        this.isConsultationInputAllowed = true;        
     } else {
-      this.isEditingAllowed = false;
+      this.isConsultationInputAllowed = false;
     }
 
     if ((this.userService.getLocalUser().chosenRole === 'territorymanager' ||
         this.userService.getLocalUser().chosenRole === 'administrator')
         && this.roadWorkActivity.properties.status == this.feedbackPhase
         ) {        
-        this.isSelectionInvolvedUsersAllowed = true;        
+        this.isAssigningUsersAllowed = true;        
     } else {
-      this.isSelectionInvolvedUsersAllowed = false;
+      this.isAssigningUsersAllowed = false;
     }
 
 
