@@ -38,9 +38,9 @@ export class ConsultationService {
     return result;
   }
 
-  deleteConsultationInput(roadworkActivityUuid: string, userUuid: string ): Observable<ConsultationInput> {
-    let urlDelete = environment.apiUrl + "/consultation/?roadworkactivityuuid=" + roadworkActivityUuid + "&inputByUuid=" + userUuid;
-    console.log("urlDelete=", urlDelete);
+  deleteConsultationInput(roadworkActivityUuid: string, userUuid: string, feedbackPhase: string): Observable<ConsultationInput> {
+    let urlDelete = environment.apiUrl + "/consultation/?roadworkactivityuuid=" + roadworkActivityUuid + "&inputByUuid=" + userUuid + "&feedbackPhase=" + feedbackPhase;
+    
     let result: Observable<any> =
       this.http.delete(urlDelete);    
     return result;

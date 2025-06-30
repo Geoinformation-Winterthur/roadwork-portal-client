@@ -321,7 +321,7 @@ export class ReportingItemsComponent implements OnInit {
   }
 
   deleteConsultation(inputByUuid: string): void {    
-     this.consultationService.deleteConsultationInput(this.roadWorkActivity.properties.uuid, inputByUuid)
+     this.consultationService.deleteConsultationInput(this.roadWorkActivity.properties.uuid, inputByUuid, this.feedbackPhase)
       .subscribe({
         next: (error) => {
           if (error) {
