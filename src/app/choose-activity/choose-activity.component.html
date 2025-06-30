@@ -3,7 +3,7 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-  <h1>Bauvorhaben ({{roadWorkActivityFeaturesFiltered?.length}})<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
+  <h1>Bauvorhaben ({{roadWorkActivityFeatures?.length}})<span *ngIf="chosenActivityYearFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{chosenActivityYearFrom}}</span></h1>
   <div class="add-project-button-container" *ngIf="userService.hasUserAccess('add_activity')">
     <button mat-fab [routerLink]="['/activities', 'new']" style="background-color: rgb(255, 25, 0);" class="fab-button">
@@ -15,7 +15,7 @@
       <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
       <ag-grid-angular
         class="ag-theme-alpine"
-        [rowData]="roadWorkActivityFeaturesFiltered"
+        [rowData]="roadWorkActivityFeatures"
         [columnDefs]="columnDefs"
         [defaultColDef]="defaultColDef"
         [localeText]="localeText"

@@ -310,9 +310,17 @@ export class ChooseActivityComponent implements OnInit {
         }
 
         this.roadWorkActivityFeatures = roadWorkActivities;
-        this.filterActivities();
+        setTimeout(() => {
+            if (this.agGrid?.api?.refreshCells) {
+              this.agGrid.api.refreshCells({ force: true });
+              this.isDataLoading = false;
+            }
+          }, 3000);
+
+        //this.filterActivities();
       },
       error: (error) => {
+         this.isDataLoading = false;
       }
     });
 
@@ -320,7 +328,7 @@ export class ChooseActivityComponent implements OnInit {
 
   filterActivities() {
 
-    if (this.statusFilterCodes.includes("all")) {
+  /*  if (this.statusFilterCodes.includes("all")) {
       let chooseAll = [];
       chooseAll.push('all');
       chooseAll.push('review');
@@ -407,18 +415,12 @@ export class ChooseActivityComponent implements OnInit {
               showActivity = filterProjectManager.uuid === roadWorkActivity.properties.projectManager.uuid;
             }
 
-          }
-
-          setTimeout(() => {
-            if (this.agGrid?.api?.refreshCells) {
-              this.agGrid.api.refreshCells({ force: true });
-              this.isDataLoading = false;
-            }
-          }, 1000);
+          }          
 
           return showActivity;
-        });
-  }
+        });*/
+    return true;
+  } 
 
   filterUniqueAreaManagers(roadWorkActivityFeatures: RoadWorkActivityFeature[]): User[] {
     let resultUuids: string[] = [];
