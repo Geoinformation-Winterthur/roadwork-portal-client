@@ -33,7 +33,7 @@ export class StatusHelper {
         const referenceIndex = StatusHelper.statusOrder.indexOf(referenceStatus);
 
         if (realIndex === -1 || referenceIndex === -1) {
-            throw new Error("Invalid status provided");
+            return true;
         }
 
         return realIndex > referenceIndex;
