@@ -61,8 +61,24 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="no_requirement_anymore">
-                <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf </th>
+            <ng-container *ngIf="isPhaseConsulting" matColumnDef="no_requirement_anymore">
+                <th mat-header-cell *matHeaderCellDef> Bedarf vorhanden/Bedarf weiterhin vorhanden</th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Bedarf vorhanden/Bedarf weiterhin vorhanden"
+                                style="color: green;">check</mat-icon>
+                        </mat-chip>
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == 'no_requirement_anymore'">
+                            <mat-icon style="font-size: 1.5;" aria-label="Kein Bedarf mehr"
+                                style="color: rgb(225, 74, 74);">close</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </td>
+            </ng-container>
+
+            <ng-container *ngIf="isPhaseReporting" matColumnDef="no_requirement_anymore">
+                <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf</th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-chip-list *ngIf="consultationInput.feedbackGiven">
                         <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
@@ -77,7 +93,7 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="activity_okay">
+            <ng-container *ngIf="isPhaseReporting" matColumnDef="activity_okay">
                 <th mat-header-cell *matHeaderCellDef> Vorgehen passt </th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-chip-list *ngIf="consultationInput.feedbackGiven">
@@ -93,41 +109,81 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="feedback_input">
-            <th mat-header-cell *matHeaderCellDef> Rückmeldung </th>
-            <td mat-cell *matCellDef="let consultationInput">
-                <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
-                <mat-form-field appearance="fill" style="width: 150px">
-                    <mat-select  [disabled]="!isConsultationInputAllowed" [(ngModel)]="consultationInput.ordererFeedback">                    
-                    <mat-select-trigger>
-                        <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
-                        {{
-                            consultationInput.ordererFeedback === 'no_requirement_anymore' ? 'Kein Berdarf' :
-                            consultationInput.ordererFeedback === 'activity_okay' ? 'Ja' :
-                            consultationInput.ordererFeedback === 'activity_not_okay' ? 'Nein' :
-                            'Bitte wählen'
-                        }}
-                        </span>
-                    </mat-select-trigger>
+             <ng-container *ngIf="isPhaseConsulting" matColumnDef="activity_okay">
+                <th mat-header-cell width="5" *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let consultationInput">                    
+                </td>
+            </ng-container>
+
+            <ng-container *ngIf="isPhaseConsulting" matColumnDef="feedback_input">
+                <th mat-header-cell *matHeaderCellDef> Rückmeldung</th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
+                        <mat-form-field appearance="fill" style="width: 150px">
+                            <mat-select  [disabled]="!isConsultationInputAllowed" [(ngModel)]="consultationInput.ordererFeedback" (closed)="updateComment(consultationInput)">                    
+                            <mat-select-trigger>
+                                <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
+                                {{
+                                    consultationInput.ordererFeedback === 'no_requirement_anymore' ? 'Kein Berdarf' :
+                                    consultationInput.ordererFeedback === 'activity_okay' ? 'Ja' :
+                                    consultationInput.ordererFeedback === 'activity_not_okay' ? 'Nein' :
+                                    'Bitte wählen'
+                                }}
+                                </span>
+                            </mat-select-trigger>
+                            
+                            <mat-option [value]="'no_requirement_anymore'">
+                                Kein Bedarf
+                            </mat-option>
+                            <mat-option [value]="'activity_okay'">
+                                Bedarf vorhanden/Bedarf weiterhin vorhanden
+                            </mat-option>                            
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
                     
-                    <mat-option [value]="'no_requirement_anymore'">
-                        Kein Bedarf/Kein Bedarf mehr
-                    </mat-option>
-                    <mat-option [value]="'activity_okay'">
-                        ✔ Ja, ich bin mit dem Vorgehen einverstanden
-                    </mat-option>
-                    <mat-option [value]="'activity_not_okay'">
-                        ✖ Nein, ich bin nicht ganz einverstanden und bitte um Kontaktaufnahme
-                    </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                </ng-container>
-                
-                <ng-template #noFeedback>
-                <span style="color: gray; font-style: italic;">Keine Rückmeldung</span>
-                </ng-template>
-            </td>
-          </ng-container>
+                    <ng-template #noFeedback>
+                        <span style="color: gray; font-style: italic;">Keine Rückmeldung</span>
+                    </ng-template>
+                </td>
+            </ng-container>
+
+            <ng-container *ngIf="isPhaseReporting" matColumnDef="feedback_input">
+                <th mat-header-cell *matHeaderCellDef> Rückmeldung</th>
+                <td mat-cell *matCellDef="let consultationInput">
+                    <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
+                        <mat-form-field appearance="fill" style="width: 150px">
+                            <mat-select  [disabled]="!isConsultationInputAllowed" [(ngModel)]="consultationInput.ordererFeedback" (closed)="updateComment(consultationInput)">                    
+                            <mat-select-trigger>
+                                <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
+                                {{
+                                    consultationInput.ordererFeedback === 'no_requirement_anymore' ? 'Kein Berdarf' :
+                                    consultationInput.ordererFeedback === 'activity_okay' ? 'Ja' :
+                                    consultationInput.ordererFeedback === 'activity_not_okay' ? 'Nein' :
+                                    'Bitte wählen'
+                                }}
+                                </span>
+                            </mat-select-trigger>
+                            
+                            <mat-option [value]="'no_requirement_anymore'">
+                                Kein Bedarf/Kein Bedarf mehr
+                            </mat-option>
+                            <mat-option [value]="'activity_okay'">
+                                Ja, ich bin mit dem Vorgehen einverstanden
+                            </mat-option>
+                            <mat-option [value]="'activity_not_okay'">
+                                Nein, ich bin nicht ganz einverstanden und bitte um Kontaktaufnahme
+                            </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+                    
+                    <ng-template #noFeedback>
+                        <span style="color: gray; font-style: italic;">Keine Rückmeldung</span>
+                    </ng-template>
+                </td>
+            </ng-container>
+
 
 
             <ng-container matColumnDef="feedback_input_text">
@@ -162,7 +218,7 @@
                               aria-label="Zuweisung aufheben" class="arrow_button">🡇</mat-icon>                            
                     <mat-icon *ngIf="!isAssigningUsersAllowed" aria-label="Zuweisung aufheben nicht möglich"
                             matTooltip="Keine Berechtigung für eine Aktion"
-                            style="color: rgb(155, 155, 155);">block</mat-icon>               
+                            style="margin-left:35px;font-size:1.3em;color: rgb(155, 155, 155);">block</mat-icon>               
                 </td>
             </ng-container>
 

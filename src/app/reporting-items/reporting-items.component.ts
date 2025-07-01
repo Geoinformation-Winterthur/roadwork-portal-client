@@ -42,6 +42,10 @@ export class ReportingItemsComponent implements OnInit {
   isAssigningUsersAllowed: boolean = false;
   isAssigningUsersVisible: boolean = false;
 
+  isPhaseConsulting: boolean = true;
+  isPhaseReporting: boolean = false;
+
+
   availableUsers: User[] = [];
 
   needsOfActivityService: NeedsOfActivityService;
@@ -147,6 +151,14 @@ export class ReportingItemsComponent implements OnInit {
         this.isAssigningUsersAllowed = true;        
     } else {
       this.isAssigningUsersAllowed = false;
+    }
+
+    if (this.feedbackPhase == 'inconsult1' || this.feedbackPhase == 'verified1' || this.feedbackPhase == 'inconsult2' || this.feedbackPhase == 'verified2') {
+      this.isPhaseConsulting = true;
+      this.isPhaseReporting = false;
+    } else {
+      this.isPhaseConsulting = false;
+      this.isPhaseReporting = true;
     }
 
 
