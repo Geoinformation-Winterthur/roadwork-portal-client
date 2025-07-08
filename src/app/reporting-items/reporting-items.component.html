@@ -118,9 +118,9 @@
             <ng-container *ngIf="isPhaseConsulting" matColumnDef="feedback_input">
                 <th mat-header-cell *matHeaderCellDef> Rückmeldung</th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
-                        <mat-form-field appearance="fill" style="width: 150px">
-                            <mat-select  [disabled]="!isConsultationInputAllowed" [(ngModel)]="consultationInput.ordererFeedback" (closed)="updateComment(consultationInput)">                    
+                    <ng-container>
+                        <mat-form-field appearance="fill" style="width: 150px">                            
+                            <mat-select  [disabled]="!isConsultationInputAllowed || consultationInput.inputBy.mailAddress!=userService.getLocalUser().mailAddress" [(ngModel)]="consultationInput.ordererFeedback" (closed)="updateComment(consultationInput)">                    
                             <mat-select-trigger>
                                 <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
                                 {{
@@ -141,19 +141,16 @@
                             </mat-select>
                         </mat-form-field>
                     </ng-container>
-                    
-                    <ng-template #noFeedback>
-                        <span style="color: gray; font-style: italic;">Keine Rückmeldung</span>
-                    </ng-template>
+                                        
                 </td>
             </ng-container>
 
             <ng-container *ngIf="isPhaseReporting" matColumnDef="feedback_input">
                 <th mat-header-cell *matHeaderCellDef> Rückmeldung</th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <ng-container *ngIf="consultationInput.feedbackGiven; else noFeedback">
+                    <ng-container>
                         <mat-form-field appearance="fill" style="width: 150px">
-                            <mat-select  [disabled]="!isConsultationInputAllowed" [(ngModel)]="consultationInput.ordererFeedback" (closed)="updateComment(consultationInput)">                    
+                            <mat-select   [disabled]="!isConsultationInputAllowed || consultationInput.inputBy.mailAddress!=userService.getLocalUser().mailAddress"  [(ngModel)]="consultationInput.ordererFeedback" (closed)="updateComment(consultationInput)">                    
                             <mat-select-trigger>
                                 <span [ngStyle]="{ color: consultationInput.ordererFeedback ? 'inherit' : 'gray', 'font-style': consultationInput.ordererFeedback ? 'normal' : 'italic' }">
                                 {{
@@ -177,10 +174,7 @@
                             </mat-select>
                         </mat-form-field>
                     </ng-container>
-                    
-                    <ng-template #noFeedback>
-                        <span style="color: gray; font-style: italic;">Keine Rückmeldung</span>
-                    </ng-template>
+                                        
                 </td>
             </ng-container>
 
@@ -191,7 +185,7 @@
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-form-field style="width: 95%;">
                         <mat-label>	Kommentar zur Rückmeldung</mat-label>
-                        <textarea [disabled]="!isConsultationInputAllowed" matInput maxlength="255" (focusout)="updateComment(consultationInput)"
+                        <textarea [disabled]="!isConsultationInputAllowed || consultationInput.inputBy.mailAddress!=userService.getLocalUser().mailAddress" matInput maxlength="255" (focusout)="updateComment(consultationInput)"
                             [(ngModel)]="consultationInput.ordererFeedbackText" placeholder="Ihre Rückmeldung bitte hier eingeben..">
                         </textarea>
                     </mat-form-field>

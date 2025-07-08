@@ -137,8 +137,9 @@ export class ReportingItemsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.userService.getLocalUser().chosenRole === 'orderer' ||
-        this.userService.getLocalUser().chosenRole === 'administrator') {        
+    if ((this.userService.getLocalUser().chosenRole === 'orderer' ||
+        this.userService.getLocalUser().chosenRole === 'administrator') &&
+        this.roadWorkActivity.properties.status==this.feedbackPhase ) {        
         this.isConsultationInputAllowed = true;        
     } else {
       this.isConsultationInputAllowed = false;

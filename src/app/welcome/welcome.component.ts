@@ -41,7 +41,7 @@ export class WelcomeComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
-  appVersion: string = "2025.15";
+  appVersion: string = "2025.16";
 
   involvedOrgs: Map<string, OrganisationalUnit>;
 
