@@ -223,13 +223,13 @@
         <div *ngIf="userService.getLocalUser().chosenRole == 'orderer' 
             && roadWorkActivity.properties.status === 'inconsult1' && feedbackPhase==='inconsult1'"
             style="margin-top: 2em;">
-            <p>Bitte geben Sie eine Rückmeldung zu Ihrer Bedarfsklärung-1.</p>
+            <p>Bitte geben Sie eine Rückmeldung zu Ihrer Bedarfsklärung - 1.Iteration.</p>
         </div>
 
         <div *ngIf="userService.getLocalUser().chosenRole == 'orderer' 
                     && roadWorkActivity.properties.status === 'inconsult2' && feedbackPhase==='inconsult2'"
             style="margin-top: 2em;">
-            <p>Bitte geben Sie eine Rückmeldung zu Ihrer Bedarfsklärung-2.</p>
+            <p>Bitte geben Sie eine Rückmeldung zu Ihrer Bedarfsklärung - 2.Iteration.</p>
         </div>
 
         <div *ngIf="userService.getLocalUser().chosenRole != 'administrator' && userService.getLocalUser().chosenRole != 'territorymanager' 

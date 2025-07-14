@@ -893,9 +893,9 @@ export class ActivityAttributesComponent implements OnInit {
       mailText += separator + "subject=Die";
 
       if (newStatus == "inconsult1")
-        mailText += " Bedarfsklärung-1 ";      
+        mailText += " Bedarfsklärung - 1.Iteration ";      
       else if (newStatus == "inconsult2")
-        mailText += " Bedarfsklärung-2 ";
+        mailText += " Bedarfsklärung - 2.Iteration ";
       else if (newStatus == "reporting")
         mailText += " Stellungnahme ";
 

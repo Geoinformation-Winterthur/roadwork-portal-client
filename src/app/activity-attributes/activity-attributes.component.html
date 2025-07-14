@@ -735,7 +735,7 @@
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
-                                        <mat-card-title>Bedarfsklärung-1</mat-card-title>
+                                        <mat-card-title>Bedarfsklärung - 1.Iteration</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
@@ -777,13 +777,13 @@
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
-                                        <mat-card-title>Bedarfsklärung-2</mat-card-title>
+                                        <mat-card-title>Bedarfsklärung - 2.Iteration</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
                                             <div>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Bedarfsklärung-2 Start</mat-label>
+                                                    <mat-label>Bedarfsklärung - 2.Iteration Start</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart2"
                                                         [matDatepicker]="dateConsultStart2"
@@ -793,7 +793,7 @@
                                                         [for]="dateConsultStart2"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Bedarfsklärung-2 Ende</mat-label>
+                                                    <mat-label>Bedarfsklärung - 2.Iteration Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd2"
                                                         [matDatepicker]="dateConsultEnd1"
@@ -803,7 +803,7 @@
                                                         [for]="dateConsultEnd1"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
-                                                    <mat-label>Bedarfsklärung-2 Abschluss</mat-label>
+                                                    <mat-label>Bedarfsklärung - 2.Iteration Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
                                                         [matDatepicker]="dateConsultClose"
@@ -1368,13 +1368,13 @@
                                 </mat-chip>
                             </div>
 
-                            <!-- Bedarfsklärung-1 -->
+                            <!-- Bedarfsklärung - 1.Iteration -->
                             <button (click)="update(false, 'inconsult1')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 [disabled]="roadWorkActivityFeature.properties.status != 'review' 
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Bedarfsklärung-1 durchführen</button>
+                                mat-button>Bedarfsklärung - 1.Iteration durchführen</button>
                                         
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult1'"
                                 (click)="openMail('inconsult1')"
@@ -1390,13 +1390,13 @@
                                 ({{roadWorkActivityFeature.properties.dateStartReporting | date:'dd.MM.yyyy'}})
                             </span><br>
 
-                            <!--Bedarfsklärung-2 -->
+                            <!--Bedarfsklärung - 2.Iteration -->
                             <button (click)="update(false, 'inconsult2')"
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 [disabled]="roadWorkActivityFeature.properties.status != 'verified1' 
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Bedarfsklärung-2 durchführen</button>
+                                mat-button>Bedarfsklärung - 2.Iteration durchführen</button>
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult2'"
                                 (click)="openMail('inconsult2')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1418,7 +1418,7 @@
                                 [disabled]="roadWorkActivityFeature.properties.status != 'verified2'
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Stellungnahme durchführen&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                mat-button>Stellungnahme durchführen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
                                 (click)="openMail('reporting')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1458,14 +1458,14 @@
                         <app-consultation-items [roadWorkActivity]="roadWorkActivityFeature">
                         </app-consultation-items>
                     </mat-tab> -->
-                     <mat-tab label="Bedarfsklärung-1">
+                     <mat-tab label="Bedarfsklärung - 1.Iteration">
                          <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')" style="margin: 2em;">
                             <span                                
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
                             <span style="display: block;margin-top: 2em;">
-                                Bedarfsklärung-1 ist abgeschlossen.
+                                Bedarfsklärung - 1.Iteration ist abgeschlossen.
                             </span>
                         </div>
                         <div style="text-align: right;">
@@ -1481,17 +1481,17 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
-                        <app-reporting-items #reportingItemsInconsult1 [feedbackPhaseName]="'Bedarfsklärung-1'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult1'" [feedbackPhaseAccomplished]="'review'">
+                        <app-reporting-items #reportingItemsInconsult1 [feedbackPhaseName]="'Bedarfsklärung - 1.Iteration'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult1'" [feedbackPhaseAccomplished]="'review'">
                         </app-reporting-items>
                     </mat-tab>
-                    <mat-tab label="Bedarfsklärung-2">
+                    <mat-tab label="Bedarfsklärung - 2.Iteration">
                          <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult2')" style="margin: 2em;">
                             <span                                
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
                             <span style="display: block;margin-top: 2em;">
-                                Bedarfsklärung-2 ist abgeschlossen.
+                                Bedarfsklärung - 2.Iteration ist abgeschlossen.
                             </span>
                         </div>
                         <div style="text-align: right;">
@@ -1507,7 +1507,7 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
-                        <app-reporting-items #reportingItemsInconsult2 [feedbackPhaseName]="'Bedarfsklärung-2'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult2'" [feedbackPhaseAccomplished]="'verified1'">
+                        <app-reporting-items #reportingItemsInconsult2 [feedbackPhaseName]="'Bedarfsklärung - 2.Iteration'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult2'" [feedbackPhaseAccomplished]="'verified1'">
                         </app-reporting-items>
                     </mat-tab>
                     <mat-tab label="Stellungnahme">
