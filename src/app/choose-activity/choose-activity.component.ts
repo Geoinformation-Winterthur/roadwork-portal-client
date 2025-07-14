@@ -63,12 +63,28 @@ export class ChooseActivityComponent implements OnInit {
   columnDefs: ColDef[] = [
     {
       headerName: 'Status',
-      field: 'properties.status',
+      field: 'statusLabel',
       sortable: true,
-      filter: true,
-      valueGetter: ({ data }) => data?.properties?.status ?? '',
-      cellRenderer: ({ value }: any) => {
-        const map: { [key: string]: { label: string; color: string } } = {
+      filter: 'agSetColumnFilter',  
+      valueGetter: ({ data }) => {
+        const status = data?.properties?.status;
+        const labelMap: Record<string, string> = {
+          requirement: '11/Bedarf',
+          review: '12/Prüfung',
+          verified1: '12/verifiziert-1',
+          verified2: '12/verifiziert-2',
+          inconsult1: '12/Bedarfsklärung-1',
+          inconsult2: '12/Bedarfsklärung-2',
+          reporting: '12/Stellungnahme',
+          coordinated: '12/koordiniert',
+          prestudy: '21/Vorstudie',
+          suspended: 'sistiert'
+        };
+        return labelMap[status] ?? status ?? '';
+      },  
+      cellRenderer: ({ data }: any) => {
+        const status = data?.properties?.status;
+        const map: Record<string, { label: string; color: string }> = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
           review: { label: '12/Prüfung', color: '#90caf9' },
           verified1: { label: '12/verifiziert-1', color: '#64b5f6' },
@@ -81,26 +97,27 @@ export class ChooseActivityComponent implements OnInit {
           suspended: { label: 'sistiert', color: '#e0e0e0' }
         };
 
-        const entry = map[value];
-        if (!entry) return value;
-        
-          return `
-            <span style="
-              background-color: ${entry.color};
-              color: black;
-              padding: 3px 10px;
-              border-radius: 10px;
-              font-size: 0.9rem;
-              font-weight: 500;
-              display: inline-block;
-              white-space: nowrap;
-              line-height: 1.5;
-            ">
-              ${entry.label}
-            </span>
-          `;         
+        const entry = map[status];
+        if (!entry) return status ?? '';
+
+        return `
+          <span style="
+            background-color: ${entry.color};
+            color: black;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+            white-space: nowrap;
+            line-height: 1.5;
+          ">
+            ${entry.label}
+          </span>
+        `;
       }
-    },
+    }
+    ,
     {
       headerName: 'GM',
       valueGetter: ({ data }) => {
@@ -477,8 +494,10 @@ export class ChooseActivityComponent implements OnInit {
         roadworkActivity.properties.status == "verified1"  ||
         roadworkActivity.properties.status == "inconsult2" ||
         roadworkActivity.properties.status == "verified2") {
-      if (roadworkActivity.properties.dateConsultEnd)
-        result = new Date(roadworkActivity.properties.dateConsultEnd);
+      if (roadworkActivity.properties.dateConsultEnd1)
+        result = new Date(roadworkActivity.properties.dateConsultEnd1)
+      else if (roadworkActivity.properties.dateConsultEnd2)
+        result = new Date(roadworkActivity.properties.dateConsultEnd2);
     } else if (roadworkActivity.properties.status == "reporting") {
       if (roadworkActivity.properties.dateReportEnd)
         result = new Date(roadworkActivity.properties.dateReportEnd);

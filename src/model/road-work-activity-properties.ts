@@ -72,8 +72,10 @@ export class RoadWorkActivityProperties {
     isPlanCirc: boolean = false;
     datePlanCircStart?: Date;
     datePlanCircEnd?: Date;
-    dateConsultStart?: Date;
-    dateConsultEnd?: Date;
+    dateConsultStart1?: Date;
+    dateConsultEnd1?: Date;
+    dateConsultStart2?: Date;
+    dateConsultEnd2?: Date;
     dateConsultClose?: Date;
     dateReportStart?: Date;
     dateReportEnd?: Date;

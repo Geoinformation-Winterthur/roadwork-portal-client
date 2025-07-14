@@ -111,7 +111,7 @@ export class PdfDocumentHelper {
     doc.text("Gerne haben wir die erfassten Bedarfe geprüft und koordiniert.", MARGIN_X, startY + 24);
 
     lorem = "Die nachfolgenden Vorgehensvorschläge wurden mit Versand der Bedarfsklärung vom " +
-      formatDate(roadWorkActivity.properties.dateConsultStart) +
+      formatDate(roadWorkActivity.properties.dateConsultStart1) +
       " erstmalig zur Prüfung versendet. Mit Stellungnahme vom " +
       formatDate(roadWorkActivity.properties.dateReportStart) +
       " erfolgt der aktualisierte Versand zur endgültigen Prüfung." +

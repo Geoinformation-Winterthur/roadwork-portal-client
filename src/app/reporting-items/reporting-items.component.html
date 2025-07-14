@@ -49,11 +49,11 @@
                 <th mat-header-cell *matHeaderCellDef> Rückmeldung erhalten </th>
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-chip-list>
-                        <mat-chip *ngIf="consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback != ''">
                             <mat-icon style="font-size: 1.5;" aria-label="Rückmeldung erhalten"
                                 style="color: green;">check</mat-icon>
                         </mat-chip>
-                        <mat-chip *ngIf="!consultationInput.feedbackGiven">
+                        <mat-chip *ngIf="consultationInput.ordererFeedback == ''">
                             <mat-icon style="font-size: 1.5;" aria-label="Noch keine Rückmeldung"
                                 style="color: rgb(225, 74, 74);">close</mat-icon>
                         </mat-chip>
@@ -64,7 +64,7 @@
             <ng-container *ngIf="isPhaseConsulting" matColumnDef="no_requirement_anymore">
                 <th mat-header-cell *matHeaderCellDef> Bedarf vorhanden/Bedarf weiterhin vorhanden</th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                    <mat-chip-list *ngIf="consultationInput.ordererFeedback != ''">
                         <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
                             <mat-icon style="font-size: 1.5;" aria-label="Bedarf vorhanden/Bedarf weiterhin vorhanden"
                                 style="color: green;">check</mat-icon>
@@ -80,7 +80,7 @@
             <ng-container *ngIf="isPhaseReporting" matColumnDef="no_requirement_anymore">
                 <th mat-header-cell *matHeaderCellDef> Weiterhin Bedarf</th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                    <mat-chip-list *ngIf="consultationInput.ordererFeedback != ''">
                         <mat-chip *ngIf="consultationInput.ordererFeedback != 'no_requirement_anymore'">
                             <mat-icon style="font-size: 1.5;" aria-label="Weiterhin Bedarf vorhanden"
                                 style="color: green;">check</mat-icon>
@@ -96,7 +96,7 @@
             <ng-container *ngIf="isPhaseReporting" matColumnDef="activity_okay">
                 <th mat-header-cell *matHeaderCellDef> Vorgehen passt </th>
                 <td mat-cell *matCellDef="let consultationInput">
-                    <mat-chip-list *ngIf="consultationInput.feedbackGiven">
+                    <mat-chip-list *ngIf="consultationInput.ordererFeedback != ''">
                         <mat-chip *ngIf="consultationInput.ordererFeedback == 'activity_okay'">
                             <mat-icon style="font-size: 1.5;" aria-label="Bauvorhaben passt"
                                 style="color: green;">check</mat-icon>
@@ -272,4 +272,17 @@
         </div>
 
     </div>
+</div>
+<div *ngIf="userService.getLocalUser().chosenRole == 'orderer' && roadWorkActivity.properties.status === feedbackPhase && roadWorkActivity.properties.status !== 'reporting' && statusHelper.isStatusEarlier(roadWorkActivity.properties.status, 'reporting')"
+     style="margin-top: 3em;">
+
+    <div style="margin-top: 1em;">
+        <label style="display: block; margin-bottom: 0.5em;">
+            Sie haben die Möglichkeit, einen Bedarf zu diesem Bauvorhaben zu erfassen:
+        </label>
+        <button mat-button style="background-color: lightgray;" (click)="createNewNeed()">
+            Bedarf erfassen
+        </button>
+    </div>
+
 </div>

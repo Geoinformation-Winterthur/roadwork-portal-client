@@ -735,7 +735,7 @@
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
-                                        <mat-card-title>Bedarfsklärung</mat-card-title>
+                                        <mat-card-title>Bedarfsklärung-1</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
@@ -743,25 +743,67 @@
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bedarfsklärung Start</mat-label>
                                                     <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart"
-                                                        [matDatepicker]="dateConsultStart"
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart1"
+                                                        [matDatepicker]="dateConsultStart1"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateConsultStart></mat-datepicker>
+                                                    <mat-datepicker #dateConsultStart1></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="dateConsultStart"></mat-datepicker-toggle>
+                                                        [for]="dateConsultStart1"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bedarfsklärung Ende</mat-label>
                                                     <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd"
-                                                        [matDatepicker]="dateConsultEnd"
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd1"
+                                                        [matDatepicker]="dateConsultEnd1"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateConsultEnd></mat-datepicker>
+                                                    <mat-datepicker #dateConsultEnd1></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="dateConsultEnd"></mat-datepicker-toggle>
+                                                        [for]="dateConsultEnd1"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bedarfsklärung Abschluss</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
+                                                        [matDatepicker]="dateConsultClose"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateConsultClose></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateConsultClose"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Bedarfsklärung-2</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <div>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bedarfsklärung-2 Start</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultStart2"
+                                                        [matDatepicker]="dateConsultStart2"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateConsultStart2></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateConsultStart2"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bedarfsklärung-2 Ende</mat-label>
+                                                    <input matInput
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd2"
+                                                        [matDatepicker]="dateConsultEnd1"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                    <mat-datepicker #dateConsultEnd2></mat-datepicker>
+                                                    <mat-datepicker-toggle matSuffix
+                                                        [for]="dateConsultEnd1"></mat-datepicker-toggle>
+                                                </mat-form-field>
+                                                <mat-form-field style="margin:10px;">
+                                                    <mat-label>Bedarfsklärung-2 Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
                                                         [matDatepicker]="dateConsultClose"

@@ -11,6 +11,9 @@ import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { UserService } from 'src/services/user.service';
 import html2pdf from 'html2pdf.js';
 import { ReportLoaderService } from 'src/services/report-loader.service';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { RoadworkPolygon } from 'src/model/road-work-polygon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reporting-items',
@@ -55,6 +58,7 @@ export class ReportingItemsComponent implements OnInit {
 
   private consultationService: ConsultationService;
   private snckBar: MatSnackBar;
+  private router: Router;
 
   private reportLoaderService: ReportLoaderService;
 
@@ -124,8 +128,9 @@ export class ReportingItemsComponent implements OnInit {
   constructor(consultationService: ConsultationService,
     needsOfActivityService: NeedsOfActivityService,
     userService: UserService, 
-    snckBar: MatSnackBar,
-    reportLoaderService: ReportLoaderService) {
+    snckBar: MatSnackBar,    
+    reportLoaderService: ReportLoaderService,
+    router: Router) {
     this.consultationService = consultationService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
@@ -133,6 +138,7 @@ export class ReportingItemsComponent implements OnInit {
     this.snckBar = snckBar;
     this.statusHelper = new StatusHelper();
     this.reportLoaderService = reportLoaderService; 
+    this.router = router;
   }
 
   ngOnInit(): void {
@@ -217,6 +223,9 @@ export class ReportingItemsComponent implements OnInit {
   }  
 
   updateComment(consultationInput: ConsultationInput) {
+    
+    consultationInput.feedbackGiven = consultationInput.ordererFeedback.trim().length > 0 ?  true : false;      
+
     this.consultationService.updateConsultationInput(this.roadWorkActivity.properties.uuid,
       consultationInput)
       .subscribe({
@@ -358,5 +367,23 @@ export class ReportingItemsComponent implements OnInit {
       });
     this.ngOnInit();
   }      
+
+  createNewNeed() {
+    let protoNeed: RoadWorkNeedFeature | undefined;
+    for (let needOfActivity of this.needsOfActivityService.assignedRoadWorkNeeds) {
+      protoNeed = needOfActivity;
+      if (needOfActivity.properties.isPrimary)
+        break;
+    }
+    if (protoNeed) {
+      let params = {
+        finishEarlyTo: protoNeed.properties.finishEarlyTo,
+        finishOptimumTo: protoNeed.properties.finishOptimumTo,
+        finishLateTo: protoNeed.properties.finishLateTo,
+        coordinates: RoadworkPolygon.coordinatesToString(protoNeed.geometry.coordinates)
+      };
+      this.router.navigate(["/needs/new"], { queryParams: params });
+    }
+  }
 
 }

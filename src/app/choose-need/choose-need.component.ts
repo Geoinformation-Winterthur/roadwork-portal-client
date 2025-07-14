@@ -64,11 +64,27 @@ export class ChooseNeedComponent implements OnInit {
     {
       headerName: 'Phase/Status',
       minWidth: 130,
-      field: 'properties.status',
+      field: 'statusLabel', 
       sortable: true,
-      filter: true,
-      valueGetter: ({ data }: any) => data?.properties?.status ?? '',
-      cellRenderer: ({ value }: any) => {
+      filter: 'agSetColumnFilter',
+      valueGetter: ({ data }) => {
+        const status = data?.properties?.status;
+        const labelMap: Record<string, string> = {
+          requirement: '11/Bedarf',
+          review: '12/Prüfung',
+          verified1: '12/verifiziert-1',
+          verified2: '12/verifiziert-2',
+          inconsult1: '12/Bedarfsklärung-1',
+          inconsult2: '12/Bedarfsklärung-2',
+          reporting: '12/Stellungnahme',
+          coordinated: '12/koordiniert',
+          prestudy: '21/Vorstudie',
+          suspended: 'sistiert'
+        };
+        return labelMap[status] ?? status ?? '';
+      },      
+      cellRenderer: ({ data }: any) => {
+        const status = data?.properties?.status;
         const map: { [key: string]: { label: string; color: string } } = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
           review: { label: '12/Prüfung', color: '#90caf9' },
@@ -82,8 +98,8 @@ export class ChooseNeedComponent implements OnInit {
           suspended: { label: 'sistiert', color: '#e0e0e0' }
         };
 
-        const entry = map[value];
-        if (!entry) return value;
+        const entry = map[status];
+        if (!entry) return status ?? '';
 
         return `
           <span style="
@@ -98,8 +114,7 @@ export class ChooseNeedComponent implements OnInit {
             line-height: 1.5">
             ${entry.label}
           </span>
-        `;        
-
+        `;
       }
     },
     {

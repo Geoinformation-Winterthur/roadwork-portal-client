@@ -821,24 +821,26 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  private _updateDueDate() {
+  public _updateDueDate() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.status == "inconsult1" ||
           this.roadWorkActivityFeature.properties.status == "verified1" ||
           this.roadWorkActivityFeature.properties.status == "inconsult2" ||
           this.roadWorkActivityFeature.properties.status == "verified2") {
-        if (this.roadWorkActivityFeature.properties.dateConsultEnd)
-          this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd);
-      } else if (this.roadWorkActivityFeature.properties.status == "reporting") {
-        if (this.roadWorkActivityFeature.properties.dateReportEnd)
-          this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
-      } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
-        if (this.roadWorkActivityFeature.properties.dateInfoEnd)
-          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
-      } else {
-        this.dueDate = new Date();
-        this.dueDate.setDate(this.dueDate.getDate() + 7);
-      }
+          if (this.roadWorkActivityFeature.properties.dateConsultEnd1)
+            this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd1);        
+          else if (this.roadWorkActivityFeature.properties.dateConsultEnd2)
+              this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd2);        
+        } else if (this.roadWorkActivityFeature.properties.status == "reporting") {
+          if (this.roadWorkActivityFeature.properties.dateReportEnd)
+            this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
+        } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
+          if (this.roadWorkActivityFeature.properties.dateInfoEnd)
+            this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
+        } else {
+          this.dueDate = new Date();
+          this.dueDate.setDate(this.dueDate.getDate() + 7);
+        }
     }
   }
 
@@ -930,9 +932,12 @@ export class ActivityAttributesComponent implements OnInit {
       else if (newStatus == "reporting")
         mailText += "Mit Klick auf obigen Link kannst du das Bauvorhaben beurteilen und bei Bedarf eine Rückmeldung geben.%0A%0A";
 
-      if ((newStatus == "inconsult1" || newStatus == "inconsult2") && this.roadWorkActivityFeature.properties.dateConsultEnd)
+      if ((newStatus == "inconsult1") && this.roadWorkActivityFeature.properties.dateConsultEnd1)
         mailText += "Die Bedarfsklärung läuft bis zum " +
-          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd).toLocaleDateString("de-CH") + "%0A%0A";
+          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd1).toLocaleDateString("de-CH") + "%0A%0A";
+      else if ((newStatus == "inconsult2") && this.roadWorkActivityFeature.properties.dateConsultEnd2)
+        mailText += "Die Bedarfsklärung läuft bis zum " +
+          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd2).toLocaleDateString("de-CH") + "%0A%0A";
       else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
         mailText += "Die Stellungnahme läuft bis zum " +
           new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
@@ -991,7 +996,5 @@ export class ActivityAttributesComponent implements OnInit {
       });
 
   }
-
-
 
 }
