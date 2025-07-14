@@ -87,9 +87,26 @@ export class ManagementAreasComponent implements OnInit {
   initializeMap() {
 
     function managementAreasStyleFunc(feature: any, resolution: any) {
+        let fillColor: string;
+        
+        switch (feature.get('uuid')) {
+          case '316c6468-81e5-4156-8817-ba13a185d0a5':            
+            fillColor = 'rgba(238, 193, 193, 0.5)';
+            break;
+          case  '3028fb7e-c07d-4dc4-a1d2-f627e875d4ae':
+            fillColor = 'rgba(252, 252, 201, 0.5)';            
+            break;
+          case  '4dbc20b8-4a91-40da-9ef4-07de90b89f34':
+            fillColor = 'rgba(176, 184, 224, 0.5)';
+            break;       
+          default:
+            fillColor = feature.get('color_fill');
+            break;
+        }
+        
       let managementAreasStyle: Style = new Style({
         fill: new Fill({
-          color: feature.get('color_fill')
+          color: fillColor
         }),
         stroke: new Stroke({
           color: feature.get('color_stroke')
