@@ -21,6 +21,11 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="text-align: right;">
+                    <button mat-button
+                        (click)="refresh()"
+                        style="margin: 1em;background-color: rgb(236,236,234);">
+                        <mat-icon aria-label="Icon zeigt Aktualisieren">refresh</mat-icon>&nbsp;AKTUALISIEREN   
+                    </button>
                     <button *ngIf="roadWorkActivityFeature.properties.isEditingAllowed" mat-button (click)="save()"
                         style="margin: 1em;background-color: rgb(236,236,234);">
                         <mat-icon aria-label="Icon zeigt Diskette">save</mat-icon>&nbsp;SPEICHERN

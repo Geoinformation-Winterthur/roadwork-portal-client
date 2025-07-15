@@ -997,4 +997,15 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  refresh(){
+    this.reportingItemsInconsult1.ngOnInit();
+    this.reportingItemsInconsult2.ngOnInit();
+    this.reportingItemsReporting.ngOnInit();
+    this.ngOnInit();
+    this._updateAllInvolvedUsers();
+    this._updateDueDate();
+    this.editActivityMap.refresh();
+    this.editActivityMap.updateRoadworkActivityFeature(this.roadWorkActivityFeature);    
+  }
+
 }
