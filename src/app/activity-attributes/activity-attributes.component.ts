@@ -8,7 +8,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { FormControl } from '@angular/forms';
+import { FormControl, NgModel } from '@angular/forms';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { Costs } from 'src/model/costs';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
@@ -46,6 +46,8 @@ export class ActivityAttributesComponent implements OnInit {
   @ViewChild("reportingItemsInconsult1") reportingItemsInconsult1 !: ReportingItemsComponent;
   @ViewChild("reportingItemsInconsult2") reportingItemsInconsult2 !: ReportingItemsComponent;
   @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
+  @ViewChild('projectDescriptionCtrl') projectDescriptionCtrl!: NgModel;
+
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
   managementArea?: ManagementArea;
@@ -99,6 +101,17 @@ export class ActivityAttributesComponent implements OnInit {
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
 
   roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
+
+  readonly projectDescriptionOptions = [
+    { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' },
+    { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' },
+    { value: 'ROAD_MAINTENANCE_REGIONAL', label: 'Strasse Überkommunal (Unterhalt)' },
+    { value: 'ROAD_MAINTENANCE_COMMUNAL', label: 'Strasse Kommunal (Unterhalt)' },
+    { value: 'TRENCH_WITH_RESURFACING', label: 'Aufgrabung mit Belagsersatz' },
+    { value: 'WATERBODY', label: 'Gewässer' },
+    { value: 'SEWER_MAINTENANCE', label: 'Kanalbau (Unterhalt)' },
+    { value: 'OTHER', label: 'Übrige' }
+  ];
 
   PdfDocumentHelper = PdfDocumentHelper;
 
@@ -345,6 +358,17 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   save() {
+     if (this.projectDescriptionCtrl) {
+        this.projectDescriptionCtrl.control.markAsTouched();
+        this.projectDescriptionCtrl.control.updateValueAndValidity();
+      }
+
+      if (this.projectDescriptionCtrl.invalid) {
+        this.snckBar.open("Bitte wählen Sie eine Projekt-Art aus.", "", {
+          duration: 4000
+        });        
+        return;
+      }
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
         this.update();

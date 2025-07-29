@@ -99,15 +99,28 @@
                                                 type="text" maxlength="80" placeholder="Abschnitt"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
-                                        <mat-form-field>
-                                            <mat-label>Auslösegrund</mat-label>
-                                            <textarea matInput maxlength="255"
+
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Projekt-Art</mat-label>
+                                            <mat-select
                                                 [(ngModel)]="roadWorkActivityFeature.properties.description"
-                                                placeholder="Ausläsegrund..."
+                                                name="projectDescription"
+                                                #projectDescriptionCtrl="ngModel"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                 required>
-                                            </textarea>
+                                                <mat-option [value]="null" disabled selected>– Bitte wählen –</mat-option>
+                                                <mat-option
+                                                    *ngFor="let option of projectDescriptionOptions"
+                                                    [value]="option.value"
+                                                    >
+                                                    {{ option.label }}
+                                                </mat-option>
+                                            </mat-select>                                            
+                                            <mat-error *ngIf="projectDescriptionCtrl.invalid && projectDescriptionCtrl.touched">
+                                                Bitte wählen Sie eine Projekt-Art aus.
+                                            </mat-error>
                                         </mat-form-field>
+                                        
 
                                         <mat-form-field>
                                             <mat-label>Bemerkung</mat-label>
