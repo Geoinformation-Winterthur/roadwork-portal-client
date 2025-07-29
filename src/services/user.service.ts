@@ -60,6 +60,17 @@ export class UserService {
   }
 
   logout() {
+
+    this.http.post(environment.apiUrl + '/account/login/endsession',
+      { logoutUser: this.user.mailAddress },
+      {
+        headers: new HttpHeaders({ "Content-Type": "application/json" })
+      })
+      .subscribe({
+        next: res => console.log("OK"),
+        error: err => console.error("Logout failed", err)
+      });
+    
     this.clearLocalUser();
   }
 
