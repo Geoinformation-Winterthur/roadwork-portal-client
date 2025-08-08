@@ -14,6 +14,7 @@ import { ReportLoaderService } from 'src/services/report-loader.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { Router } from '@angular/router';
+import { ColDef } from 'ag-grid-community';
 
 @Component({
   selector: 'app-reporting-items',
@@ -62,7 +63,7 @@ export class ReportingItemsComponent implements OnInit {
 
   private reportLoaderService: ReportLoaderService;
 
-  columnDefs = [
+  columnDefs: ColDef[] = [
     {
       headerName: 'Werk',
       field: 'organisationalUnit.name',
@@ -255,7 +256,7 @@ export class ReportingItemsComponent implements OnInit {
   
   async generatePDF2(): Promise<void> {    
 
-    this.reportLoaderService.loadReport("report_roadwork_activity", {"uuid": this.roadWorkActivity.properties.uuid}).then((html:any) => {
+    this.reportLoaderService.loadReport("report_roadwork_activity", {"uuid": "ae4194c3-8cef-4067-806d-aed3e7947ea1"}).then((html:any) => { //this.roadWorkActivity.properties.uuid
       this.reportContainer.nativeElement.innerHTML = html;
 
       this.snckBar.open("PDF wird generiert...", "", {

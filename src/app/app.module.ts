@@ -73,6 +73,7 @@ import { EventsAtActivityComponent } from './events-at-activity/events-at-activi
 import { OrganisationsComponent } from './organisations/organisations.component';
 import { StatusChipComponent } from './status-chip/status-chip.component';
 import { DataexportComponent } from './dataexport/dataexport.component';
+import { SessionsComponent } from './sessions/sessions.component';
 import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dialog.component';
 import { DeleteActivityDialogComponent } from './delete-activity-dialog/delete-activity-dialog.component';
 import { ActivityHistoryComponent } from './activity-history/activity-history.component';
@@ -124,6 +125,7 @@ import { AgGridModule } from 'ag-grid-angular';
      OrganisationsComponent,
      StatusChipComponent,
      DataexportComponent,
+     SessionsComponent,
      DeleteNeedDialogComponent,
      DeleteActivityDialogComponent,
      ActivityHistoryComponent,

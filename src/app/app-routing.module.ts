@@ -20,6 +20,7 @@ import { TestopenidComponent } from './testopenid/testopenid.component';
 import { EventAttributesComponent } from './event-attributes/event-attributes.component';
 import { DataexportComponent } from './dataexport/dataexport.component';
 import { AuthGuardService } from 'src/services/auth-guard.service';
+import { SessionsComponent } from './sessions/sessions.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -36,6 +37,7 @@ import { AuthGuardService } from 'src/services/auth-guard.service';
    {path: 'events/:id', component: EventAttributesComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'configuration', component: ConfigurationComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'dataexport', component: DataexportComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
+   {path: 'sessions', component: SessionsComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'openid', component: TestopenidComponent, pathMatch: 'full'},
  ];
  

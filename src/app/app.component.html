@@ -80,6 +80,10 @@
                             *ngIf="userService.hasUserAccess('data_export')" [class.chosen-menu]="chosenMenu == 'dataexport'">
                         <mat-icon aria-label="Datenexport">system_update_alt</mat-icon>&nbsp;<span i18n>Datenexport</span>
                     </a>
+                    <a mat-list-item routerLink='/sessions' (click)="toggleSideNav('sessions')"
+                            *ngIf="userService.hasUserAccess('sessions')" [class.chosen-menu]="chosenMenu == 'sessions'">
+                        <mat-icon aria-label="Sessions">people</mat-icon>&nbsp;<span i18n>Sitzungen</span>
+                    </a>
                 </div>
                 <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="toggleSideNav('imprint')">
                     <mat-icon aria-label="Impressum">star_border</mat-icon>&nbsp;<span i18n>Impressum</span>

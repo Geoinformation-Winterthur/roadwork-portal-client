@@ -194,7 +194,12 @@ export class UserService {
     } else if (functionDesc === "data_export") {
       if (role === "administrator")
         return true;
+    } else if (functionDesc === "sessions") {
+      if (role === "administrator" ||
+        role === "territorymanager")
+        return true;
     }
+    
     return false;
   }
 
