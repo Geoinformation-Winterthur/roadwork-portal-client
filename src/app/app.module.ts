@@ -82,6 +82,7 @@ import { ReportingItemsComponent } from './reporting-items/reporting-items.compo
 import { registerLocaleData } from '@angular/common';
 import deChLocale from '@angular/common/locales/de-CH';
 import { AgGridModule } from 'ag-grid-angular';
+import { TextFieldModule } from '@angular/cdk/text-field';
  
  
  export function getToken(){
@@ -178,7 +179,8 @@ import { AgGridModule } from 'ag-grid-angular';
          disallowedRoutes: []
        }
      }),
-      AgGridModule
+      AgGridModule,
+      TextFieldModule
    ],
    providers: [UserService, MatDatepickerModule,
      {provide: LOCALE_ID, useValue: 'de-CH'}

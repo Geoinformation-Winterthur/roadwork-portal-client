@@ -631,9 +631,10 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Auflageverfahren</h2>
-                            <div fxLayout="row wrap padding"  class="tab-content" [class.disabled]="isScheduleEditingDisabled">
+                            <div fxLayout="row wrap padding"  class="tab-content">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"                                     
+                                    [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
                                     <mat-card-header>
                                         <mat-card-title>Begehrensäusserung §&nbsp;45</mat-card-title>
                                     </mat-card-header>
@@ -688,7 +689,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateParticipStart"
                                                         [matDatepicker]="dateParticipStart"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isParticip">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isParticip">
                                                     <mat-datepicker #dateParticipStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="dateParticipStart"></mat-datepicker-toggle>
@@ -698,7 +699,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateParticipEnd"
                                                         [matDatepicker]="dateParticipEnd"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isParticip">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isParticip">
                                                     <mat-datepicker #dateParticipEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="dateParticipEnd"></mat-datepicker-toggle>
@@ -726,7 +727,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircStart"
                                                         [matDatepicker]="datePlanCircStart"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isPlanCirc">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isPlanCirc">
                                                     <mat-datepicker #datePlanCircStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="datePlanCircStart"></mat-datepicker-toggle>
@@ -736,7 +737,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircEnd"
                                                         [matDatepicker]="datePlanCircEnd"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isPlanCirc">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isPlanCirc">
                                                     <mat-datepicker #datePlanCircEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="datePlanCircEnd"></mat-datepicker-toggle>

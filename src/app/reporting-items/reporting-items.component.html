@@ -185,8 +185,17 @@
                 <td mat-cell *matCellDef="let consultationInput">
                     <mat-form-field style="width: 95%;">
                         <mat-label>	Kommentar zur Rückmeldung</mat-label>
-                        <textarea [disabled]="!isConsultationInputAllowed || consultationInput.inputBy.mailAddress!=userService.getLocalUser().mailAddress" matInput maxlength="255" (focusout)="updateComment(consultationInput)"
-                            [(ngModel)]="consultationInput.ordererFeedbackText" placeholder="Ihre Rückmeldung bitte hier eingeben..">
+                        <textarea
+                            matInput
+                            cdkTextareaAutosize
+                            cdkAutosizeMinRows="1"
+                            cdkAutosizeMaxRows="10"
+                            rows="1"
+                            maxlength="255"
+                            [disabled]="!isConsultationInputAllowed || consultationInput.inputBy.mailAddress != userService.getLocalUser().mailAddress"
+                            [(ngModel)]="consultationInput.ordererFeedbackText"
+                            (focusout)="updateComment(consultationInput)"
+                            placeholder="Ihre Rückmeldung bitte hier eingeben..">
                         </textarea>
                     </mat-form-field>
                 </td>

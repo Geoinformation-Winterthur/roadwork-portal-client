@@ -1,150 +1,203 @@
 /**
- * @author Edgar Butwilowski
- * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ * Author: Edgar Butwilowski
+ * Copyright (c) Fachstelle Geoinformation Winterthur
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/model/user';
-import { ColDef } from 'ag-grid-community';
+
 import { AgGridAngular } from 'ag-grid-angular';
-
-
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
-import {  
+import 'ag-grid-enterprise';
+import html2pdf from 'html2pdf.js';
+import {
   ColGroupDef,
   GridApi,
   GridOptions,
+  ColumnApi,
   GridReadyEvent,
-  ISetFilterParams,  
-  ModuleRegistry,  
-} from "ag-grid-community";
+  ColDef,
+  ICellEditorParams
+} from 'ag-grid-community';
+import { ReportLoaderService } from 'src/services/report-loader.service';
 
+export type ReportType = 'Berichtstyp' | 'Vor-Protokol SKS' | 'Protokol SKS';
 
 @Component({
   selector: 'app-sessions',
   templateUrl: './sessions.component.html',
-  styleUrls: ['./sessions.component.css']
+  styleUrls: ['./sessions.component.css'],
 })
 export class SessionsComponent implements OnInit {
-
   isDataLoading = false;
-
-  sessionsData: any = [ {a1: "Phase 123", bv: "Rosenbergstarsse 1", a2: "2025-01-18", a3: true, a4: false, a5: true, a6: "Max1 Mustermann", a7: "2025-07-28"},
-                        {a1: "Phase 456", bv: "Rosenbergstarsse 2", a2: "2025-02-21", a3: false, a4: false, a5: true, a6: "Max2 Mustermann", a7: "2025-07-29"},
-                        {a1: "Phase 789", bv: "Rosenbergstarsse 3", a2: "2025-03-25", a3: false, a4: false, a5: true, a6: "Max3 Mustermann", a7: "2025-07-30"}
-  ];
+  gridApi!: GridApi;
+  columnApi!: ColumnApi;
   
-  columnDefs: ColDef[] = [    
-    { headerName: 'Phase/Status',       
-      field: "a1",  
-      filter: "agSetColumnFilter",     
-      sortable: true,
-      editable: true
-    },      
-    { headerName: 'Bauvorhaben',       
-      field: "bv",  
-      filter: "agSetColumnFilter",     
-      sortable: true,
-      editable: true
-    }, 
-    { headerName: 'Datum Genehmigung',  
-      field: "a2",  
-      filter: "agDateColumnFilter",     
-      sortable: true,
-      editable: true, 
-      filterParams: {
-        comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-          const cellDate = new Date(cellValue);
-          if (cellDate < filterLocalDateAtMidnight) return -1;
-          if (cellDate > filterLocalDateAtMidnight) return 1;
-          return 0;
-        }
-      }
+  sessionsData: any[] = [
+    {
+      id: 'ae4194c3-8cef-4067-806d-aed3e7947ea1',
+      meetingType: 'Berichtstyp',
+      a1: 'Sitzung 1/2025',
+      a2: '2025-01-18',
+      a6: 'Max1 Mustermann',
+      a7: '2025-07-28',
+      childs: [
+        { bv: 'Rosenbergstrasse 1' },
+        { bv: 'Rosenbergstrasse 2' },
+        { bv: 'Rosenbergstrasse 3' },
+      ],
     },
-    { headerName: 'Ersteller',          
-      field: "a6",  
-      filter: "agNumberColumnFilter",  
-      sortable: true,
-      editable: true,
+    {
+      id: 'f57d7f60-d49b-411f-a17b-7cd4911aae8e',
+      meetingType: 'Berichtstyp',
+      a1: 'Sitzung 2/2025',
+      a2: '2025-02-21',      
+      a6: 'Max2 Mustermann',
+      a7: '2025-07-29',
+      childs: [
+        { bv: 'Rosenbergstrasse 21' },
+        { bv: 'Rosenbergstrasse 22' },
+      ],
     },
-    { headerName: 'Datum',              
-      field: "a7",  
-      sortable: true,
-      editable: true,
-      filter: "agDateColumnFilter",  
-      filterParams: {
-        comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-          const cellDate = new Date(cellValue);
-          if (cellDate < filterLocalDateAtMidnight) return -1;
-          if (cellDate > filterLocalDateAtMidnight) return 1;
-          return 0;
-        }
-      }
-     },
-    { headerName: 'Berichtstyp',        
-      field: "a3",  
-      editable: true,
-      sortable: true,
-      filter: "agSetColumnFilter",              
+    {
+      id: '46e3c862-1589-42bf-bcc5-f8d8e4bd93db',
+      meetingType: 'Berichtstyp',
+      a1: 'Sitzung 3/2025',
+      a2: '2025-07-21',      
+      a6: 'Max2 Mustermann',
+      a7: '2025-07-29',
+      childs: [
+        { bv: 'Hauptstrasse 21' },
+        { bv: 'Hauptstrasse 22' },
+      ],
     },
-    { headerName: 'Vor-Protokol SKS',  
-      field: 'a4',
-      editable: true,
-      sortable: true,
-      cellRenderer: 'agCheckboxCellRenderer', 
-      cellEditor: 'agCheckboxCellEditor', 
-      filter: 'agSetColumnFilter',           
+    {
+      id: '81c7ee67-a0f9-448f-b425-0b0044f63cca',
+      meetingType: 'Berichtstyp',
+      a1: 'Sitzung 4/2025',
+      a2: '2025-08-01',      
+      a6: 'Max2 Mustermann',
+      a7: '2025-07-29',
+      childs: [
+        { bv: 'Bahnhofplatz 21' },
+        { bv: 'Bahnhofplatz 22' },
+      ],
     },
-    { headerName: 'Protokol SKS',       
-      field: "a5",  
-      filter: "agSetColumnFilter",  
-      sortable: true, 
+    {
+      id: '85cba275-3067-447d-906b-24a8e4396770',
+      meetingType: 'Berichtstyp',
+      a1: 'Sitzung 5/2025',
+      a2: '2025-09-12',      
+      a6: 'Max2 Mustermann',
+      a7: '2025-07-29',
+      childs: [
+        { bv: 'Pionierstrasse 7' },
+        { bv: 'Pionierstrasse 8' },
+      ],
+    },
+  ];
+
+  reportTypeOptions: ReportType[] = ['Berichtstyp', 'Vor-Protokol SKS', 'Protokol SKS'];
+
+  columnDefs: ColDef[] = [
+    { headerName: 'Phase/Status', field: 'a1', minWidth: 220, cellRenderer: 'agGroupCellRenderer' },
+
+    { headerName: 'Datum Genehmigung', field: 'a2' },
+    { headerName: 'Ersteller', field: 'a6' },
+    { headerName: 'Datum', field: 'a7' },    
+    {
+      headerName: 'Berichtsstatus',
+      field: 'meetingType',
       editable: true,
-      cellRenderer: 'agCheckboxCellRenderer',
-      cellEditor: 'agCheckboxCellEditor',
-    }, 
+      singleClickEdit: true,      
+      cellEditor: 'agSelectCellEditor',
+      cellEditorParams: {
+        values: this.reportTypeOptions, // ReportType[] = string[]
+      },
+      filter: 'agSetColumnFilter',
+      filterParams: { values: this.reportTypeOptions },      
+      comparator: (a: ReportType, b: ReportType) =>
+        this.reportTypeOptions.indexOf(a) - this.reportTypeOptions.indexOf(b),
+      valueParser: p => {
+        const v = (p.newValue ?? '').toString();
+        return this.reportTypeOptions.includes(v as ReportType) ? v : null;
+      },
+      valueFormatter: p => p.value ?? '',
+      minWidth: 200,    
+      cellClass: 'report-combo-cell',  
+    },
     {
       headerName: 'Bericht',
       cellRenderer: (params: any) => {
         const button = document.createElement('button');
-        button.innerText = 'Show Bericht';
-        button.addEventListener('click', () => {
-          alert(params.data.a1);
-        });
+        button.innerText = 'Bericht anzeigen';
+        button.addEventListener('click', () => this.generateMeetingPDF(params.data.id));
         return button;
-      }
-  }   
+      },
+    },
+
+    {
+      headerName: 'BV (quick only)',
+      colId: 'bvQuick',
+      valueGetter: p => (p.data?.childs || []).map((c: any) => c.bv).join(' '),
+      hide: true,
+      filter: false,
+      suppressColumnsToolPanel: true,
+    },
   ];
+
+  isRowMaster = (dataItem: any) =>
+    Array.isArray(dataItem?.childs) && dataItem.childs.length > 0;
+  
+  detailCellRendererParams = {
+    detailGridOptions: {
+      domLayout: 'autoHeight',
+      defaultColDef: { flex: 1, resizable: true },
+      columnDefs: [{ headerName: 'Bauvorhaben', field: 'bv' }],
+      onFirstDataRendered: (e: any) => e.api.sizeColumnsToFit(),
+    },
+    getDetailRowData: (params: any) => {
+      const rows = params.data?.childs || [];            
+      params.successCallback(rows);
+    },
+  };
+
   defaultColDef: ColDef = {
     flex: 1,
     minWidth: 200,
     floatingFilter: true,
+    sortable: true,
+    filter: true,
+    resizable: true,
   };
   
   user: User = new User();
   userService: UserService;  
   
   private roadWorkNeedService: RoadWorkNeedService; 
+  private reportLoaderService: ReportLoaderService;
   private snckBar: MatSnackBar;    
 
   localeText = AG_GRID_LOCALE_DE;
- 
+
   
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
-
+  @ViewChild('reportContainer', { static: false }) reportContainer!: ElementRef;
 
   constructor(
       roadWorkNeedService: RoadWorkNeedService, 
+      reportLoaderService: ReportLoaderService,
       userService: UserService,
       snckBar: MatSnackBar) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.userService = userService;
     this.snckBar = snckBar;
     this.isDataLoading = true;        
+    this.reportLoaderService = reportLoaderService;
   }
 
   ngOnInit(): void {  
@@ -175,5 +228,44 @@ export class SessionsComponent implements OnInit {
       });
   
   }  
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridApi = params.api;
+    this.columnApi = params.columnApi;
+  }
+
+  onQuickFilterChanged() {
+    const value = (document.querySelector<HTMLInputElement>('#input-quick-filter')?.value || '').trim();
+    this.gridApi?.setQuickFilter(value);
+  }
+
+  async generateMeetingPDF(id: string): Promise<void> {    
+
+    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", id);
+    console.log("PDF HTML:", html);
+    this.reportContainer.nativeElement.innerHTML = html;
+
+    this.snckBar.open("PDF wird generiert..." + String(id), "", {
+      duration: 4000
+    });
+
+    const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
+
+    if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
+      return;
+    }
+
+    html2pdf().from(target)
+                .set({
+                    filename: 'Strategische Koordinationssitzung (SKS) -Vor-Protokoll.pdf',
+                    margin: 10,
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                })
+                .save();
+    };
 
 }

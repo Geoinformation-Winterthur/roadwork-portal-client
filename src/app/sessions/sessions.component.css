@@ -20,3 +20,39 @@
 mat-slider {
     width: 300px;
 }
+
+.quick-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.quick-filter input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.quick-filter input:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 2px rgba(63,81,181,.2);
+}
+
+:host ::ng-deep .ag-theme-alpine .report-combo-cell {
+  position: relative;
+  padding-right: 18px;
+}
+
+:host ::ng-deep .ag-theme-alpine .report-combo-cell::after {
+  content: '▾';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.6;
+  font-size: 12px;
+}

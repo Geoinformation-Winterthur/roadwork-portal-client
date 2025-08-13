@@ -9,6 +9,8 @@ import { RoadWorkNeedService } from './roadwork-need.service';
 import { NeedsOfActivityService } from './needs-of-activity.service';
 import { ManagementAreaService } from './management-area.service';
 import { StorageService } from './storage.service';
+import { map, switchMap, forkJoin, of, throwError, Observable, firstValueFrom } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 
 
 
@@ -43,9 +45,10 @@ export class ReportLoaderService {
 
     }
 
-    generateReport(uuid: string) {
-        this.loadRoadWorkActivity(uuid);
-        this.loadReport("report_roadwork_activity", { "uuid": uuid });
+    async generateReport(templateName: string, uuid: string) {
+        await firstValueFrom(this.loadRoadWorkActivity$(uuid));
+        const html: string = await this.loadReport(templateName, { uuid });  
+        return html;
     }
 
 
@@ -195,26 +198,24 @@ export class ReportLoaderService {
     };
 
 
-    loadRoadWorkActivity(uuid: string): void {
-        this.roadWorkActivityService.getRoadWorkActivities(uuid).subscribe({
-            next: (activities: RoadWorkActivityFeature[]) => {
-                if (activities.length !== 1) {
-                    console.warn(`Expected one RoadWorkActivity for UUID ${uuid}, got ${activities.length}`);
-                    return;
-                }
-
-                const activity = activities[0];
-                this.roadWorkActivity = activity;
-                this.primaryNeed = this.getPrimaryNeed();
-                this.loadManagementArea(activity.geometry);
-
-                this.loadAssociatedNeeds(activity);
-                
-            },
-            error: (err) => {
-                console.error("Failed to load RoadWorkActivity:", err);
+    loadRoadWorkActivity$(uuid: string) {
+        return this.roadWorkActivityService.getRoadWorkActivities(uuid).pipe(
+            switchMap((activities: RoadWorkActivityFeature[]) => {
+            if (activities.length !== 1) {
+                return throwError(() => new Error(`Expected one RoadWorkActivity for UUID ${uuid}, got ${activities.length}`));
             }
-        });
+
+            const activity = activities[0];
+            this.roadWorkActivity = activity;
+            this.primaryNeed = this.getPrimaryNeed();
+
+          
+            const mgmt$  = this.loadManagementArea$(activity.geometry); 
+            const needs$ = this.loadAssociatedNeeds$(activity);        
+
+            return forkJoin([mgmt$, needs$]).pipe(map(() => activity));
+            })
+        );
     }
 
     private getPrimaryNeed(): RoadWorkNeedFeature {
@@ -227,49 +228,58 @@ export class ReportLoaderService {
         return new RoadWorkNeedFeature();
     }
 
-    private loadManagementArea(geometry: any): void {
-        this.managementAreaService.getIntersectingManagementArea(geometry).subscribe({
-            next: (managementArea) => {
-                if (managementArea) {
-                    this.managementArea = managementArea;
-                    if (this.roadWorkActivity) {
-                        this.roadWorkActivity.properties.areaManager = managementArea.manager;
-                    }
-                }
-            },
-            error: (err) => {
-                console.error("Error loading management area:", err);
+   private loadManagementArea$(geometry: any): Observable<void> {
+    return this.managementAreaService.getIntersectingManagementArea(geometry).pipe(
+        tap((managementArea: any) => {
+        if (managementArea) {
+            this.managementArea = managementArea;
+            if (this.roadWorkActivity) {
+            this.roadWorkActivity.properties.areaManager = managementArea.manager;
             }
-        });
+        }
+        }),
+        map(() => void 0),
+        catchError(err => {
+        console.error('Error loading management area:', err);
+        return throwError(() => err); 
+        })
+    );
     }
 
-    private loadAssociatedNeeds(activity: RoadWorkActivityFeature): void {
+
+    private loadAssociatedNeeds$(activity: RoadWorkActivityFeature): Observable<void> {
         const uuids = activity?.properties?.roadWorkNeedsUuids;
-        if (!uuids || uuids.length === 0) return;
+        if (!uuids || uuids.length === 0) {
+            
+            this.needsOfActivityService.assignedRoadWorkNeeds = [];
+            this.needsOfActivityService.registeredRoadWorkNeeds = [];
+            return of(void 0);
+        }
 
-        this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined, undefined,
-            undefined, undefined, undefined, undefined, undefined, undefined, undefined, activity.properties.uuid)
-            .subscribe({
-                next: (needs) => {
-                    const assigned: RoadWorkNeedFeature[] = [];
-                    const registered: RoadWorkNeedFeature[] = [];
+        return this.roadWorkNeedService.getRoadWorkNeeds(
+            [], undefined, undefined, undefined,
+            undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+            activity.properties.uuid
+        ).pipe(
+            tap((needs: RoadWorkNeedFeature[]) => {
+            const assigned: RoadWorkNeedFeature[] = [];
+            const registered: RoadWorkNeedFeature[] = [];
 
-                    for (const need of needs) {
-                        const type = need.properties.activityRelationType;
-                        if (type === "assignedneed") {
-                            assigned.push(need);
-                        } else if (type === "registeredneed") {
-                            registered.push(need);
-                        }
-                    }
+            for (const need of needs) {
+                const type = need.properties.activityRelationType;
+                if (type === 'assignedneed') assigned.push(need);
+                else if (type === 'registeredneed') registered.push(need);
+            }
 
-                    this.needsOfActivityService.assignedRoadWorkNeeds = assigned;
-                    this.needsOfActivityService.registeredRoadWorkNeeds = registered;
-                },
-                error: (err) => {
-                    console.error("Error loading associated road work needs:", err);
-                }
-            });
+            this.needsOfActivityService.assignedRoadWorkNeeds = assigned;
+            this.needsOfActivityService.registeredRoadWorkNeeds = registered;
+            }),
+            map(() => void 0),
+            catchError(err => {
+                console.error('Error loading associated road work needs:', err);
+                return throwError(() => err); 
+            })
+        );
     }
 
     private loadPrimaryNeed(primaryNeedUuid: string): void {
