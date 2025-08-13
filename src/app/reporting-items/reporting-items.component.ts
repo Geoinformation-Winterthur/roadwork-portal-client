@@ -201,6 +201,25 @@ export class ReportingItemsComponent implements OnInit {
           }
           this.consultationInputsFromReporting = consultationInputsFromReportingTemp;
 
+          const collator = new Intl.Collator('de-CH', { sensitivity: 'base', ignorePunctuation: true, numeric: true });
+
+          // Sort by organisation (abbr), then by full name
+          this.consultationInputsFromReporting = (this.consultationInputsFromReporting ?? [])
+            .slice()
+            .sort((a, b) => {
+              const aOrg = a?.inputBy?.organisationalUnit?.abbreviation ?? '';
+              const bOrg = b?.inputBy?.organisationalUnit?.abbreviation ?? '';
+
+              const orgCmp = collator.compare(aOrg, bOrg);
+              if (orgCmp !== 0) return orgCmp;
+
+              const aName = `${a?.inputBy?.firstName ?? ''} ${a?.inputBy?.lastName ?? ''}`.trim();
+              const bName = `${b?.inputBy?.firstName ?? ''} ${b?.inputBy?.lastName ?? ''}`.trim();
+
+              return collator.compare(aName, bName);
+          });
+
+
           for (let consultationInput of consultationInputs) {
             if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
               consultationInput.feedbackPhase === this.feedbackPhase) {
@@ -256,20 +275,20 @@ export class ReportingItemsComponent implements OnInit {
   
   async generatePDF2(): Promise<void> {    
 
-    this.reportLoaderService.loadReport("report_roadwork_activity", {"uuid": "ae4194c3-8cef-4067-806d-aed3e7947ea1"}).then((html:any) => { //this.roadWorkActivity.properties.uuid
-      this.reportContainer.nativeElement.innerHTML = html;
+    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", this.roadWorkActivity.properties.uuid);
+    this.reportContainer.nativeElement.innerHTML = html;
 
-      this.snckBar.open("PDF wird generiert...", "", {
-        duration: 4000
-      });
+    this.snckBar.open("PDF wird generiert...", "", {
+      duration: 4000
+    });
 
-      const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
+    const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
 
-      if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
-        return;
-      }
+    if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
+      return;
+    }
 
-      html2pdf().from(target)
+    html2pdf().from(target)
                 .set({
                     filename: 'Strategische Koordinationssitzung (SKS) -Vor-Protokoll.pdf',
                     margin: 10,
@@ -279,8 +298,7 @@ export class ReportingItemsComponent implements OnInit {
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 })
-                .save();
-    });
+                .save();    
   }
  
 

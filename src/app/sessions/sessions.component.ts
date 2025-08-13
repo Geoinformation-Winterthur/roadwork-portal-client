@@ -241,8 +241,8 @@ export class SessionsComponent implements OnInit {
 
   async generateMeetingPDF(id: string): Promise<void> {    
 
-    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", id);
-    console.log("PDF HTML:", html);
+    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", id);    
+    
     this.reportContainer.nativeElement.innerHTML = html;
 
     this.snckBar.open("PDF wird generiert..." + String(id), "", {
@@ -266,6 +266,6 @@ export class SessionsComponent implements OnInit {
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 })
                 .save();
-    };
+    }    
 
 }
