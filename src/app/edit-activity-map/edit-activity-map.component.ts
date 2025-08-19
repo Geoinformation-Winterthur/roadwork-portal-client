@@ -37,6 +37,8 @@ import { Address } from 'src/model/address';
 import { AddressService } from 'src/services/address.service';
 import html2canvas from 'html2canvas';
 import { StorageService } from 'src/services/storage.service';
+import { fromLonLat } from 'ol/proj';
+import BaseLayer from 'ol/layer/Base';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -593,21 +595,70 @@ export class EditActivityMapComponent implements OnInit {
   }
 
   captureMap() {
-    let mapElement = document.getElementById("edit_activity_map") as HTMLElement;
+    const mapElement = document.getElementById('edit_activity_map') as HTMLElement | null;
+
+    if (mapElement && this.map) {
+      this.makeScreenshotFromElement(mapElement, this.map);
+      return;
+    }
     
-    this.map.once('rendercomplete', () => {
-      
-      html2canvas(mapElement, { scale: 2, useCORS: false }).then((canvas) => {        
-        this.imageDataUrl = canvas.toDataURL('image/png');        
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.left = '-99999px';
+    container.style.top = '0';
+    container.style.width = '800px';
+    container.style.height = '600px';
+    document.body.appendChild(container);
+
+    const baseView = this.map ? this.map.getView() : undefined;
+    const baseLayers = this.map ? this.map.getLayers().getArray() : [];
+
+    const tempMap = new Map({
+      target: container,
+      layers: this.cloneLayers(baseLayers),
+      view: this.cloneView(baseView),
+      controls: []
+    });
+
+    this.makeScreenshotFromElement(container, tempMap, () => {
+      tempMap.setTarget(null as any);
+      document.body.removeChild(container);
+    });
+  }
+
+  private makeScreenshotFromElement(element: HTMLElement, mapInstance: Map, afterCapture?: () => void) {
+    mapInstance.once('rendercomplete', () => {
+      html2canvas(element, { scale: 2, useCORS: false }).then((canvas) => {
+        const dataUrl = canvas.toDataURL('image/png');
         try {
-              this.storageService.save('ProjectPerimeter', this.imageDataUrl);              
-            } catch (error) {                            
-            }
+          this.storageService.save('ProjectPerimeter', dataUrl);
+        } catch (error) {
+          console.error(error);
+        }
+        afterCapture?.();
       });
+      mapInstance.renderSync();
+    });
+  }
 
-      this.map.renderSync();
+  private cloneView(src?: View): View {
+    if (!src) {
+      return new View({
+        center: fromLonLat([8.719, 47.499]),
+        zoom: 13
+      });
+    }
+    return new View({
+      center: src.getCenter(),
+      zoom: src.getZoom(),
+      rotation: src.getRotation(),
+      projection: src.getProjection()
+    });
+  }
 
-    })
+  private cloneLayers(srcLayers?: BaseLayer[]): BaseLayer[] {
+    if (!srcLayers) return [];    
+    return srcLayers.map(layer => layer);
   }
 
 }

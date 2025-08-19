@@ -11,7 +11,7 @@ import { ManagementAreaService } from './management-area.service';
 import { StorageService } from './storage.service';
 import { map, switchMap, forkJoin, of, throwError, Observable, firstValueFrom } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-
+import { MapCaptureService } from './map-capture.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -19,6 +19,7 @@ export class ReportLoaderService {
 
     roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
     primaryNeed: RoadWorkNeedFeature = new RoadWorkNeedFeature();
+    roadWorkNeeds: any[] = [];
 
     roadWorkActivityService: RoadWorkActivityService;
     roadWorkNeedService: RoadWorkNeedService;
@@ -35,7 +36,8 @@ export class ReportLoaderService {
         roadWorkNeedService: RoadWorkNeedService,
         needsOfActivityService: NeedsOfActivityService,
         storageService: StorageService,
-        managementAreaService: ManagementAreaService) {
+        managementAreaService: ManagementAreaService,
+        private mapCapture: MapCaptureService) {
 
         this.roadWorkActivityService = roadWorkActivityService;   
         this.roadWorkNeedService = roadWorkNeedService;     
@@ -45,14 +47,14 @@ export class ReportLoaderService {
 
     }
 
-    async generateReport(templateName: string, uuid: string) {
-        await firstValueFrom(this.loadRoadWorkActivity$(uuid));
-        const html: string = await this.loadReport(templateName, { uuid });  
+    async generateReport(templateName: string, sessionType: string, children: any[], uuid: string) {
+        await firstValueFrom(this.loadRoadWorkActivity$(uuid));        
+        const html: string = await this.loadReport(templateName, sessionType, children, { uuid });
         return html;
     }
 
 
-    async loadReport(templateName: string, values: { [key: string]: string }): Promise<string> {
+    async loadReport(templateName: string, sessionType: string, children: any[], values: { [key: string]: string }): Promise<string> {
         
         if (values["uuid"] === undefined || values["uuid"] === null) {
             return `<pre style="color:red;">Error: UUID not provided.</pre>`;
@@ -76,7 +78,7 @@ export class ReportLoaderService {
 
             const htmlTableAssignedRoadWorkNeeds = this.prepareHtmlTable(
                 this.needsOfActivityService.assignedRoadWorkNeeds.map((item) => ({
-                    'Titel & Abschnitt': item.properties.name,
+                    'Titel & Abschnitt': item.properties.name + '-' + sessionType,
                     'Auslösegrund': item.properties.description,
                     'Auslösende:r': `${item.properties.orderer.firstName} ${item.properties.orderer.lastName}`,
                     'Werk': item.properties.orderer.organisationalUnit.abbreviation,
@@ -85,8 +87,52 @@ export class ReportLoaderService {
                     'auslösend': item.properties.isPrimary ? 'Ja' : 'Nein'
                 }))
             );
+            
+            const htmlTablePresentPersons = this.prepareHtmlTable(
+                children
+                .filter(item =>
+                    !item.isRoadworkProject === true
+                    && item.isPresent === true
+                )
+                .slice(0, 10)
+                .map(item => ({
+                    Name: item.name,
+                    Organisation: item.department,
+                    Anwesend: item.isPresent ? 'Ja' : 'Nein'
+                }))
+            );
+
+            const htmlTableExcusedPersons = this.prepareHtmlTable(
+                children
+                .filter(item =>
+                    !item.isRoadworkProject === true     
+                    && item.isPresent === false                    
+                )
+                .slice(0, 10)
+                .map(item => ({
+                    Name: item.name,
+                    Organisation: item.department,
+                    Anwesend: item.isPresent ? 'Ja' : 'Nein'
+                }))
+            );
+
+            const htmlTableDistributionListPersons = this.prepareHtmlTable(
+                children
+                .filter(item =>
+                    !item.isRoadworkProject === true
+                    && item.isDistributionList === true                    
+                )
+                .slice(0, 10)
+                .map(item => ({
+                    Name: item.name,
+                    Organisation: item.department,
+                    Verteiler: item.isDistributionList ? 'Ja' : 'Nein'
+                }))
+            );
 
             const placeholders: Record<string, string> = {
+                'SESSION_TYPE': sessionType,
+                'VORSITZ': this.wrapPlaceholder('Stefan Gahler (TBA APK)'),
                 'DATUM': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'DATUM_LETZTE_SKS': this.wrapPlaceholder('?DATUM_LETZTE_SKS?'),
@@ -108,6 +154,10 @@ export class ReportLoaderService {
                 'AUSLOESENDES_WERK': this.wrapPlaceholder(this.primaryNeed?.properties?.orderer?.organisationalUnit?.abbreviation ?? "-"),
                 'MITWIRKENDE': this.wrapPlaceholder(this.getInvolvedOrgsNames() ?? "-"),
                 'ZUGEWIESENE_BEDARFE': "<div style='background:yellow'>" + htmlTableAssignedRoadWorkNeeds + "</div>",
+
+                'ANWESENDE': "<div style='background:yellow'>" + htmlTablePresentPersons + "</div>",
+                'ENTSCHULDIGT': "<div style='background:yellow'>" + htmlTableExcusedPersons + "</div>",
+                'TEILNEHMENDE': "<div style='background:yellow'>" + htmlTableDistributionListPersons + "</div>",
 
                 'Ist_im_Aggloprogramm': this.wrapPlaceholder('[  ]'),
                 'Laermschutzverordnung': this.wrapPlaceholder('[  ]'),
@@ -132,7 +182,44 @@ export class ReportLoaderService {
     }
 
     private async loadProjectPerimeterMap(): Promise<string> {
-        try {
+        try {                        
+            
+            const geoJson = {
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type: 'Feature',
+                        geometry: { type: 'Polygon', coordinates: JSON.stringify(this.roadWorkActivity.geometry.coordinates) },
+                        properties: {},
+                    },
+                ],
+            };            
+
+            const needsPolygons: Array<Array<{ x: number; y: number }>> =
+                this.roadWorkNeeds.map((item) =>                    
+                    item.geometry.coordinates[0].map(([x, y]: [number, number]) => ({
+                    x,
+                    y
+                }))
+            );
+
+            const activityPolygons = [this.roadWorkActivity.geometry.coordinates as Array<{ x: number; y: number }>]
+                
+
+            // Generate off-screen map image
+            const mapImageUrl = await this.mapCapture.captureMapOffscreen(
+                undefined,
+                1280,
+                720,
+                [8.719, 47.499],
+                13,
+                true,
+                activityPolygons,
+                needsPolygons
+            );  
+
+            this.storageService.save('ProjectPerimeter', mapImageUrl);
+
             const data = await this.storageService.load('ProjectPerimeter');
             return data || '';
         } catch (e) {
@@ -146,13 +233,13 @@ export class ReportLoaderService {
     }
 
  
-     getInvolvedOrgsNames(): string {
+    getInvolvedOrgsNames(): string {
         let result: string[] = [];
         if (this.roadWorkActivity) {
-        for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
-            if (!result.includes(involvedUser.organisationalUnit.abbreviation))
-            result.push(involvedUser.organisationalUnit.abbreviation);
-        }
+            for (let involvedUser of this.roadWorkActivity.properties.involvedUsers) {
+                if (!result.includes(involvedUser.organisationalUnit.abbreviation))
+                result.push(involvedUser.organisationalUnit.abbreviation);
+            }
         }
         return result.join(', ');
     }
@@ -170,7 +257,7 @@ export class ReportLoaderService {
     }
 
     prepareHtmlTable(data: Record<string, string>[]): string {
-        if (data.length === 0) return '<p>No data</p>';
+        if (data.length === 0) return '<p>-</p>';
 
         const headers = Object.keys(data[0]);
 
@@ -201,19 +288,22 @@ export class ReportLoaderService {
     loadRoadWorkActivity$(uuid: string) {
         return this.roadWorkActivityService.getRoadWorkActivities(uuid).pipe(
             switchMap((activities: RoadWorkActivityFeature[]) => {
-            if (activities.length !== 1) {
-                return throwError(() => new Error(`Expected one RoadWorkActivity for UUID ${uuid}, got ${activities.length}`));
-            }
+                if (activities.length !== 1) {
+                    return throwError(() => new Error(`Expected one RoadWorkActivity for UUID ${uuid}, got ${activities.length}`));
+                }
 
-            const activity = activities[0];
-            this.roadWorkActivity = activity;
-            this.primaryNeed = this.getPrimaryNeed();
+                const activity = activities[0];
+                this.roadWorkActivity = activity;
+                this.primaryNeed = this.getPrimaryNeed();
+            
+            
+                const mgmt$  = this.loadManagementArea$(activity.geometry); 
+                const needs$ = this.loadAssociatedNeeds$(activity);        
+                needs$.forEach((need: any) => { 
+                    this.roadWorkNeeds.push(need.geometry.coordinates);
+                });
 
-          
-            const mgmt$  = this.loadManagementArea$(activity.geometry); 
-            const needs$ = this.loadAssociatedNeeds$(activity);        
-
-            return forkJoin([mgmt$, needs$]).pipe(map(() => activity));
+                return forkJoin([mgmt$, needs$]).pipe(map(() => activity));
             })
         );
     }

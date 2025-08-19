@@ -46,7 +46,7 @@ export class ActivityAttributesComponent implements OnInit {
   @ViewChild("reportingItemsInconsult1") reportingItemsInconsult1 !: ReportingItemsComponent;
   @ViewChild("reportingItemsInconsult2") reportingItemsInconsult2 !: ReportingItemsComponent;
   @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
-  @ViewChild('projectDescriptionCtrl') projectDescriptionCtrl!: NgModel;
+  @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
 
 
   roadWorkActivityFeature?: RoadWorkActivityFeature;
@@ -102,7 +102,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
 
-  readonly projectDescriptionOptions = [
+  readonly projectKindOptions = [
     { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' },
     { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' },
     { value: 'ROAD_MAINTENANCE_REGIONAL', label: 'Strasse Überkommunal (Unterhalt)' },
@@ -358,12 +358,12 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   save() {
-     if (this.projectDescriptionCtrl) {
-        this.projectDescriptionCtrl.control.markAsTouched();
-        this.projectDescriptionCtrl.control.updateValueAndValidity();
+     if (this.projectKindCtrl) {
+        this.projectKindCtrl.control.markAsTouched();
+        this.projectKindCtrl.control.updateValueAndValidity();
       }
 
-      if (this.projectDescriptionCtrl.invalid) {
+      if (this.projectKindCtrl.invalid) {
         this.snckBar.open("Bitte wählen Sie eine Projekt-Art aus.", "", {
           duration: 4000
         });        

@@ -56,3 +56,51 @@ mat-slider {
   opacity: 0.6;
   font-size: 12px;
 }
+
+:host ::ng-deep  .type-icon-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+:host ::ng-deep  .material-icons.small-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+
+:host ::ng-deep  .material-icons.icon-project {
+  color: #ff9800;
+}
+
+.no-split,
+li.no-split,
+.table-row-no-split,
+.block-no-split {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+
+h1, h2, h3, h4 {
+  page-break-after: avoid;
+  break-after: avoid-page;
+}
+
+
+ul, ol { margin: 0 0 8px 24px; }
+li { break-inside: avoid; }
+table { border-collapse: collapse; }
+tr, thead, tbody { break-inside: avoid; }
+
+
+mark, .highlight {
+  display: inline-block;
+  padding: 0 .1em;
+}
+
+.page-break {
+  page-break-before: always;
+  break-before: page;
+}

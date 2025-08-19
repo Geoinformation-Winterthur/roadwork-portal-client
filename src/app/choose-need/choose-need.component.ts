@@ -55,9 +55,10 @@ export class ChooseNeedComponent implements OnInit {
   localeText = AG_GRID_LOCALE_DE;
 
   defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
+    sortable: true,    
     resizable: true,
+    filter: 'agTextColumnFilter',
+    menuTabs: ['filterMenuTab'],     
   };
 
   columnDefs: ColDef[] = [    

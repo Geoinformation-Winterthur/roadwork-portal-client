@@ -13,7 +13,7 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, ColumnMenuTab } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 
@@ -50,12 +50,13 @@ export class WelcomeComponent implements OnInit {
 
   localeText = AG_GRID_LOCALE_DE;
 
-  defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
-    resizable: true,
-  };
-
+   defaultColDef = {      
+      sortable: true,    
+      resizable: true,
+      filter: 'agTextColumnFilter',
+      menuTabs: ['filterMenuTab'] as ColumnMenuTab[], 
+    };
+  
    columnDefsNeed: ColDef[] = [    
    {
       headerName: 'Phase/Status',

@@ -55,9 +55,10 @@ export class ChooseActivityComponent implements OnInit {
   localeText = AG_GRID_LOCALE_DE;
 
   defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
-    resizable: true,
+    sortable: true,    
+    resizable: true,    
+    filter: 'agTextColumnFilter', 
+    menuTabs: ['filterMenuTab'],
   };
 
   columnDefs: ColDef[] = [

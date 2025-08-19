@@ -103,26 +103,34 @@
                                         <mat-form-field appearance="fill">
                                             <mat-label>Projekt-Art</mat-label>
                                             <mat-select
-                                                [(ngModel)]="roadWorkActivityFeature.properties.description"
-                                                name="projectDescription"
-                                                #projectDescriptionCtrl="ngModel"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.projectKind"
+                                                name="projectKind"
+                                                #projectKindCtrl="ngModel"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                 required>
                                                 <mat-option [value]="null" disabled selected>– Bitte wählen –</mat-option>
                                                 <mat-option
-                                                    *ngFor="let option of projectDescriptionOptions"
+                                                    *ngFor="let option of projectKindOptions"
                                                     [value]="option.value"
                                                     >
                                                     {{ option.label }}
                                                 </mat-option>
                                             </mat-select>                                            
-                                            <mat-error *ngIf="projectDescriptionCtrl.invalid && projectDescriptionCtrl.touched">
+                                            <mat-error *ngIf="projectKindCtrl.invalid && projectKindCtrl.touched">
                                                 Bitte wählen Sie eine Projekt-Art aus.
                                             </mat-error>
                                         </mat-form-field>
                                         
 
                                         <mat-form-field>
+                                            <mat-label>Bemerkung</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.description"
+                                                placeholder="Bemerkung eingeben.."
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                                        </mat-form-field>
+
+                                         <mat-form-field>
                                             <mat-label>Beschrieb Bauvorhaben</mat-label>
                                             <textarea matInput maxlength="255"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.comment"

@@ -14,7 +14,7 @@ import { ReportLoaderService } from 'src/services/report-loader.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { Router } from '@angular/router';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, ColumnMenuTab } from 'ag-grid-community';
 
 @Component({
   selector: 'app-reporting-items',
@@ -117,9 +117,10 @@ export class ReportingItemsComponent implements OnInit {
   ];
 
   defaultColDef = {      
-    sortable: true,
-    filter: true,
+    sortable: true,    
     resizable: true,
+    filter: 'agTextColumnFilter',
+    menuTabs: ['filterMenuTab'] as ColumnMenuTab[], 
   };
 
     
@@ -275,7 +276,8 @@ export class ReportingItemsComponent implements OnInit {
   
   async generatePDF2(): Promise<void> {    
 
-    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", this.roadWorkActivity.properties.uuid);
+    const sessionType = "Vor-Protocoll";
+    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType , [], this.roadWorkActivity.properties.uuid);
     this.reportContainer.nativeElement.innerHTML = html;
 
     this.snckBar.open("PDF wird generiert...", "", {
@@ -290,7 +292,7 @@ export class ReportingItemsComponent implements OnInit {
 
     html2pdf().from(target)
                 .set({
-                    filename: 'Strategische Koordinationssitzung (SKS) -Vor-Protokoll.pdf',
+                    filename: 'Strategische Koordinationssitzung (SKS)' + ' - ' + sessionType + '.pdf',
                     margin: 10,
                     html2canvas: {
                         scale: 2,
