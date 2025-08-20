@@ -3,13 +3,12 @@
  * Copyright (c) Fachstelle Geoinformation Winterthur
  */
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
-import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/model/user';
-
+import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
+import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 import 'ag-grid-enterprise';
@@ -24,6 +23,28 @@ import {
   ColumnMenuTab
 } from 'ag-grid-community';
 import { ReportLoaderService } from 'src/services/report-loader.service';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+
+interface Session {
+  id: string;
+  sessionType: string;     
+  sessionName: string;     
+  sessionDateApproval: string;
+  sessionCreator: string;  
+  sessionDate: string;     
+  children: { id: string; name: string; isRoadworkProject: boolean }[];
+}
+
+interface SessionChild {
+  id: string;
+  name: string;
+  isRoadworkProject: boolean;  
+  department?: string;
+  mailAddress?: string;
+  isPresent?: boolean;
+  isDistributionList?: boolean;
+}
 
 export type ReportType = 'Vor-Protokol SKS' | 'Protokol SKS';
 
@@ -37,71 +58,15 @@ export class SessionsComponent implements OnInit {
   gridApi!: GridApi;
   columnApi!: ColumnApi;
   
-  sessionsData: any[] = [
-    {
-      id: 'ae4194c3-8cef-4067-806d-aed3e7947ea1',
-      sessionType: 'Vor-Protokol SKS',
-      a1: 'Sitzung 1/2025',
-      sessionDate: '2025-01-18',
-      a6: 'Max1 Mustermann',
-      a7: '2025-07-28',
-      children: [
-        { id: '31dc3e50-c6b0-46d7-9c56-b7754fdbbe0d', name: 'Bauvorhaben / Rosentalstrasse 121.1', isRoadworkProject: true },        
-      ],
-    },
-    {
-      id: 'f57d7f60-d49b-411f-a17b-7cd4911aae8e',
-      sessionType: 'Vor-Protokol SKS',
-      a1: 'Sitzung 2/2025',
-      sessionDate: '2025-02-21',      
-      a6: 'Max2 Mustermann',
-      a7: '2025-07-29',
-      children: [
-        { id: '3a87b037-5b54-41b3-82d2-c75116eb3924', name: 'Bauvorhaben / Nägelseestrasse - SBB – Töss' , isRoadworkProject: true},        
-      ],
-    },
-    {
-      id: '46e3c862-1589-42bf-bcc5-f8d8e4bd93db',
-      sessionType: 'Vor-Protokol SKS',
-      a1: 'Sitzung 3/2025',
-      sessionDate: '2025-07-21',      
-      a6: 'Max2 Mustermann',
-      a7: '2025-07-29',
-      children: [        
-        { id: 'f57d7f60-d49b-411f-a17b-7cd4911aae8e', name: 'Bauvorhaben / Flugplatzstrasse - Höhe Deltastrasse' , isRoadworkProject: true},        
-      ],
-    },
-    {
-      id: '81c7ee67-a0f9-448f-b425-0b0044f63cca',
-      sessionType: 'Vor-Protokol SKS',
-      a1: 'Sitzung 4/2025',
-      sessionDate: '2025-08-01',      
-      a6: 'Max2 Mustermann',
-      a7: '2025-07-29',
-      children: [        
-        {  id: '46e3c862-1589-42bf-bcc5-f8d8e4bd93db', name: 'Bauvorhaben / Rosentalstrasse 121.1' , isRoadworkProject: true},        
-      ],
-    },
-    {
-      id: '85cba275-3067-447d-906b-24a8e4396770',
-      sessionType: 'Vor-Protokol SKS',
-      a1: 'Sitzung 5/2025',
-      sessionDate: '2025-09-12',      
-      a6: 'Max2 Mustermann',
-      a7: '2025-07-29',
-      children: [
-        { id: '51f12323-4788-4ad9-bc9b-f971deab8208', name: 'Bauvorhaben / Theaterstrasse / Museumsstrasse' , isRoadworkProject: true},         
-      ],
-    },
-  ];
+  sessionsData: Session[] = [];
 
   reportTypeOptions: ReportType[] = ['Vor-Protokol SKS', 'Protokol SKS'];   
 
   columnDefs: ColDef[] = [
-    { headerName: 'Phase/Status', field: 'a1', minWidth: 220, cellRenderer: 'agGroupCellRenderer' },
-    { headerName: 'Datum Genehmigung', field: 'sessionDate' },
-    { headerName: 'Ersteller', field: 'a6' },
-    { headerName: 'Datum', field: 'a7' },    
+    { headerName: 'Phase/Status', field: 'sessionName', minWidth: 220, cellRenderer: 'agGroupCellRenderer' },
+    { headerName: 'Datum Genehmigung', field: 'sessionDateApproval' },
+    /* { headerName: 'Ersteller', field: 'sessionCreator' },
+    { headerName: 'Datum', field: 'sessionDate' },     */
     {
       headerName: 'Berichtsstatus',
       field: 'sessionType',
@@ -128,7 +93,7 @@ export class SessionsComponent implements OnInit {
       cellRenderer: (params: any) => {
         const button = document.createElement('button');
         button.innerText = 'Bericht anzeigen';        
-        button.addEventListener('click', () => this.generateSessionPDF(params.data.id, params.data.sessionType, params.data.sessionDate, params.data.children));
+        button.addEventListener('click', () => this.generateSessionPDF(params.data.id, params.data.sessionType, params.data.sessionDateApproval, params.data.children));
         return button;
       },
     },
@@ -146,10 +111,10 @@ export class SessionsComponent implements OnInit {
           .join(' ');      
         return [
           d.sessionType,
-          d.a1,
+          d.sessionName,
+          d.sessionDateApproval,
+          d.sessionCreator,
           d.sessionDate,
-          d.a6,
-          d.a7,
           childText,
         ].filter(Boolean).join(' ');
       },
@@ -253,7 +218,9 @@ export class SessionsComponent implements OnInit {
   user: User = new User();
   userService: UserService;  
   
-  private roadWorkNeedService: RoadWorkNeedService; 
+  roadWorkActivity: RoadWorkActivityFeature[] | undefined;
+  
+  private roadWorkActivityService: RoadWorkActivityService; 
   private reportLoaderService: ReportLoaderService;
   private snckBar: MatSnackBar;    
 
@@ -264,11 +231,11 @@ export class SessionsComponent implements OnInit {
   @ViewChild('reportContainer', { static: false }) reportContainer!: ElementRef;
 
   constructor(
-      roadWorkNeedService: RoadWorkNeedService, 
+      roadWorkActivityService: RoadWorkActivityService, 
       reportLoaderService: ReportLoaderService,
       userService: UserService,
       snckBar: MatSnackBar) {
-    this.roadWorkNeedService = roadWorkNeedService;
+    this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
     this.snckBar = snckBar;
     this.isDataLoading = true;        
@@ -302,22 +269,38 @@ export class SessionsComponent implements OnInit {
         }
     });
 
-    this.userService.getAllUsers().subscribe(
-      usersList => {
-        usersList.forEach((user, index) => {        
-          this.sessionsData.forEach(session => {
-            session.children.push( {
+    const sessionsWithUsers$ = this.roadWorkActivityService.getRoadWorkActivities().pipe(
+      map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)), 
+      switchMap((sessions: Session[]) =>
+        this.userService.getAllUsers().pipe(
+          map(users => {            
+            const userChildren: SessionChild[] = users.map((user, index) => ({
               id: String(index + 1),
-              name: user.firstName + " " + user.lastName,
-              department: user.organisationalUnit.abbreviation,
-              mailAddress:  user.mailAddress,
+              name: `${user.firstName} ${user.lastName}`,
+              isRoadworkProject: false, 
+              department: user.organisationalUnit?.abbreviation ?? "",
+              mailAddress: user.mailAddress ?? "",
               isPresent: true,
-              isDistributionList: Math.random() > 0.5 ? true: false    
-            });
-        })
-      })
-    })  
-  }  
+              isDistributionList: true
+            }));
+            
+            return sessions.map(session => ({
+              ...session,
+              children: [...session.children, ...userChildren]
+            }));
+          })
+        )
+      )
+    );
+
+    sessionsWithUsers$.subscribe({
+      next: (sessions) => {
+        this.sessionsData = sessions;
+      },
+      error: console.error
+    });
+
+  }
 
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
@@ -329,7 +312,7 @@ export class SessionsComponent implements OnInit {
     this.gridApi?.setQuickFilter(value);
   }
 
-  async generateSessionPDF(id: string, sessionType: string, sessionDate: string, children: any[]): Promise<void> {    
+  async generateSessionPDF(id: string, sessionType: string, sessionDateApproval: string, children: any[]): Promise<void> {    
 
     const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType, children, id);    
     
@@ -371,7 +354,7 @@ export class SessionsComponent implements OnInit {
                     const w = ps.getWidth ? ps.getWidth() : ps.width;
                     const h = ps.getHeight ? ps.getHeight() : ps.height;
 
-                    const text = `SKS-${sessionType}_${sessionDate}, Seite ${i} von ${total}`;
+                    const text = `SKS-${sessionType}_${sessionDateApproval}, Seite ${i} von ${total}`;
                     
                     const textWidth = pdf.getTextWidth(text);
                     const textHeight = 4;                     
@@ -390,5 +373,55 @@ export class SessionsComponent implements OnInit {
                 })
                 .save();
     }    
+
+    transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
+      // Group activities by ISO date of dateSks
+      const groups = new Map<string, RoadWorkActivityFeature[]>();
+
+      for (const act of activities) {
+        const dateKey = act.properties.dateSks?.toString() ?? "unknown";
+        if (!groups.has(dateKey)) groups.set(dateKey, []);
+        groups.get(dateKey)!.push(act);
+      }
+
+      // Sort date keys (exclude "unknown" for sorting; append at the end)
+      const knownDateKeys = [...groups.keys()].filter(k => k !== "unknown").sort(); // ascending YYYY-MM-DD
+      const dateKeys = [...knownDateKeys, ...(groups.has("unknown") ? ["unknown"] : [])];
+
+      // Per-year counters
+      const yearCount = new Map<string, number>();
+
+      const sessions: Session[] = [];
+
+      for (const dateKey of dateKeys) {
+        const acts = groups.get(dateKey)!;
+        const first = acts[0];
+
+        // sessionName: "Sitzung N/YYYY" where N resets per year
+        let sessionName = "Sitzung ?/unknown";
+        if (dateKey !== "unknown") {
+          const year = dateKey.slice(0, 4);
+          const n = (yearCount.get(year) ?? 0) + 1;
+          yearCount.set(year, n);
+          sessionName = `Sitzung ${n}/${year}`;
+        }
+
+        sessions.push({
+          id: first.properties.uuid,
+          sessionType: "Vor-Protokol SKS",
+          sessionName,
+          sessionDateApproval: dateKey.split("T")[0], // YYYY-MM-DD
+          sessionCreator: first.properties.areaManager?.firstName ?? "",
+          sessionDate: first.properties.created.toString() ?? "",
+          children: acts.map(act => ({
+            id: act.properties.uuid,
+            name: `Bauvorhaben:${act.properties.type} / ${act.properties.section || act.properties.name}`,
+            isRoadworkProject: true
+          }))
+        });
+      }
+
+      return sessions;
+    }
 
 }
