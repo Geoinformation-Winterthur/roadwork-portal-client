@@ -134,8 +134,8 @@ export class ReportLoaderService {
                 'SESSION_TYPE': sessionType,
                 'VORSITZ': this.wrapPlaceholder('Stefan Gahler (TBA APK)'),
                 'DATUM': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
-                'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
-                'DATUM_LETZTE_SKS': this.wrapPlaceholder('?DATUM_LETZTE_SKS?'),
+                'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSksReal)),
+                'DATUM_LETZTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'DATUM_VERSAND_BEDARFSKLAERUNG_1': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult1)),
                 'DATUM_VERSAND_BEDARFSKLAERUNG_2': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult2)),
                 'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateReportStart)),
@@ -144,7 +144,7 @@ export class ReportLoaderService {
                 'TITEL_ADRESSE_ABSCHNITT': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.name??"-"} / ${this.roadWorkActivity?.properties?.section??"-"}`),
                 'TITEL_ADRESSE': this.wrapPlaceholder(this.roadWorkActivity?.properties?.name?? "-"),
                 'ABSCHNITT': this.wrapPlaceholder(this.roadWorkActivity?.properties?.section?? "-"),
-                'SKS_NR': this.wrapPlaceholder('?SKS_NR?'),
+                'SKS_NR': this.wrapPlaceholder(this.roadWorkActivity?.properties?.strabakoNo?? "-"),
                 'AUSLOESENDE': this.wrapPlaceholder(`${this.primaryNeed?.properties?.orderer?.firstName ?? "-"} ${this.primaryNeed?.properties?.orderer?.lastName ?? "-"}`),
                 'GM': this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
                 'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                 
@@ -159,15 +159,16 @@ export class ReportLoaderService {
                 'ENTSCHULDIGT': "<div style='background:yellow'>" + htmlTableExcusedPersons + "</div>",
                 'TEILNEHMENDE': "<div style='background:yellow'>" + htmlTableDistributionListPersons + "</div>",
 
-                'Ist_im_Aggloprogramm': this.wrapPlaceholder('[  ]'),
-                'Laermschutzverordnung': this.wrapPlaceholder('[  ]'),
-                'Stoerfallverordnung': this.wrapPlaceholder('[  ]'),
-                'Haltekanten': this.wrapPlaceholder('[  ]'),
-                'Vorstudie_BGK': this.wrapPlaceholder('[  ]')
+                'Ist_im_Aggloprogramm': this.wrapPlaceholder(this.roadWorkActivity.properties.isAggloprog ? '[ x ]' : "[&nbsp;&nbsp;&nbsp;]"),
+                'Laermschutzverordnung': this.wrapPlaceholder('[ isProp1 ? ]'),
+                'Stoerfallverordnung': this.wrapPlaceholder('[ isProp2 ? ]'),
+                'Haltekanten': this.wrapPlaceholder(this.roadWorkActivity.properties.isStudy ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
+                'Vorstudie_BGK': this.wrapPlaceholder(this.roadWorkActivity.properties.isStudy ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
+                'Uebergeordnete_Massnahme': this.wrapPlaceholder(this.roadWorkActivity.properties.overarchingMeasure ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
+                'Begehrensaeusserung_45': this.wrapPlaceholder(this.roadWorkActivity.properties.isDesire ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
+                'Mitwirkungsverfahren_13': this.wrapPlaceholder(this.roadWorkActivity.properties.isParticip ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
+                'Planauflage_16': this.wrapPlaceholder(this.roadWorkActivity.properties.isPlanCirc ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
             };
-
-        
-
 
             const filledHtml = this.fillPlaceholders(htmlTemplate!, placeholders);
 
@@ -387,6 +388,32 @@ export class ReportLoaderService {
                 console.error("Error loading primary need:", err);
             }
         });
+    }
+
+    prepareRoadWorkActivity() {
+        let templateSection = `            
+           <table style="width: 100%; margin: 0 auto;">
+                <tr>
+                    <td style="background:silver">
+                        <p><strong>Bauvorhaben: [PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT]</strong></p>
+                    </td>
+                </tr>
+            </table>
+            <p>    
+                <img src="[PLACEHOLDER_MAP_PERIMETER]" alt="Mapa" style="max-width: 100%; border: 1px solid #ccc;" />
+            </p>
+            <p>Bauvorhaben: [PLACEHOLDER_Titel_Adresse]</p>                        
+        `;
+
+        let html = "";
+        for (let i=0; i<3; i++) {
+            let newChild = templateSection.replace('PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT_', "PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT_"+i.toString());
+            newChild = newChild.replace('PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT_', "PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT_"+i.toString());
+            newChild = templateSection.replace('PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT_', "PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT_"+i.toString());
+            html = html + newChild;
+        }
+        return html;
+        
     }
 
 }

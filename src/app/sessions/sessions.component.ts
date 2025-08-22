@@ -318,7 +318,7 @@ export class SessionsComponent implements OnInit {
     
     this.reportContainer.nativeElement.innerHTML = html;
 
-    this.snckBar.open("PDF wird generiert..." + String(id), "", {
+    this.snckBar.open("PDF wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {
       duration: 4000
     });
 
