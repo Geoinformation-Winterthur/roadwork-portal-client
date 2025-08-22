@@ -390,9 +390,10 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Projekttermine</h2>
-                            <div fxLayout="row wrap padding" class="tab-content" [class.disabled]="isScheduleEditingDisabled">
+                            <div fxLayout="row wrap padding" class="tab-content">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"
+                                    [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
                                     <mat-card-header>
                                         <mat-card-title>Bautermine</mat-card-title>
                                     </mat-card-header>
@@ -461,7 +462,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateStudyStart"
                                                         [matDatepicker]="dateStudyStart"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
                                                     <mat-datepicker #dateStudyStart></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="dateStudyStart"></mat-datepicker-toggle>
@@ -471,7 +472,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateStudyEnd"
                                                         [matDatepicker]="dateStudyEnd"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
                                                     <mat-datepicker #dateStudyEnd></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="dateStudyEnd"></mat-datepicker-toggle>
@@ -481,7 +482,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.projectStudyApproved"
                                                         [matDatepicker]="projectStudyApproved"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
                                                     <mat-datepicker #projectStudyApproved></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="projectStudyApproved"></mat-datepicker-toggle>
@@ -491,7 +492,7 @@
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.studyApproved"
                                                         [matDatepicker]="studyApproved"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
+                                                        [disabled]="isScheduleEditingDisabled || !roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isStudy">
                                                     <mat-datepicker #studyApproved></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="studyApproved"></mat-datepicker-toggle>
@@ -501,7 +502,8 @@
                                     </mat-card-content>
                                 </mat-card>
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"
+                                     [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
                                     <mat-card-header>
                                         <mat-card-title>Aggloprogramm</mat-card-title>
                                     </mat-card-header>
