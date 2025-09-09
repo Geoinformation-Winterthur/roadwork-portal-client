@@ -5,6 +5,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChooseNeedComponent } from './choose-need.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('ChooseNeedComponent', () => {
   let component: ChooseNeedComponent;
@@ -12,7 +15,12 @@ describe('ChooseNeedComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChooseNeedComponent ]
+      imports: [HttpClientTestingModule, MatSnackBarModule],
+      declarations: [ ChooseNeedComponent ],
+      providers: [
+        { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+        JwtHelperService
+      ]
     })
     .compileComponents();
   });

@@ -5,6 +5,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditActivityMapComponent } from './edit-activity-map.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('EditActivityMapComponent', () => {
   let component: EditActivityMapComponent;
@@ -12,6 +14,9 @@ describe('EditActivityMapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule,
+        MatSnackBarModule
+      ],
       declarations: [ EditActivityMapComponent ]
     })
     .compileComponents();

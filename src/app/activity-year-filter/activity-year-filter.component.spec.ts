@@ -1,16 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ActivityYearFilterComponent } from './activity-year-filter.component';
+import { ChooseActivityComponent } from '../choose-activity/choose-activity.component';
 
 describe('ActivityYearFilterComponent', () => {
   let component: ActivityYearFilterComponent;
   let fixture: ComponentFixture<ActivityYearFilterComponent>;
 
+  // Minimaler Parent-Mock mit nur der verwendeten Methode
+  const chooseActivityMock = {
+    filterActivities: jasmine.createSpy('filterActivities'),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ActivityYearFilterComponent ]
+      declarations: [ActivityYearFilterComponent],
+      providers: [
+        { provide: ChooseActivityComponent, useValue: chooseActivityMock },
+      ],
     })
-    .compileComponents();
+      // Template leeren, um jegliche Template-Abhängigkeiten zu vermeiden
+      .overrideTemplate(ActivityYearFilterComponent, '')
+      .compileComponents();
   });
 
   beforeEach(() => {

@@ -5,6 +5,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConfigurationComponent } from './configuration.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
@@ -12,6 +14,7 @@ describe('ConfigurationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule, MatSnackBarModule],
       declarations: [ ConfigurationComponent ]
     })
     .compileComponents();
