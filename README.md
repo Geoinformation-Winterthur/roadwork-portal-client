@@ -29,7 +29,7 @@ Example command to build for test environment (DO NOT USE THIS WITH GIT BASH):
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
 ## Running end-to-end tests
 
