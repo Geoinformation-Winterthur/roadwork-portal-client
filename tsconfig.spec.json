@@ -3,16 +3,20 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": [
-      "jasmine"
-    ]
+    "types": ["jasmine", "node", "geojson"],
+    "skipLibCheck": true,
+    "paths": {
+      "ag-grid-enterprise": ["src/test-stubs/ag-grid-enterprise.stub.ts"]
+    }
   },
   "files": [
     "src/test.ts",
-    "src/polyfills.ts"
+    "src/polyfills.ts",
+    "src/test-stubs/ag-grid-enterprise.stub.ts"
   ],
   "include": [
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "src/test-stubs/**/*.ts"
   ]
 }
