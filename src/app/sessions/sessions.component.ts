@@ -411,7 +411,7 @@ export class SessionsComponent implements OnInit {
         const first = acts[0];
 
         // sessionName: "Sitzung N/YYYY" where N resets per year
-        let sessionName = "Sitzung ?/unknown";
+        let sessionName = "Sitzung ?/unbekannt";
         if (dateKey !== "unknown") {
           const year = dateKey.slice(0, 4);
           const n = (yearCount.get(year) ?? 0) + 1;
