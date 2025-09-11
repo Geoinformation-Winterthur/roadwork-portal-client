@@ -375,11 +375,11 @@ export class SessionsComponent implements OnInit {
     }    
 
     transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
-      // Group activities by ISO date of dateSks
+      // Group activities by ISO date of dateSksPlanned 
       const groups = new Map<string, RoadWorkActivityFeature[]>();
 
       for (const act of activities) {
-        const dateKey = act.properties.dateSks?.toString() ?? "unknown";
+        const dateKey = act.properties.dateSksPlanned ?.toString() ?? "unknown";
         if (!groups.has(dateKey)) groups.set(dateKey, []);
         groups.get(dateKey)!.push(act);
       }
