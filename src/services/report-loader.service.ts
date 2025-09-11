@@ -93,8 +93,8 @@ export class ReportLoaderService {
                 .filter(item =>
                     !item.isRoadworkProject === true
                     && item.isPresent === true
-                )
-                .slice(0, 10)
+                    && item.shouldBePresent === true    
+                )                
                 .map(item => ({
                     Name: item.name,
                     Organisation: item.department,
@@ -106,9 +106,9 @@ export class ReportLoaderService {
                 children
                 .filter(item =>
                     !item.isRoadworkProject === true     
-                    && item.isPresent === false                    
-                )
-                .slice(0, 10)
+                    && item.isPresent === false  
+                    && item.shouldBePresent === true                        
+                )                
                 .map(item => ({
                     Name: item.name,
                     Organisation: item.department,
@@ -121,8 +121,8 @@ export class ReportLoaderService {
                 .filter(item =>
                     !item.isRoadworkProject === true
                     && item.isDistributionList === true                    
-                )
-                .slice(0, 10)
+                    && item.shouldBeOnDistributionList === true    
+                )                
                 .map(item => ({
                     Name: item.name,
                     Organisation: item.department,

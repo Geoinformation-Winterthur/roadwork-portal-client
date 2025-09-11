@@ -27,6 +27,7 @@ import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
 import saveAs from 'file-saver';
 import { asBlob } from 'html-docx-js-typescript';
+import { environment } from 'src/environments/environment';
 
 interface Session {
   id: string;
@@ -45,7 +46,9 @@ interface SessionChild {
   department?: string;
   mailAddress?: string;
   isPresent?: boolean;
+  shouldBePresent?: boolean;
   isDistributionList?: boolean;
+  shouldBeOnDistributionList?: boolean;
 }
 
 export type ReportType = 'Vor-Protokol SKS' | 'Protokol SKS';
@@ -61,6 +64,9 @@ export class SessionsComponent implements OnInit {
   columnApi!: ColumnApi;
   
   sessionsData: Session[] = [];
+
+  presentEmails = environment.presentEmails;
+  distributionListEmails = environment.distributionListEmails;
 
   reportTypeOptions: ReportType[] = ['Vor-Protokol SKS', 'Protokol SKS'];   
 
@@ -271,24 +277,43 @@ export class SessionsComponent implements OnInit {
         }
     });
 
+    const presentSet = new Set(this.presentEmails.map(e => e.toLowerCase().trim()));
+    const distributionListSet = new Set(this.distributionListEmails.map(e => e.toLowerCase().trim()));
+    
     const sessionsWithUsers$ = this.roadWorkActivityService.getRoadWorkActivities().pipe(
-      map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)), 
+      map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)),
       switchMap((sessions: Session[]) =>
         this.userService.getAllUsers().pipe(
           map(users => {            
-            const userChildren: SessionChild[] = users.map((user, index) => ({
-              id: String(index + 1),
-              name: `${user.firstName} ${user.lastName}`,
-              isRoadworkProject: false, 
-              department: user.organisationalUnit?.abbreviation ?? "",
-              mailAddress: user.mailAddress ?? "",
-              isPresent: true,
-              isDistributionList: true
+            const mapped: SessionChild[] = users.map((user) => {              
+              const email = (user.mailAddress ?? '').toLowerCase().trim();
+              
+              const isPresent = email !== '' && presentSet.has(email);
+              const isDistributionList = email !== '' && distributionListSet.has(email);
+
+              return {                
+                id: '', 
+                name: `${user.firstName} ${user.lastName}`,
+                isRoadworkProject: false,
+                department: user.organisationalUnit?.abbreviation ?? '',
+                mailAddress: user.mailAddress ?? '',
+                isPresent,
+                shouldBePresent: isPresent,
+                isDistributionList,
+                shouldBeOnDistributionList: isDistributionList
+              };
+            });
+            
+            const filtered = mapped.filter(u => u.shouldBePresent || u.shouldBeOnDistributionList);
+            
+            const userChildren: SessionChild[] = filtered.map((u, idx) => ({
+              ...u,
+              id: String(idx + 1),
             }));
             
             return sessions.map(session => ({
               ...session,
-              children: [...session.children, ...userChildren]
+              children: [...session.children, ...userChildren],
             }));
           })
         )
@@ -320,27 +345,57 @@ export class SessionsComponent implements OnInit {
     
     this.reportContainer.nativeElement.innerHTML = html;
 
-    this.snckBar.open("PDF wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {
-      duration: 4000
-    });
-
     const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
 
     if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
       return;
     }
 
-    // START: Save as Word
+    // START: Save as Word    
+    this.snckBar.open("Word-Dokument wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {
+      duration: 4000
+    });
     const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
-                    
-    const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
-          <style>body{font-family: Arial, sans-serif}.page-break{page-break-before:always}</style>
-          </head><body>${target.outerHTML}</body></html>`;
     
-    const blob = await asBlob(htmlWord);   // returns a Blob
-    saveAs(blob as Blob, `${filenameBase}.docx`);
+    const cmToTwips = (cm: number) => Math.round((1440 / 2.54) * cm);
+
+    const MARGIN_CM = 1;
+    const margins = {
+      top: cmToTwips(2),
+      right: cmToTwips(1),
+      bottom: cmToTwips(2),
+      left: cmToTwips(2),
+    };
+
+    const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
+      <style>        
+        @page { margin: 1cm; size: A4; }
+        body { font-family: Arial, sans-serif; }
+        .page-break { page-break-before: always; }
+        img { max-width: 100%; height: auto; }
+      </style>
+    </head><body><div style="margin:0">${target.outerHTML}</div></body></html>`;
+
+    const blobOrBuffer = await asBlob(htmlWord, {
+      orientation: 'portrait' as const,
+      margins, // 1 cm = ~567 twips
+    });
+
+    const docxMime =
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+    const docxBlob =
+      blobOrBuffer instanceof Blob
+        ? blobOrBuffer
+        : new Blob([blobOrBuffer as unknown as ArrayBuffer], { type: docxMime });
+
+    saveAs(docxBlob, `${filenameBase}.docx`);
     // END: Save as Word
 
+    // START: Save as PDF
+    this.snckBar.open("PDF wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {          
+      duration: 4000
+    });
     html2pdf().from(target)
                 .set({
                     filename: 'Strategische Koordinationssitzung (SKS)' + '-' + sessionType + '.pdf',
@@ -384,7 +439,8 @@ export class SessionsComponent implements OnInit {
                     pdf.text(text, w - 10, h - 8, { align: 'right' });
                   }
                 })
-                .save();
+                .save();     
+      // END: Save as PDF
     }    
 
     transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
