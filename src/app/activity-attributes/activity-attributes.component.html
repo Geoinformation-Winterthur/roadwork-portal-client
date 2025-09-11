@@ -527,7 +527,7 @@
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
-                                        <mat-card-title>Sitzungen, terminiert</mat-card-title>
+                                        <mat-card-title>Sitzungen, berechnet</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
                                         <div style="display:flex;flex-direction:column;">
@@ -569,6 +569,31 @@
                                                         [for]="dateGlTba"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                             </form>
+                                        </div>
+                                    </mat-card-content>
+                                </mat-card>
+                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                    <mat-card-header>
+                                        <mat-card-title>Sitzungen, terminiert</mat-card-title>
+                                    </mat-card-header>
+                                    <mat-card-content>
+                                        <div style="display:flex;flex-direction:column;">                                            
+                                            <form>
+                                                <mat-form-field appearance="fill">
+                                                    <mat-label>Strategische Koord. (SKS)</mat-label>
+                                                    <mat-select
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
+                                                        [formControl]="dateSksPlannedControl"
+                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-option
+                                                            *ngFor="let plannedDateSks of configurationData.plannedDatesSks"
+                                                            value="{{plannedDateSks}}">{{plannedDateSks |
+                                                            date:'dd.MM.yyyy'}}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </form>                                            
                                         </div>
                                     </mat-card-content>
                                 </mat-card>

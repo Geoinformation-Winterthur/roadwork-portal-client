@@ -45,6 +45,7 @@ export class RoadWorkActivityProperties {
     projectNo: string = "";
     dateSks?: Date;
     dateSksReal?: Date;
+    dateSksPlanned?: Date;
     dateKap?: Date;
     dateKapReal?: Date;
     dateOks?: Date;

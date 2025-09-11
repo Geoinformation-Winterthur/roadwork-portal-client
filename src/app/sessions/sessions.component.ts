@@ -25,6 +25,8 @@ import {
 import { ReportLoaderService } from 'src/services/report-loader.service';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import saveAs from 'file-saver';
+import { asBlob } from 'html-docx-js-typescript';
 
 interface Session {
   id: string;
@@ -328,6 +330,17 @@ export class SessionsComponent implements OnInit {
       return;
     }
 
+    // START: Save as Word
+    const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
+                    
+    const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
+          <style>body{font-family: Arial, sans-serif}.page-break{page-break-before:always}</style>
+          </head><body>${target.outerHTML}</body></html>`;
+    
+    const blob = await asBlob(htmlWord);   // returns a Blob
+    saveAs(blob as Blob, `${filenameBase}.docx`);
+    // END: Save as Word
+
     html2pdf().from(target)
                 .set({
                     filename: 'Strategische Koordinationssitzung (SKS)' + '-' + sessionType + '.pdf',
@@ -375,11 +388,11 @@ export class SessionsComponent implements OnInit {
     }    
 
     transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
-      // Group activities by ISO date of dateSks
+      // Group activities by ISO date of dateSksPlanned 
       const groups = new Map<string, RoadWorkActivityFeature[]>();
 
       for (const act of activities) {
-        const dateKey = act.properties.dateSks?.toString() ?? "unknown";
+        const dateKey = act.properties.dateSksPlanned ?.toString() ?? "unknown";
         if (!groups.has(dateKey)) groups.set(dateKey, []);
         groups.get(dateKey)!.push(act);
       }
