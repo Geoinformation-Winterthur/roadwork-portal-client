@@ -288,8 +288,8 @@ export class SessionsComponent implements OnInit {
             const mapped: SessionChild[] = users.map((user) => {              
               const email = (user.mailAddress ?? '').toLowerCase().trim();
               
-              const isPresent = email !== '' && presentSet.has(email);
-              const isDistributionList = email !== '' && distributionListSet.has(email);
+              const isPresent = email !== '' && [...presentSet].some(p => email.startsWith(p));
+              const isDistributionList = email !== '' && [...distributionListSet].some(p => email.startsWith(p));
 
               return {                
                 id: '', 

@@ -5,7 +5,7 @@ export const environment = {
   subtitle: "Koordination Infrastruktur Strasse",
   fullAppPath: "http://localhost:4200/civil-engineering/roadworks-portal/",  
   apiDomain: "localhost:7297",
-  apiUrl: "https://localhost:7297",
+  apiUrl: "http://localhost:7297",
   roadworksPortalToken: "roadworks.token.test",
   roadworksPortalUserToken: "roadworks.user.token.test",
   hideInfoCookieName: "hide_info.test",
@@ -14,5 +14,7 @@ export const environment = {
   clientId: "545260861106-tgfacmvouu3lhpddesi1upgjeme33ibk.apps.googleusercontent.com",
   scope: "openid profile email",
   clearHashAfterLogin: false,
-  strictDiscoveryDocumentValidation: false
+  strictDiscoveryDocumentValidation: false,
+  presentEmails: ['alizee.b','andreas.m','arsim.d','arsim.d','denis.k','dirk.k','gabriela.m','heinz.m','juergen.r','mario.l','marcel.n','marcel.s','mnar.G','nelson.c','patrick.w','philipp.u','phuntsok.c','pierre.w','rico.m','sander.k','sandra.p','sascha.s','stefan.h','tino.t','tobias.j' ],
+  distributionListEmails: ['adrian.h','andreas.m','armand.b','cornelia.s','denis.k','dirk.k','herbert.e','ilona.m','ioannis.k','marc.v','mark.m','nino.w','patrick.s','renata.w','roland.f','rozina.p','simon.a','vanessa.h','werner.h']
 };
