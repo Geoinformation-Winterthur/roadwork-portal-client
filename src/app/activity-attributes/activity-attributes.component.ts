@@ -74,6 +74,7 @@ export class ActivityAttributesComponent implements OnInit {
   projectManagerControl: FormControl = new FormControl();
   projectTypeEnumControl: FormControl = new FormControl();
   availableProjectTypes: EnumType[] = [];
+  dateSksPlannedControl: FormControl = new FormControl();
   dateSksControl: FormControl = new FormControl();
   dateKapControl: FormControl = new FormControl();
   dateOksControl: FormControl = new FormControl();
@@ -184,7 +185,7 @@ export class ActivityAttributesComponent implements OnInit {
         }
       });
 
-    this.appConfigService.getConfigurationData(true)
+    this.appConfigService.getConfigurationData()
       .subscribe({
         next: (configData) => {
           if (configData) {
