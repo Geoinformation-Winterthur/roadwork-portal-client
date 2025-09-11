@@ -13,6 +13,8 @@
         break-inside: avoid; 
     }
     img { max-width: 100%; height: auto; display: block; }
+    table.compact { border-collapse: collapse; }
+    table.compact td { padding: 2px 6px; vertical-align: top; line-height: 1.2; }
   </style>
     </head>
 <body>
@@ -48,48 +50,25 @@
 <hr>
 
 
-<table style="vertical-align:top;">
+    <table class="compact">
     <tr>
-        <td style="width: 130px;">
-            <p>Datum und Zeit</p>
-        </td>
-        <td>
-            <p><a id="DatumAllgemein"></a>[PLACEHOLDER_DATUM_NAECHSTE_SKS] / von 10.30 - 12.00 Uhr</p>
-        </td>
+        <td style="width:130px">Datum und Zeit</td>
+        <td><a id="DatumAllgemein"></a>[PLACEHOLDER_DATUM_NAECHSTE_SKS] / von 10.30 - 12.00 Uhr</td>
     </tr>
     <tr>
-        <td>
-            <p style="vertical-align:top;">Ort</p>
-        </td>
-        <td>
-            <p>
-                <div>
-                    Stadt Winterthur, Departement Bau und Mobilität, Tiefbauamt, Superblock, <br/>
-                    Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)
-                </div>
-            </p>
-        </td>
+        <td>Ort</td>
+        <td>Stadt Winterthur, Departement Bau und Mobilität, Tiefbauamt, Superblock,<br>
+            Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)</td>
     </tr>
     <tr>
-        <td>
-            <p style="vertical-align:top;">Vorsitz</p>
-        </td>
-        <td>
-            <table style="font-size:0.9em">                
-                <tr><td style="padding-right:100px">[PLACEHOLDER_VORSITZ]</td></tr>
-            </table>
-        </td>
+        <td>Vorsitz</td>
+        <td style="font-size:0.9em; padding-right:100px">[PLACEHOLDER_VORSITZ]</td>
     </tr>
     <tr>
-        <td style="vertical-align:top;">
-            <p>Protokoll</p>
-        </td>
-        <td>
-            <p>APK (direkt in WiKIS)</p>
-        </td>
+        <td>Protokoll</td>
+        <td>APK (direkt in WiKIS)</td>
     </tr>
     </table>
-
     <p>
         Anwesende
     </p>        

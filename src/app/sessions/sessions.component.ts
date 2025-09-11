@@ -25,6 +25,8 @@ import {
 import { ReportLoaderService } from 'src/services/report-loader.service';
 import { map } from 'rxjs/internal/operators/map';
 import { switchMap } from 'rxjs/internal/operators/switchMap';
+import saveAs from 'file-saver';
+import { asBlob } from 'html-docx-js-typescript';
 
 interface Session {
   id: string;
@@ -327,6 +329,17 @@ export class SessionsComponent implements OnInit {
     if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
       return;
     }
+
+    // START: Save as Word
+    const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
+                    
+    const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
+          <style>body{font-family: Arial, sans-serif}.page-break{page-break-before:always}</style>
+          </head><body>${target.outerHTML}</body></html>`;
+    
+    const blob = await asBlob(htmlWord);   // returns a Blob
+    saveAs(blob as Blob, `${filenameBase}.docx`);
+    // END: Save as Word
 
     html2pdf().from(target)
                 .set({
