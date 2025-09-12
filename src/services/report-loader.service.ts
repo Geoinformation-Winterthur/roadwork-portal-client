@@ -504,7 +504,7 @@ export class ReportLoaderService {
             const mapUrl = await this.loadProjectPerimeterMap();
 
             const htmlSection = fill(sectionTpl, {
-                TITEL_ADRESSE_ABSCHNITT: `${project.name ?? ""} - ${project.section ?? ""}`,
+                TITEL_ADRESSE_ABSCHNITT: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.name ?? "-"} ${this.roadWorkActivity?.properties?.name ?? "-"}`),
                 Titel_Adresse: this.wrapPlaceholder(this.roadWorkActivity?.properties?.name?? "-"),
                 Abschnitt: this.wrapPlaceholder(this.roadWorkActivity?.properties?.section?? "-"),
                 SKS_Nr: this.wrapPlaceholder(this.roadWorkActivity?.properties?.strabakoNo?? "-"),

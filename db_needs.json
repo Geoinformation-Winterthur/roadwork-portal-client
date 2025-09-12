@@ -1,0 +1,3858 @@
+[
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "75ec1e6e-9f3c-40a5-a26c-237d1260e375",
+            "name": "Trollstr.",
+            "orderer": {
+                "uuid": "cb03db22-1118-48ff-9d33-847d2fa2dee7",
+                "mailAddress": "rico.meier@win.ch",
+                "passPhrase": "",
+                "lastName": "Meier",
+                "firstName": "Rico",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Elektrizität und Telekom",
+                    "abbreviation": "TE",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:15:23.718569",
+            "lastModified": "2025-06-16T11:22:23.592951",
+            "finishEarlyTo": "2025-10-01T00:00:00",
+            "finishOptimumTo": "2026-02-01T00:00:00",
+            "finishLateTo": "2027-04-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Störung bei der OeB",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Hermann-Götz-Str. - St. Georgen-Str.",
+            "comment": "Dringender Bedarf da Störung",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [
+                {
+                    "uuid": "c2c50939-aea8-4751-8d5d-feb7ec7f2de4",
+                    "filename": "Smile.pdf",
+                    "errorMessage": null
+                }
+            ],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2697479.7834057533,
+                    "y": 1262284.534521095
+                },
+                {
+                    "x": 2697458.3284509666,
+                    "y": 1262289.5845469513
+                },
+                {
+                    "x": 2697444.445826367,
+                    "y": 1262109.677690065
+                },
+                {
+                    "x": 2697470.3179930197,
+                    "y": 1262114.0964735255
+                },
+                {
+                    "x": 2697479.7834057533,
+                    "y": 1262284.534521095
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "6e265d86-1a41-44d5-947a-eb71015f4bad",
+            "name": "Schlosstalstrasse 15 bis 24",
+            "orderer": {
+                "uuid": "cb03db22-1118-48ff-9d33-847d2fa2dee7",
+                "mailAddress": "rico.meier@win.ch",
+                "passPhrase": "",
+                "lastName": "Meier",
+                "firstName": "Rico",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Elektrizität und Telekom",
+                    "abbreviation": "TE",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:28:23.666226",
+            "lastModified": "2025-06-16T11:29:02.068091",
+            "finishEarlyTo": "2026-04-01T00:00:00",
+            "finishOptimumTo": "2027-07-01T00:00:00",
+            "finishLateTo": "2029-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Neues MS-Kabel",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Nr. 15 - Nr. 24",
+            "comment": "neues MS-Kabel",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2695570.7053128993,
+                    "y": 1261222.2787749062
+                },
+                {
+                    "x": 2695549.612475433,
+                    "y": 1261192.3299525597
+                },
+                {
+                    "x": 2695474.767017578,
+                    "y": 1261245.4210835423
+                },
+                {
+                    "x": 2695378.828722256,
+                    "y": 1261288.3023816438
+                },
+                {
+                    "x": 2695312.1482257047,
+                    "y": 1261332.5449700241
+                },
+                {
+                    "x": 2695333.2410008777,
+                    "y": 1261358.409890376
+                },
+                {
+                    "x": 2695442.787606568,
+                    "y": 1261296.4702479488
+                },
+                {
+                    "x": 2695570.7053128993,
+                    "y": 1261222.2787749062
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "efd05048-2f52-438f-b4ab-a05ed5da6409",
+            "name": "Pappelweg 12.1",
+            "orderer": {
+                "uuid": "cb03db22-1118-48ff-9d33-847d2fa2dee7",
+                "mailAddress": "rico.meier@win.ch",
+                "passPhrase": "",
+                "lastName": "Meier",
+                "firstName": "Rico",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Elektrizität und Telekom",
+                    "abbreviation": "TE",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:24:43.158994",
+            "lastModified": "2025-06-16T11:26:44.079161",
+            "finishEarlyTo": "2028-02-01T00:00:00",
+            "finishOptimumTo": "2030-02-01T00:00:00",
+            "finishLateTo": "2032-02-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Sanierung OeB",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "A - C",
+            "comment": "keine Bemerkung",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2699642.5570839266,
+                    "y": 1263305.0843195086
+                },
+                {
+                    "x": 2699661.3180276975,
+                    "y": 1263235.227088025
+                },
+                {
+                    "x": 2699586.274252615,
+                    "y": 1263120.5360212044
+                },
+                {
+                    "x": 2699555.0060129976,
+                    "y": 1262999.58917694
+                },
+                {
+                    "x": 2699516.441914418,
+                    "y": 1263018.3567956425
+                },
+                {
+                    "x": 2699510.1882664943,
+                    "y": 1263075.7023290528
+                },
+                {
+                    "x": 2699544.5833300734,
+                    "y": 1263161.1991950602
+                },
+                {
+                    "x": 2699584.189735115,
+                    "y": 1263234.1844107227
+                },
+                {
+                    "x": 2699619.627105156,
+                    "y": 1263280.060827905
+                },
+                {
+                    "x": 2699642.5570839266,
+                    "y": 1263305.0843195086
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "e0aade7c-deac-4c1a-a3d3-9045adeeb902",
+            "name": "Tössfeldstrasse",
+            "orderer": {
+                "uuid": "a6db5628-881b-4e46-a0ff-6b445b168274",
+                "mailAddress": "arsim.dermaku@win.ch",
+                "passPhrase": "",
+                "lastName": "Dermaku",
+                "firstName": "Arsim",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Energie-Contracting",
+                    "abbreviation": "EC",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:13:30.49356",
+            "lastModified": "2025-06-16T11:15:29.277904",
+            "finishEarlyTo": "2026-10-01T00:00:00",
+            "finishOptimumTo": "2027-04-01T00:00:00",
+            "finishLateTo": "2027-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Erstellung neues Wärmetrasse",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Jägerstrasse - Grenzstrasse",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696306.5674210438,
+                    "y": 1261142.8950433948
+                },
+                {
+                    "x": 2696020.243255816,
+                    "y": 1260759.609488797
+                },
+                {
+                    "x": 2695992.911129088,
+                    "y": 1260778.1747069517
+                },
+                {
+                    "x": 2696281.6777223093,
+                    "y": 1261161.4694433312
+                },
+                {
+                    "x": 2696306.5674210438,
+                    "y": 1261142.8950433948
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "74e9461b-9e4f-4f7e-aab0-70f6b240aa57",
+            "name": "Landvogtwaserstrasse - Heinrichbosshardstrasse",
+            "orderer": {
+                "uuid": "a6db5628-881b-4e46-a0ff-6b445b168274",
+                "mailAddress": "arsim.dermaku@win.ch",
+                "passPhrase": "",
+                "lastName": "Dermaku",
+                "firstName": "Arsim",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Energie-Contracting",
+                    "abbreviation": "EC",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:20:59.430045",
+            "lastModified": "2025-06-16T11:21:02.175406",
+            "finishEarlyTo": "2027-04-01T00:00:00",
+            "finishOptimumTo": "2028-04-01T00:00:00",
+            "finishLateTo": "2029-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Erstellung Wärmetrasse - Anschluss Schule Steinacker",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Seenerstrasse - Steinackerstrasse",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2699501.223169727,
+                    "y": 1260426.1852312475
+                },
+                {
+                    "x": 2699495.2582118423,
+                    "y": 1260464.9574574956
+                },
+                {
+                    "x": 2699355.678197349,
+                    "y": 1260423.7992480937
+                },
+                {
+                    "x": 2699259.045879623,
+                    "y": 1260346.2547955976
+                },
+                {
+                    "x": 2699243.536989124,
+                    "y": 1260302.1141072535
+                },
+                {
+                    "x": 2699267.396820661,
+                    "y": 1260231.13110843
+                },
+                {
+                    "x": 2699332.1142528234,
+                    "y": 1260065.0414606414
+                },
+                {
+                    "x": 2699360.1495548794,
+                    "y": 1260072.795905891
+                },
+                {
+                    "x": 2699286.184077114,
+                    "y": 1260277.3939613234
+                },
+                {
+                    "x": 2699280.2191192294,
+                    "y": 1260301.850288649
+                },
+                {
+                    "x": 2699294.856283881,
+                    "y": 1260328.2782780982
+                },
+                {
+                    "x": 2699330.0495353984,
+                    "y": 1260361.085546462
+                },
+                {
+                    "x": 2699395.458822739,
+                    "y": 1260400.5909431493
+                },
+                {
+                    "x": 2699501.223169727,
+                    "y": 1260426.1852312475
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "054c026f-0285-4304-8016-46665a554769",
+            "name": "Römerstrasse",
+            "orderer": {
+                "uuid": "a6db5628-881b-4e46-a0ff-6b445b168274",
+                "mailAddress": "arsim.dermaku@win.ch",
+                "passPhrase": "",
+                "lastName": "Dermaku",
+                "firstName": "Arsim",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Energie-Contracting",
+                    "abbreviation": "EC",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:28:28.613255",
+            "lastModified": "2025-06-16T11:28:33.073451",
+            "finishEarlyTo": "2028-04-01T00:00:00",
+            "finishOptimumTo": "2029-04-01T00:00:00",
+            "finishLateTo": "2030-02-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Wärmetrasse für Anschluss Unteres Bühl",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Obere Hohlgasse - Talackerstrasse ",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2699196.5926425885,
+                    "y": 1262689.3058342708
+                },
+                {
+                    "x": 2699187.198422588,
+                    "y": 1262697.572747871
+                },
+                {
+                    "x": 2699091.4579363954,
+                    "y": 1262667.4562170869
+                },
+                {
+                    "x": 2699035.983828071,
+                    "y": 1262638.8244192423
+                },
+                {
+                    "x": 2699000.790576554,
+                    "y": 1262596.4732182636
+                },
+                {
+                    "x": 2698938.1585187684,
+                    "y": 1262547.560563612
+                },
+                {
+                    "x": 2698910.7197125005,
+                    "y": 1262525.49021944
+                },
+                {
+                    "x": 2698916.684670385,
+                    "y": 1262512.963807883
+                },
+                {
+                    "x": 2698936.9655271913,
+                    "y": 1262518.9287657673
+                },
+                {
+                    "x": 2698998.4045934,
+                    "y": 1262563.0694541114
+                },
+                {
+                    "x": 2699033.0013491292,
+                    "y": 1262590.5082603793
+                },
+                {
+                    "x": 2699067.0016090698,
+                    "y": 1262628.683990839
+                },
+                {
+                    "x": 2699125.458196336,
+                    "y": 1262653.1403181646
+                },
+                {
+                    "x": 2699177.949825718,
+                    "y": 1262670.4386960291
+                },
+                {
+                    "x": 2699202.4061530437,
+                    "y": 1262682.9651075862
+                },
+                {
+                    "x": 2699196.5926425885,
+                    "y": 1262689.3058342708
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "5920e4aa-662d-43d1-8930-1693a8e429c6",
+            "name": "Am Bach 4 bis Waldeggweg 28",
+            "orderer": {
+                "uuid": "a21f844c-ca50-4749-a8b3-599c43c31407",
+                "mailAddress": "sascha.stucki@win.ch",
+                "passPhrase": "",
+                "lastName": "Stucki",
+                "firstName": "Sascha",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Entwässerung",
+                    "abbreviation": "AEW",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-03T15:12:40.796815",
+            "lastModified": "2025-06-03T15:12:56.515084",
+            "finishEarlyTo": "2027-04-01T00:00:00",
+            "finishOptimumTo": "2029-04-01T00:00:00",
+            "finishLateTo": "2029-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "0981f86c-ae1a-4782-bcbb-afaa69a541c7",
+                    "costs": 356921.00,
+                    "projectType": "channel",
+                    "costsComment": "",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Sanierung Kanalisation",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2698602.1661737277,
+                    "y": 1260564.7186482905
+                },
+                {
+                    "x": 2698616.442693912,
+                    "y": 1260561.7130650938
+                },
+                {
+                    "x": 2698615.315600213,
+                    "y": 1260518.507806642
+                },
+                {
+                    "x": 2698600.6633821293,
+                    "y": 1260530.5301394286
+                },
+                {
+                    "x": 2698602.1661737277,
+                    "y": 1260564.7186482905
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "be541d50-6ed8-4a5f-94c7-7738b5b16490",
+            "name": "Friedhofstrasse",
+            "orderer": {
+                "uuid": "364c897f-f9ea-4e3e-8bcb-82e44befb460",
+                "mailAddress": "juergen.roth@win.ch",
+                "passPhrase": "",
+                "lastName": "Roth",
+                "firstName": "Jürgen",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Entwässerung",
+                    "abbreviation": "AEW",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:23:59.722975",
+            "lastModified": "2025-06-16T11:26:31.287562",
+            "finishEarlyTo": "2028-10-01T00:00:00",
+            "finishOptimumTo": "2028-10-01T00:00:00",
+            "finishLateTo": "2032-04-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "259ff8fa-16cd-4c96-92ca-2c2199a65bc8",
+                    "costs": 2000000.00,
+                    "projectType": "channel",
+                    "costsComment": "",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Erneuerung Mischabwasserkanal",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2694833.7056814535,
+                    "y": 1261490.7719673933
+                },
+                {
+                    "x": 2694863.0007946775,
+                    "y": 1261479.4849186703
+                },
+                {
+                    "x": 2694980.691969389,
+                    "y": 1261375.7506484517
+                },
+                {
+                    "x": 2694993.657544013,
+                    "y": 1261365.381653132
+                },
+                {
+                    "x": 2694986.2486418057,
+                    "y": 1261365.5668192115
+                },
+                {
+                    "x": 2694897.527111212,
+                    "y": 1261444.0748467154
+                },
+                {
+                    "x": 2694861.647945808,
+                    "y": 1261477.1446787901
+                },
+                {
+                    "x": 2694834.0246817977,
+                    "y": 1261487.2698214047
+                },
+                {
+                    "x": 2694833.7056814535,
+                    "y": 1261490.7719673933
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "ba3757dd-e433-43fd-bd46-b597944426ec",
+            "name": "Nelkenstrasse",
+            "orderer": {
+                "uuid": "10b939cf-2b32-4301-996d-b6c630cda91f",
+                "mailAddress": "mnar.gebbory@win.ch",
+                "passPhrase": "",
+                "lastName": "Gebbory",
+                "firstName": "Mnar",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Technik Gas und Wasser",
+                    "abbreviation": "TGW",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:19:15.282977",
+            "lastModified": "2025-06-16T11:26:41.131433",
+            "finishEarlyTo": "2026-02-01T00:00:00",
+            "finishOptimumTo": "2026-07-01T00:00:00",
+            "finishLateTo": "2027-04-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Leitungsalter + Zustand",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "St.Georgen-Strasse – Hermann-Götz-Strasse",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [
+                {
+                    "uuid": "bb22ed01-3bd6-4d59-9a1c-1f9ae7b652df",
+                    "filename": "Nelkenstrasse TGW.pdf",
+                    "errorMessage": null
+                }
+            ],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2697587.8307589362,
+                    "y": 1262253.847795722
+                },
+                {
+                    "x": 2697598.406729892,
+                    "y": 1262247.3405554467
+                },
+                {
+                    "x": 2697576.4412971097,
+                    "y": 1262113.1289322744
+                },
+                {
+                    "x": 2697563.4247294078,
+                    "y": 1262114.3490194634
+                },
+                {
+                    "x": 2697587.8307589362,
+                    "y": 1262253.847795722
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "84db499c-2782-46dd-8dc5-31c6345de68b",
+            "name": "Agnesstrasse",
+            "orderer": {
+                "uuid": "10b939cf-2b32-4301-996d-b6c630cda91f",
+                "mailAddress": "mnar.gebbory@win.ch",
+                "passPhrase": "",
+                "lastName": "Gebbory",
+                "firstName": "Mnar",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Technik Gas und Wasser",
+                    "abbreviation": "TGW",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:24:51.595025",
+            "lastModified": "2025-06-16T11:26:18.036076",
+            "finishEarlyTo": "2026-04-01T00:00:00",
+            "finishOptimumTo": "2027-04-01T00:00:00",
+            "finishLateTo": "2028-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Leitungsalter + Zustand",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Obere Briggerstrasse – Untere Briggerstrasse",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [
+                {
+                    "uuid": "f8a2428c-e350-486c-b492-0d7c578f1bf4",
+                    "filename": "Agnesstrasse.pdf",
+                    "errorMessage": null
+                }
+            ],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696080.1131700566,
+                    "y": 1261111.5091939603
+                },
+                {
+                    "x": 2696090.5413285177,
+                    "y": 1261101.661924935
+                },
+                {
+                    "x": 2695995.529370341,
+                    "y": 1260986.970818149
+                },
+                {
+                    "x": 2695977.569803392,
+                    "y": 1261005.5067447785
+                },
+                {
+                    "x": 2696073.1610938828,
+                    "y": 1261116.7224150386
+                },
+                {
+                    "x": 2696080.1131700566,
+                    "y": 1261111.5091939603
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "9ded06dd-bf1d-4311-9628-75be8e84715a",
+            "name": "Tösstalstrasse 80 bis 83",
+            "orderer": {
+                "uuid": "a224d162-e35c-416e-9d69-9a19f5e29dec",
+                "mailAddress": "edgar.butwilowski@win.ch",
+                "passPhrase": "",
+                "lastName": "Butwilowski",
+                "firstName": "Edgar",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-05-20T13:18:01.709868",
+            "lastModified": "2025-05-20T13:18:24.640815",
+            "finishEarlyTo": "2026-02-01T00:00:00",
+            "finishOptimumTo": "2027-04-01T00:00:00",
+            "finishLateTo": "2028-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Test 3",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2698202.4291991456,
+                    "y": 1261152.6340866121
+                },
+                {
+                    "x": 2698180.9853103478,
+                    "y": 1261126.0844673424
+                },
+                {
+                    "x": 2698238.169039777,
+                    "y": 1261089.3235039883
+                },
+                {
+                    "x": 2698261.6552519263,
+                    "y": 1261110.767392786
+                },
+                {
+                    "x": 2698202.4291991456,
+                    "y": 1261152.6340866121
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "5a653223-25d8-4914-b772-b5c4863251a0",
+            "name": "Buchackerstrasse 115 bis 117",
+            "orderer": {
+                "uuid": "6937c0df-2e5c-48f1-8721-9689d45f9f2d",
+                "mailAddress": "dariusz.milczuk@win.ch",
+                "passPhrase": "",
+                "lastName": "Milczuk",
+                "firstName": "Dariusz",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-05-22T14:35:18.62103",
+            "lastModified": "2025-05-22T14:38:14.458467",
+            "finishEarlyTo": "2026-10-01T00:00:00",
+            "finishOptimumTo": "2027-04-01T00:00:00",
+            "finishLateTo": "2028-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Grund testing",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": "",
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696178.303104899,
+                    "y": 1263969.5464501872
+                },
+                {
+                    "x": 2696247.138161518,
+                    "y": 1263842.8899460076
+                },
+                {
+                    "x": 2696220.9808400027,
+                    "y": 1263838.7598426105
+                },
+                {
+                    "x": 2696164.536093575,
+                    "y": 1263948.8959332015
+                },
+                {
+                    "x": 2696178.303104899,
+                    "y": 1263969.5464501872
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "9bc23563-4f55-43bb-960b-06da84d1dab8",
+            "name": "Schaffhauserstrasse 201.1 bis 201.2",
+            "orderer": {
+                "uuid": "6937c0df-2e5c-48f1-8721-9689d45f9f2d",
+                "mailAddress": "dariusz.milczuk@win.ch",
+                "passPhrase": "",
+                "lastName": "Milczuk",
+                "firstName": "Dariusz",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-05-22T14:59:11.396795",
+            "lastModified": "2025-05-22T15:20:52.588873",
+            "finishEarlyTo": "2026-07-01T00:00:00",
+            "finishOptimumTo": "2027-07-01T00:00:00",
+            "finishLateTo": "2028-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "aaaaaaaaaaaaaaa",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": "",
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696313.208722323,
+                    "y": 1264024.582528916
+                },
+                {
+                    "x": 2696335.38006023,
+                    "y": 1263974.6970186254
+                },
+                {
+                    "x": 2696364.941844106,
+                    "y": 1263989.4779105633
+                },
+                {
+                    "x": 2696353.8561751526,
+                    "y": 1264033.8205863773
+                },
+                {
+                    "x": 2696313.208722323,
+                    "y": 1264024.582528916
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "89db7c44-6c38-4136-8d10-32b0e716688c",
+            "name": "Buchackerstrasse 117 bis Eichliwaldstrasse 7",
+            "orderer": {
+                "uuid": "6937c0df-2e5c-48f1-8721-9689d45f9f2d",
+                "mailAddress": "dariusz.milczuk@win.ch",
+                "passPhrase": "",
+                "lastName": "Milczuk",
+                "firstName": "Dariusz",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-05-27T08:40:03.08704",
+            "lastModified": "2025-05-27T08:53:15.190298",
+            "finishEarlyTo": "2025-06-30T00:00:00",
+            "finishOptimumTo": "2026-06-30T00:00:00",
+            "finishLateTo": "2027-09-30T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Bedarf - early-optimum-finish",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": "",
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696143.8626607424,
+                    "y": 1263938.7701642541
+                },
+                {
+                    "x": 2696194.892900277,
+                    "y": 1263963.5562805992
+                },
+                {
+                    "x": 2696257.5871945615,
+                    "y": 1263842.541712561
+                },
+                {
+                    "x": 2696205.0989481835,
+                    "y": 1263826.5036372787
+                },
+                {
+                    "x": 2696143.8626607424,
+                    "y": 1263938.7701642541
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "fee47a43-3743-4080-b160-9995406d759a",
+            "name": "PDF3 - Titel und Strasse",
+            "orderer": {
+                "uuid": "6937c0df-2e5c-48f1-8721-9689d45f9f2d",
+                "mailAddress": "dariusz.milczuk@win.ch",
+                "passPhrase": "",
+                "lastName": "Milczuk",
+                "firstName": "Dariusz",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-12T09:34:01.782685",
+            "lastModified": "2025-06-12T09:34:01.782688",
+            "finishEarlyTo": "2028-04-01T00:00:00",
+            "finishOptimumTo": "2029-07-01T00:00:00",
+            "finishLateTo": "2031-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "PDF3 - Auslösegrund",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": true,
+            "section": "PDF3 - Abschnitt",
+            "comment": "PDF3 -  Bemerkung",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2700160.508538876,
+                    "y": 1263086.9136551325
+                },
+                {
+                    "x": 2700193.7774523227,
+                    "y": 1263054.7537054676
+                },
+                {
+                    "x": 2700237.0270398036,
+                    "y": 1263054.7537054676
+                },
+                {
+                    "x": 2700247.0077138375,
+                    "y": 1263083.5867637878
+                },
+                {
+                    "x": 2700224.828438206,
+                    "y": 1263103.548111856
+                },
+                {
+                    "x": 2700160.508538876,
+                    "y": 1263086.9136551325
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "42fd088e-b0b4-419a-945c-69fd0ba88e15",
+            "name": "PDF1 - Titel und Strasse",
+            "orderer": {
+                "uuid": "6937c0df-2e5c-48f1-8721-9689d45f9f2d",
+                "mailAddress": "dariusz.milczuk@win.ch",
+                "passPhrase": "",
+                "lastName": "Milczuk",
+                "firstName": "Dariusz",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-12T09:31:21.982387",
+            "lastModified": "2025-06-13T09:39:09.892082",
+            "finishEarlyTo": "2025-06-30T00:00:00",
+            "finishOptimumTo": "2026-06-30T00:00:00",
+            "finishLateTo": "2028-09-30T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "PDF1- Auslösegrund",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": true,
+            "section": "PDF1-  Abschnit",
+            "comment": "PDF1 - Bemerkung",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": "",
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2700184.524966069,
+                    "y": 1263222.008809651
+                },
+                {
+                    "x": 2700193.6016503694,
+                    "y": 1263163.9180301274
+                },
+                {
+                    "x": 2700248.0617561727,
+                    "y": 1263163.0103616973
+                },
+                {
+                    "x": 2700260.7691141935,
+                    "y": 1263212.9321253505
+                },
+                {
+                    "x": 2700184.524966069,
+                    "y": 1263222.008809651
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "0105d89b-3511-454f-9b44-2d3a35b76995",
+            "name": "PDF2 - Titel und Strasse",
+            "orderer": {
+                "uuid": "6937c0df-2e5c-48f1-8721-9689d45f9f2d",
+                "mailAddress": "dariusz.milczuk@win.ch",
+                "passPhrase": "",
+                "lastName": "Milczuk",
+                "firstName": "Dariusz",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-12T09:32:40.44455",
+            "lastModified": "2025-06-13T09:39:10.574048",
+            "finishEarlyTo": "2026-01-31T00:00:00",
+            "finishOptimumTo": "2027-01-31T00:00:00",
+            "finishLateTo": "2028-06-30T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "PDF2 - Auslösegrund",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": true,
+            "section": "PDF2 - Abschnitt",
+            "comment": "PDF2 - Bemerkung",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": "",
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2700093.998914903,
+                    "y": 1263128.8633913025
+                },
+                {
+                    "x": 2700122.468150091,
+                    "y": 1263035.3216185425
+                },
+                {
+                    "x": 2700185.507170864,
+                    "y": 1263036.338376942
+                },
+                {
+                    "x": 2700165.1720028725,
+                    "y": 1263108.528223311
+                },
+                {
+                    "x": 2700176.356345268,
+                    "y": 1263159.3661432895
+                },
+                {
+                    "x": 2700093.998914903,
+                    "y": 1263128.8633913025
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "b814962c-3947-497a-8706-f16d63d7e7f2",
+            "name": "Schaffhauserstrasse 8a bis Neuwiesenstrasse 60.1",
+            "orderer": {
+                "uuid": "a224d162-e35c-416e-9d69-9a19f5e29dec",
+                "mailAddress": "edgar.butwilowski@win.ch",
+                "passPhrase": "",
+                "lastName": "Butwilowski",
+                "firstName": "Edgar",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:14:30.967241",
+            "lastModified": "2025-06-16T11:18:41.699335",
+            "finishEarlyTo": "2026-04-01T00:00:00",
+            "finishOptimumTo": "2027-02-01T00:00:00",
+            "finishLateTo": "2027-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Test",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [
+                {
+                    "uuid": "8328c0d4-69eb-451a-8e4b-a8339ed01804",
+                    "filename": "datenstrategie-basel-stadt-0.pdf",
+                    "errorMessage": null
+                }
+            ],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696820.1650139885,
+                    "y": 1262302.6539220498
+                },
+                {
+                    "x": 2696966.60324654,
+                    "y": 1262281.176344402
+                },
+                {
+                    "x": 2697019.321099637,
+                    "y": 1262400.2794104172
+                },
+                {
+                    "x": 2696888.5028558457,
+                    "y": 1262451.0446345755
+                },
+                {
+                    "x": 2696882.6454159226,
+                    "y": 1262357.324180639
+                },
+                {
+                    "x": 2696804.5450252285,
+                    "y": 1262396.3743759862
+                },
+                {
+                    "x": 2696820.1650139885,
+                    "y": 1262302.6539220498
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "0942bf7e-4d1e-4001-adbf-2634a66a1418",
+            "name": "St.-Georgen-Strasse 52",
+            "orderer": {
+                "uuid": "a224d162-e35c-416e-9d69-9a19f5e29dec",
+                "mailAddress": "edgar.butwilowski@win.ch",
+                "passPhrase": "",
+                "lastName": "Butwilowski",
+                "firstName": "Edgar",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Geomatik- und Vermessungsamt",
+                    "abbreviation": "GeoV",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-17T13:20:10.729387",
+            "lastModified": "2025-06-17T13:20:20.390377",
+            "finishEarlyTo": "2026-10-01T00:00:00",
+            "finishOptimumTo": "2028-02-01T00:00:00",
+            "finishLateTo": "2028-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [],
+            "activityRelationType": "",
+            "description": "Test",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2697602.6670416077,
+                    "y": 1262124.242038304
+                },
+                {
+                    "x": 2697603.2287617195,
+                    "y": 1262107.9531621023
+                },
+                {
+                    "x": 2697661.6440537125,
+                    "y": 1262104.5830342688
+                },
+                {
+                    "x": 2697653.780486381,
+                    "y": 1262126.4887901929
+                },
+                {
+                    "x": 2697602.6670416077,
+                    "y": 1262124.242038304
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "3fe52931-da03-4b53-93cf-f799bcfe790a",
+            "name": "Schlossackerstrasse - Deltastrasse",
+            "orderer": {
+                "uuid": "7147aef8-f645-49a2-806a-3e7375d23cd7",
+                "mailAddress": "monica.ramspergersaxer@win.ch",
+                "passPhrase": "",
+                "lastName": "Ramsperger Saxer",
+                "firstName": "Monica",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Planung & Koordination",
+                    "abbreviation": "APK",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-05-20T08:27:16.254632",
+            "lastModified": "2025-05-20T08:27:33.169195",
+            "finishEarlyTo": "2027-04-01T00:00:00",
+            "finishOptimumTo": "2027-07-01T00:00:00",
+            "finishLateTo": "2028-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "8c53dcfc-64d1-4606-8018-ae45cb501fab",
+                    "costs": 20365.00,
+                    "projectType": "third_parties",
+                    "costsComment": "SBB - neue Unterführung",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Neue Unterführung",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2700049.6539342897,
+                    "y": 1263142.2794084596
+                },
+                {
+                    "x": 2700031.783830556,
+                    "y": 1263135.2254201437
+                },
+                {
+                    "x": 2700056.2376567177,
+                    "y": 1263096.6636173502
+                },
+                {
+                    "x": 2700076.45908989,
+                    "y": 1263107.0094668805
+                },
+                {
+                    "x": 2700078.340153441,
+                    "y": 1263130.9930271546
+                },
+                {
+                    "x": 2700101.853447827,
+                    "y": 1263150.2739285512
+                },
+                {
+                    "x": 2700090.096800634,
+                    "y": 1263162.0305757443
+                },
+                {
+                    "x": 2700070.34563335,
+                    "y": 1263143.2199402354
+                },
+                {
+                    "x": 2700049.6539342897,
+                    "y": 1263142.2794084596
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "af51766b-6da7-444d-8134-1d37e42fa854",
+            "name": "Seuzacherstrasse",
+            "orderer": {
+                "uuid": "38fc97b0-4699-4898-ab61-233b9e8067a2",
+                "mailAddress": "tobias.juon@win.ch",
+                "passPhrase": "",
+                "lastName": "Juon",
+                "firstName": "Tobias",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Planung & Koordination",
+                    "abbreviation": "APK",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:12:31.960568",
+            "lastModified": "2025-06-16T11:14:13.124026",
+            "finishEarlyTo": "2029-07-01T00:00:00",
+            "finishOptimumTo": "2031-02-01T00:00:00",
+            "finishLateTo": "2031-02-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "1e11a9f1-c59d-46de-a1ea-56279be4bd69",
+                    "costs": 500000.00,
+                    "projectType": "streets",
+                    "costsComment": "400000 davon durch Kantonalen Baufonds",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Veloroute",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Schaffhauserstrasse – Eggenzahnstrasse",
+            "comment": "Eigentlich sollte AMO Velorouten eingeben",
+            "url": "http://intramap2.winport.net/tbview2/index.php",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [
+                {
+                    "uuid": "348c85a8-9cd2-4c80-8cbd-4a96f1aee522",
+                    "filename": "8497.210_21-001_SI_GA_RAT-Tösstalstr.pdf",
+                    "errorMessage": null
+                }
+            ],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696549.5422641467,
+                    "y": 1263891.909287236
+                },
+                {
+                    "x": 2696672.7794664404,
+                    "y": 1263839.0933733773
+                },
+                {
+                    "x": 2696717.8930499093,
+                    "y": 1264058.0594011764
+                },
+                {
+                    "x": 2696604.558849827,
+                    "y": 1264129.5809205873
+                },
+                {
+                    "x": 2696549.5422641467,
+                    "y": 1263891.909287236
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "cd5f61c8-30d8-4db4-b29d-a6f010386137",
+            "name": "Rümikerstrasse 66 bis 98.1",
+            "orderer": {
+                "uuid": "d63f87f9-09e7-4cbd-abf2-06f867815fac",
+                "mailAddress": "stefan.gahler@win.ch",
+                "passPhrase": "",
+                "lastName": "Gahler",
+                "firstName": "Stefan",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Planung & Koordination",
+                    "abbreviation": "APK",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:10:53.384267",
+            "lastModified": "2025-06-16T11:11:07.927694",
+            "finishEarlyTo": "2026-10-01T00:00:00",
+            "finishOptimumTo": "2027-07-01T00:00:00",
+            "finishLateTo": "2028-02-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "b12e4d5c-3fbc-4244-bd84-6ff13063c724",
+                    "costs": 100000.00,
+                    "projectType": "third_parties",
+                    "costsComment": "",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "neue Haltestelle",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": ";-)",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2700961.0259993672,
+                    "y": 1262498.6189548504
+                },
+                {
+                    "x": 2700966.1314009754,
+                    "y": 1262476.7313144803
+                },
+                {
+                    "x": 2701050.7348079593,
+                    "y": 1262476.0017042027
+                },
+                {
+                    "x": 2701043.4414534024,
+                    "y": 1262502.9964829243
+                },
+                {
+                    "x": 2700961.0259993672,
+                    "y": 1262498.6189548504
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "6f6b0a76-20bb-49cb-b134-4b467426ceba",
+            "name": "Weinbergstrasse 139.1 bis 35",
+            "orderer": {
+                "uuid": "d63f87f9-09e7-4cbd-abf2-06f867815fac",
+                "mailAddress": "stefan.gahler@win.ch",
+                "passPhrase": "",
+                "lastName": "Gahler",
+                "firstName": "Stefan",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Planung & Koordination",
+                    "abbreviation": "APK",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:22:25.526062",
+            "lastModified": "2025-06-16T11:22:32.807916",
+            "finishEarlyTo": "2026-04-01T00:00:00",
+            "finishOptimumTo": "2027-02-01T00:00:00",
+            "finishLateTo": "2030-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "3625a5a6-21dd-4475-bf46-39e2c30a1a63",
+                    "costs": 3000000.00,
+                    "projectType": "streets",
+                    "costsComment": "",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Strassenzustand",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "dringend",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2695970.210487137,
+                    "y": 1262873.6924945354
+                },
+                {
+                    "x": 2695916.8448657226,
+                    "y": 1262912.4506214655
+                },
+                {
+                    "x": 2695636.1268081907,
+                    "y": 1262965.8344301435
+                },
+                {
+                    "x": 2695544.74723191,
+                    "y": 1262985.579130631
+                },
+                {
+                    "x": 2695368.567408037,
+                    "y": 1263072.6020474967
+                },
+                {
+                    "x": 2695302.774121146,
+                    "y": 1263106.9724632076
+                },
+                {
+                    "x": 2695222.3601261443,
+                    "y": 1263174.9819871087
+                },
+                {
+                    "x": 2695165.339277506,
+                    "y": 1263236.4099441809
+                },
+                {
+                    "x": 2695111.973622627,
+                    "y": 1263316.1200201763
+                },
+                {
+                    "x": 2695067.380372536,
+                    "y": 1263348.2965802774
+                },
+                {
+                    "x": 2695058.6079342836,
+                    "y": 1263333.670865054
+                },
+                {
+                    "x": 2695110.511504966,
+                    "y": 1263288.3311712947
+                },
+                {
+                    "x": 2695144.8702660725,
+                    "y": 1263226.9032142225
+                },
+                {
+                    "x": 2695265.491292039,
+                    "y": 1263112.822722517
+                },
+                {
+                    "x": 2695540.361012784,
+                    "y": 1262970.2221413613
+                },
+                {
+                    "x": 2695910.996528935,
+                    "y": 1262896.3623246755
+                },
+                {
+                    "x": 2695960.707056983,
+                    "y": 1262861.2606349199
+                },
+                {
+                    "x": 2695970.210487137,
+                    "y": 1262873.6924945354
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "e683d538-986d-4125-9a8d-4ff8aa47f4f6",
+            "name": "Walkestrasse 16 bis 23",
+            "orderer": {
+                "uuid": "213c25a0-1014-4494-bd48-d1333eadf36f",
+                "mailAddress": "fabia.moret@win.ch",
+                "passPhrase": "",
+                "lastName": "Moret",
+                "firstName": "Fabia",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Planung & Koordination",
+                    "abbreviation": "APK",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:23:16.470594",
+            "lastModified": "2025-06-16T11:23:47.782735",
+            "finishEarlyTo": "2025-10-01T00:00:00",
+            "finishOptimumTo": "2026-04-01T00:00:00",
+            "finishLateTo": "2026-10-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "29f607bc-ccfc-440c-bd74-724f89df0ecb",
+                    "costs": 100000.00,
+                    "projectType": "others",
+                    "costsComment": "",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Kleinmassnahmen Gute Luft",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [
+                {
+                    "uuid": "922c9171-075a-4e5a-8535-4492eaef3f41",
+                    "filename": "Sitzungszimmerverzeichnis.pdf",
+                    "errorMessage": null
+                }
+            ],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2696288.690730677,
+                    "y": 1262285.1546366534
+                },
+                {
+                    "x": 2696298.9941778374,
+                    "y": 1262279.8234130468
+                },
+                {
+                    "x": 2696349.800906227,
+                    "y": 1262386.0924919646
+                },
+                {
+                    "x": 2696338.431551573,
+                    "y": 1262391.4237155712
+                },
+                {
+                    "x": 2696288.690730677,
+                    "y": 1262285.1546366534
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "cf7b8733-b58e-4433-997f-c81e69c4e074",
+            "name": "St. Gallerstrasse",
+            "orderer": {
+                "uuid": "012cc673-9400-4522-a191-7c6605402dc0",
+                "mailAddress": "phuntsok.chokchampa@win.ch",
+                "passPhrase": "",
+                "lastName": "Chokchampa",
+                "firstName": "Phuntsok",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Planung & Koordination",
+                    "abbreviation": "APK",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-16T11:23:40.739431",
+            "lastModified": "2025-06-16T11:23:58.78923",
+            "finishEarlyTo": "2026-04-01T00:00:00",
+            "finishOptimumTo": "2027-02-01T00:00:00",
+            "finishLateTo": "2027-07-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "09698288-9756-4008-981f-77d22c777175",
+                    "costs": 15000000.00,
+                    "projectType": "streets",
+                    "costsComment": "",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Quartierentwicklung BGK",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Grüzefeldstrasse - Bahnlinie",
+            "comment": "Leoni Messi Brücke",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2698478.076562514,
+                    "y": 1261665.1044056655
+                },
+                {
+                    "x": 2698547.1625447497,
+                    "y": 1261668.4338477233
+                },
+                {
+                    "x": 2698610.4219914777,
+                    "y": 1261688.4105159466
+                },
+                {
+                    "x": 2698699.9008638687,
+                    "y": 1261698.8150322998
+                },
+                {
+                    "x": 2698904.852332344,
+                    "y": 1261687.1698960627
+                },
+                {
+                    "x": 2698977.284705503,
+                    "y": 1261687.454133181
+                },
+                {
+                    "x": 2698716.1560556875,
+                    "y": 1261654.944133645
+                },
+                {
+                    "x": 2698725.0700707193,
+                    "y": 1261553.743647669
+                },
+                {
+                    "x": 2698707.2420006506,
+                    "y": 1261556.8897682682
+                },
+                {
+                    "x": 2698705.144573583,
+                    "y": 1261658.0902542442
+                },
+                {
+                    "x": 2698600.885391474,
+                    "y": 1261647.0788121442
+                },
+                {
+                    "x": 2698502.3066793317,
+                    "y": 1261637.6404303443
+                },
+                {
+                    "x": 2698481.8568554316,
+                    "y": 1261637.6404303443
+                },
+                {
+                    "x": 2698478.076562514,
+                    "y": 1261665.1044056655
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "7ef25f01-26a3-443e-8c28-ff265951f4fa",
+            "name": "Scheibenstandstrasse",
+            "orderer": {
+                "uuid": "5b46d8cb-19ae-4a89-b6f5-054b4e72ca2f",
+                "mailAddress": "pierre.walpen@win.ch",
+                "passPhrase": "",
+                "lastName": "Walpen",
+                "firstName": "Pierre",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Projektierung & Realisierung, Kunstbauten",
+                    "abbreviation": "KuBa",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-03T11:44:47.139547",
+            "lastModified": "2025-06-03T11:45:15.134351",
+            "finishEarlyTo": "2026-07-01T00:00:00",
+            "finishOptimumTo": "2028-02-01T00:00:00",
+            "finishLateTo": "2030-02-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "326f6e5e-31a3-4d1d-85d8-e942bc58657b",
+                    "costs": 456378.00,
+                    "projectType": "streets",
+                    "costsComment": "Neuer Strassenbau",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Neue Strassenoberfläche inkl. darunterliegenden Leitungen",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Kreuzungsbereich 3er Strassen",
+            "comment": "Zusammen mit AEW koordinieren",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2695867.676235769,
+                    "y": 1263845.6645149083
+                },
+                {
+                    "x": 2695902.2290754067,
+                    "y": 1263860.5070421738
+                },
+                {
+                    "x": 2695920.662648515,
+                    "y": 1263815.6520142765
+                },
+                {
+                    "x": 2695883.181049861,
+                    "y": 1263799.6762134125
+                },
+                {
+                    "x": 2695867.676235769,
+                    "y": 1263845.6645149083
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "5b9e4870-caa2-4adc-8afb-bb80af09e7ab",
+            "name": "Mattenbach - Höhe Am Bach 56",
+            "orderer": {
+                "uuid": "5b46d8cb-19ae-4a89-b6f5-054b4e72ca2f",
+                "mailAddress": "pierre.walpen@win.ch",
+                "passPhrase": "",
+                "lastName": "Walpen",
+                "firstName": "Pierre",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Projektierung & Realisierung, Kunstbauten",
+                    "abbreviation": "KuBa",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-03T15:07:02.387885",
+            "lastModified": "2025-06-10T06:20:57.092788",
+            "finishEarlyTo": "2027-06-29T00:00:00",
+            "finishOptimumTo": "2028-01-30T00:00:00",
+            "finishLateTo": "2030-06-29T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "42eb23f3-17e9-4c95-bfd9-03e752bd73f7",
+                    "costs": 352678.00,
+                    "projectType": "streets",
+                    "costsComment": "Keine",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Ersatz Brücke über Fluss",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "Brücke",
+            "comment": "Vielen Dank, für mit ist Mattenbach noch immer gut. Aber: Gerne hätte ich mich für \"Höhe am Bach 56\" abgemeldet, dies werden wir später durchführen. Kann ich leider nicht. Bitte Bedarf entfernen.",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": true,
+            "feedbackGiven": true,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2698870.6314498316,
+                    "y": 1260331.348655269
+                },
+                {
+                    "x": 2698833.322684877,
+                    "y": 1260289.5983706766
+                },
+                {
+                    "x": 2698864.4133223393,
+                    "y": 1260270.0556842715
+                },
+                {
+                    "x": 2698901.7220872943,
+                    "y": 1260310.9176649365
+                },
+                {
+                    "x": 2698870.6314498316,
+                    "y": 1260331.348655269
+                }
+            ]
+        },
+        "errorMessage": ""
+    },
+    {
+        "type": "RoadWorkNeedFeature",
+        "properties": {
+            "uuid": "d15b3dc7-ce0f-48b5-8c0c-3e89f2166b80",
+            "name": "Obere Brühlbergstrasse",
+            "orderer": {
+                "uuid": "5b46d8cb-19ae-4a89-b6f5-054b4e72ca2f",
+                "mailAddress": "pierre.walpen@win.ch",
+                "passPhrase": "",
+                "lastName": "Walpen",
+                "firstName": "Pierre",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "Projektierung & Realisierung, Kunstbauten",
+                    "abbreviation": "KuBa",
+                    "contactPerson": "",
+                    "isCivilEngineering": true,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "created": "2025-06-10T14:00:29.053827",
+            "lastModified": "2025-06-10T14:00:41.111792",
+            "finishEarlyTo": "2025-06-10T00:00:00",
+            "finishOptimumTo": "2029-07-01T00:00:00",
+            "finishLateTo": "2031-04-01T00:00:00",
+            "priority": {
+                "code": "middle",
+                "name": ""
+            },
+            "status": "requirement",
+            "costs": [
+                {
+                    "uuid": "6de0adf6-5412-48c7-b4fe-f2161671a03e",
+                    "costs": 1256987.00,
+                    "projectType": "streets",
+                    "costsComment": "Keine",
+                    "errorMessage": null
+                }
+            ],
+            "activityRelationType": "",
+            "description": "Neue Strassengestaltung",
+            "roadWorkActivityUuid": "",
+            "isEditingAllowed": true,
+            "noteOfAreaManager": "",
+            "areaManagerNoteDate": "0001-01-01T00:00:00",
+            "areaManagerOfNote": {
+                "uuid": "",
+                "mailAddress": "",
+                "passPhrase": "",
+                "lastName": "",
+                "firstName": "",
+                "active": false,
+                "prefTableView": false,
+                "organisationalUnit": {
+                    "uuid": "",
+                    "name": "",
+                    "abbreviation": "",
+                    "contactPerson": "",
+                    "isCivilEngineering": false,
+                    "errorMessage": ""
+                },
+                "lastLoginAttempt": null,
+                "databaseTime": null,
+                "grantedRoles": {
+                    "view": false,
+                    "projectmanager": false,
+                    "eventmanager": false,
+                    "orderer": false,
+                    "trafficmanager": false,
+                    "territorymanager": false,
+                    "administrator": false
+                },
+                "chosenRole": null,
+                "errorMessage": ""
+            },
+            "isPrivate": false,
+            "section": "",
+            "comment": "",
+            "url": "",
+            "overarchingMeasure": false,
+            "desiredYearFrom": null,
+            "desiredYearTo": null,
+            "documentAtts": [],
+            "hasSpongeCityMeasures": false,
+            "spongeCityMeasures": [],
+            "deleteReason": null,
+            "isPrimary": null,
+            "stillRelevant": false,
+            "feedbackGiven": false,
+            "decline": false
+        },
+        "geometry": {
+            "coordinates": [
+                {
+                    "x": 2695725.0193979987,
+                    "y": 1261828.9540286302
+                },
+                {
+                    "x": 2695720.139744625,
+                    "y": 1261823.6990173042
+                },
+                {
+                    "x": 2695727.6469036615,
+                    "y": 1261809.8107730863
+                },
+                {
+                    "x": 2695722.767250288,
+                    "y": 1261801.552898146
+                },
+                {
+                    "x": 2695731.40048318,
+                    "y": 1261798.5500345312
+                },
+                {
+                    "x": 2695736.280136554,
+                    "y": 1261808.309341279
+                },
+                {
+                    "x": 2695725.0193979987,
+                    "y": 1261828.9540286302
+                }
+            ]
+        },
+        "errorMessage": ""
+    }
+]
