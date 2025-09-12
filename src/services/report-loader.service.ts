@@ -142,9 +142,9 @@ export class ReportLoaderService {
                 'DATUM_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),                                                                
                 'GM': this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
                 'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                                           
-                'ANWESENDE': "<div style='background:yellow'>" + htmlTablePresentPersons + "</div>",
-                'ENTSCHULDIGT': "<div style='background:yellow'>" + htmlTableExcusedPersons + "</div>",
-                'TEILNEHMENDE': "<div style='background:yellow'>" + htmlTableDistributionListPersons + "</div>",                
+                'ANWESENDE': "<div>" + htmlTablePresentPersons + "</div>",
+                'ENTSCHULDIGT': "<div>" + htmlTableExcusedPersons + "</div>",
+                'TEILNEHMENDE': "<div>" + htmlTableDistributionListPersons + "</div>",                
             };
 
             placeholders['BAUVORHABEN_LISTE'] = await this.prepareRoadWorkActivity(children);
@@ -184,13 +184,30 @@ export class ReportLoaderService {
             );
 
             const activityPolygons = [this.roadWorkActivity.geometry.coordinates as Array<{ x: number; y: number }>]
-                
+
+            const ptToPx = (pt: number) => Math.round(pt * (96 / 72));
+            const cmToPt = (cm: number) => cm * (72 / 2.54);
+
+            const page = { wPt: 595.28, hPt: 841.89 }; // A4 portrait
+            const marginsCm = { top: 2, right: 1, bottom: 2, left: 2 };
+
+            const contentWPt = page.wPt - cmToPt(marginsCm.left) - cmToPt(marginsCm.right); // ≈ 510.24 pt
+            const contentHPt = page.hPt - cmToPt(marginsCm.top) - cmToPt(marginsCm.bottom); // ≈ 728.50 pt
+
+            const contentWPx = ptToPx(contentWPt); // ≈ 680 px
+            const contentHPx = ptToPx(contentHPt); // ≈ 971 px
+            
+            let w = contentWPx;
+            let h = Math.round(w * 9 / 16);
+            if (h > contentHPx) { h = contentHPx; w = Math.round(h * 16 / 9); }
+
+
 
             // Generate off-screen map image
             const mapImageUrl = await this.mapCapture.captureMapOffscreen(
                 undefined,
-                1280,
-                720,
+                w,
+                h,
                 [8.719, 47.499],
                 13,
                 true,
@@ -209,7 +226,7 @@ export class ReportLoaderService {
     }
 
     private wrapPlaceholder(content: string): string {
-        return `<b style="background:yellow">${content}</b>`;
+        return `<b>${content}</b>`;
     }
 
  
@@ -507,7 +524,7 @@ export class ReportLoaderService {
                 Begehrensaeusserung_45: this.wrapPlaceholder(this.roadWorkActivity.properties.isDesire ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
                 Mitwirkungsverfahren_13: this.wrapPlaceholder(this.roadWorkActivity.properties.isParticip ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
                 Planauflage_16: this.wrapPlaceholder(this.roadWorkActivity.properties.isPlanCirc ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                ZUGEWIESENE_BEDARFE: "<div style='background:yellow'>" + this.prepareHtmlTable(
+                ZUGEWIESENE_BEDARFE: "<div>" + this.prepareHtmlTable(
                     this.needsOfActivityService.assignedRoadWorkNeeds.map((item) => ({
                         'Titel & Abschnitt': item.properties.name + '-' + project.sessionType,
                         'Auslösegrund': item.properties.description,
