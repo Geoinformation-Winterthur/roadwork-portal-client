@@ -1200,36 +1200,37 @@
 
                                 <ng-container matColumnDef="earliest">
                                     <th mat-header-cell *matHeaderCellDef> Frühester </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
-                                            [class.green-date]="hasConstructionDates() && isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            [class.red-date]="hasConstructionDates() && !isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            style="padding: 0.3em; background-color: rgb(240,240,240);">
-                                            {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
+                                    <td mat-cell *matCellDef="let need" class="mat-column-earliest">
+                                        <span [ngClass]="{
+                                              'green-date': isDateWithinConstruction(need?.properties?.finishEarlyTo),
+                                                  'border': calcTimeFactor(need) !== 4
+                                                }">
+                                            {{ need?.properties?.finishEarlyTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
                                     </td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="wish">
                                     <th mat-header-cell *matHeaderCellDef> Wunsch </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
-                                            [class.green-date]="hasConstructionDates() && isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                            [class.red-date]="hasConstructionDates() && !isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                            style="padding: 0.3em; background-color: rgb(240,240,240);">
-                                            {{ assignedRoadWorkNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
+                                    <td mat-cell *matCellDef="let need" class="mat-column-wish">
+                                        <span [ngClass]="{
+                                              'green-date': isDateWithinConstruction(need?.properties?.finishOptimumTo),
+                                              'border': calcTimeFactor(need) !== 4
+                                            }">
+                                            {{ need?.properties?.finishOptimumTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
                                     </td>
                                 </ng-container>
 
                                 <ng-container matColumnDef="latest">
                                     <th mat-header-cell *matHeaderCellDef> Spätester </th>
-                                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
-                                            [class.red-date]="hasConstructionDates() && isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                            [class.green-date]="hasConstructionDates() && !isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                            style="padding: 0.3em; background-color: rgb(240,240,240);">
-                                            {{ assignedRoadWorkNeed.properties.finishLateTo | date:'dd.MM.yyyy' }}
+                                    <td mat-cell *matCellDef="let need" class="mat-column-latest">
+                                        <span [ngClass]="{
+                                              'red-date':  isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
+                                              'green-date': !isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
+                                              'border':    calcTimeFactor(need) !== 4
+                                            }">
+                                            {{ need?.properties?.finishLateTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
                                     </td>
                                 </ng-container>

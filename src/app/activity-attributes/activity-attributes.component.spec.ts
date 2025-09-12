@@ -49,6 +49,13 @@ function d(iso: string): Date {
   return new Date(y, m - 1, day, 12, 0, 0, 0);
 }
 
+function hasClassDeep(el: HTMLElement | null, cls: string): boolean {
+  if (!el) return false;
+  if (el.classList.contains(cls)) return true;
+  const span = el.querySelector('span');
+  return !!span && span.classList.contains(cls);
+}
+
 function need(
   name: string,
   orgAbbr: string,
@@ -287,32 +294,40 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     return Array.from(nodes) as HTMLElement[];
   }
 
+  function getCellSpan(cell: HTMLElement | null): HTMLElement | null {
+    if (!cell) return null;
+    // häufig direkt ein <span> im Cell – sonst beliebiges Descendant-Span
+    return (cell.querySelector('span') ?? cell);
+  }
 
   // ---------- Tests ----------
   it('rendert "earliest" und "wish" innerhalb des Bauzeitraums als grün (AEW/EC/KuBa/APK)', async () => {
-    // sicherstellen, dass der Tab-Inhalt gerendert ist
     await selectInnerTab('Zeitfaktor');
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const earliest = getColumnCells('earliest');
-    const wish = getColumnCells('wish');
+    const cases = [
+      'Bedarf AEW',
+      'Bedarf EC',
+      'Bedarf KuBa',
+      'Bedarf APK',
+    ];
 
-    expect(earliest.length).withContext('Zu wenige earliest-Zellen').toBeGreaterThanOrEqual(5);
-    expect(wish.length).withContext('Zu wenige wish-Zellen').toBeGreaterThanOrEqual(5);
+    for (const name of cases) {
+      const row = findRowByText(name);
+      expect(row).withContext(`Zeile "${name}" nicht gefunden`).not.toBeNull();
 
-    // Reihenfolge: [0]=primary, [1]=AEW, [2]=EC, [3]=KuBa, [4]=APK
-    expect(earliest[1].classList.contains('green-date')).withContext('AEW earliest').toBeTrue();
-    expect(wish[1].classList.contains('green-date')).withContext('AEW wish').toBeTrue();
+      const earliestCell = getCellInRow(row!, 'earliest');
+      const wishCell = getCellInRow(row!, 'wish');
 
-    expect(earliest[2].classList.contains('green-date')).withContext('EC earliest').toBeTrue();
-    expect(wish[2].classList.contains('green-date')).withContext('EC wish').toBeTrue();
+      expect(earliestCell).withContext(`"earliest" in "${name}" fehlt`).not.toBeNull();
+      expect(wishCell).withContext(`"wish" in "${name}" fehlt`).not.toBeNull();
 
-    expect(earliest[3].classList.contains('green-date')).withContext('KuBa earliest').toBeTrue();
-    expect(wish[3].classList.contains('green-date')).withContext('KuBa wish').toBeTrue();
-
-    expect(earliest[4].classList.contains('green-date')).withContext('APK earliest').toBeTrue();
-    expect(wish[4].classList.contains('green-date')).withContext('APK wish').toBeTrue();
+      expect(hasClassDeep(earliestCell, 'green-date'))
+        .withContext(`${name} earliest sollte grün sein`).toBeTrue();
+      expect(hasClassDeep(wishCell, 'green-date'))
+        .withContext(`${name} wish sollte grün sein`).toBeTrue();
+    }
   });
 
   it('färbt "latest" rot, wenn späteste Inbetriebnahme vor Bauende liegt (AEW, APK)', async () => {
@@ -342,24 +357,24 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
   });
 
   it('färbt "latest" grün, wenn späteste Inbetriebnahme >= Bauende liegt (EC, KuBa)', async () => {
-    // sicherstellen, dass der Tab-Inhalt gerendert ist
     await selectInnerTab('Zeitfaktor');
     await fixture.whenStable();
     fixture.detectChanges();
 
-    // Reihenfolge der Rows gemäss Setup:
-    // [0]=primary, [1]=AEW, [2]=EC, [3]=KuBa, [4]=APK
-    const latest = getColumnCells('latest');
-    expect(latest.length).withContext('Zu wenige latest-Zellen').toBeGreaterThanOrEqual(5);
+    for (const name of ['Bedarf EC', 'Bedarf KuBa']) {
+      const row = findRowByText(name);
+      expect(row).withContext(`Zeile "${name}" nicht gefunden`).not.toBeNull();
 
-    expect(latest[2].classList.contains('green-date'))
-      .withContext('EC latest sollte grün sein')
-      .toBeTrue();
+      const latestCell = getCellInRow(row!, 'latest');
+      expect(latestCell).withContext(`"latest" in "${name}" fehlt`).not.toBeNull();
 
-    expect(latest[3].classList.contains('green-date'))
-      .withContext('KuBa latest sollte grün sein')
-      .toBeTrue();
+      const latestSpan = getCellSpan(latestCell);
+      expect(latestSpan?.classList.contains('green-date'))
+        .withContext(`${name} latest sollte grün sein`)
+        .toBeTrue();
+    }
   });
+
 
   it('setzt die "border"-Klasse, wenn calcTimeFactor(...) != 4', async () => {
     // sicherstellen, dass der Tab-Inhalt gerendert ist
