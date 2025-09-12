@@ -14,5 +14,8 @@ export const environment = {
   clientId: "545260861106-tgfacmvouu3lhpddesi1upgjeme33ibk.apps.googleusercontent.com",
   scope: "openid profile email",
   clearHashAfterLogin: false,
-  strictDiscoveryDocumentValidation: false
+  strictDiscoveryDocumentValidation: false,
+  /** E-Mail-Listen für Sessions (leer als Default im Dev) */
+  presentEmails: [] as string[],
+  distributionListEmails: [] as string[]
 };

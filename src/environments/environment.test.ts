@@ -8,5 +8,7 @@ export const environment = {
   apiUrl: "https://stadtplantest.winterthur.ch/civil-engineering/roadworks-services",
   roadworksPortalToken: "roadworks.token.test",
   roadworksPortalUserToken: "roadworks.user.token.test",
-  hideInfoCookieName: "hide_info.test"
+  hideInfoCookieName: "hide_info.test",
+  presentEmails: [] as string[],
+  distributionListEmails: [] as string[],
 };

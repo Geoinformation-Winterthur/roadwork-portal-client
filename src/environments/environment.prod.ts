@@ -8,5 +8,7 @@ export const environment = {
   apiUrl: "https://stadtplan.winterthur.ch/civil-engineering/roadworks-services",
   roadworksPortalToken: "roadworks.token",
   roadworksPortalUserToken: "roadworks.user.token",
-  hideInfoCookieName: "hide_info"
+  hideInfoCookieName: "hide_info",
+  presentEmails: [] as string[],
+  distributionListEmails: [] as string[],
 };

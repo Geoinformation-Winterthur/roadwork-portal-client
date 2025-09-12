@@ -65,8 +65,8 @@ export class SessionsComponent implements OnInit {
   
   sessionsData: Session[] = [];
 
-  presentEmails = environment.presentEmails;
-  distributionListEmails = environment.distributionListEmails;
+  presentEmails: string[] = environment.presentEmails ?? [];
+  distributionListEmails: string[] = environment.distributionListEmails ?? [];
 
   reportTypeOptions: ReportType[] = ['Vor-Protokol SKS', 'Protokol SKS'];   
 
@@ -277,9 +277,13 @@ export class SessionsComponent implements OnInit {
         }
     });
 
-    const presentSet = new Set(this.presentEmails.map(e => e.toLowerCase().trim()));
-    const distributionListSet = new Set(this.distributionListEmails.map(e => e.toLowerCase().trim()));
-    
+    const presentSet = new Set(
+      this.presentEmails.map((e: string) => e.toLowerCase().trim())
+    );
+    const distributionListSet = new Set(
+      this.distributionListEmails.map((e: string) => e.toLowerCase().trim())
+    );
+
     const sessionsWithUsers$ = this.roadWorkActivityService.getRoadWorkActivities().pipe(
       map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)),
       switchMap((sessions: Session[]) =>

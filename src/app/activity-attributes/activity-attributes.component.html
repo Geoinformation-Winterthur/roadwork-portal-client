@@ -21,10 +21,8 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="text-align: right;">
-                    <button mat-button
-                        (click)="refresh()"
-                        style="margin: 1em;background-color: rgb(236,236,234);">
-                        <mat-icon aria-label="Icon zeigt Aktualisieren">refresh</mat-icon>&nbsp;AKTUALISIEREN   
+                    <button mat-button (click)="refresh()" style="margin: 1em;background-color: rgb(236,236,234);">
+                        <mat-icon aria-label="Icon zeigt Aktualisieren">refresh</mat-icon>&nbsp;AKTUALISIEREN
                     </button>
                     <button *ngIf="roadWorkActivityFeature.properties.isEditingAllowed" mat-button (click)="save()"
                         style="margin: 1em;background-color: rgb(236,236,234);">
@@ -54,7 +52,7 @@
                             aria-label="Icon zeigt durchgekreuzten Mülleimer">delete_forever</mat-icon>&nbsp;LÖSCHEN
                     </button>
                 </div>
-                <mat-tab-group style="margin-left: 1em;margin-right: 1em;">
+                <mat-tab-group [(selectedIndex)]="selectedStammdatenTabIndex" style="margin-left: 1em;margin-right: 1em;">
                     <mat-tab label="Übersicht">
                         <div fxLayout="row wrap padding">
                             <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
@@ -102,25 +100,22 @@
 
                                         <mat-form-field appearance="fill">
                                             <mat-label>Projekt-Art</mat-label>
-                                            <mat-select
-                                                [(ngModel)]="roadWorkActivityFeature.properties.projectKind"
-                                                name="projectKind"
-                                                #projectKindCtrl="ngModel"
+                                            <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectKind"
+                                                name="projectKind" #projectKindCtrl="ngModel"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                 required>
-                                                <mat-option [value]="null" disabled selected>– Bitte wählen –</mat-option>
-                                                <mat-option
-                                                    *ngFor="let option of projectKindOptions"
-                                                    [value]="option.value"
-                                                    >
+                                                <mat-option [value]="null" disabled selected>– Bitte wählen
+                                                    –</mat-option>
+                                                <mat-option *ngFor="let option of projectKindOptions"
+                                                    [value]="option.value">
                                                     {{ option.label }}
                                                 </mat-option>
-                                            </mat-select>                                            
+                                            </mat-select>
                                             <mat-error *ngIf="projectKindCtrl.invalid && projectKindCtrl.touched">
                                                 Bitte wählen Sie eine Projekt-Art aus.
                                             </mat-error>
                                         </mat-form-field>
-                                        
+
 
                                         <mat-form-field>
                                             <mat-label>Bemerkung</mat-label>
@@ -130,7 +125,7 @@
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                         </mat-form-field>
 
-                                         <mat-form-field>
+                                        <mat-form-field>
                                             <mat-label>Beschrieb Bauvorhaben</mat-label>
                                             <textarea matInput maxlength="255"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.comment"
@@ -404,21 +399,21 @@
                                                     <mat-label>Baubeginn</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
-                                                        [matDatepicker]="startOfConstruction"
+                                                        [matDatepicker]="startOfConstructionA"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #startOfConstruction></mat-datepicker>
+                                                    <mat-datepicker #startOfConstructionA></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="startOfConstruction"></mat-datepicker-toggle>
+                                                        [for]="startOfConstructionA"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bauende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
-                                                        [matDatepicker]="endOfConstruction"
+                                                        [matDatepicker]="endOfConstructionA"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #endOfConstruction></mat-datepicker>
+                                                    <mat-datepicker #endOfConstructionA></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="endOfConstruction"></mat-datepicker-toggle>
+                                                        [for]="endOfConstructionA"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Abnahme</mat-label>
@@ -503,7 +498,7 @@
                                 </mat-card>
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"
-                                     [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
+                                    [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
                                     <mat-card-header>
                                         <mat-card-title>Aggloprogramm</mat-card-title>
                                     </mat-card-header>
@@ -578,7 +573,7 @@
                                         <mat-card-title>Sitzungen, terminiert</mat-card-title>
                                     </mat-card-header>
                                     <mat-card-content>
-                                        <div style="display:flex;flex-direction:column;">                                            
+                                        <div style="display:flex;flex-direction:column;">
                                             <form>
                                                 <mat-form-field appearance="fill">
                                                     <mat-label>Strategische Koord. (SKS)</mat-label>
@@ -593,7 +588,7 @@
                                                         </mat-option>
                                                     </mat-select>
                                                 </mat-form-field>
-                                            </form>                                            
+                                            </form>
                                         </div>
                                     </mat-card-content>
                                 </mat-card>
@@ -666,9 +661,9 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Auflageverfahren</h2>
-                            <div fxLayout="row wrap padding"  class="tab-content">
+                            <div fxLayout="row wrap padding" class="tab-content">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"                                     
+                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"
                                     [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
                                     <mat-card-header>
                                         <mat-card-title>Begehrensäusserung §&nbsp;45</mat-card-title>
@@ -785,7 +780,8 @@
                         </div>
                         <div style="margin: 1em;">
                             <h2>Vernehmlassungen</h2>
-                            <div fxLayout="row wrap padding" class="tab-content" [class.disabled]="isScheduleEditingDisabled">
+                            <div fxLayout="row wrap padding" class="tab-content"
+                                [class.disabled]="isScheduleEditingDisabled">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
@@ -850,21 +846,21 @@
                                                     <mat-label>Bedarfsklärung - 2.Iteration Ende</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultEnd2"
-                                                        [matDatepicker]="dateConsultEnd1"
+                                                        [matDatepicker]="dateConsultEnd2"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #dateConsultEnd2></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="dateConsultEnd1"></mat-datepicker-toggle>
+                                                        [for]="dateConsultEnd2"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bedarfsklärung - 2.Iteration Abschluss</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateConsultClose"
-                                                        [matDatepicker]="dateConsultClose"
+                                                        [matDatepicker]="dateConsultClose2"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateConsultClose></mat-datepicker>
+                                                    <mat-datepicker #dateConsultClose2></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
-                                                        [for]="dateConsultClose"></mat-datepicker-toggle>
+                                                        [for]="dateConsultClose2"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                             </div>
                                         </div>
@@ -1108,19 +1104,25 @@
                                             {{primaryNeed.properties.orderer.organisationalUnit.abbreviation}}
                                         </h4>
                                         <p>
-                                            Frühester Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                            Frühester
+                                            Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
                                                 [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed.properties.finishEarlyTo)"
                                                 [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed.properties.finishEarlyTo)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{ roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed?.properties?.finishEarlyTo | date:'dd.MM.yyyy' }}                                               
+                                                {{
+                                                roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed?.properties?.finishEarlyTo
+                                                | date:'dd.MM.yyyy' }}
                                             </span>
-                                        </p>                                        
+                                        </p>
                                         <p>
-                                            Wunsch Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                            Wunsch
+                                            Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
                                                 [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed.properties.finishOptimumTo)"
                                                 [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed.properties.finishOptimumTo)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{ roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed?.properties?.finishOptimumTo | date:'dd.MM.yyyy' }}                                                
+                                                {{
+                                                roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed?.properties?.finishOptimumTo
+                                                | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
@@ -1128,7 +1130,8 @@
                                                 [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo??primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                 [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo??primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                 style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{roadWorkActivityFeature.properties.finishLateTo??primaryNeed?.properties?.finishLateTo | date:'dd.MM.yyyy'}}                                                
+                                                {{roadWorkActivityFeature.properties.finishLateTo??primaryNeed?.properties?.finishLateTo
+                                                | date:'dd.MM.yyyy'}}
                                             </span>
                                         </p>
                                     </div>
@@ -1146,23 +1149,22 @@
                                             <mat-label>Voraussichtlicher Baubeginn</mat-label>
                                             <input matInput
                                                 [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
-                                                [matDatepicker]="startOfConstruction"
-                                                [max]="roadWorkActivityFeature.properties.isEditingAllowed"
+                                                [matDatepicker]="startOfConstructionB"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-datepicker #startOfConstruction></mat-datepicker>
+                                            <mat-datepicker #startOfConstructionB></mat-datepicker>
                                             <mat-datepicker-toggle matSuffix
-                                                [for]="startOfConstruction"></mat-datepicker-toggle>
+                                                [for]="startOfConstructionB"></mat-datepicker-toggle>
                                         </mat-form-field>
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Voraussichtliches Bauende</mat-label>
                                             <input matInput
                                                 [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
-                                                [matDatepicker]="endOfConstruction"
+                                                [matDatepicker]="endOfConstructionB"
                                                 [min]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <mat-datepicker #endOfConstruction></mat-datepicker>
+                                            <mat-datepicker #endOfConstructionB></mat-datepicker>
                                             <mat-datepicker-toggle matSuffix
-                                                [for]="endOfConstruction"></mat-datepicker-toggle>
+                                                [for]="endOfConstructionB"></mat-datepicker-toggle>
                                         </mat-form-field>
                                     </div>
                                 </mat-card-content>
@@ -1199,11 +1201,10 @@
                                 <ng-container matColumnDef="earliest">
                                     <th mat-header-cell *matHeaderCellDef> Frühester </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
-                                            [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
-                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                        <span [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                            [class.green-date]="hasConstructionDates() && isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            [class.red-date]="hasConstructionDates() && !isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                            style="padding: 0.3em; background-color: rgb(240,240,240);">
                                             {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
                                         </span>
                                     </td>
@@ -1212,11 +1213,10 @@
                                 <ng-container matColumnDef="wish">
                                     <th mat-header-cell *matHeaderCellDef> Wunsch </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
-                                            [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                            [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                        <span [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                            [class.green-date]="hasConstructionDates() && isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                            [class.red-date]="hasConstructionDates() && !isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                            style="padding: 0.3em; background-color: rgb(240,240,240);">
                                             {{ assignedRoadWorkNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
                                         </span>
                                     </td>
@@ -1225,11 +1225,10 @@
                                 <ng-container matColumnDef="latest">
                                     <th mat-header-cell *matHeaderCellDef> Spätester </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                                        <span
-                                            [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
-                                            [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                            [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                            style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                        <span [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                            [class.red-date]="hasConstructionDates() && isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                            [class.green-date]="hasConstructionDates() && !isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                            style="padding: 0.3em; background-color: rgb(240,240,240);">
                                             {{ assignedRoadWorkNeed.properties.finishLateTo | date:'dd.MM.yyyy' }}
                                         </span>
                                     </td>
@@ -1243,14 +1242,16 @@
                                     </td>
                                 </ng-container>
 
-                                 <ng-container matColumnDef="consult_input">
+                                <ng-container matColumnDef="consult_input">
                                     <th mat-header-cell *matHeaderCellDef> Bemerkung GM </th>
                                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
                                         <mat-form-field style="width: 100%;">
                                             <mat-label>Bemerkung GM</mat-label>
-                                            <textarea matInput maxlength="255" (focusout)="updateComment(assignedRoadWorkNeed)"
-                                                [disabled] = "isEditingForRoleNotAllowed"
-                                                [(ngModel)]="assignedRoadWorkNeed.properties.noteOfAreaManager" placeholder="Bemerkung GM...">
+                                            <textarea matInput maxlength="255"
+                                                (focusout)="updateComment(assignedRoadWorkNeed)"
+                                                [disabled]="isEditingForRoleNotAllowed"
+                                                [(ngModel)]="assignedRoadWorkNeed.properties.noteOfAreaManager"
+                                                placeholder="Bemerkung GM...">
                                     </textarea>
                                         </mat-form-field>
                                     </td>
@@ -1281,7 +1282,8 @@
                                                     [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                     [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy' }}
+                                                    {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy'
+                                                    }}
                                                 </span>
                                             </p>
                                             <p>
@@ -1290,7 +1292,8 @@
                                                     [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
                                                     [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                    {{ assignedRoadWorkNeed.properties.finishOptimumTo | date:'dd.MM.yyyy' }}
+                                                    {{ assignedRoadWorkNeed.properties.finishOptimumTo |
+                                                    date:'dd.MM.yyyy' }}
                                                 </span>
                                             </p>
                                             <p>
@@ -1311,7 +1314,7 @@
                                 </mat-card>
                             </ng-container>
                         </div>
-                        
+
                     </mat-tab>
                     <mat-tab label="Dokumente" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div fxLayout="row wrap padding">
@@ -1375,12 +1378,12 @@
 
                                 <ng-container matColumnDef="url">
                                     <th mat-header-cell *matHeaderCellDef style="width: 20%;"> Link (URL) </th>
-                                    <td mat-cell *matCellDef="let roadworkNeed"> {{roadworkNeed.properties.url}}                                        
-                                        (<a *ngIf="roadworkNeed.properties.url"
-                                            href="{{roadworkNeed.properties.url}}" target="_blank">Link
-                                            öffnen</a>)                                                                                
+                                    <td mat-cell *matCellDef="let roadworkNeed"> {{roadworkNeed.properties.url}}
+                                        (<a *ngIf="roadworkNeed.properties.url" href="{{roadworkNeed.properties.url}}"
+                                            target="_blank">Link
+                                            öffnen</a>)
                                     </td>
-                                </ng-container> 
+                                </ng-container>
 
                                 <ng-container matColumnDef="documents">
                                     <th mat-header-cell *matHeaderCellDef style="width: 50%;"> Dokumente </th>
@@ -1429,7 +1432,7 @@
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
                                 mat-button>Bedarfsklärung - 1.Iteration durchführen</button>
-                                        
+
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'inconsult1'"
                                 (click)="openMail('inconsult1')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1472,7 +1475,8 @@
                                 [disabled]="roadWorkActivityFeature.properties.status != 'verified2'
                                         || roadWorkActivityFeature.properties.isPrivate
                                         || !roadWorkActivityFeature.properties.isEditingAllowed"
-                                mat-button>Stellungnahme durchführen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                mat-button>Stellungnahme
+                                durchführen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
                             <button *ngIf="roadWorkActivityFeature.properties.status == 'reporting'"
                                 (click)="openMail('reporting')"
                                 style="background-color: white;margin-top: 1em;margin-right: 1em;"
@@ -1512,9 +1516,10 @@
                         <app-consultation-items [roadWorkActivity]="roadWorkActivityFeature">
                         </app-consultation-items>
                     </mat-tab> -->
-                     <mat-tab label="Bedarfsklärung - 1.Iteration">
-                         <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')" style="margin: 2em;">
-                            <span                                
+                    <mat-tab label="Bedarfsklärung - 1.Iteration">
+                        <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')"
+                            style="margin: 2em;">
+                            <span
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -1535,12 +1540,16 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
-                        <app-reporting-items #reportingItemsInconsult1 [feedbackPhaseName]="'Bedarfsklärung - 1.Iteration'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult1'" [feedbackPhaseAccomplished]="'review'">
+                        <app-reporting-items #reportingItemsInconsult1
+                            [feedbackPhaseName]="'Bedarfsklärung - 1.Iteration'"
+                            [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult1'"
+                            [feedbackPhaseAccomplished]="'review'">
                         </app-reporting-items>
                     </mat-tab>
                     <mat-tab label="Bedarfsklärung - 2.Iteration">
-                         <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult2')" style="margin: 2em;">
-                            <span                                
+                        <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult2')"
+                            style="margin: 2em;">
+                            <span
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
@@ -1561,16 +1570,20 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
-                        <app-reporting-items #reportingItemsInconsult2 [feedbackPhaseName]="'Bedarfsklärung - 2.Iteration'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult2'" [feedbackPhaseAccomplished]="'verified1'">
+                        <app-reporting-items #reportingItemsInconsult2
+                            [feedbackPhaseName]="'Bedarfsklärung - 2.Iteration'"
+                            [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'inconsult2'"
+                            [feedbackPhaseAccomplished]="'verified1'">
                         </app-reporting-items>
                     </mat-tab>
                     <mat-tab label="Stellungnahme">
-                        <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'reporting')" style="margin: 2em;">
-                            <span                                
+                        <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'reporting')"
+                            style="margin: 2em;">
+                            <span
                                 style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
                                 ABGESCHLOSSEN
                             </span>
-                           <span style="display: block;margin-top: 2em;">
+                            <span style="display: block;margin-top: 2em;">
                                 Stellungnahme ist abgeschlossen.
                             </span>
                         </div>
@@ -1587,7 +1600,9 @@
                                 style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
                                 mat-button>WIEDERERÖFFNEN</button>
                         </div>
-                        <app-reporting-items #reportingItemsReporting [feedbackPhaseName]="'Stellungnahme'" [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'reporting'" [feedbackPhaseAccomplished]="'verified2'">
+                        <app-reporting-items #reportingItemsReporting [feedbackPhaseName]="'Stellungnahme'"
+                            [roadWorkActivity]="roadWorkActivityFeature" [feedbackPhase]="'reporting'"
+                            [feedbackPhaseAccomplished]="'verified2'">
                         </app-reporting-items>
                     </mat-tab>
                 </mat-tab-group>
