@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, Optional } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -90,8 +90,9 @@ export class ActivityAttributesComponent implements OnInit {
 
   statusHelper: StatusHelper;
 
-  selectedTabIndex = 0;
-  selectedSubTabIndex = 0;
+  selectedTabIndex = 0;              // äussere Tabs (Perimeter, Stammdaten, ...)
+  selectedSubTabIndex = 0;           // Vernehmlassung (eigene Tab-Gruppe unten)
+  selectedStammdatenTabIndex = 0;    // innere Tab-Gruppe unter "Stammdaten"
 
   needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
   needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
@@ -130,13 +131,13 @@ export class ActivityAttributesComponent implements OnInit {
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
 
-  constructor(activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
+  constructor(@Optional() activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService,
     consultationService: ConsultationService, router: Router,
     snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog) {
-    this.activatedRoute = activatedRoute;
+    this.activatedRoute = activatedRoute!;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
@@ -233,6 +234,11 @@ export class ActivityAttributesComponent implements OnInit {
     this.needsOfActivityService.nonAssignedRoadWorkNeeds = [];
     this.needsOfActivityService.registeredRoadWorkNeeds = [];
 
+    // Route-Handling nur, wenn ActivatedRoute vorhanden ist (Tests liefern evtl. keinen Provider)
+    if (!this.activatedRoute) {
+      return; // Tests nutzen direkten State-Set => Template rendert trotzdem
+    }
+
     this.activatedRouteSubscription = this.activatedRoute.params
       .subscribe(params => {
         let idParamString: string = params['id'];
@@ -307,8 +313,8 @@ export class ActivityAttributesComponent implements OnInit {
                               for (let costs of assignedRoadWorkNeed.properties.costs)
                                 costsOfAssignedNeedsTemp.push(costs);
                             if ((assignedRoadWorkNeed.properties.documentAtts &&
-                              assignedRoadWorkNeed.properties.documentAtts.length != 0) 
-                              || assignedRoadWorkNeed.properties.url 
+                              assignedRoadWorkNeed.properties.documentAtts.length != 0)
+                              || assignedRoadWorkNeed.properties.url
                             ) {
                               assignedRoadWorkNeedsWithDocuments.push(assignedRoadWorkNeed);
                             }
@@ -331,13 +337,13 @@ export class ActivityAttributesComponent implements OnInit {
                     this.selectedSubTabIndex = 1;
                   } else if (tabName == "bedarfsklaerung2") {
                     this.selectedTabIndex = 3;
-                    this.selectedSubTabIndex = 2;                  
+                    this.selectedSubTabIndex = 2;
                   } else if (tabName == "stellungnahme") {
                     this.selectedTabIndex = 3;
                     this.selectedSubTabIndex = 3;
                   }
                 });
-                
+
               },
               error: (error) => {
               }
@@ -359,17 +365,17 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   save() {
-     if (this.projectKindCtrl) {
-        this.projectKindCtrl.control.markAsTouched();
-        this.projectKindCtrl.control.updateValueAndValidity();
-      }
+    if (this.projectKindCtrl) {
+      this.projectKindCtrl.control.markAsTouched();
+      this.projectKindCtrl.control.updateValueAndValidity();
+    }
 
-      if (this.projectKindCtrl.invalid) {
-        this.snckBar.open("Bitte wählen Sie eine Projekt-Art aus.", "", {
-          duration: 4000
-        });        
-        return;
-      }
+    if (this.projectKindCtrl.invalid) {
+      this.snckBar.open("Bitte wählen Sie eine Projekt-Art aus.", "", {
+        duration: 4000
+      });
+      return;
+    }
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
         this.update();
@@ -482,7 +488,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  registerTrefficManager() {
+  registerTrafficManager() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityService.registerTrafficManager(this.roadWorkActivityFeature)
         .subscribe({
@@ -528,7 +534,7 @@ export class ActivityAttributesComponent implements OnInit {
       else if (valueToCheck === 'verified1')
         return true;
       else
-        return false;    
+        return false;
     } else if (currValue === 'inconsult2') {
       if (valueToCheck === 'review')
         return true;
@@ -594,7 +600,7 @@ export class ActivityAttributesComponent implements OnInit {
     return "background-color: rgb(109, 255, 121);";
   }
 
-  changeInvolvedUsers(user: User) {    
+  changeInvolvedUsers(user: User) {
     if (this.roadWorkActivityFeature) {
       let involvedUsersCopy = [...this.roadWorkActivityFeature.properties.involvedUsers];
 
@@ -614,10 +620,10 @@ export class ActivityAttributesComponent implements OnInit {
 
 
   isInvolvedUser(user: User): boolean {
-  return this.roadWorkActivityFeature ? this.roadWorkActivityFeature.properties.involvedUsers.some(
-        (involvedUser) => involvedUser.uuid === user.uuid
-      )
-    : false;
+    return this.roadWorkActivityFeature ? this.roadWorkActivityFeature.properties.involvedUsers.some(
+      (involvedUser) => involvedUser.uuid === user.uuid
+    )
+      : false;
   }
 
 
@@ -724,31 +730,23 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  isFirstDateBefore(firstDate?: Date, secondDate?: Date): boolean {
-    if (firstDate && secondDate) {
-      let firstDateObj = new Date(firstDate);
-      let secondDateObj = new Date(secondDate);
-      return firstDateObj.getTime() < secondDateObj.getTime();
-    }
-    return false;
+  isFirstDateBefore(firstDate?: Date | string, secondDate?: Date | string): boolean {
+    const a = this.coerceDate(firstDate);
+    const b = this.coerceDate(secondDate);
+    if (!a || !b) return false;                // ohne beide Datumswerte: keine "rot"-Markierung
+    return a.getTime() < b.getTime();          // strikt "<"
   }
 
   calcTimeFactor(compareNeed: RoadWorkNeedFeature): number {
     return TimeFactorHelper.calcTimeFactor(compareNeed, this.primaryNeed);
   }
 
-  isDateWithinConstruction(dateToCheck?: Date): boolean {
-    if (!dateToCheck ||
-      !this.roadWorkActivityFeature?.properties.startOfConstruction ||
-      !this.roadWorkActivityFeature?.properties.endOfConstruction) {
-      return true;                 // neutral "kein Urteil möglich"
-    }
-
-    const start = new Date(this.roadWorkActivityFeature.properties.startOfConstruction);
-    const end = new Date(this.roadWorkActivityFeature.properties.endOfConstruction);
-    const d = new Date(dateToCheck);
-
-    return d >= start && d <= end; // true = innerhalb ⇒ grün
+  isDateWithinConstruction(dateToCheck?: Date | string): boolean {
+    const d = this.coerceDate(dateToCheck);
+    const start = this.coerceDate(this.roadWorkActivityFeature?.properties?.startOfConstruction);
+    const end = this.coerceDate(this.roadWorkActivityFeature?.properties?.endOfConstruction);
+    if (!d || !start || !end) return false;    // nur färben, wenn alle Datumswerte vorhanden
+    return d.getTime() >= start.getTime() && d.getTime() <= end.getTime(); // inklusiv
   }
 
   get primaryNeed(): RoadWorkNeedFeature {
@@ -782,15 +780,18 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.activatedRouteSubscription.unsubscribe();
+    // nur unsubscriben, wenn auch subscribed wurde
+    if (this.activatedRouteSubscription) {
+      this.activatedRouteSubscription.unsubscribe();
+    }
   }
 
   getInvolvedOrgsNames(): string[] {
-    let result: string[] = [];
+    const result: string[] = [];
     if (this.roadWorkActivityFeature) {
-      for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
-        if (!result.includes(involvedUser.organisationalUnit.abbreviation))
-          result.push(involvedUser.organisationalUnit.abbreviation);
+      for (const involvedUser of this.roadWorkActivityFeature.properties.involvedUsers ?? []) {
+        const abbr = involvedUser?.organisationalUnit?.abbreviation;
+        if (abbr && !result.includes(abbr)) result.push(abbr);
       }
     }
     return result;
@@ -849,23 +850,23 @@ export class ActivityAttributesComponent implements OnInit {
   public _updateDueDate() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.status == "inconsult1" ||
-          this.roadWorkActivityFeature.properties.status == "verified1" ||
-          this.roadWorkActivityFeature.properties.status == "inconsult2" ||
-          this.roadWorkActivityFeature.properties.status == "verified2") {
-          if (this.roadWorkActivityFeature.properties.dateConsultEnd1)
-            this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd1);        
-          else if (this.roadWorkActivityFeature.properties.dateConsultEnd2)
-              this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd2);        
-        } else if (this.roadWorkActivityFeature.properties.status == "reporting") {
-          if (this.roadWorkActivityFeature.properties.dateReportEnd)
-            this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
-        } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
-          if (this.roadWorkActivityFeature.properties.dateInfoEnd)
-            this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
-        } else {
-          this.dueDate = new Date();
-          this.dueDate.setDate(this.dueDate.getDate() + 7);
-        }
+        this.roadWorkActivityFeature.properties.status == "verified1" ||
+        this.roadWorkActivityFeature.properties.status == "inconsult2" ||
+        this.roadWorkActivityFeature.properties.status == "verified2") {
+        if (this.roadWorkActivityFeature.properties.dateConsultEnd1)
+          this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd1);
+        else if (this.roadWorkActivityFeature.properties.dateConsultEnd2)
+          this.dueDate = new Date(this.roadWorkActivityFeature.properties.dateConsultEnd2);
+      } else if (this.roadWorkActivityFeature.properties.status == "reporting") {
+        if (this.roadWorkActivityFeature.properties.dateReportEnd)
+          this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
+      } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
+        if (this.roadWorkActivityFeature.properties.dateInfoEnd)
+          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
+      } else {
+        this.dueDate = new Date();
+        this.dueDate.setDate(this.dueDate.getDate() + 7);
+      }
     }
   }
 
@@ -893,11 +894,11 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.roadWorkActivityFeature &&
       (newStatus == "inconsult1" || newStatus == "inconsult2" || newStatus == "reporting")) {
 
-      if (this.roadWorkActivityFeature.geometry 
-          && !this.roadWorkActivityFeature.properties.areaManager) {
+      if (this.roadWorkActivityFeature.geometry
+        && !this.roadWorkActivityFeature.properties.areaManager) {
         let geometry = this.roadWorkActivityFeature.geometry;
         await this.getAreaManager(geometry);
-      }    
+      }
 
       if (this.involvedUsers.length > 0) {
         mailText += this.involvedUsers[0].mailAddress + ";"
@@ -918,7 +919,7 @@ export class ActivityAttributesComponent implements OnInit {
       mailText += separator + "subject=Die";
 
       if (newStatus == "inconsult1")
-        mailText += " Bedarfsklärung - 1.Iteration ";      
+        mailText += " Bedarfsklärung - 1.Iteration ";
       else if (newStatus == "inconsult2")
         mailText += " Bedarfsklärung - 2.Iteration ";
       else if (newStatus == "reporting")
@@ -970,9 +971,10 @@ export class ActivityAttributesComponent implements OnInit {
         mailText += "Mit «Senden» übermittelst du uns deine Rückmeldung.%0A%0A";
       mailText += "Vielen Dank für deine Teilnahme.%0A%0A";
       mailText += "Freundliche Grüsse.%0A%0A";
-      mailText += this.roadWorkActivityFeature.properties.areaManager.firstName + " "
-        + this.roadWorkActivityFeature.properties.areaManager.lastName + "%0A%0A";
-      mailText += "Tiefbauamt, Abteilung Planung %26 Koordination%0A%0A";
+
+      const am = this.roadWorkActivityFeature?.properties?.areaManager;
+      const amName = am ? `${am.firstName ?? ''} ${am.lastName ?? ''}`.trim() : 'Gebietsmanagement';
+      mailText += `${encodeURIComponent(amName)}%0A%0A`;
 
       window.open(mailText, "_blank", "noreferrer");
 
@@ -1022,15 +1024,34 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
-  refresh(){
-    this.reportingItemsInconsult1.ngOnInit();
-    this.reportingItemsInconsult2.ngOnInit();
-    this.reportingItemsReporting.ngOnInit();
+  refresh() {
+    this.reportingItemsInconsult1?.ngOnInit();
+    this.reportingItemsInconsult2?.ngOnInit();
+    this.reportingItemsReporting?.ngOnInit();
     this.ngOnInit();
     this._updateAllInvolvedUsers();
     this._updateDueDate();
-    this.editActivityMap.refresh();
-    this.editActivityMap.updateRoadworkActivityFeature(this.roadWorkActivityFeature);    
+    this.editActivityMap?.refresh();
+    this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
+  }
+
+  /** ISO- oder Date-Werte sicher in ein lokales Datum (12:00) umwandeln. */
+  private coerceDate(v?: string | Date | null): Date | undefined {
+    if (!v) return undefined;
+    if (v instanceof Date) return new Date(v.getFullYear(), v.getMonth(), v.getDate(), 12, 0, 0, 0);
+    const s = String(v);
+    // erwartet "YYYY-MM-DD" oder "YYYY-MM-DDTHH:MM:SS"
+    const [ymd] = s.split('T');
+    const [y, m, d] = ymd.split('-').map(Number);
+    if (!y || !m || !d) return undefined;
+    return new Date(y, m - 1, d, 12, 0, 0, 0);
+  }
+
+  hasConstructionDates(): boolean {
+    return !!(
+      this.roadWorkActivityFeature?.properties?.startOfConstruction &&
+      this.roadWorkActivityFeature?.properties?.endOfConstruction
+    );
   }
 
 }
