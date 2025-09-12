@@ -300,6 +300,13 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     return (cell.querySelector('span') ?? cell);
   }
 
+  function hasBorderDeep(cell: HTMLElement | null): boolean {
+    if (!cell) return false;
+    if (cell.classList.contains('border')) return true;
+    const span = cell.querySelector('span');
+    return !!span && span.classList.contains('border');
+  }
+
   // ---------- Tests ----------
   it('rendert "earliest" und "wish" innerhalb des Bauzeitraums als grün (AEW/EC/KuBa/APK)', async () => {
     await selectInnerTab('Zeitfaktor');
@@ -376,53 +383,40 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
   });
 
 
-  it('setzt die "border"-Klasse, wenn calcTimeFactor(...) != 4', async () => {
-    // sicherstellen, dass der Tab-Inhalt gerendert ist
+  it('setzt die "border"-Klasse, wenn calcTimeFactor(...) != 4 (AEW/EC/KuBa/APK) und NICHT beim Primärbedarf', async () => {
     await selectInnerTab('Zeitfaktor');
     await fixture.whenStable();
     fixture.detectChanges();
 
-    // Alle Spalten holen
-    const nameCells = getColumnCells('name');
-    const earliest = getColumnCells('earliest');
-    const wish = getColumnCells('wish');
-    const latest = getColumnCells('latest');
+    // Positiv: Rahmen erwartet (Daten ergeben TF != 4)
+    for (const name of ['Bedarf AEW', 'Bedarf EC', 'Bedarf KuBa', 'Bedarf APK']) {
+      const row = findRowByText(name);
+      expect(row).withContext(`Zeile "${name}" nicht gefunden`).not.toBeNull();
 
-    // Mindestens 5 Zeilen erwartet: [0]=primary, [1]=AEW, [2]=EC, [3]=KuBa, [4]=APK
-    expect(nameCells.length).withContext('Zu wenige Name-Zellen').toBeGreaterThanOrEqual(5);
-    expect(earliest.length).withContext('Zu wenige earliest-Zellen').toBeGreaterThanOrEqual(5);
-    expect(wish.length).withContext('Zu wenige wish-Zellen').toBeGreaterThanOrEqual(5);
-    expect(latest.length).withContext('Zu wenige latest-Zellen').toBeGreaterThanOrEqual(5);
+      const earliest = getCellInRow(row!, 'earliest');
+      const wish = getCellInRow(row!, 'wish');
+      const latest = getCellInRow(row!, 'latest');
 
-    // Name -> Index Map
-    const textAt = (el: HTMLElement) => (el.textContent || '').replace(/\s+/g, ' ').trim();
-    const idxByName = new Map<string, number>();
-    nameCells.forEach((el, i) => idxByName.set(textAt(el), i));
+      expect(earliest).withContext(`"earliest" in "${name}" fehlt`).not.toBeNull();
+      expect(wish).withContext(`"wish" in "${name}" fehlt`).not.toBeNull();
+      expect(latest).withContext(`"latest" in "${name}" fehlt`).not.toBeNull();
 
-    // Gesuchte Zeilen anhand "enthält"-Match finden (falls weitere Infos mit im Namen stehen)
-    function findIndexContains(needle: string): number {
-      const i = nameCells.findIndex(el => textAt(el).includes(needle));
-      expect(i).withContext(`Zeile mit Name enthält "${needle}" nicht gefunden`).toBeGreaterThanOrEqual(0);
-      return i;
+      expect(hasBorderDeep(earliest)).withContext(`Border fehlt (earliest) in "${name}"`).toBeTrue();
+      expect(hasBorderDeep(wish)).withContext(`Border fehlt (wish) in "${name}"`).toBeTrue();
+      expect(hasBorderDeep(latest)).withContext(`Border fehlt (latest) in "${name}"`).toBeTrue();
     }
 
-    const idxAEW = findIndexContains('Bedarf AEW');
-    const idxEC = findIndexContains('Bedarf EC');
-    const idxKuBa = findIndexContains('Bedarf KuBa');
-    const idxAPK = findIndexContains('Bedarf APK');
+    // Negativ: Primärbedarf (TF == 4) => KEIN Rahmen
+    const primaryRow = findRowByText('Auslösend');
+    // Falls Primärzeile nicht explizit angezeigt wird, diese Negativprobe einfach weglassen.
+    if (primaryRow) {
+      const earliestP = getCellInRow(primaryRow, 'earliest');
+      const wishP = getCellInRow(primaryRow, 'wish');
+      const latestP = getCellInRow(primaryRow, 'latest');
 
-    // Helper: border kann am span oder direkt an der Zelle hängen
-    const hasBorder = (el: HTMLElement | null) => {
-      if (!el) return false;
-      if (el.classList.contains('border')) return true;
-      const span = el.querySelector('span');
-      return !!span && span.classList.contains('border');
-    };
-
-    for (const idx of [idxAEW, idxEC, idxKuBa, idxAPK]) {
-      expect(hasBorder(earliest[idx]!)).withContext(`"border" fehlt (earliest) in Zeile ${idx}`).toBeTrue();
-      expect(hasBorder(wish[idx]!)).withContext(`"border" fehlt (wish) in Zeile ${idx}`).toBeTrue();
-      expect(hasBorder(latest[idx]!)).withContext(`"border" fehlt (latest) in Zeile ${idx}`).toBeTrue();
+      if (earliestP) expect(hasBorderDeep(earliestP)).withContext('Primär earliest ohne Rahmen erwartet').toBeFalse();
+      if (wishP) expect(hasBorderDeep(wishP)).withContext('Primär wish ohne Rahmen erwartet').toBeFalse();
+      if (latestP) expect(hasBorderDeep(latestP)).withContext('Primär latest ohne Rahmen erwartet').toBeFalse();
     }
   });
 
