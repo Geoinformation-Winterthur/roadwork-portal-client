@@ -420,4 +420,117 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     }
   });
 
+  it('kombiniert Border + Farbe korrekt bei "latest": rot bei < Bauende (AEW, APK), grün bei ≥ Bauende (EC, KuBa)', async () => {
+    await selectInnerTab('Zeitfaktor');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // < Bauende -> rot + Border
+    for (const name of ['Bedarf AEW', 'Bedarf APK']) {
+      const row = findRowByText(name);
+      expect(row).withContext(`Zeile "${name}" nicht gefunden`).not.toBeNull();
+      const latest = getCellInRow(row!, 'latest');
+      expect(latest).withContext(`"latest" in "${name}" fehlt`).not.toBeNull();
+
+      expect(hasClassDeep(latest, 'red-date'))
+        .withContext(`${name} latest sollte rot sein`).toBeTrue();
+      expect(hasClassDeep(latest, 'border'))
+        .withContext(`${name} latest sollte einen Rahmen haben`).toBeTrue();
+    }
+
+    // ≥ Bauende -> grün + Border
+    for (const name of ['Bedarf EC', 'Bedarf KuBa']) {
+      const row = findRowByText(name);
+      expect(row).withContext(`Zeile "${name}" nicht gefunden`).not.toBeNull();
+      const latest = getCellInRow(row!, 'latest');
+      expect(latest).withContext(`"latest" in "${name}" fehlt`).not.toBeNull();
+
+      expect(hasClassDeep(latest, 'green-date'))
+        .withContext(`${name} latest sollte grün sein`).toBeTrue();
+      expect(hasClassDeep(latest, 'border'))
+        .withContext(`${name} latest sollte einen Rahmen haben`).toBeTrue();
+    }
+  });
+
+  it('kombiniert Border + Farbe korrekt bei "earliest"/"wish" für Nicht-Primärbedarf (grün + Border)', async () => {
+    await selectInnerTab('Zeitfaktor');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    for (const name of ['Bedarf AEW', 'Bedarf EC', 'Bedarf KuBa', 'Bedarf APK']) {
+      const row = findRowByText(name);
+      expect(row).withContext(`Zeile "${name}" nicht gefunden`).not.toBeNull();
+
+      const earliest = getCellInRow(row!, 'earliest');
+      const wish = getCellInRow(row!, 'wish');
+      expect(earliest).withContext(`"earliest" in "${name}" fehlt`).not.toBeNull();
+      expect(wish).withContext(`"wish" in "${name}" fehlt`).not.toBeNull();
+
+      expect(hasClassDeep(earliest, 'green-date'))
+        .withContext(`${name} earliest sollte grün sein`).toBeTrue();
+      expect(hasClassDeep(wish, 'green-date'))
+        .withContext(`${name} wish sollte grün sein`).toBeTrue();
+
+      expect(hasClassDeep(earliest, 'border'))
+        .withContext(`${name} earliest sollte einen Rahmen haben`).toBeTrue();
+      expect(hasClassDeep(wish, 'border'))
+        .withContext(`${name} wish sollte einen Rahmen haben`).toBeTrue();
+    }
+  });
+
+  // Fallback-Szenario wie im oberen Block des Screenshots:
+  // "Achtung: voraussichtlicher Baubeginn/Bauende sind noch nicht eingetragen!"
+  it('Fallback: ohne Start/Ende -> earliest/wish ohne Grün, dennoch Border; latest wird grün markiert', async () => {
+    // Setup: Bauzeitraum entfernen
+    component.roadWorkActivityFeature = {
+      properties: {
+        uuid: 'u1',
+        name: 'BV Test',
+        isEditingAllowed: true,
+        isPrivate: false,
+        status: 'review',
+        startOfConstruction: undefined,
+        endOfConstruction: undefined,
+        involvedUsers: [],
+        roadWorkNeedsUuids: [],
+      }
+    } as any;
+
+    fixture.detectChanges();
+    await selectInnerTab('Zeitfaktor');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // Prüfen an einem Nicht-Primärbedarf (z.B. AEW)
+    const row = findRowByText('Bedarf AEW');
+    expect(row).withContext('Zeile "Bedarf AEW" nicht gefunden').not.toBeNull();
+
+    const earliest = getCellInRow(row!, 'earliest');
+    const wish = getCellInRow(row!, 'wish');
+    const latest = getCellInRow(row!, 'latest');
+
+    expect(earliest).not.toBeNull();
+    expect(wish).not.toBeNull();
+    expect(latest).not.toBeNull();
+
+    // keine Grünfärbung ohne Bauzeitraum
+    expect(hasClassDeep(earliest, 'green-date'))
+      .withContext('earliest sollte ohne Bauzeitraum NICHT grün sein').toBeFalse();
+    expect(hasClassDeep(wish, 'green-date'))
+      .withContext('wish sollte ohne Bauzeitraum NICHT grün sein').toBeFalse();
+
+    // Border bleibt, weil TF ≠ 4
+    expect(hasClassDeep(earliest, 'border'))
+      .withContext('earliest sollte trotz fehlendem Bauzeitraum einen Rahmen haben').toBeTrue();
+    expect(hasClassDeep(wish, 'border'))
+      .withContext('wish sollte trotz fehlendem Bauzeitraum einen Rahmen haben').toBeTrue();
+
+    // latest wird grün (aktuelles Verhalten: kein Vergleich -> nicht "vor" Bauende)
+    expect(hasClassDeep(latest, 'green-date'))
+      .withContext('latest sollte ohne Bauzeitraum grün sein (aktuelles Verhalten)').toBeTrue();
+    expect(hasClassDeep(latest, 'border'))
+      .withContext('latest sollte einen Rahmen haben').toBeTrue();
+  });
+
+
 });
