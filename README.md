@@ -15,7 +15,7 @@ Run `npx ng generate component component-name` to generate a new component. You 
 Run `npx ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 Example command to build for production environment (DO NOT USE THIS WITH GIT BASH):
-`npx npx ng build --configuration production --aot --outputHashing=all`
+`npx ng build --configuration production --aot --outputHashing=all`
 => Before this command: INCREMENT VERSION NUMBER in package.json, package-lock.json and welcome.component.ts.
 
 Example command to build for test environment (DO NOT USE THIS WITH GIT BASH):
