@@ -136,7 +136,7 @@ export class SessionsComponent implements OnInit {
   detailCellRendererParams = {
     detailGridOptions: {
       domLayout: 'normal',
-      defaultColDef: { flex: 1, resizable: true },
+      defaultColDef: { flex: 1, resizable: true, editable: () => !this.isDataLoading },
       filter: 'agTextColumnFilter',
       menuTabs: ['filterMenuTab'], 
       columnDefs: [
@@ -345,105 +345,115 @@ export class SessionsComponent implements OnInit {
 
   async generateSessionPDF(id: string, sessionType: string, sessionDateApproval: string, children: any[]): Promise<void> {        
 
-    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType, children, id);    
-    
-    this.reportContainer.nativeElement.innerHTML = html;
+    this.isDataLoading = true;       
 
-    const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
+    try {
+      const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType, children, id);    
+      
+      this.reportContainer.nativeElement.innerHTML = html;
 
-    if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
-      return;
-    }
+      const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
 
-    // START: Save as Word    
-    this.snckBar.open("Word-Dokument wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {
-      duration: 4000
-    });
-    const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
-    
-    const cmToTwips = (cm: number) => Math.round((1440 / 2.54) * cm);
-    
-    const margins = {
-      top: cmToTwips(2),
-      right: cmToTwips(1),
-      bottom: cmToTwips(2),
-      left: cmToTwips(2),
-    };
+      if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
+        return;
+      }
 
-    const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
-      <style>        
-        @page { margin: 1cm; size: A4; }
-        body { font-family: Arial, sans-serif; }
-        .page-break { page-break-before: always; }
-        img { max-width: 100%; height: auto; }
-      </style>
-    </head><body><div style="margin:0">${target.outerHTML}</div></body></html>`;
+      // START: Save as Word     
+      this.snckBar.open("Word-Dokument wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {
+        duration: 4000
+      });
+      const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
+      
+      const cmToTwips = (cm: number) => Math.round((1440 / 2.54) * cm);
+      
+      const margins = {
+        top: cmToTwips(2),
+        right: cmToTwips(1),
+        bottom: cmToTwips(2),
+        left: cmToTwips(2),
+      };
 
-    const blobOrBuffer = await asBlob(htmlWord, {
-      orientation: 'portrait' as const,
-      margins, // 1 cm = ~567 twips
-    });
+      const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
+        <style>        
+          @page { margin: 1cm; size: A4; }
+          body { font-family: Arial, sans-serif; }
+          .page-break { page-break-before: always; }
+          img { max-width: 100%; height: auto; }
+        </style>
+      </head><body><div style="margin:0">${target.outerHTML}</div></body></html>`;
 
-    const docxMime =
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const blobOrBuffer = await asBlob(htmlWord, {
+        orientation: 'portrait' as const,
+        margins, // 1 cm = ~567 twips
+      });
 
-    const docxBlob =
-      blobOrBuffer instanceof Blob
-        ? blobOrBuffer
-        : new Blob([blobOrBuffer as unknown as ArrayBuffer], { type: docxMime });
+      const docxMime =
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
-    saveAs(docxBlob, `${filenameBase}.docx`);
-    // END: Save as Word
+      const docxBlob =
+        blobOrBuffer instanceof Blob
+          ? blobOrBuffer
+          : new Blob([blobOrBuffer as unknown as ArrayBuffer], { type: docxMime });
 
-    // START: Save as PDF
-    this.snckBar.open("PDF wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {          
-      duration: 4000
-    });
-    html2pdf().from(target)
-                .set({
-                    filename: 'Strategische Koordinationssitzung (SKS)' + '-' + sessionType + '.pdf',
-                    margin: [10, 10, 16, 10],
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: {
-                      mode: ['css', 'legacy'],
-                      avoid: ['.no-split']
+      saveAs(docxBlob, `${filenameBase}.docx`);      
+      // END: Save as Word
+
+      // START: Save as PDF      
+      this.snckBar.open("PDF wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {          
+        duration: 4000
+      });
+      html2pdf().from(target)
+                  .set({
+                      filename: 'Strategische Koordinationssitzung (SKS)' + '-' + sessionType + '.pdf',
+                      margin: [10, 10, 16, 10],
+                      html2canvas: {
+                          scale: 2,
+                          useCORS: true
+                      },
+                      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                      pagebreak: {
+                        mode: ['css', 'legacy'],
+                        avoid: ['.no-split']
+                      }
+                  })
+                  .toPdf()
+                  .get('pdf')
+                  .then((pdf: any) => {
+                    const total = pdf.internal.getNumberOfPages();
+
+                    for (let i = 1; i <= total; i++) {
+                      pdf.setPage(i);
+                      
+                      const ps = pdf.internal.pageSize;
+                      const w = ps.getWidth ? ps.getWidth() : ps.width;
+                      const h = ps.getHeight ? ps.getHeight() : ps.height;
+
+                      const text = `SKS-${sessionType}_${sessionDateApproval}, Seite ${i} von ${total}`;
+                      
+                      const textWidth = pdf.getTextWidth(text);
+                      const textHeight = 4;                     
+                      const x = w - 10 - textWidth; 
+                      const y = h - 8;      
+                      pdf.setFillColor(255, 255, 255);        
+                      pdf.rect(x, y - 3, textWidth, textHeight, 'F'); 
+
+                      pdf.setFont('helvetica', 'normal');
+                      pdf.setFontSize(9);
+                      pdf.setTextColor(100);
+
+                      
+                      pdf.text(text, w - 10, h - 8, { align: 'right' });
                     }
-                })
-                .toPdf()
-                .get('pdf')
-                .then((pdf: any) => {
-                  const total = pdf.internal.getNumberOfPages();
-
-                  for (let i = 1; i <= total; i++) {
-                    pdf.setPage(i);
-                    
-                    const ps = pdf.internal.pageSize;
-                    const w = ps.getWidth ? ps.getWidth() : ps.width;
-                    const h = ps.getHeight ? ps.getHeight() : ps.height;
-
-                    const text = `SKS-${sessionType}_${sessionDateApproval}, Seite ${i} von ${total}`;
-                    
-                    const textWidth = pdf.getTextWidth(text);
-                    const textHeight = 4;                     
-                    const x = w - 10 - textWidth; 
-                    const y = h - 8;      
-                    pdf.setFillColor(255, 255, 0);        
-                    pdf.rect(x, y - 3, textWidth, textHeight, 'F'); 
-
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(9);
-                    pdf.setTextColor(100);
-
-                    
-                    pdf.text(text, w - 10, h - 8, { align: 'right' });
-                  }
-                })
-                .save();     
-      // END: Save as PDF
+                  })
+                  .save();     
+                  // END: Save as PDF
+        } catch (error) {          
+          this.snckBar.open("Fehler beim Generieren des Berichts.", "", {
+            duration: 4000
+          });
+        } finally {
+          this.isDataLoading = false;    
+        }
     }    
 
     transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
@@ -487,7 +497,7 @@ export class SessionsComponent implements OnInit {
           sessionDate: first.properties.created.toString() ?? "",
           children: acts.map(act => ({
             id: act.properties.uuid,
-            name: `Bauvorhaben:${act.properties.type} / ${act.properties.section || act.properties.name}`,
+            name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
             isRoadworkProject: true
           }))
         });

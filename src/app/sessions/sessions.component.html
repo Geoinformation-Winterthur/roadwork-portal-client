@@ -25,21 +25,24 @@
       </label>
 
       <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
-      <ag-grid-angular
-        class="ag-theme-alpine"
-        [rowData]="sessionsData"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [masterDetail]="true"
-        [isRowMaster]="isRowMaster"
-        [detailCellRendererParams]="detailCellRendererParams"
-        [detailRowHeight]="320"
-        [detailRowAutoHeight]="false"            
-        [groupAggFiltering]=true             
-        [includeHiddenColumnsInQuickFilter]=true
-        (gridReady)="onGridReady($event)"
-        style="width: 100%; height: 70vh;"
-      >
-      </ag-grid-angular>
+      <div class="grid-overlay" *ngIf="isDataLoading"></div>
+        <ag-grid-angular
+            class="ag-theme-alpine"
+            [rowData]="sessionsData"
+            [columnDefs]="columnDefs"
+            [defaultColDef]="defaultColDef"
+            [masterDetail]="true"
+            [isRowMaster]="isRowMaster"
+            [detailCellRendererParams]="detailCellRendererParams"
+            [detailRowHeight]="320"
+            [detailRowAutoHeight]="false"            
+            [groupAggFiltering]=true             
+            [includeHiddenColumnsInQuickFilter]=true
+            (gridReady)="onGridReady($event)"
+            [attr.inert]="isDataLoading ? '' : null"
+            style="width: 100%; height: 70vh;"
+          >
+        </ag-grid-angular>
+      </div>        
   </div>
 </div>
