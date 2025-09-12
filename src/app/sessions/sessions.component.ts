@@ -292,8 +292,8 @@ export class SessionsComponent implements OnInit {
             const mapped: SessionChild[] = users.map((user) => {              
               const email = (user.mailAddress ?? '').toLowerCase().trim();
               
-              const isPresent = email !== '' && presentSet.has(email);
-              const isDistributionList = email !== '' && distributionListSet.has(email);
+              const isPresent = email !== '' && [...presentSet].some(p => email.startsWith(p));
+              const isDistributionList = email !== '' && [...distributionListSet].some(p => email.startsWith(p));
 
               return {                
                 id: '', 
@@ -343,7 +343,7 @@ export class SessionsComponent implements OnInit {
     this.gridApi?.setQuickFilter(value);
   }
 
-  async generateSessionPDF(id: string, sessionType: string, sessionDateApproval: string, children: any[]): Promise<void> {    
+  async generateSessionPDF(id: string, sessionType: string, sessionDateApproval: string, children: any[]): Promise<void> {        
 
     const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType, children, id);    
     
@@ -362,8 +362,7 @@ export class SessionsComponent implements OnInit {
     const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
     
     const cmToTwips = (cm: number) => Math.round((1440 / 2.54) * cm);
-
-    const MARGIN_CM = 1;
+    
     const margins = {
       top: cmToTwips(2),
       right: cmToTwips(1),
