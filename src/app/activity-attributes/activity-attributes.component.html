@@ -1203,7 +1203,7 @@
                                     <td mat-cell *matCellDef="let need" class="mat-column-earliest">
                                         <span [ngClass]="{
                                               'green-date': isDateWithinConstruction(need?.properties?.finishEarlyTo),
-                                                  'border': calcTimeFactor(need) !== 4
+                                                  'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
                                                 }">
                                             {{ need?.properties?.finishEarlyTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
@@ -1215,7 +1215,7 @@
                                     <td mat-cell *matCellDef="let need" class="mat-column-wish">
                                         <span [ngClass]="{
                                               'green-date': isDateWithinConstruction(need?.properties?.finishOptimumTo),
-                                              'border': calcTimeFactor(need) !== 4
+                                              'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
                                             }">
                                             {{ need?.properties?.finishOptimumTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
@@ -1228,7 +1228,7 @@
                                         <span [ngClass]="{
                                               'red-date':  isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
                                               'green-date': !isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
-                                              'border':    calcTimeFactor(need) !== 4
+                                              'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
                                             }">
                                             {{ need?.properties?.finishLateTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
@@ -1279,7 +1279,7 @@
                                             <p><b>Bedarf</b>: <i>{{assignedRoadWorkNeed.properties.name}}</i></p>
                                             <p>
                                                 Frühester:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                                    [class.border]="!assignedRoadWorkNeed?.properties?.isPrimary && calcTimeFactor(assignedRoadWorkNeed) !== 4"
                                                     [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                     [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
@@ -1289,7 +1289,7 @@
                                             </p>
                                             <p>
                                                 Wunsch:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                                    [class.border]="!assignedRoadWorkNeed?.properties?.isPrimary && calcTimeFactor(assignedRoadWorkNeed) !== 4"
                                                     [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
                                                     [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
@@ -1299,7 +1299,7 @@
                                             </p>
                                             <p>
                                                 Spätester:&nbsp;<span
-                                                    [class.border]="calcTimeFactor(assignedRoadWorkNeed) != 4"
+                                                    [class.border]="!assignedRoadWorkNeed?.properties?.isPrimary && calcTimeFactor(assignedRoadWorkNeed) !== 4"
                                                     [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                     [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
