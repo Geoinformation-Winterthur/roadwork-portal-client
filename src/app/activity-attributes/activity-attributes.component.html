@@ -1105,31 +1105,18 @@
                                         </h4>
                                         <p>
                                             Frühester
-                                            Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                                [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed.properties.finishEarlyTo)"
-                                                [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed.properties.finishEarlyTo)"
-                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{
-                                                roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed?.properties?.finishEarlyTo
-                                                | date:'dd.MM.yyyy' }}
+                                            Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{ roadWorkActivityFeature.properties.finishEarlyTo??primaryNeed?.properties?.finishEarlyTo | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
                                             Wunsch
-                                            Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                                [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed.properties.finishOptimumTo)"
-                                                [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed.properties.finishOptimumTo)"
-                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
-                                                {{
-                                                roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed?.properties?.finishOptimumTo
-                                                | date:'dd.MM.yyyy' }}
+                                            Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                                {{roadWorkActivityFeature.properties.finishOptimumTo??primaryNeed?.properties?.finishOptimumTo | date:'dd.MM.yyyy' }}
                                             </span>
                                         </p>
                                         <p>
-                                            Späteste Inbetriebnahme:&nbsp;<span
-                                                [class.red-date]="isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo??primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                                [class.green-date]="!isFirstDateBefore(roadWorkActivityFeature.properties.finishLateTo??primaryNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                                style="padding: 0.3em;background-color:rgb(240, 240, 240);">
+                                            Späteste Inbetriebnahme:&nbsp;<span style="padding: 0.3em;background-color:rgb(240, 240, 240);">
                                                 {{roadWorkActivityFeature.properties.finishLateTo??primaryNeed?.properties?.finishLateTo
                                                 | date:'dd.MM.yyyy'}}
                                             </span>

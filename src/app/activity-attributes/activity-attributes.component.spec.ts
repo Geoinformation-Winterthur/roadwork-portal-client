@@ -532,5 +532,27 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       .withContext('latest sollte einen Rahmen haben').toBeTrue();
   });
 
+  it('Auslösender Bedarf unter "Zeitangaben: Bedarfserfassung" ist neutral (keine Farben/Rahmen)', async () => {
+    await selectInnerTab('Zeitfaktor');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // Karte "Zeitangaben: Bedarfserfassung" finden
+    const cards = Array.from(fixture.nativeElement.querySelectorAll('mat-card')) as HTMLElement[];
+    const card = cards.find(c =>
+      (c.querySelector('mat-card-title')?.textContent || '').includes('Zeitangaben: Bedarfserfassung')
+    );
+    expect(card).withContext('Karte "Zeitangaben: Bedarfserfassung" nicht gefunden').toBeTruthy();
+
+    // Innerhalb des Blocks die drei Werte-Spans prüfen
+    const spans = Array.from(card!.querySelectorAll('mat-card-content span')) as HTMLElement[];
+    expect(spans.length).withContext('Erwarte mind. 1 Datumspan im Block').toBeGreaterThan(0);
+
+    for (const s of spans) {
+      expect(s.classList.contains('green-date')).withContext('Darf nicht grün sein').toBeFalse();
+      expect(s.classList.contains('red-date')).withContext('Darf nicht rot sein').toBeFalse();
+      expect(s.classList.contains('border')).withContext('Darf keinen Rahmen haben').toBeFalse();
+    }
+  });
 
 });
