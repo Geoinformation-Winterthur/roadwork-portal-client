@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA, LOCALE_ID } from '@angular/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { ActivityAttributesComponent } from './activity-attributes.component';
 import { of } from 'rxjs';
 import { CommonModule, registerLocaleData } from '@angular/common';
@@ -160,7 +161,7 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       declarations: [ActivityAttributesComponent],
       providers: [
         { provide: LOCALE_ID, useValue: 'de-CH' },
-
+        { provide: MAT_DATE_LOCALE, useValue: 'de-CH' },
         { provide: ActivatedRoute, useValue: activatedRouteMock },
         { provide: Router, useValue: routerMock },
         { provide: MatSnackBar, useValue: snackBarMock },
@@ -305,6 +306,27 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     if (cell.classList.contains('border')) return true;
     const span = cell.querySelector('span');
     return !!span && span.classList.contains('border');
+  }
+
+  function getInputByLabelText(labelText: string): HTMLInputElement | null {
+    const fields = fixture.nativeElement.querySelectorAll('mat-form-field');
+    for (const f of Array.from(fields) as HTMLElement[]) {
+      const lbl = f.querySelector('mat-label');
+      if ((lbl?.textContent || '').trim().includes(labelText)) {
+        return f.querySelector('input') as HTMLInputElement | null;
+      }
+    }
+    return null;
+  }
+
+  async function typeInto(el: HTMLInputElement, value: string) {
+    el.value = value;
+    el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    el.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
   }
 
   // ---------- Tests ----------
@@ -553,6 +575,77 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       expect(s.classList.contains('red-date')).withContext('Darf nicht rot sein').toBeFalse();
       expect(s.classList.contains('border')).withContext('Darf keinen Rahmen haben').toBeFalse();
     }
+  });
+
+  it('nutzt manuell eingegebene dd.MM.yyyy-Bauzeiten für die Farb-Logik (Texteingabe)', async () => {
+    await selectInnerTab('Zeitfaktor');
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // 1) "Voraussichtliches Bauende" per TIPPEINGABE setzen: 15.09.2028
+    const endInput = getInputByLabelText('Voraussichtliches Bauende');
+    expect(endInput)
+      .withContext('Datepicker-Eingabe für "Voraussichtliches Bauende" nicht gefunden')
+      .not.toBeNull();
+
+    // MANUELLE Texteingabe – Events bubbled, damit [(ngModel)] und (ngModelChange) feuern
+    endInput!.value = '15.09.2028';
+    endInput!.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+    endInput!.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    endInput!.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // Fallback: Falls NgModel den String im Model belassen hat, manuell normalisieren
+    if (typeof (component.roadWorkActivityFeature!.properties.endOfConstruction as any) === 'string') {
+      component.onDateInputChange('endOfConstruction', component.roadWorkActivityFeature!.properties.endOfConstruction as any);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    // Sicherstellen, dass wirklich ein Date im Model steht
+    expect(component.roadWorkActivityFeature!.properties.endOfConstruction instanceof Date)
+      .withContext('endOfConstruction sollte nach Texteingabe (15.09.2028) ein Date sein')
+      .toBeTrue();
+
+    // Erwartung: APK.latest (01.10.2028) >= Bauende (15.09.2028) -> grün
+    let apkRow = findRowByText('Bedarf APK');
+    expect(apkRow).withContext('Zeile "Bedarf APK" nicht gefunden').not.toBeNull();
+    let latestCell = getCellInRow(apkRow!, 'latest');
+    expect(latestCell).withContext('"latest" fehlt').not.toBeNull();
+    expect(hasClassDeep(latestCell, 'green-date'))
+      .withContext('latest sollte bei Bauende 15.09.2028 grün sein')
+      .toBeTrue();
+
+    // 2) Bauende erneut per TIPPEINGABE auf 31.10.2028 ändern (nach "latest")
+    endInput!.value = '31.10.2028';
+    endInput!.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+    endInput!.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    endInput!.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    // Wieder: falls String im Model, explizit normalisieren
+    if (typeof (component.roadWorkActivityFeature!.properties.endOfConstruction as any) === 'string') {
+      component.onDateInputChange('endOfConstruction', component.roadWorkActivityFeature!.properties.endOfConstruction as any);
+      fixture.detectChanges();
+      await fixture.whenStable();
+      fixture.detectChanges();
+    }
+
+    expect(component.roadWorkActivityFeature!.properties.endOfConstruction instanceof Date)
+      .withContext('endOfConstruction sollte nach Texteingabe (31.10.2028) ein Date sein')
+      .toBeTrue();
+
+    // Erwartung: APK.latest (01.10.2028) < Bauende (31.10.2028) -> rot
+    apkRow = findRowByText('Bedarf APK');
+    latestCell = getCellInRow(apkRow!, 'latest');
+    expect(hasClassDeep(latestCell, 'red-date'))
+      .withContext('latest sollte bei Bauende 31.10.2028 rot sein')
+      .toBeTrue();
   });
 
 });

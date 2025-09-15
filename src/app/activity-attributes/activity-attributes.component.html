@@ -398,7 +398,8 @@
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Baubeginn</mat-label>
                                                     <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
+                                                        [ngModel]="roadWorkActivityFeature.properties.startOfConstruction"
+                                                        (ngModelChange)="onDateInputChange('startOfConstruction', $event)"
                                                         [matDatepicker]="startOfConstructionA"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #startOfConstructionA></mat-datepicker>
@@ -408,7 +409,8 @@
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bauende</mat-label>
                                                     <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
+                                                        [ngModel]="roadWorkActivityFeature.properties.endOfConstruction"
+                                                        (ngModelChange)="onDateInputChange('endOfConstruction', $event)"
                                                         [matDatepicker]="endOfConstructionA"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #endOfConstructionA></mat-datepicker>
@@ -1135,7 +1137,10 @@
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Voraussichtlicher Baubeginn</mat-label>
                                             <input matInput
-                                                [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
+                                                [ngModel]="roadWorkActivityFeature.properties.startOfConstruction"
+                                                (ngModelChange)="onDateInputChange('startOfConstruction', $event)"
+                                                (input)="onTextDateInput('startOfConstruction', $event)"
+                                                (change)="onTextDateInput('startOfConstruction', $event)"
                                                 [matDatepicker]="startOfConstructionB"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                             <mat-datepicker #startOfConstructionB></mat-datepicker>
@@ -1145,7 +1150,10 @@
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Voraussichtliches Bauende</mat-label>
                                             <input matInput
-                                                [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
+                                                [ngModel]="roadWorkActivityFeature.properties.endOfConstruction"
+                                                (ngModelChange)="onDateInputChange('endOfConstruction', $event)"
+                                                       (input)="onTextDateInput('endOfConstruction', $event)"
+                                                       (change)="onTextDateInput('endOfConstruction', $event)"
                                                 [matDatepicker]="endOfConstructionB"
                                                 [min]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">

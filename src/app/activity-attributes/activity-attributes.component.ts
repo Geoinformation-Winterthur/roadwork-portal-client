@@ -2,7 +2,7 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
-import { Component, OnInit, ViewChild, ViewEncapsulation, Optional } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, Optional, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -135,7 +135,7 @@ export class ActivityAttributesComponent implements OnInit {
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService,
-    consultationService: ConsultationService, router: Router,
+    consultationService: ConsultationService, router: Router, private cdr: ChangeDetectorRef,
     snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog) {
     this.activatedRoute = activatedRoute!;
     this.roadWorkActivityService = roadWorkActivityService;
@@ -1035,23 +1035,62 @@ export class ActivityAttributesComponent implements OnInit {
     this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
   }
 
-  /** ISO- oder Date-Werte sicher in ein lokales Datum (12:00) umwandeln. */
-  private coerceDate(v?: string | Date | null): Date | undefined {
+  // robustes Parsen, inkl. dd.MM.yyyy
+  private parseAnyDate(v: string | Date | null | undefined): Date | undefined {
     if (!v) return undefined;
     if (v instanceof Date) return new Date(v.getFullYear(), v.getMonth(), v.getDate(), 12, 0, 0, 0);
-    const s = String(v);
-    // erwartet "YYYY-MM-DD" oder "YYYY-MM-DDTHH:MM:SS"
+    const s = String(v).trim();
+
+    // dd.MM.yyyy
+    const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(s);
+    if (m) {
+      const dd = +m[1], mm = +m[2], yyyy = +m[3];
+      return new Date(yyyy, mm - 1, dd, 12, 0, 0, 0);
+    }
+
+    // ISO yyyy-MM-dd[...]
     const [ymd] = s.split('T');
-    const [y, m, d] = ymd.split('-').map(Number);
-    if (!y || !m || !d) return undefined;
-    return new Date(y, m - 1, d, 12, 0, 0, 0);
+    const [y, mth, d] = (ymd || '').split('-').map(n => +n);
+    if (y && mth && d) return new Date(y, mth - 1, d, 12, 0, 0, 0);
+
+    return undefined;
   }
 
-  hasConstructionDates(): boolean {
-    return !!(
-      this.roadWorkActivityFeature?.properties?.startOfConstruction &&
-      this.roadWorkActivityFeature?.properties?.endOfConstruction
-    );
+  // bei Texteingabe in Datepicker-Feldern auf Date normalisieren
+  onDateInputChange(
+    prop: 'startOfConstruction' | 'endOfConstruction',
+    value: any
+  ) {
+    if (!this.roadWorkActivityFeature) return;
+    const parsed = this.parseAnyDate(value);
+    if (!parsed) return;
+
+    // IMMUTABLE UPDATE → triggert OnPush/Embedded-Views zuverlässig
+    const nextProps = {
+      ...this.roadWorkActivityFeature.properties,
+      [prop]: parsed,
+    };
+    this.roadWorkActivityFeature = {
+      ...this.roadWorkActivityFeature,
+      properties: nextProps,
+    };
+
+    // sichert Re-Render in Material-Table/OnPush
+    this.cdr.markForCheck();
+  }
+
+  // reagiert auf native (input)/(change) Events und nutzt dein bestehendes Parsing
+  onTextDateInput(
+    prop: 'startOfConstruction' | 'endOfConstruction',
+    ev: Event
+  ) {
+    const value = (ev.target as HTMLInputElement)?.value ?? '';
+    this.onDateInputChange(prop, value);
+  }
+
+  /** ISO- oder Date-Werte sicher in ein lokales Datum (12:00) umwandeln. */
+  private coerceDate(v?: string | Date | null): Date | undefined {
+    return this.parseAnyDate(v ?? undefined);
   }
 
 }
