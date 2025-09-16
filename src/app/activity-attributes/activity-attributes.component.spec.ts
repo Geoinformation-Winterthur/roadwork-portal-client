@@ -505,7 +505,7 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     }
   });
 
-  it('Fallback: ohne Start/Ende -> earliest/wish ohne Grün, dennoch Border; latest wird grün markiert', async () => {
+  it('Fallback: ohne Start/Ende -> earliest/wish ohne Grün, dennoch Border; latest ohne Färbung (neutral), aber mit Border', async () => {
     // Setup: Bauzeitraum entfernen
     component.roadWorkActivityFeature = {
       properties: {
