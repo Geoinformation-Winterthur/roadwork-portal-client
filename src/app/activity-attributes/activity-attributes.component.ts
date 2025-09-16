@@ -730,23 +730,40 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  isFirstDateBefore(firstDate?: Date | string, secondDate?: Date | string): boolean {
-    const a = this.coerceDate(firstDate);
-    const b = this.coerceDate(secondDate);
-    if (!a || !b) return false;                // ohne beide Datumswerte: keine "rot"-Markierung
-    return a.getTime() < b.getTime();          // strikt "<"
+  isFirstDateBefore(firstDate?: Date, secondDate?: Date): boolean {
+    if (firstDate && secondDate) {
+      let firstDateObj = new Date(firstDate);
+      let secondDateObj = new Date(secondDate);
+      return firstDateObj.getTime() < secondDateObj.getTime();
+    }
+    return false;
   }
 
   calcTimeFactor(compareNeed: RoadWorkNeedFeature): number {
     return TimeFactorHelper.calcTimeFactor(compareNeed, this.primaryNeed);
   }
 
-  isDateWithinConstruction(dateToCheck?: Date | string): boolean {
-    const d = this.coerceDate(dateToCheck);
-    const start = this.coerceDate(this.roadWorkActivityFeature?.properties?.startOfConstruction);
-    const end = this.coerceDate(this.roadWorkActivityFeature?.properties?.endOfConstruction);
-    if (!d || !start || !end) return false;    // nur färben, wenn alle Datumswerte vorhanden
-    return d.getTime() >= start.getTime() && d.getTime() <= end.getTime(); // inklusiv
+  isDateWithinConstruction(dateToCheck?: Date): boolean {
+    const p = this.roadWorkActivityFeature?.properties;
+    const start = p?.startOfConstruction;
+    const end = p?.endOfConstruction;
+    if (!dateToCheck || !start || !end) return false; // ohne Zeitraum NICHT grün
+
+    const s = new Date(start);
+    const e = new Date(end);
+    const d = new Date(dateToCheck);
+
+    // robust gegen Zeitzonen:
+    s.setHours(0, 0, 0, 0);
+    e.setHours(23, 59, 59, 999);
+    d.setHours(12, 0, 0, 0);
+
+    return d >= s && d <= e;
+  }
+
+  hasConstructionRange(): boolean {
+    const p = this.roadWorkActivityFeature?.properties;
+    return !!(p?.startOfConstruction && p?.endOfConstruction);
   }
 
   get primaryNeed(): RoadWorkNeedFeature {
@@ -1033,64 +1050,6 @@ export class ActivityAttributesComponent implements OnInit {
     this._updateDueDate();
     this.editActivityMap?.refresh();
     this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
-  }
-
-  // robustes Parsen, inkl. dd.MM.yyyy
-  private parseAnyDate(v: string | Date | null | undefined): Date | undefined {
-    if (!v) return undefined;
-    if (v instanceof Date) return new Date(v.getFullYear(), v.getMonth(), v.getDate(), 12, 0, 0, 0);
-    const s = String(v).trim();
-
-    // dd.MM.yyyy
-    const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(s);
-    if (m) {
-      const dd = +m[1], mm = +m[2], yyyy = +m[3];
-      return new Date(yyyy, mm - 1, dd, 12, 0, 0, 0);
-    }
-
-    // ISO yyyy-MM-dd[...]
-    const [ymd] = s.split('T');
-    const [y, mth, d] = (ymd || '').split('-').map(n => +n);
-    if (y && mth && d) return new Date(y, mth - 1, d, 12, 0, 0, 0);
-
-    return undefined;
-  }
-
-  // bei Texteingabe in Datepicker-Feldern auf Date normalisieren
-  onDateInputChange(
-    prop: 'startOfConstruction' | 'endOfConstruction',
-    value: any
-  ) {
-    if (!this.roadWorkActivityFeature) return;
-    const parsed = this.parseAnyDate(value);
-    if (!parsed) return;
-
-    // IMMUTABLE UPDATE → triggert OnPush/Embedded-Views zuverlässig
-    const nextProps = {
-      ...this.roadWorkActivityFeature.properties,
-      [prop]: parsed,
-    };
-    this.roadWorkActivityFeature = {
-      ...this.roadWorkActivityFeature,
-      properties: nextProps,
-    };
-
-    // sichert Re-Render in Material-Table/OnPush
-    this.cdr.markForCheck();
-  }
-
-  // reagiert auf native (input)/(change) Events und nutzt dein bestehendes Parsing
-  onTextDateInput(
-    prop: 'startOfConstruction' | 'endOfConstruction',
-    ev: Event
-  ) {
-    const value = (ev.target as HTMLInputElement)?.value ?? '';
-    this.onDateInputChange(prop, value);
-  }
-
-  /** ISO- oder Date-Werte sicher in ein lokales Datum (12:00) umwandeln. */
-  private coerceDate(v?: string | Date | null): Date | undefined {
-    return this.parseAnyDate(v ?? undefined);
   }
 
 }

@@ -398,8 +398,7 @@
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Baubeginn</mat-label>
                                                     <input matInput
-                                                        [ngModel]="roadWorkActivityFeature.properties.startOfConstruction"
-                                                        (ngModelChange)="onDateInputChange('startOfConstruction', $event)"
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
                                                         [matDatepicker]="startOfConstructionA"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #startOfConstructionA></mat-datepicker>
@@ -409,8 +408,7 @@
                                                 <mat-form-field style="margin:10px;">
                                                     <mat-label>Bauende</mat-label>
                                                     <input matInput
-                                                        [ngModel]="roadWorkActivityFeature.properties.endOfConstruction"
-                                                        (ngModelChange)="onDateInputChange('endOfConstruction', $event)"
+                                                        [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
                                                         [matDatepicker]="endOfConstructionA"
                                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                     <mat-datepicker #endOfConstructionA></mat-datepicker>
@@ -1137,10 +1135,7 @@
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Voraussichtlicher Baubeginn</mat-label>
                                             <input matInput
-                                                [ngModel]="roadWorkActivityFeature.properties.startOfConstruction"
-                                                (ngModelChange)="onDateInputChange('startOfConstruction', $event)"
-                                                (input)="onTextDateInput('startOfConstruction', $event)"
-                                                (change)="onTextDateInput('startOfConstruction', $event)"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [matDatepicker]="startOfConstructionB"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                             <mat-datepicker #startOfConstructionB></mat-datepicker>
@@ -1150,10 +1145,7 @@
                                         <mat-form-field style="margin:10px;">
                                             <mat-label>Voraussichtliches Bauende</mat-label>
                                             <input matInput
-                                                [ngModel]="roadWorkActivityFeature.properties.endOfConstruction"
-                                                (ngModelChange)="onDateInputChange('endOfConstruction', $event)"
-                                                       (input)="onTextDateInput('endOfConstruction', $event)"
-                                                       (change)="onTextDateInput('endOfConstruction', $event)"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
                                                 [matDatepicker]="endOfConstructionB"
                                                 [min]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
@@ -1197,8 +1189,8 @@
                                     <th mat-header-cell *matHeaderCellDef> Frühester </th>
                                     <td mat-cell *matCellDef="let need" class="mat-column-earliest">
                                         <span [ngClass]="{
-                                              'green-date': isDateWithinConstruction(need?.properties?.finishEarlyTo),
-                                                  'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
+                                                    'green-date': hasConstructionRange() && isDateWithinConstruction(need?.properties?.finishEarlyTo),
+                                                    'border': !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
                                                 }">
                                             {{ need?.properties?.finishEarlyTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
@@ -1209,9 +1201,9 @@
                                     <th mat-header-cell *matHeaderCellDef> Wunsch </th>
                                     <td mat-cell *matCellDef="let need" class="mat-column-wish">
                                         <span [ngClass]="{
-                                              'green-date': isDateWithinConstruction(need?.properties?.finishOptimumTo),
-                                              'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
-                                            }">
+                                          'green-date': hasConstructionRange() && isDateWithinConstruction(need?.properties?.finishOptimumTo),
+                                          'border': !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
+                            }">
                                             {{ need?.properties?.finishOptimumTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
                                     </td>
@@ -1221,10 +1213,10 @@
                                     <th mat-header-cell *matHeaderCellDef> Spätester </th>
                                     <td mat-cell *matCellDef="let need" class="mat-column-latest">
                                         <span [ngClass]="{
-                                              'red-date':  isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
-                                              'green-date': !isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
-                                              'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
-                                            }">
+                                          'red-date':  hasConstructionRange() && isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
+                                          'green-date': hasConstructionRange() && !isFirstDateBefore(need?.properties?.finishLateTo, roadWorkActivityFeature?.properties?.endOfConstruction),
+                                          'border':    !need?.properties?.isPrimary && calcTimeFactor(need) !== 4
+                                        }">
                                             {{ need?.properties?.finishLateTo | date:'dd.MM.yyyy':'':'de-CH' }}
                                         </span>
                                     </td>
@@ -1275,8 +1267,8 @@
                                             <p>
                                                 Frühester:&nbsp;<span
                                                     [class.border]="!assignedRoadWorkNeed?.properties?.isPrimary && calcTimeFactor(assignedRoadWorkNeed) !== 4"
-                                                    [class.green-date]="isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
-                                                    [class.red-date]="!isDateWithinConstruction(roadWorkActivityFeature.properties.finishEarlyTo)"
+                                                    [class.green-date]="hasConstructionRange() && isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
+                                                    [class.red-date]="hasConstructionRange() && !isDateWithinConstruction(assignedRoadWorkNeed.properties.finishEarlyTo)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
                                                     {{ assignedRoadWorkNeed.properties.finishEarlyTo | date:'dd.MM.yyyy'
                                                     }}
@@ -1285,8 +1277,8 @@
                                             <p>
                                                 Wunsch:&nbsp;<span
                                                     [class.border]="!assignedRoadWorkNeed?.properties?.isPrimary && calcTimeFactor(assignedRoadWorkNeed) !== 4"
-                                                    [class.green-date]="isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
-                                                    [class.red-date]="!isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    [class.green-date]="hasConstructionRange() && isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
+                                                    [class.red-date]="hasConstructionRange() && !isDateWithinConstruction(assignedRoadWorkNeed.properties.finishOptimumTo)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
                                                     {{ assignedRoadWorkNeed.properties.finishOptimumTo |
                                                     date:'dd.MM.yyyy' }}
@@ -1295,8 +1287,8 @@
                                             <p>
                                                 Spätester:&nbsp;<span
                                                     [class.border]="!assignedRoadWorkNeed?.properties?.isPrimary && calcTimeFactor(assignedRoadWorkNeed) !== 4"
-                                                    [class.red-date]="isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
-                                                    [class.green-date]="!isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                    [class.red-date]="hasConstructionRange() && isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
+                                                    [class.green-date]="hasConstructionRange() && !isFirstDateBefore(assignedRoadWorkNeed.properties.finishLateTo, roadWorkActivityFeature.properties.endOfConstruction)"
                                                     style="padding: 0.3em;background-color:rgb(240, 240, 240);">
                                                     {{assignedRoadWorkNeed.properties.finishLateTo | date:'dd.MM.yyyy'}}
                                                 </span>

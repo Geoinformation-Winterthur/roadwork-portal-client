@@ -3,7 +3,7 @@
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  */
  import { BrowserModule } from '@angular/platform-browser';
- import { LOCALE_ID, NgModule } from '@angular/core';
+ import { NgModule } from '@angular/core';
  
  import { HttpClientModule } from '@angular/common/http';
  import { AppRoutingModule } from './app-routing.module';
@@ -26,7 +26,6 @@
  import { MatRadioModule } from '@angular/material/radio';
  import { MatButtonToggleModule } from '@angular/material/button-toggle';
  import { MatDatepickerModule } from '@angular/material/datepicker';
- import { MatNativeDateModule } from '@angular/material/core';
  import { MatSelectModule } from '@angular/material/select';
  import { MatSlideToggleModule } from '@angular/material/slide-toggle';
  import { MatExpansionModule } from '@angular/material/expansion';
@@ -45,6 +44,8 @@ import { UsersComponent } from "./users/users.component";
  import { ServiceWorkerModule } from '@angular/service-worker';
  import { environment } from '../environments/environment';
  import { LoginComponent } from './login/login.component';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
  
  import { JwtModule } from '@auth0/angular-jwt';
  import { ChooseNeedComponent } from './choose-need/choose-need.component';
@@ -95,6 +96,16 @@ import { TextFieldModule } from '@angular/cdk/text-field';
    }
  }
 
+export const CH_DATE_FORMATS = {
+  parse: { dateInput: 'DD.MM.YYYY' },
+  display: {
+    dateInput: 'DD.MM.YYYY',
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'DD.MM.YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
  registerLocaleData(deChLocale, "de-CH");
  
  @NgModule({
@@ -140,6 +151,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
      HttpClientModule,
      MatButtonModule,
      MatToolbarModule,
+     MatMomentDateModule,
      MatIconModule,
      MatListModule,
      MatCardModule,
@@ -159,7 +171,6 @@ import { TextFieldModule } from '@angular/cdk/text-field';
      FormsModule,
      FlexLayoutModule,
      MatDatepickerModule,
-     MatNativeDateModule,
      MatSelectModule,
      MatGridListModule,
      MatAutocompleteModule,
@@ -183,7 +194,8 @@ import { TextFieldModule } from '@angular/cdk/text-field';
       TextFieldModule
    ],
    providers: [UserService, MatDatepickerModule,
-     {provide: LOCALE_ID, useValue: 'de-CH'}
+    { provide: MAT_DATE_FORMATS, useValue: CH_DATE_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'de-CH' }
    ],
    bootstrap: [AppComponent]
  })

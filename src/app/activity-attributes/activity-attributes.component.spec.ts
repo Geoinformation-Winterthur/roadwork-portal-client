@@ -1,8 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA, LOCALE_ID } from '@angular/core';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { ActivityAttributesComponent } from './activity-attributes.component';
-import { of } from 'rxjs';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import localeDeCh from '@angular/common/locales/de-CH';
 
@@ -21,16 +18,23 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+
+// Adapter & Formate
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+
+// Komponente
+import { ActivityAttributesComponent } from './activity-attributes.component';
+import { of } from 'rxjs';
 
 // Services – Pfade analog zur Komponente
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
@@ -81,6 +85,39 @@ function need(
       noteOfAreaManager: ''
     }
   } as any;
+}
+
+// Konsistente CH-Formate wie in der App
+export const CH_DATE_FORMATS = {
+  parse: { dateInput: 'DD.MM.YYYY' },
+  display: {
+    dateInput: 'DD.MM.YYYY',
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'DD.MM.YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
+// Prüft, dass ein Wert Date-ähnlich ist (oder parsebar) und inhaltlich passt
+function expectDateLikeToEqual(value: any, expectedDdMmYyyy: string) {
+  const adapter = TestBed.inject<DateAdapter<any>>(DateAdapter);
+
+  const parsed = adapter.isDateInstance(value)
+    ? value
+    : adapter.parse(String(value), CH_DATE_FORMATS.parse.dateInput);
+
+  expect(adapter.isDateInstance(parsed))
+    .withContext('Wert ist kein Date-ähnliches Objekt nach Parsing')
+    .toBeTrue();
+
+  expect(adapter.isValid(parsed))
+    .withContext('Parsed Date ist ungültig')
+    .toBeTrue();
+
+  const formatted = adapter.format(parsed, CH_DATE_FORMATS.display.dateInput);
+  expect(formatted)
+    .withContext(`Sollte ${expectedDdMmYyyy} sein`)
+    .toBe(expectedDdMmYyyy);
 }
 
 registerLocaleData(localeDeCh);
@@ -149,7 +186,7 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
         MatInputModule,
         MatCheckboxModule,
         MatDatepickerModule,
-        MatNativeDateModule,
+        MatMomentDateModule,
         MatIconModule,
         MatButtonModule,
         MatCardModule,
@@ -162,6 +199,8 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       providers: [
         { provide: LOCALE_ID, useValue: 'de-CH' },
         { provide: MAT_DATE_LOCALE, useValue: 'de-CH' },
+        { provide: MAT_DATE_FORMATS, useValue: CH_DATE_FORMATS },
+
         { provide: ActivatedRoute, useValue: activatedRouteMock },
         { provide: Router, useValue: routerMock },
         { provide: MatSnackBar, useValue: snackBarMock },
@@ -267,19 +306,11 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     ) as HTMLElement | null;
   }
 
-  // optionale Helfer: Klasse "border" an span ODER Cell?
-  function hasBorder(el: HTMLElement | null): boolean {
-    if (!el) return false;
-    if (el.classList.contains('border')) return true;
-    const span = el.querySelector('span');
+  function hasBorderDeep(cell: HTMLElement | null): boolean {
+    if (!cell) return false;
+    if (cell.classList.contains('border')) return true;
+    const span = cell.querySelector('span');
     return !!span && span.classList.contains('border');
-  }
-
-  function hasClass(el: HTMLElement | null, cls: string): boolean {
-    if (!el) return false;
-    if (el.classList.contains(cls)) return true;
-    const span = el.querySelector('span');
-    return !!span && span.classList.contains(cls);
   }
 
   function getColumnCells(column: string): HTMLElement[] {
@@ -295,19 +326,6 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     return Array.from(nodes) as HTMLElement[];
   }
 
-  function getCellSpan(cell: HTMLElement | null): HTMLElement | null {
-    if (!cell) return null;
-    // häufig direkt ein <span> im Cell – sonst beliebiges Descendant-Span
-    return (cell.querySelector('span') ?? cell);
-  }
-
-  function hasBorderDeep(cell: HTMLElement | null): boolean {
-    if (!cell) return false;
-    if (cell.classList.contains('border')) return true;
-    const span = cell.querySelector('span');
-    return !!span && span.classList.contains('border');
-  }
-
   function getInputByLabelText(labelText: string): HTMLInputElement | null {
     const fields = fixture.nativeElement.querySelectorAll('mat-form-field');
     for (const f of Array.from(fields) as HTMLElement[]) {
@@ -317,16 +335,6 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       }
     }
     return null;
-  }
-
-  async function typeInto(el: HTMLInputElement, value: string) {
-    el.value = value;
-    el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
-    el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-    el.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
   }
 
   // ---------- Tests ----------
@@ -376,11 +384,11 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     expect(aewLatest).withContext('latest-Zelle in "Bedarf AEW" fehlt').not.toBeNull();
     expect(apkLatest).withContext('latest-Zelle in "Bedarf APK" fehlt').not.toBeNull();
 
-    expect(aewLatest!.classList.contains('red-date') || aewLatest!.querySelector('span')?.classList.contains('red-date'))
+    expect(hasClassDeep(aewLatest, 'red-date'))
       .withContext('AEW latest sollte rot sein')
       .toBeTrue();
 
-    expect(apkLatest!.classList.contains('red-date') || apkLatest!.querySelector('span')?.classList.contains('red-date'))
+    expect(hasClassDeep(apkLatest, 'red-date'))
       .withContext('APK latest sollte rot sein')
       .toBeTrue();
   });
@@ -397,13 +405,11 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       const latestCell = getCellInRow(row!, 'latest');
       expect(latestCell).withContext(`"latest" in "${name}" fehlt`).not.toBeNull();
 
-      const latestSpan = getCellSpan(latestCell);
-      expect(latestSpan?.classList.contains('green-date'))
+      expect(hasClassDeep(latestCell, 'green-date'))
         .withContext(`${name} latest sollte grün sein`)
         .toBeTrue();
     }
   });
-
 
   it('setzt die "border"-Klasse, wenn calcTimeFactor(...) != 4 (AEW/EC/KuBa/APK) und NICHT beim Primärbedarf', async () => {
     await selectInnerTab('Zeitfaktor');
@@ -430,7 +436,6 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
 
     // Negativ: Primärbedarf (TF == 4) => KEIN Rahmen
     const primaryRow = findRowByText('Auslösend');
-    // Falls Primärzeile nicht explizit angezeigt wird, diese Negativprobe einfach weglassen.
     if (primaryRow) {
       const earliestP = getCellInRow(primaryRow, 'earliest');
       const wishP = getCellInRow(primaryRow, 'wish');
@@ -456,7 +461,7 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
 
       expect(hasClassDeep(latest, 'red-date'))
         .withContext(`${name} latest sollte rot sein`).toBeTrue();
-      expect(hasClassDeep(latest, 'border'))
+      expect(hasBorderDeep(latest))
         .withContext(`${name} latest sollte einen Rahmen haben`).toBeTrue();
     }
 
@@ -469,7 +474,7 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
 
       expect(hasClassDeep(latest, 'green-date'))
         .withContext(`${name} latest sollte grün sein`).toBeTrue();
-      expect(hasClassDeep(latest, 'border'))
+      expect(hasBorderDeep(latest))
         .withContext(`${name} latest sollte einen Rahmen haben`).toBeTrue();
     }
   });
@@ -493,15 +498,13 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       expect(hasClassDeep(wish, 'green-date'))
         .withContext(`${name} wish sollte grün sein`).toBeTrue();
 
-      expect(hasClassDeep(earliest, 'border'))
+      expect(hasBorderDeep(earliest))
         .withContext(`${name} earliest sollte einen Rahmen haben`).toBeTrue();
-      expect(hasClassDeep(wish, 'border'))
+      expect(hasBorderDeep(wish))
         .withContext(`${name} wish sollte einen Rahmen haben`).toBeTrue();
     }
   });
 
-  // Fallback-Szenario wie im oberen Block des Screenshots:
-  // "Achtung: voraussichtlicher Baubeginn/Bauende sind noch nicht eingetragen!"
   it('Fallback: ohne Start/Ende -> earliest/wish ohne Grün, dennoch Border; latest wird grün markiert', async () => {
     // Setup: Bauzeitraum entfernen
     component.roadWorkActivityFeature = {
@@ -542,15 +545,20 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       .withContext('wish sollte ohne Bauzeitraum NICHT grün sein').toBeFalse();
 
     // Border bleibt, weil TF ≠ 4
-    expect(hasClassDeep(earliest, 'border'))
+    expect(hasBorderDeep(earliest))
       .withContext('earliest sollte trotz fehlendem Bauzeitraum einen Rahmen haben').toBeTrue();
-    expect(hasClassDeep(wish, 'border'))
+    expect(hasBorderDeep(wish))
       .withContext('wish sollte trotz fehlendem Bauzeitraum einen Rahmen haben').toBeTrue();
 
-    // latest wird grün (aktuelles Verhalten: kein Vergleich -> nicht "vor" Bauende)
+    expect(hasClassDeep(latest, 'red-date'))
+      .withContext('latest sollte ohne Bauzeitraum NICHT rot sein').toBeFalse();
     expect(hasClassDeep(latest, 'green-date'))
-      .withContext('latest sollte ohne Bauzeitraum grün sein (aktuelles Verhalten)').toBeTrue();
+      .withContext('latest sollte ohne Bauzeitraum NICHT grün sein').toBeFalse();
+
+      // Border bleibt, weil TF != 4
     expect(hasClassDeep(latest, 'border'))
+      .withContext('latest sollte einen Rahmen haben').toBeTrue();
+    expect(hasBorderDeep(latest))
       .withContext('latest sollte einen Rahmen haben').toBeTrue();
   });
 
@@ -588,7 +596,6 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       .withContext('Datepicker-Eingabe für "Voraussichtliches Bauende" nicht gefunden')
       .not.toBeNull();
 
-    // MANUELLE Texteingabe – Events bubbled, damit [(ngModel)] und (ngModelChange) feuern
     endInput!.value = '15.09.2028';
     endInput!.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
     endInput!.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
@@ -597,18 +604,11 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    // Fallback: Falls NgModel den String im Model belassen hat, manuell normalisieren
-    if (typeof (component.roadWorkActivityFeature!.properties.endOfConstruction as any) === 'string') {
-      component.onDateInputChange('endOfConstruction', component.roadWorkActivityFeature!.properties.endOfConstruction as any);
-      fixture.detectChanges();
-      await fixture.whenStable();
-      fixture.detectChanges();
-    }
-
-    // Sicherstellen, dass wirklich ein Date im Model steht
-    expect(component.roadWorkActivityFeature!.properties.endOfConstruction instanceof Date)
-      .withContext('endOfConstruction sollte nach Texteingabe (15.09.2028) ein Date sein')
-      .toBeTrue();
+    // Statt instanceof Date -> parsebare & korrekte Repräsentation prüfen
+    expectDateLikeToEqual(
+      component.roadWorkActivityFeature!.properties.endOfConstruction,
+      '15.09.2028'
+    );
 
     // Erwartung: APK.latest (01.10.2028) >= Bauende (15.09.2028) -> grün
     let apkRow = findRowByText('Bedarf APK');
@@ -619,7 +619,7 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
       .withContext('latest sollte bei Bauende 15.09.2028 grün sein')
       .toBeTrue();
 
-    // 2) Bauende erneut per TIPPEINGABE auf 31.10.2028 ändern (nach "latest")
+    // 2) Bauende erneut auf 31.10.2028 ändern
     endInput!.value = '31.10.2028';
     endInput!.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
     endInput!.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
@@ -628,17 +628,10 @@ describe('ActivityAttributesComponent – Farblogik in MatTable', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    // Wieder: falls String im Model, explizit normalisieren
-    if (typeof (component.roadWorkActivityFeature!.properties.endOfConstruction as any) === 'string') {
-      component.onDateInputChange('endOfConstruction', component.roadWorkActivityFeature!.properties.endOfConstruction as any);
-      fixture.detectChanges();
-      await fixture.whenStable();
-      fixture.detectChanges();
-    }
-
-    expect(component.roadWorkActivityFeature!.properties.endOfConstruction instanceof Date)
-      .withContext('endOfConstruction sollte nach Texteingabe (31.10.2028) ein Date sein')
-      .toBeTrue();
+    expectDateLikeToEqual(
+      component.roadWorkActivityFeature!.properties.endOfConstruction,
+      '31.10.2028'
+    );
 
     // Erwartung: APK.latest (01.10.2028) < Bauende (31.10.2028) -> rot
     apkRow = findRowByText('Bedarf APK');
