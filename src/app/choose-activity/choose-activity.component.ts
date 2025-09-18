@@ -1,6 +1,12 @@
 /**
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ *
+ * @file ChooseActivityComponent
+ * @description Angular component that lists and filters "road work activities" in an AG Grid table.
+ * It loads activities, enriches them with area-management metadata, and provides helper methods
+ * for due-date coloring, quarter calculation, and unique manager lists. All comments added without
+ * modifying any executable code.
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
@@ -24,36 +30,63 @@ import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 })
 export class ChooseActivityComponent implements OnInit {
 
+  /** Flag to show loading indicators while async data is being fetched. */
   isDataLoading: boolean = false;
 
+  /** Full data set of activity features fetched from the backend. */
   roadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
+  /** Optional filtered subset used by the grid (currently not utilized). */
   roadWorkActivityFeaturesFiltered: RoadWorkActivityFeature[] = [];
 
+  /** Controls visibility of the filter panel (if present in template). */
   filterPanelOpen: boolean = false;
 
+  /** Free-text filter: activity name. */
   chosenActivityName: string = "";
+  /** Optional filter for "from year" constraint. */
   chosenActivityYearFrom?: number;
+  /** Toggle to restrict to "my activities". */
   filterMyActivities?: boolean = false;
+  /** Optional filter for a due date. */
   filterDueDate?: Date;
+  /** Optional filter for planned start of construction. */
   filterStartOfConstruction?: Date;
+  /** Optional filter for SKS evaluation value. */
   filterEvaluationSks?: number;
+  /** Dropdown control for filtering by area manager. */
   filterAreaManagerControl: FormControl = new FormControl();
+  /** Dropdown control for filtering by project manager. */
   filterProjectManagerControl: FormControl = new FormControl();
 
+  /**
+   * Status codes used to filter activities. The codes map to human-readable labels
+   * in the grid column definition below.
+   */
   statusFilterCodes: string[] = ["review", "inconsult1", "inconsult2", "verified1", "verified2", "reporting", "coordinated", "prestudy"];
 
+  /** Column keys to show (kept for reference if using Angular Material tables). */
   tableDisplayedColumns: string[] = ['status', 'area_man', 'title', 'involved', 'lead', 'project_man',
     'realisation_date', 'due_date', 'link_cityplan', 'link_wwg'];
 
+  /** Currently logged-in user (loaded in ngOnInit). */
   user: User = new User();
+  /** Reference to the user service (DI). */
   userService: UserService;
 
+  /** Injected services used within this component. */
   private roadWorkActivityService: RoadWorkActivityService;
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
 
+  /** AG Grid locale strings (German). */
   localeText = AG_GRID_LOCALE_DE;
 
+  /**
+   * Default column definition applied to all AG Grid columns unless overridden.
+   * - sortable/resizable for UX
+   * - text filter by default
+   * - only the filter menu tab is shown
+   */
   defaultColDef: ColDef = {
     sortable: true,    
     resizable: true,    
@@ -61,7 +94,12 @@ export class ChooseActivityComponent implements OnInit {
     menuTabs: ['filterMenuTab'],
   };
 
+  /**
+   * Column definitions for the activity list. Individual columns use valueGetters
+   * and cellRenderers to map nested properties and render chips/links.
+   */
   columnDefs: ColDef[] = [
+    // --- Status column: maps internal status codes to labeled colored badges.
     {
       headerName: 'Status',
       field: 'statusLabel',
@@ -119,6 +157,7 @@ export class ChooseActivityComponent implements OnInit {
       }
     }
     ,
+    // --- Area Manager (GM): shows first and last name or blank.
     {
       headerName: 'GM',
       valueGetter: ({ data }) => {
@@ -129,6 +168,7 @@ export class ChooseActivityComponent implements OnInit {
       sortable: true,
       filter: true
     },
+    // --- Title/Name column: renders a link to the activity details; tooltip includes section.
     {
       headerName: 'Bezeichnung',
       minWidth: 400, 
@@ -153,6 +193,7 @@ export class ChooseActivityComponent implements OnInit {
       sortable: true,
       filter: true
     },
+    // --- Involved organizations: flattens involvedUsers to a comma-separated org abbreviation list.
     {
       headerName: 'Mitwirkende',
       field: 'properties', 
@@ -179,12 +220,14 @@ export class ChooseActivityComponent implements OnInit {
       sortable: true,
       filter: true
     },
+    // --- Lead of realization: shows the activity kind (domain-specific label).
     {
       headerName: 'Lead Realisierung',
       valueGetter: ({ data }) => data?.properties?.kind?.name ?? '',
       sortable: true,
       filter: true
     },
+    // --- Project Manager (PL): user full name or blank.
     {
       headerName: 'PL',
       valueGetter: ({ data }) => {
@@ -194,6 +237,7 @@ export class ChooseActivityComponent implements OnInit {
       sortable: true,
       filter: true
     },
+    // --- Planned realization time: rendered as quarter and year (e.g., "2.Q 2026").
     {
       headerName: 'Voraussichtliche Realisierung',
       width:230,
@@ -207,6 +251,7 @@ export class ChooseActivityComponent implements OnInit {
       sortable: true,
       filter: true
     },
+   // --- Due date: displays a mat-chip with color based on urgency and supports date filtering.
    {
       headerName: 'Fälligkeit',
       width: 130,
@@ -236,6 +281,7 @@ export class ChooseActivityComponent implements OnInit {
         closeOnApply: true
       }
     },
+    // --- Stadtplan link: builds an external URL using first coordinate pair if available.
     {
       headerName: 'Stadtplan-Link',
       sortable: false,
@@ -249,6 +295,7 @@ export class ChooseActivityComponent implements OnInit {
         return `<a href="${href}" target="_blank">Im Stadtplan</a>`;
       }
     },
+    // --- WinWebGIS link: intranet URL using the same coordinate heuristic.
     {
       headerName: 'WinWebGIS-Link',
       sortable: false,
@@ -265,8 +312,16 @@ export class ChooseActivityComponent implements OnInit {
   ];
 
 
+  /** AG Grid instance reference for manual refresh calls. */
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
+  /**
+   * Constructor with Angular DI for required services.
+   * - roadWorkActivityService: loads activities
+   * - userService: resolves current user and DB user data
+   * - managementAreaService: enriches each activity with area manager info
+   * - snckBar: shows transient error/info messages
+   */
   constructor(roadWorkActivityService: RoadWorkActivityService,
     userService: UserService, managementAreaService: ManagementAreaService,
     snckBar: MatSnackBar) {
@@ -277,6 +332,11 @@ export class ChooseActivityComponent implements OnInit {
     this.isDataLoading = true;
   }
 
+  /**
+   * Lifecycle hook: initializes component state by loading activities and the current user.
+   * Displays a snack bar on user-related system errors. Activity loading continues
+   * independently (see getAllActivities).
+   */
   ngOnInit(): void {
     this.getAllActivities();
 
@@ -304,6 +364,13 @@ export class ChooseActivityComponent implements OnInit {
       });
   }
 
+  /**
+   * Loads all road work activities, converts their geometry to a RoadworkPolygon instance,
+   * requests the intersecting management area for each, and attaches the area's manager to the activity.
+   * After data is prepared, forces an AG Grid refresh (with a timeout) and hides the loading indicator.
+   *
+   * Note: The 3-second timeout ensures grid cells are refreshed after async enrichment completes.
+   */
   getAllActivities() {
 
     this.roadWorkActivityService.getRoadWorkActivities().subscribe({
@@ -344,6 +411,11 @@ export class ChooseActivityComponent implements OnInit {
 
   }
 
+  /**
+   * Placeholder for client-side filtering logic.
+   * The original detailed filter implementation is commented out below and retained
+   * for reference. Currently returns `true` to keep API compatibility.
+   */
   filterActivities() {
 
   /*  if (this.statusFilterCodes.includes("all")) {
@@ -440,6 +512,11 @@ export class ChooseActivityComponent implements OnInit {
     return true;
   } 
 
+  /**
+   * Builds a unique list of area managers from the given activity features.
+   * @param roadWorkActivityFeatures Source features
+   * @returns Unique users who appear as area managers
+   */
   filterUniqueAreaManagers(roadWorkActivityFeatures: RoadWorkActivityFeature[]): User[] {
     let resultUuids: string[] = [];
     let result: User[] = [];
@@ -455,6 +532,12 @@ export class ChooseActivityComponent implements OnInit {
     return result;
   }
 
+  /**
+   * Extracts a list of involved organization abbreviations from an activity.
+   * Duplicates are removed while preserving the first occurrence order.
+   * @param roadWorkActivity The activity feature
+   * @returns Array of org unit abbreviations
+   */
   getInvolvedOrgsNames(roadWorkActivity: RoadWorkActivityFeature): string[] {
     let result: string[] = [];
     if (roadWorkActivity) {
@@ -466,11 +549,24 @@ export class ChooseActivityComponent implements OnInit {
     return result;
   }
 
+  /**
+   * Calculates the calendar quarter (1–4) for the given date.
+   * @param date A Date or ISO string
+   * @returns Quarter index
+   */
   getQuarter(date: Date | string): number {
     const d = new Date(date);
     return Math.floor(d.getMonth() / 3) + 1;
   }
 
+  /**
+   * Returns inline style for due-date chip based on current time:
+   * - Red: overdue (>= 1 day late)
+   * - Orange: within 3 days before due
+   * - Green: otherwise
+   * @param roadworkActivity Activity to evaluate
+   * @returns CSS style string for background color
+   */
   getColorDueDate(roadworkActivity: RoadWorkActivityFeature): string {
     if (roadworkActivity) {
       const today: Date = new Date();
@@ -489,6 +585,15 @@ export class ChooseActivityComponent implements OnInit {
     return "background-color: rgb(109, 255, 121);";
   }
 
+  /**
+   * Derives a due date depending on the activity status:
+   * - inconsult1/verified1/inconsult2/verified2 → consult end date 1/2
+   * - reporting → report end date
+   * - coordinated → info end date
+   * - otherwise → today + 7 days (fallback)
+   * @param roadworkActivity Activity to evaluate
+   * @returns Calculated due date or undefined
+   */
   calcDueDate(roadworkActivity: RoadWorkActivityFeature): Date | undefined {
     let result = undefined;
     if (roadworkActivity.properties.status == "inconsult1" ||
@@ -512,6 +617,11 @@ export class ChooseActivityComponent implements OnInit {
     return result;
   }
 
+  /**
+   * Builds a unique list of project managers from the given activity features.
+   * @param roadWorkActivityFeatures Source features
+   * @returns Unique users who appear as project managers
+   */
   filterUniqueProjectManagers(roadWorkActivityFeatures: RoadWorkActivityFeature[]): User[] {
     let resultUuids: string[] = [];
     let result: User[] = [];
