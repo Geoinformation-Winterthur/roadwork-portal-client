@@ -84,7 +84,9 @@ import { registerLocaleData } from '@angular/common';
 import deChLocale from '@angular/common/locales/de-CH';
 import { AgGridModule } from 'ag-grid-angular';
 import { TextFieldModule } from '@angular/cdk/text-field';
- 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { UtcDatesInterceptor } from '../helper/utc-dates.intrerceptor';
+
  
  export function getToken(){
    let userTokenTemp = localStorage.getItem(UserService.userTokenName);
@@ -195,7 +197,8 @@ export const CH_DATE_FORMATS = {
    ],
    providers: [UserService, MatDatepickerModule,
     { provide: MAT_DATE_FORMATS, useValue: CH_DATE_FORMATS },
-    { provide: MAT_DATE_LOCALE, useValue: 'de-CH' }
+    { provide: MAT_DATE_LOCALE, useValue: 'de-CH' },
+    { provide: HTTP_INTERCEPTORS, useClass: UtcDatesInterceptor, multi: true },
    ],
    bootstrap: [AppComponent]
  })
