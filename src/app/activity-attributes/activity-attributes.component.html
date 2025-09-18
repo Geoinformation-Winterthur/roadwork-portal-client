@@ -1479,31 +1479,7 @@
                                 ({{roadWorkActivityFeature.properties.dateStartCoordinated | date:'dd.MM.yyyy'}})
                             </span><br>
                         </div>
-                    </mat-tab>
-                    <!-- <mat-tab label="Bedarfsklärung">
-                        <div style="margin: 2em;">
-                            <span
-                                *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')"
-                                style="color: rgb(81, 81, 81);border: 3px solid;border-color: rgb(135, 135, 135);padding: 0.5em;">
-                                ABGESCHLOSSEN
-                            </span>
-                        </div>
-                        <div style="text-align: right;">
-                            <button *ngIf="(userService.getLocalUser().chosenRole == 'administrator' || 
-                                                userService.getLocalUser().chosenRole == 'territorymanager') &&
-                                                roadWorkActivityFeature.properties.status == 'inconsult1'"
-                                (click)="update(false, 'verified0')"
-                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                mat-button>ABSCHLIESSEN</button>
-                            <button *ngIf="userService.getLocalUser().chosenRole == 'administrator' &&
-                                    roadWorkActivityFeature.properties.status == 'verified0'"
-                                (click)="update(false, 'inconsult1')"
-                                style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
-                                mat-button>WIEDERERÖFFNEN</button>
-                        </div>
-                        <app-consultation-items [roadWorkActivity]="roadWorkActivityFeature">
-                        </app-consultation-items>
-                    </mat-tab> -->
+                    </mat-tab>                    
                     <mat-tab label="Bedarfsklärung - 1.Iteration">
                         <div *ngIf="statusHelper.isStatusLater(roadWorkActivityFeature.properties.status, 'inconsult1')"
                             style="margin: 2em;">
