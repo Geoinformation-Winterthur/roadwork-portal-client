@@ -1,6 +1,13 @@
 /**
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ *
+ * Component to browse and filter roadwork needs (Bedarfe). Fetches needs from
+ * the service with server-side filters, enriches with management area, and
+ * renders them in AG Grid with localized date handling and link-outs.
+ *
+ * Notes:
+ * - Uses lazy grid refresh after enrichment to update derived columns.
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
@@ -23,10 +30,13 @@ import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 })
 export class ChooseNeedComponent implements OnInit {
 
+  /** Controls global loading indicator until grid data is ready. */
   isDataLoading = false;
 
+  /** Server-provided list of need features. */
   roadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
 
+  /** Filter UI state and values. */
   filterPanelOpen: boolean = false;
   filterNeedName: string = "";
   filterNeedYearOptFrom?: number;
@@ -38,22 +48,28 @@ export class ChooseNeedComponent implements OnInit {
   filterAreaManager?: User;
   filterOrderer?: User;
 
+  /** Current logged-in user model (resolved on init). */
   user: User = new User();
   userService: UserService;
 
+  /** Distinct lists for filter dropdowns (computed from results). */
   areaManagers: User[] = [];
   orderers: User[] = [];
 
+  /** Status codes used for server-side filtering. */
   statusFilterCodes: string[] = ["requirement"];
 
+  /** Column order for a material-style table (AG Grid configured below). */
   tableDisplayedColumns: string[] = ['status', 'areaman', 'title', 'person', 'org', 'description', 'optRealYears', 'create_date', 'last_modified', 'link_cityplan', 'link_wwg'];
 
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;    
 
+  /** German translations for AG Grid UI. */
   localeText = AG_GRID_LOCALE_DE;
 
+  /** Default AG Grid column behavior; overrides are defined per column. */
   defaultColDef: ColDef = {
     sortable: true,    
     resizable: true,
@@ -61,6 +77,13 @@ export class ChooseNeedComponent implements OnInit {
     menuTabs: ['filterMenuTab'],     
   };
 
+  /**
+   * Column definitions for AG Grid:
+   * - Status badge rendering,
+   * - Linkified names,
+   * - Date columns with de-CH formatting and proper filter comparators,
+   * - External links to Stadtplan/WinWebGIS based on geometry.
+   */
   columnDefs: ColDef[] = [    
     {
       headerName: 'Phase/Status',
@@ -69,6 +92,7 @@ export class ChooseNeedComponent implements OnInit {
       sortable: true,
       filter: 'agSetColumnFilter',
       valueGetter: ({ data }) => {
+        // Map raw status to human-friendly label; default to raw if unmapped.
         const status = data?.properties?.status;
         const labelMap: Record<string, string> = {
           requirement: '11/Bedarf',
@@ -85,6 +109,7 @@ export class ChooseNeedComponent implements OnInit {
         return labelMap[status] ?? status ?? '';
       },      
       cellRenderer: ({ data }: any) => {
+        // Render colored pill for status indicator.
         const status = data?.properties?.status;
         const map: { [key: string]: { label: string; color: string } } = {
           requirement: { label: '11/Bedarf', color: '#b3e5fc' },
@@ -124,6 +149,7 @@ export class ChooseNeedComponent implements OnInit {
       sortable: true,
       filter: true,
       valueGetter: ({ data }) => {
+        // Extract manager full name from resolved managementArea.
         const manager = data?.properties?.managementArea?.manager;
         return manager
           ? `${manager.firstName} ${manager.lastName}`
@@ -139,10 +165,12 @@ export class ChooseNeedComponent implements OnInit {
       sortable: true,
       filter: true,
       valueGetter: (params: any) => {
+        // Safe access to need name for sorting/filtering.
         const name = params.data?.properties?.name;
         return name || '';
       },
       cellRenderer: (params: any) => {
+        // Link to need details; includes section in title tooltip.
         const name = params.data?.properties?.name;
         const section = params.data?.properties?.section;
         const uuid = params.data?.properties?.uuid;
@@ -167,6 +195,7 @@ export class ChooseNeedComponent implements OnInit {
       headerName: 'Wunschtermin',
       width: 160,
       valueGetter: ({ data }) => {
+        // Format finishOptimumTo as "Q.YYYY".
         const finish = data.properties.finishOptimumTo;
         if (!finish) return '';
         const date = new Date(finish);
@@ -182,15 +211,18 @@ export class ChooseNeedComponent implements OnInit {
       sortable: true,
       filter: 'agDateColumnFilter',
       valueGetter: ({ data }) => {
+        // Provide a Date object to AG Grid; null if unavailable.
         const raw = data?.properties?.created;
         return raw ? new Date(raw) : null;
       },
       valueFormatter: ({ value }) => {
+        // de-CH date formatting for display.
         return value instanceof Date
           ? value.toLocaleDateString('de-CH')
           : '';
       },
       filterParams: {
+        // Compare dates at midnight for stable equality semantics.
         comparator: (filterLocalDateAtMidnight: Date, cellValue: Date) => {
           if (!(cellValue instanceof Date)) return -1;
           const cellDate = new Date(
@@ -212,6 +244,7 @@ export class ChooseNeedComponent implements OnInit {
       sortable: true,
       filter: 'agDateColumnFilter',
       valueGetter: ({ data }) => {
+        // Provide a Date object to AG Grid; null if unavailable.
         const raw = data?.properties?.lastModified;
         return raw ? new Date(raw) : null;
       },
@@ -242,6 +275,7 @@ export class ChooseNeedComponent implements OnInit {
       filter: false,
       maxWidth: 150,
       cellRenderer: ({ data } : any) => {
+        // External link to Stadtplan at need coordinates.
         const x = data.geometry.coordinates[0].x;
         const y = data.geometry.coordinates[0].y;
         const href = `https://stadtplan.winterthur.ch?topic=Grundkarte&scale=1000&x=${x}&y=${y}&back=Hintergrundkarte_LK_AV_Situationsplan`;
@@ -254,6 +288,7 @@ export class ChooseNeedComponent implements OnInit {
       filter: false,
       maxWidth: 160,
       cellRenderer: ({ data }: any) => {
+        // External link to WinWebGIS at need coordinates.
         const x = data.geometry.coordinates[0].x;
         const y = data.geometry.coordinates[0].y;
         const href = `http://intramap.winport.net/projekte/tiefbau_info/start_redirect_wikis.php?&x=${x}&y=${y}`;
@@ -275,6 +310,10 @@ export class ChooseNeedComponent implements OnInit {
     this.isDataLoading = true;
   }
 
+  /**
+   * Lifecycle: fetch needs with current filter settings and resolve current user.
+   * Shows backend messages (if any) in a snackbar.
+   */
   ngOnInit(): void {
     this.getNeedsWithFilter();
 
@@ -303,6 +342,11 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
+  /**
+   * Calls the service with server-side filters; enriches each need with
+   * management area and collects unique managers/orderers for dropdowns.
+   * Refreshes the grid after a short delay to reflect async updates.
+   */
   getNeedsWithFilter() {
 
     let roadWorkNeedName: string = this.filterNeedName.trim().toLowerCase();
@@ -318,10 +362,15 @@ export class ChooseNeedComponent implements OnInit {
             next: (roadWorkNeeds) => {
 
               for (let roadWorkNeed of roadWorkNeeds) {
+                // Normalize geometry to RoadworkPolygon wrapper.
                 let blowUpPoly: RoadworkPolygon = new RoadworkPolygon();
                 blowUpPoly.coordinates = roadWorkNeed.geometry.coordinates;
                 roadWorkNeed.geometry = blowUpPoly;
+
+                // Track unique orderers for filter UI.
                 this._addOrderer(roadWorkNeed.properties.orderer)
+
+                // Lookup intersecting management area and attach to feature.
                 this.managementAreaService.getIntersectingManagementArea(roadWorkNeed.geometry)
                   .subscribe({
                     next: (managementArea) => {
@@ -332,12 +381,14 @@ export class ChooseNeedComponent implements OnInit {
                       }
                     },
                     error: (error) => {
+                      // Silent error keeps feature but without area metadata.
                     }
                   });
               }
 
               this.roadWorkNeedFeatures = roadWorkNeeds;
 
+              // Refresh grid after enrichment; guard against undefined agGrid.api.
               setTimeout(() => {
                 if (this.agGrid?.api?.refreshCells) {
                   this.agGrid.api.refreshCells({ force: true });  
@@ -354,11 +405,16 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
+  /** Utility: returns quarter (1–4) for a given Date or ISO string. */
   getQuarter(date: Date | string): number {
     const d = new Date(date);
     return Math.floor(d.getMonth() / 3) + 1;
   }
 
+  /**
+   * Collects a unique list of area managers; used to populate the filter.
+   * No-op if the manager is already present.
+   */
   private _addAreaManager(areaManager: User) {
 
     let containsAlready: boolean = false;
@@ -374,6 +430,10 @@ export class ChooseNeedComponent implements OnInit {
 
   }
 
+  /**
+   * Collects a unique list of orderers; used to populate the filter.
+   * No-op if the orderer is already present.
+   */
   private _addOrderer(orderer: User) {
 
     let containsAlready: boolean = false;

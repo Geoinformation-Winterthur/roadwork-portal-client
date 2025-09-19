@@ -2,11 +2,12 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  *
- * @file ChooseActivityComponent
- * @description Angular component that lists and filters "road work activities" in an AG Grid table.
- * It loads activities, enriches them with area-management metadata, and provides helper methods
- * for due-date coloring, quarter calculation, and unique manager lists. All comments added without
- * modifying any executable code.
+ * Angular component that lists and filters "road work activities".
+ * Uses AG Grid for tabular display and enriches features with management area and derived fields.
+ *
+ * Notes:
+ * - Column defs include custom value getters and renderers for UX polish.
+ * - Grid refresh is deferred to allow async enrichment to finish.
  */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';

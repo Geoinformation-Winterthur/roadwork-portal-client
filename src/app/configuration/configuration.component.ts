@@ -1,6 +1,13 @@
 /**
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ *
+ * Component for viewing and updating application-wide configuration dates.
+ * Values are edited via Angular FormControls and persisted through AppConfigService.
+ *
+ * Notes: 
+ * - `updateCurrentDates()` rebuilds the planned date arrays from the form controls,
+ *   converting truthy control values to `Date` instances.
  */
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
@@ -16,8 +23,10 @@ import { AppConfigService } from 'src/services/app-config.service';
 })
 export class ConfigurationComponent implements OnInit {
 
+  /** Backing model for configuration; populated on init and after successful updates. */
   configurationData: ConfigurationData = new ConfigurationData();
 
+  /** Form controls for SKS planned dates (up to 6 entries). */
   dateSks1Control: FormControl = new FormControl();
   dateSks2Control: FormControl = new FormControl();
   dateSks3Control: FormControl = new FormControl();
@@ -25,11 +34,13 @@ export class ConfigurationComponent implements OnInit {
   dateSks5Control: FormControl = new FormControl();
   dateSks6Control: FormControl = new FormControl();
 
+  /** Form controls for KAP planned dates (up to 4 entries). */
   dateKap1Control: FormControl = new FormControl();
   dateKap2Control: FormControl = new FormControl();
   dateKap3Control: FormControl = new FormControl();
   dateKap4Control: FormControl = new FormControl();
 
+  /** Form controls for OKS planned dates (up to 11 entries). */
   dateOks1Control: FormControl = new FormControl();
   dateOks2Control: FormControl = new FormControl();
   dateOks3Control: FormControl = new FormControl();
@@ -51,47 +62,68 @@ export class ConfigurationComponent implements OnInit {
     this.snackBar = snackBar;
   }
 
+  /**
+   * Loads the current configuration from the backend.
+   * Displays a snackbar if the backend returns a coded/explicit error message.
+   */
   ngOnInit(): void {
     this.appConfigService.getConfigurationData()
     .subscribe({
       next: (configData) => {
         if (configData) {
+          // Normalize potential coded error messages such as "SSP-<n>".
           ErrorMessageEvaluation._evaluateErrorMessage(configData);
           if (configData.errorMessage !== "") {
             this.snackBar.open(configData.errorMessage, "", {
               duration: 4000
             });
           } else {
+            // Bind the fetched configuration to the view model.
             this.configurationData = configData;
           }
         }
       },
       error: (error) => {
+        // Intentionally silent; could surface a generic error if desired.
       }
     });
   }
 
+  /**
+   * Sends an update with the current form control values.
+   * Steps:
+   * 1) Rebuild the `plannedDates*` arrays from the form controls.
+   * 2) Call the service to persist; show any server message in a snackbar.
+   */
   update() {
     if (this.configurationData) {
       this.updateCurrentDates();
       this.appConfigService.updateConfigurationData(this.configurationData)
         .subscribe({
           next: (configData) => {
+            // Expand possible code-based error messages before display.
             ErrorMessageEvaluation._evaluateErrorMessage(configData);
             if (configData.errorMessage !== "") {
               this.snackBar.open(configData.errorMessage, "", {
                 duration: 4000
               });
             } else {
+              // Replace local model with the saved version from the backend.
               this.configurationData = configData;
             }
           },
           error: (error) => {
+            // Intentionally silent; consider adding user feedback if needed.
           }
         });
     }
   }
 
+  /**
+   * Collects values from the date controls and writes them into
+   * `configurationData.plannedDatesSks/Kap/Oks` as arrays of `Date`.
+   * Only truthy control values are included.
+   */
   private updateCurrentDates(){
     this.configurationData.plannedDatesSks = [];
     if(this.dateSks1Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks1Control.value));

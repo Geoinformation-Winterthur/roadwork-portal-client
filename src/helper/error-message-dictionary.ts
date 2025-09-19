@@ -1,4 +1,14 @@
+/**
+ * Centralized dictionary of backend/frontend error messages (German).
+*/
 export class ErrorMessageDictionary {
+    /**
+     * Static list of human-readable error messages.
+     * Typical usage:
+     *   - Display as-is in snackbars/dialogs.
+     *   - Map to i18n keys if a translation layer is introduced later.
+     *   - Use String.includes/equals to detect specific failure reasons.
+     */
     public static messages: string[] =
             ["Es wurden keine gültigen Benutzerdaten empfangen.",
              "Benutzer kann nicht entfernt werden.",
