@@ -63,7 +63,7 @@ export class WelcomeComponent implements OnInit {
       minWidth: 130,
       field: 'statusLabel',
       sortable: true,
-      filter: 'agSetColumnFilter',
+      filter: 'agTextColumnFilter',
       valueGetter: ({ data }) => {
         const status = data?.properties?.status;
         const labelMap: Record<string, string> = {
@@ -263,7 +263,7 @@ export class WelcomeComponent implements OnInit {
       headerName: 'Status',
       field: 'statusLabel',
       sortable: true,
-      filter: 'agSetColumnFilter',
+      filter: 'agTextColumnFilter',
       valueGetter: ({ data }) => {
         const status = data?.properties?.status;
         const labelMap: Record<string, string> = {

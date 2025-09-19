@@ -107,7 +107,7 @@ export class ChooseActivityComponent implements OnInit {
       headerName: 'Status',
       field: 'statusLabel',
       sortable: true,
-      filter: 'agSetColumnFilter',  
+      filter: 'agTextColumnFilter',  
       valueGetter: ({ data }) => {
         const status = data?.properties?.status;
         const labelMap: Record<string, string> = {

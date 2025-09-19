@@ -92,7 +92,7 @@ export class ChooseNeedComponent implements OnInit {
       minWidth: 130,
       field: 'statusLabel', 
       sortable: true,
-      filter: 'agSetColumnFilter',
+      filter: 'agTextColumnFilter',
       valueGetter: ({ data }) => {
         // Map raw status to human-friendly label; default to raw if unmapped.
         const status = data?.properties?.status;

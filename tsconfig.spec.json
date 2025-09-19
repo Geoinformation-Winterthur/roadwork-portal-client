@@ -6,13 +6,13 @@
     "types": ["jasmine", "node", "geojson"],
     "skipLibCheck": true,
     "paths": {
-      "ag-grid-enterprise": ["src/test-stubs/ag-grid-enterprise.stub.ts"]
+      "ag-grid": ["src/test-stubs/ag-grid.stub.ts"]
     }
   },
   "files": [
     "src/test.ts",
     "src/polyfills.ts",
-    "src/test-stubs/ag-grid-enterprise.stub.ts"
+    "src/test-stubs/ag-grid.stub.ts"
   ],
   "include": [
     "src/**/*.spec.ts",

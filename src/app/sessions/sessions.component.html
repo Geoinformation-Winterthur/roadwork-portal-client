@@ -3,12 +3,12 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div #reportContainer style="position: fixed; left: -9999px; top: 0; visibility: hidden;"></div>
+
 <div style="margin: 2em;">
   <h1>Sitzungen ({{ sessionsData?.length }})</h1>
-    
-  <div style="margin-bottom: 2em;">  
-    <div *ngIf="user">          
 
+  <div style="margin-bottom: 2em;">
+    <div *ngIf="user">
       <label class="quick-filter">
         <span>Filter:</span>
         <input
@@ -21,23 +21,36 @@
 
       <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
       <div class="grid-overlay" *ngIf="isDataLoading"></div>
+
+      <!-- MASTER GRID -->
+      <ag-grid-angular
+        class="ag-theme-alpine"
+        [rowData]="sessionsData"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [rowSelection]="'single'"
+        [localeText]="localeText"
+        (gridReady)="onGridReady($event)"
+        (selectionChanged)="onSelectionChanged()"
+        [attr.inert]="isDataLoading ? '' : null"
+        style="width: 100%; height: 40vh;"
+      >
+      </ag-grid-angular>
+
+      <!-- CHILD GRID BELOW -->
+      <div style="margin-top: 1.5rem" *ngIf="selectedChildren?.length">
+        <h3>Teilnehmende & Projekte ({{ selectedChildren.length }})</h3>
         <ag-grid-angular
-            class="ag-theme-alpine"
-            [rowData]="sessionsData"
-            [columnDefs]="columnDefs"
-            [defaultColDef]="defaultColDef"
-            [masterDetail]="true"
-            [isRowMaster]="isRowMaster"
-            [detailCellRendererParams]="detailCellRendererParams"
-            [detailRowHeight]="320"
-            [detailRowAutoHeight]="false"            
-            [groupAggFiltering]=true             
-            [includeHiddenColumnsInQuickFilter]=true
-            (gridReady)="onGridReady($event)"
-            [attr.inert]="isDataLoading ? '' : null"
-            style="width: 100%; height: 70vh;"
-          >
+          class="ag-theme-alpine"
+          [rowData]="selectedChildren"
+          [columnDefs]="childColumnDefs"
+          [defaultColDef]="childDefaultColDef"
+          [suppressRowClickSelection]="true"
+          [localeText]="localeText"
+          style="width: 100%; height: 30vh;"
+        >
         </ag-grid-angular>
-      </div>        
+      </div>
+    </div>
   </div>
 </div>
