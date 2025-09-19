@@ -2,6 +2,8 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  * 
+ * ConsultationItemsComponent
+ * --------------------------
  * Component to manage and submit consultation feedback for road work needs
  * associated with a given road work activity.
  * 

@@ -2,6 +2,8 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  *
+ * ChooseNeedComponent
+ * -------------------
  * Component to browse and filter roadwork needs (Bedarfe). Fetches needs from
  * the service with server-side filters, enriches with management area, and
  * renders them in AG Grid with localized date handling and link-outs.

@@ -2,6 +2,8 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  *
+ * DataexportComponent
+ * -------------------
  * Component to trigger data exports, currently supporting CSV export of road work needs.
  *  
  * Notes:

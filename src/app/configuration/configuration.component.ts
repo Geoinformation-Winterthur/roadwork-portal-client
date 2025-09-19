@@ -2,6 +2,8 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  *
+ * ConfigurationComponent
+ * ----------------------
  * Component for viewing and updating application-wide configuration dates.
  * Values are edited via Angular FormControls and persisted through AppConfigService.
  *

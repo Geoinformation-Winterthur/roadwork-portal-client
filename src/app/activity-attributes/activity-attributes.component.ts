@@ -1,6 +1,15 @@
 /**
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ *
+ * ActivityAttributesComponent
+ * --------------------------- 
+ * Main editor/view for a roadwork activity (Bauvorhaben):
+ * - Loads activity data by route param (existing or "new").
+ * - Handles status transitions, publish/save, document upload/download, and deletion.
+ * - Manages related needs, costs, due dates, involved users, and configuration data.
+ * - Coordinates with child components (map + reporting items) and several services.
+ * - Implements role-based editing permissions and field enabling/disabling.
  */
 import { Component, OnInit, ViewChild, ViewEncapsulation, Optional, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,16 +51,20 @@ import { ReportingItemsComponent } from '../reporting-items/reporting-items.comp
 })
 export class ActivityAttributesComponent implements OnInit {
 
+  /** Child map component reference (OpenLayers wrapper). */
   @ViewChild("edit_activity_map") editActivityMap: any;
+  /** Child components showing reporting/consultation lists per phase. */
   @ViewChild("reportingItemsInconsult1") reportingItemsInconsult1 !: ReportingItemsComponent;
   @ViewChild("reportingItemsInconsult2") reportingItemsInconsult2 !: ReportingItemsComponent;
   @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
+  /** Access to template-driven control for project kind validation. */
   @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
 
-
+  /** Currently edited activity entity and its intersecting management area. */
   roadWorkActivityFeature?: RoadWorkActivityFeature;
   managementArea?: ManagementArea;
 
+  /** Various user- and UI-related state. */
   currentUser: User = new User();
   orderer: User = new User();
   ordererOrgUnitName: string = "";
@@ -60,17 +73,20 @@ export class ActivityAttributesComponent implements OnInit {
   priorityCode: string = "";
   involvedUsers: User[] = [];
 
+  /** Toggles for enabling/disabling scheduling fields and editing per role. */
   isScheduleEditingDisabled = true;
-
   isEditingForRoleNotAllowed: boolean = false;
 
+  /** Data for selectors and lookups in the form. */
   availableUsers: User[] = [];
   availableOrganisations: OrganisationalUnit[] = [];
   usersOfChosenOrganisation: User[] = [];
   costsOfAssignedNeeds: Costs[] = [];
 
+  /** Injected services stored for reuse in methods. */
   userService: UserService;
 
+  /** Reactive controls for various editable fields. */
   projectManagerControl: FormControl = new FormControl();
   projectTypeEnumControl: FormControl = new FormControl();
   availableProjectTypes: EnumType[] = [];
@@ -79,21 +95,28 @@ export class ActivityAttributesComponent implements OnInit {
   dateKapControl: FormControl = new FormControl();
   dateOksControl: FormControl = new FormControl();
 
+  /** Shared service cache for needs displayed in this activity. */
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
 
+  /** System-wide configuration values (e.g., planned dates). */
   configurationData: ConfigurationData = new ConfigurationData();
 
+  /** Calculated due date of the current phase (used for color chips). */
   dueDate?: Date;
 
+  /** Toggles explanatory content for project type. */
   showProjectTypeInfo: boolean = false;
 
+  /** Helper for status transitions and label mapping. */
   statusHelper: StatusHelper;
 
-  selectedTabIndex = 0;              // äussere Tabs (Perimeter, Stammdaten, ...)
-  selectedSubTabIndex = 0;           // Vernehmlassung (eigene Tab-Gruppe unten)
-  selectedStammdatenTabIndex = 0;    // innere Tab-Gruppe unter "Stammdaten"
+  /** Tab indices for outer and inner tab groups in the template. */
+  selectedTabIndex = 0;              // outer tabs (Perimeter, Stammdaten, ...)
+  selectedSubTabIndex = 0;           // consultation/reporting sub-tab group
+  selectedStammdatenTabIndex = 0;    // inner tab group under "Stammdaten"
 
+  /** Table column definitions used in the template. */
   needsDatesDisplayedColumns: string[] = ['name', 'finishEarlyTo', 'finishOptimumTo', 'finishLateTo'];
   needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
@@ -104,6 +127,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
 
+  /** Hard-coded project kind options (distinct from backend-provided project types). */
   readonly projectKindOptions = [
     { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' },
     { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' },
@@ -115,8 +139,10 @@ export class ActivityAttributesComponent implements OnInit {
     { value: 'OTHER', label: 'Übrige' }
   ];
 
+  /** Utility exposed for formatting in templates. */
   PdfDocumentHelper = PdfDocumentHelper;
 
+  /** Service references for data access and dialogs. */
   private roadWorkActivityService: RoadWorkActivityService;
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
@@ -131,6 +157,10 @@ export class ActivityAttributesComponent implements OnInit {
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
 
+  /**
+   * Constructor: injects all required services and computes initial role permissions.
+   * Note: `@Optional()` ActivatedRoute allows using this component in contexts without routing.
+   */
   constructor(@Optional() activatedRoute: ActivatedRoute, roadWorkActivityService: RoadWorkActivityService,
     needsOfActivityService: NeedsOfActivityService, managementAreaService: ManagementAreaService,
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
@@ -151,9 +181,18 @@ export class ActivityAttributesComponent implements OnInit {
     this.documentService = documentService;
     this.consultationService = consultationService;
     this.dialog = dialog;
+    // Editing permissions: locked down unless user is admin or territory manager.
     this.isEditingForRoleNotAllowed = this.userService.getLocalUser().chosenRole != 'administrator' && this.userService.getLocalUser().chosenRole != 'territorymanager';
   }
 
+  /**
+   * Component initialization:
+   * - Load lists (users, organisations, configuration, project types).
+   * - Initialize needs containers on the shared service.
+   * - If routing available: resolve activity by route param (new vs existing).
+   * - For existing activity: fetch intersecting management area, related needs,
+   *   compute costs & due dates, and navigate to phase-specific tabs based on query.
+   */
   ngOnInit() {
     this.userService.getAllUsers().subscribe({
       next: (users) => {
@@ -230,13 +269,14 @@ export class ActivityAttributesComponent implements OnInit {
       }
     });
 
+    // Reset shared need buckets prior to loading activity-specific data.
     this.needsOfActivityService.assignedRoadWorkNeeds = [];
     this.needsOfActivityService.nonAssignedRoadWorkNeeds = [];
     this.needsOfActivityService.registeredRoadWorkNeeds = [];
 
-    // Route-Handling nur, wenn ActivatedRoute vorhanden ist (Tests liefern evtl. keinen Provider)
+    // Route-Handling only when ActivatedRoute is provided (unit tests might skip it).
     if (!this.activatedRoute) {
-      return; // Tests nutzen direkten State-Set => Template rendert trotzdem
+      return;
     }
 
     this.activatedRouteSubscription = this.activatedRoute.params
@@ -245,6 +285,7 @@ export class ActivityAttributesComponent implements OnInit {
 
         if (idParamString == "new") {
 
+          // Initialize an empty draft activity with defaults for a new entry.
           this.roadWorkActivityFeature = new RoadWorkActivityFeature();
           this.roadWorkActivityFeature.properties.status = "review";
           this.roadWorkActivityFeature.properties.isPrivate = true;
@@ -257,22 +298,26 @@ export class ActivityAttributesComponent implements OnInit {
 
           let constProjId: string = params['id'];
 
+          // Load a single activity by UUID/id from the backend.
           this.roadWorkActivityService.getRoadWorkActivities(constProjId)
             .subscribe({
               next: (roadWorkActivities) => {
                 if (roadWorkActivities.length === 1) {
                   let roadWorkActivity: any = roadWorkActivities[0];
+                  // Convert backend geometry to a typed model class for the OL map.
                   let rwPoly: RoadworkPolygon = new RoadworkPolygon();
                   rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
                   roadWorkActivity.geometry = rwPoly;
                   this.roadWorkActivityFeature = roadWorkActivity;
 
+                  // Normalize zero-values to undefined for optional numeric inputs.
                   let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
                   if (roadWorkActivityFeature.properties.costs == 0)
                     roadWorkActivityFeature.properties.costs = undefined;
                   if (roadWorkActivityFeature.properties.investmentNo == 0)
                     roadWorkActivityFeature.properties.investmentNo = undefined;
 
+                  // Resolve management area and set its manager on the activity.
                   this.managementAreaService.getIntersectingManagementArea(roadWorkActivityFeature.geometry)
                     .subscribe({
                       next: (managementArea) => {
@@ -286,8 +331,10 @@ export class ActivityAttributesComponent implements OnInit {
                       }
                     });
 
+                  // Pre-fill project type control for the UI.
                   this.projectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
 
+                  // Load needs related to the activity (assigned vs registered).
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
                     this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined, undefined,
                       undefined, undefined, undefined, undefined, undefined, undefined, undefined,
@@ -306,6 +353,7 @@ export class ActivityAttributesComponent implements OnInit {
                           this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
                           this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
 
+                          // Collect costs and detect needs with documents for display.
                           let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = [];
                           let costsOfAssignedNeedsTemp: Costs[] = [];
                           for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
@@ -326,10 +374,12 @@ export class ActivityAttributesComponent implements OnInit {
                         }
                       });
                   }
+                  // Populate helper lists and compute phase due date.
                   this._updateAllInvolvedUsers();
                   this._updateDueDate();
                 }
 
+                // Navigate to specific sub-tab when query param is present.
                 this.activatedRoute.queryParams.subscribe(params => {
                   const tabName = params["open_tab"];
                   if (tabName == "bedarfsklaerung1") {
@@ -355,6 +405,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  /** Publish wrapper: toggles privacy to public and saves/creates accordingly. */
   publish() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
@@ -364,6 +415,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /** Save wrapper: validates key fields, then updates or creates. */
   save() {
     if (this.projectKindCtrl) {
       this.projectKindCtrl.control.markAsTouched();
@@ -384,6 +436,11 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Create new activity on the server.
+   * - When `publish` is true, flips `isPrivate` to false before sending.
+   * - Restores `isPrivate` if backend responds with an error.
+   */
   add(publish: boolean = false) {
     if (this.roadWorkActivityFeature) {
       if (publish) this.roadWorkActivityFeature.properties.isPrivate = false;
@@ -418,6 +475,11 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Update existing activity on the server.
+   * - Supports optional `publish` and/or immediate status change (`newStatus`).
+   * - Restores previous flags on failure; updates child views on success.
+   */
   update(publish: boolean = false, newStatus: string = "") {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       if (publish) this.roadWorkActivityFeature.properties.isPrivate = false;
@@ -439,6 +501,7 @@ export class ActivityAttributesComponent implements OnInit {
                           duration: 4000
                         });
                       } else {
+                        // Normalize zero as undefined to keep inputs empty where appropriate.
                         if (roadWorkActivityFeature.properties.costs == 0)
                           roadWorkActivityFeature.properties.costs = undefined;
                         if (roadWorkActivityFeature.properties.investmentNo == 0)
@@ -446,11 +509,13 @@ export class ActivityAttributesComponent implements OnInit {
                         this.roadWorkActivityFeature = roadWorkActivityFeature;
                         this.managementArea = managementArea;
 
+                        // Inform the OL-layer styling if activity is finished.
                         if (roadWorkActivityFeature.properties.status == "coordinated" &&
                           roadWorkActivityFeature.properties.dateSksReal) {
                           this.editActivityMap.setRoadworkActivityFinished();
                         }
 
+                        // Refresh dependent UI parts.
                         this._updateDueDate();
                         this.reportingItemsInconsult1.ngOnInit();
                         this.reportingItemsInconsult2.ngOnInit();
@@ -482,12 +547,14 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /** Sync enum value into the model when the UI control changes. */
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityFeature.properties.projectType = this.projectTypeEnumControl.value;
     }
   }
 
+  /** Registers the traffic manager for the activity via backend call. */
   registerTrafficManager() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
       this.roadWorkActivityService.registerTrafficManager(this.roadWorkActivityFeature)
@@ -513,6 +580,10 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * UI helper: determines whether a status option should be disabled given the current status.
+   * The matrix encodes the allowed forward-only transitions per process phase.
+   */
   checkStatusDisabled(currValue: string, valueToCheck: string): boolean {
     if (currValue === 'review') {
       if (valueToCheck === 'review')
@@ -584,6 +655,7 @@ export class ActivityAttributesComponent implements OnInit {
     return true;
   }
 
+  /** Returns a background-color style string for the due-date chip (red/orange/green). */
   getColorDueDate(): string {
     if (this.dueDate) {
       const today: Date = new Date();
@@ -600,6 +672,9 @@ export class ActivityAttributesComponent implements OnInit {
     return "background-color: rgb(109, 255, 121);";
   }
 
+  /**
+   * Toggle a user in/out of the involved users list (immutable update for change detection).
+   */
   changeInvolvedUsers(user: User) {
     if (this.roadWorkActivityFeature) {
       let involvedUsersCopy = [...this.roadWorkActivityFeature.properties.involvedUsers];
@@ -618,7 +693,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-
+  /** Returns true if the given user is currently an involved user for this activity. */
   isInvolvedUser(user: User): boolean {
     return this.roadWorkActivityFeature ? this.roadWorkActivityFeature.properties.involvedUsers.some(
       (involvedUser) => involvedUser.uuid === user.uuid
@@ -626,8 +701,7 @@ export class ActivityAttributesComponent implements OnInit {
       : false;
   }
 
-
-
+  /** Convenience variant used by template bindings (by UUID). */
   isInvolvedUserSelected(userUuid: string): boolean {
     if (this.roadWorkActivityFeature) {
       for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
@@ -638,10 +712,16 @@ export class ActivityAttributesComponent implements OnInit {
     return false;
   }
 
+  /** Show/hide inline help text for project type selection. */
   switchProjectTypeInfo() {
     this.showProjectTypeInfo = !this.showProjectTypeInfo;
   }
 
+  /**
+   * Upload a PDF to the activity:
+   * - Wraps file in FormData and sends via DocumentService.
+   * - On success, pushes the returned document attachment into the activity.
+   */
   uploadPdf(event: any) {
     if (this.roadWorkActivityFeature && event && event.target &&
       event.target.files && event.target.files.length > 0) {
@@ -672,6 +752,10 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Download an attached PDF in a new browser tab using a blob URL.
+   * Shows a snackbar if no document is available.
+   */
   downloadPdf(documentUuid: string) {
     if (this.roadWorkActivityFeature) {
       this.documentService.getDocument(this.roadWorkActivityFeature.properties.uuid, documentUuid, "roadworkactivity")
@@ -697,6 +781,9 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Delete an attached PDF and remove it from the activity's attachments list.
+   */
   deletePdf(documentUuid: string) {
     if (this.roadWorkActivityFeature) {
       this.documentService.deleteDocument(this.roadWorkActivityFeature.properties.uuid, documentUuid, "roadworkactivity")
@@ -718,6 +805,11 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Remove activity:
+   * - If the activity is private, delete directly.
+   * - Otherwise, open a confirmation dialog; the dialog handles deletion flow.
+   */
   removeRoadworkActivity() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.isPrivate) {
@@ -730,6 +822,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /** Returns true if firstDate strictly precedes secondDate (both defined). */
   isFirstDateBefore(firstDate?: Date, secondDate?: Date): boolean {
     if (firstDate && secondDate) {
       let firstDateObj = new Date(firstDate);
@@ -739,10 +832,15 @@ export class ActivityAttributesComponent implements OnInit {
     return false;
   }
 
+  /** Compute temporal factor for a need relative to the activity's primary need. */
   calcTimeFactor(compareNeed: RoadWorkNeedFeature): number {
     return TimeFactorHelper.calcTimeFactor(compareNeed, this.primaryNeed);
   }
 
+  /**
+   * Returns whether a given date lies within the planned construction date range.
+   * - Inclusive range; safeguards against timezone effects.
+   */
   isDateWithinConstruction(dateToCheck?: Date): boolean {
     const p = this.roadWorkActivityFeature?.properties;
     const start = p?.startOfConstruction;
@@ -753,7 +851,7 @@ export class ActivityAttributesComponent implements OnInit {
     const e = new Date(end);
     const d = new Date(dateToCheck);
 
-    // robust gegen Zeitzonen:
+    // robust against time zone shifts:
     s.setHours(0, 0, 0, 0);
     e.setHours(23, 59, 59, 999);
     d.setHours(12, 0, 0, 0);
@@ -761,11 +859,13 @@ export class ActivityAttributesComponent implements OnInit {
     return d >= s && d <= e;
   }
 
+  /** Whether the activity has both start and end construction dates. */
   hasConstructionRange(): boolean {
     const p = this.roadWorkActivityFeature?.properties;
     return !!(p?.startOfConstruction && p?.endOfConstruction);
   }
 
+  /** Finds the "primary" assigned need if present; otherwise returns a new (empty) need. */
   get primaryNeed(): RoadWorkNeedFeature {
     if (this.needsOfActivityService.assignedRoadWorkNeeds.length > 0) {
       for (let roadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
@@ -776,11 +876,13 @@ export class ActivityAttributesComponent implements OnInit {
     return new RoadWorkNeedFeature();
   }
 
+  /** Sums all cost items associated with assigned needs (NaN-safe). */
   get totalCosts(): number {
     return this.costsOfAssignedNeeds
       .reduce((sum, c) => sum + (c?.costs ?? 0), 0);
   }
 
+  /** Reset study dates when "isStudy" is toggled off. */
   onChangeIsStudy() {
     if (this.roadWorkActivityFeature) {
       if (!this.roadWorkActivityFeature.properties.isStudy) {
@@ -790,19 +892,22 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /** Enforce SKS relevance when Aggloprog is enabled. */
   onChangeIsAggloprog() {
     if (this.roadWorkActivityFeature)
       if (this.roadWorkActivityFeature.properties.isAggloprog)
         this.roadWorkActivityFeature.properties.isSksRelevant = true;
   }
 
+  /** Clean up route subscription if it was created. */
   ngOnDestroy() {
-    // nur unsubscriben, wenn auch subscribed wurde
+    // unsubscribing only if a subscription exists
     if (this.activatedRouteSubscription) {
       this.activatedRouteSubscription.unsubscribe();
     }
   }
 
+  /** Collect unique organisation abbreviations of involved users for display. */
   getInvolvedOrgsNames(): string[] {
     const result: string[] = [];
     if (this.roadWorkActivityFeature) {
@@ -814,6 +919,7 @@ export class ActivityAttributesComponent implements OnInit {
     return result;
   }
 
+  /** Internal deletion helper that handles result snackbars and redirect. */
   private _deleteRoadworkActivity(roadWorkActivityUuid: string) {
     this.roadWorkActivityService.deleteRoadWorkActivity(roadWorkActivityUuid).subscribe({
       next: (errorMessage) => {
@@ -835,6 +941,10 @@ export class ActivityAttributesComponent implements OnInit {
     });
   }
 
+  /**
+   * Build the union of involved users from all needs linked to the activity.
+   * Shows a warning if needs could not be loaded.
+   */
   private _updateAllInvolvedUsers() {
     if (this.roadWorkActivityFeature) {
       this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
@@ -864,6 +974,13 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Compute and store the due date for the current phase:
+   * - For consultation phases: uses dateConsultEnd1/2.
+   * - For reporting: uses dateReportEnd.
+   * - For coordinated: uses dateInfoEnd.
+   * - Otherwise: defaults to 7 days from today (informational).
+   */
   public _updateDueDate() {
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.status == "inconsult1" ||
@@ -887,6 +1004,7 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /** Finds which assigned need a given cost item belongs to. */
   getAssignedNeedForCost(cost: Costs): RoadWorkNeedFeature {
     for (let assignedRoadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds)
       if (assignedRoadWorkNeed.properties.costs)
@@ -896,6 +1014,7 @@ export class ActivityAttributesComponent implements OnInit {
     return new RoadWorkNeedFeature();
   }
 
+  /** Sum helper for a cost array (ignores undefined values). */
   sumUpCosts(costs: Costs[]): number {
     let result: number = 0;
     for (let cost of costs)
@@ -904,6 +1023,12 @@ export class ActivityAttributesComponent implements OnInit {
     return result;
   }
 
+  /**
+   * Compose and open a "mailto:" link to invite/notify involved users depending on the new status.
+   * - Adds the logged-in user as CC.
+   * - Includes deep links to open the appropriate tab in the UI.
+   * - Inserts phase-specific wording and deadlines if available.
+   */
   public async openMail(newStatus: string) {
 
     let mailText = "mailto:";
@@ -999,6 +1124,10 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  /**
+   * Ensures that the activity has a resolved area manager:
+   * - Queries backend for intersecting management area and copies its manager.
+   */
   async getAreaManager(geometry: any): Promise<void> {
     try {
       const result = await firstValueFrom(
@@ -1015,6 +1144,10 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  /**
+   * Persist inline comments/notes on a specific related need.
+   * Shows translated backend errors via snackbar if present.
+   */
   updateComment(roadWorkNeed: RoadWorkNeedFeature) {
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
@@ -1041,6 +1174,11 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  /**
+   * Full UI refresh convenience:
+   * - Re-runs init of child reporting components and this component.
+   * - Refreshes helper lists, due date, and asks the map component to repaint.
+   */
   refresh() {
     this.reportingItemsInconsult1?.ngOnInit();
     this.reportingItemsInconsult2?.ngOnInit();

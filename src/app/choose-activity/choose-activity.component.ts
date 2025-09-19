@@ -2,6 +2,8 @@
  * @author Edgar Butwilowski
  * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
  *
+ * ChooseActivityComponent
+ * -----------------------
  * Angular component that lists and filters "road work activities".
  * Uses AG Grid for tabular display and enriches features with management area and derived fields.
  *

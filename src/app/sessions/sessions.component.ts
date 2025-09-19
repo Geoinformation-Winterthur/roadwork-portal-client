@@ -1,6 +1,17 @@
 /**
- * Author: Edgar Butwilowski
- * Copyright (c) Fachstelle Geoinformation Winterthur
+ * @author Edgar Butwilowski
+ * @copyright Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+ *
+ * SessionsComponent
+ * -----------------
+ * Displays SKS sessions in a master/detail AG Grid and generates reports.
+ *
+ * Key features:
+ * - Aggregates `RoadWorkActivityFeature` items into dated "sessions".
+ * - Enriches each session with attendees/distribution list users (from env-based email lists).
+ * - Master grid shows session meta; detail grid lists projects and people.
+ * - Generates a Word (.docx) and a PDF report for a selected session via `ReportLoaderService`,
+ *   `html-docx-js-typescript`, and `html2pdf.js`.
  */
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UserService } from 'src/services/user.service';
@@ -29,16 +40,18 @@ import saveAs from 'file-saver';
 import { asBlob } from 'html-docx-js-typescript';
 import { environment } from 'src/environments/environment';
 
+/** Master row model representing one SKS session. */
 interface Session {
   id: string;
-  sessionType: string;     
-  sessionName: string;     
+  sessionType: string;     // editable via select; see ReportType
+  sessionName: string;     // e.g., "Sitzung 1/2025"
   sessionDateApproval: string;
   sessionCreator: string;  
   sessionDate: string;     
   children: { id: string; name: string; isRoadworkProject: boolean }[];
 }
 
+/** Detail row model representing either a project or a person in the session. */
 interface SessionChild {
   id: string;
   name: string;
@@ -51,6 +64,7 @@ interface SessionChild {
   shouldBeOnDistributionList?: boolean;
 }
 
+/** Allowed report type values (also used by select editor/filter). */
 export type ReportType = 'Vor-Protokol SKS' | 'Protokol SKS';
 
 @Component({
@@ -59,17 +73,28 @@ export type ReportType = 'Vor-Protokol SKS' | 'Protokol SKS';
   styleUrls: ['./sessions.component.css'],
 })
 export class SessionsComponent implements OnInit {
+  /** Controls loading spinners and disables editing while true. */
   isDataLoading = false;
+
+  /** AG Grid API handles assigned in onGridReady. */
   gridApi!: GridApi;
   columnApi!: ColumnApi;
   
+  /** Master grid data: list of sessions with expanded children in detail view. */
   sessionsData: Session[] = [];
 
+  /**
+   * Email hints from environment:
+   * - `presentEmails`: if a user's email starts with any of these prefixes, they are marked present.
+   * - `distributionListEmails`: analogous for the distribution list.
+   */
   presentEmails: string[] = environment.presentEmails ?? [];
   distributionListEmails: string[] = environment.distributionListEmails ?? [];
 
+  /** Values offered in the report type combo box. */
   reportTypeOptions: ReportType[] = ['Vor-Protokol SKS', 'Protokol SKS'];   
 
+  /** Master grid columns; includes an action button to generate the report. */
   columnDefs: ColDef[] = [
     { headerName: 'Phase/Status', field: 'sessionName', minWidth: 220, cellRenderer: 'agGroupCellRenderer' },
     { headerName: 'Datum Genehmigung', field: 'sessionDateApproval' },
@@ -99,6 +124,7 @@ export class SessionsComponent implements OnInit {
     {
       headerName: 'Bericht',
       cellRenderer: (params: any) => {
+        // Create a native button and attach click handler to generate reports.
         const button = document.createElement('button');
         button.innerText = 'Bericht anzeigen';        
         button.addEventListener('click', () => this.generateSessionPDF(params.data.id, params.data.sessionType, params.data.sessionDateApproval, params.data.children));
@@ -106,6 +132,11 @@ export class SessionsComponent implements OnInit {
       },
     },
     {
+      /**
+       * Hidden utility column to support quick filtering across multiple fields,
+       * including flattened child data. It aggregates text into a single string,
+       * which AG Grid uses when quick filter is applied.
+       */
       headerName: 'BV (quick only)',
       colId: 'bvQuick',
       hide: true,                 
@@ -130,9 +161,14 @@ export class SessionsComponent implements OnInit {
     }
   ];
 
+  /** Determines which rows are masters (those with non-empty `children`). */
   isRowMaster = (dataItem: any) =>
     Array.isArray(dataItem?.children) && dataItem.children.length > 0;
   
+  /**
+   * Configuration for the detail grid (rendered per master row).
+   * Shows either a project (read-only icon) or a person (checkboxes for presence/distribution).
+   */
   detailCellRendererParams = {
     detailGridOptions: {
       domLayout: 'normal',
@@ -150,6 +186,7 @@ export class SessionsComponent implements OnInit {
                 resizable: false,
                 cellClass: 'type-icon-cell',
                 cellRenderer: (p: any) => {
+                  // Material icon identifying persons vs. projects.
                   const e = document.createElement('span');                  
                   e.classList.add('material-icons', 'small-icon');                 
                   e.textContent = !p.data?.isRoadworkProject ? 'person' : 'work';
@@ -169,6 +206,7 @@ export class SessionsComponent implements OnInit {
                   disabled: false
                 },
                 cellRendererSelector: (params: any) => {
+                  // Projects: no checkbox; Persons: checkbox renderer/editor.
                   if (params.data.isRoadworkProject == true) {
                     return { component: undefined };
                   }
@@ -209,11 +247,13 @@ export class SessionsComponent implements OnInit {
       onFirstDataRendered: (e: any) => e.api.sizeColumnsToFit(),
     },
     getDetailRowData: (params: any) => {
+      // Provide the child rows to the detail grid.
       const rows = params.data?.children || [];            
       params.successCallback(rows);
     },
   };
 
+  /** Default column settings for the master grid. */
   defaultColDef: ColDef = {
     flex: 1,
     minWidth: 200,    
@@ -223,18 +263,22 @@ export class SessionsComponent implements OnInit {
     menuTabs: ['filterMenuTab'],    
   };
   
+  /** Current user (loaded on init). */
   user: User = new User();
   userService: UserService;  
   
+  /** Optional cache of activities (not directly bound in the grid). */
   roadWorkActivity: RoadWorkActivityFeature[] | undefined;
   
+  /** Service references and feedback UI. */
   private roadWorkActivityService: RoadWorkActivityService; 
   private reportLoaderService: ReportLoaderService;
   private snckBar: MatSnackBar;    
 
+  /** German locale overrides for AG Grid UI strings. */
   localeText = AG_GRID_LOCALE_DE;
 
-  
+  /** AG Grid and report container references from the template. */
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
   @ViewChild('reportContainer', { static: false }) reportContainer!: ElementRef;
 
@@ -250,6 +294,12 @@ export class SessionsComponent implements OnInit {
     this.reportLoaderService = reportLoaderService;
   }
 
+  /**
+   * Initialization sequence:
+   * 1) Load the current user and surface any coded error via snack bar.
+   * 2) Build session rows from activities, then enrich with selected users based on
+   *    env-provided presence/distribution list email prefixes.
+   */
   ngOnInit(): void {  
 
     this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
@@ -277,6 +327,7 @@ export class SessionsComponent implements OnInit {
         }
     });
 
+    // Precompute sets for case-insensitive prefix checks on user emails.
     const presentSet = new Set(
       this.presentEmails.map((e: string) => e.toLowerCase().trim())
     );
@@ -284,11 +335,13 @@ export class SessionsComponent implements OnInit {
       this.distributionListEmails.map((e: string) => e.toLowerCase().trim())
     );
 
+    // Pipe: activities → sessions → attach selected users to each session as children.
     const sessionsWithUsers$ = this.roadWorkActivityService.getRoadWorkActivities().pipe(
       map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)),
       switchMap((sessions: Session[]) =>
         this.userService.getAllUsers().pipe(
           map(users => {            
+            // Map users into SessionChild rows and mark presence/distribution flags by prefix rules.
             const mapped: SessionChild[] = users.map((user) => {              
               const email = (user.mailAddress ?? '').toLowerCase().trim();
               
@@ -308,13 +361,16 @@ export class SessionsComponent implements OnInit {
               };
             });
             
+            // Keep only those users who should be listed (present or on distribution list).
             const filtered = mapped.filter(u => u.shouldBePresent || u.shouldBeOnDistributionList);
             
+            // Assign incremental IDs for UI display.
             const userChildren: SessionChild[] = filtered.map((u, idx) => ({
               ...u,
               id: String(idx + 1),
             }));
             
+            // Combine existing session children (projects) with user children.
             return sessions.map(session => ({
               ...session,
               children: [...session.children, ...userChildren],
@@ -324,6 +380,7 @@ export class SessionsComponent implements OnInit {
       )
     );
 
+    // Bind the final result to the grid.
     sessionsWithUsers$.subscribe({
       next: (sessions) => {
         this.sessionsData = sessions;
@@ -333,16 +390,31 @@ export class SessionsComponent implements OnInit {
 
   }
 
+  /** AG Grid callback: capture APIs for later operations. */
   onGridReady(params: GridReadyEvent) {
     this.gridApi = params.api;
     this.columnApi = params.columnApi;
   }
 
+  /** Apply quick filter text from an input element to the grid. */
   onQuickFilterChanged() {
     const value = (document.querySelector<HTMLInputElement>('#input-quick-filter')?.value || '').trim();
     this.gridApi?.setQuickFilter(value);
   }
 
+  /**
+   * Generate a Word document and a PDF for the provided session.
+   * Steps:
+   * - Retrieve HTML from `ReportLoaderService`.
+   * - Render to a hidden container to ensure size/layout is known.
+   * - Save as .docx via `asBlob` and as .pdf via `html2pdf`.
+   * - Add a footer to each PDF page containing session meta and page X/Y.
+   *
+   * @param id Session id (typically a UUID from the primary activity).
+   * @param sessionType One of `ReportType`.
+   * @param sessionDateApproval ISO date string used in the footer.
+   * @param children Detail rows (projects + people) used by the report template.
+   */
   async generateSessionPDF(id: string, sessionType: string, sessionDateApproval: string, children: any[]): Promise<void> {        
 
     this.isDataLoading = true;       
@@ -350,6 +422,7 @@ export class SessionsComponent implements OnInit {
     try {
       const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType, children, id);    
       
+      // Inject generated HTML into the hidden container for export.
       this.reportContainer.nativeElement.innerHTML = html;
 
       const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
@@ -358,12 +431,13 @@ export class SessionsComponent implements OnInit {
         return;
       }
 
-      // START: Save as Word     
+      // START: Save as Word (docx)
       this.snckBar.open("Word-Dokument wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {
         duration: 4000
       });
       const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
       
+      // Helper to convert centimeters to twips (1/20 pt).
       const cmToTwips = (cm: number) => Math.round((1440 / 2.54) * cm);
       
       const margins = {
@@ -373,6 +447,7 @@ export class SessionsComponent implements OnInit {
         left: cmToTwips(2),
       };
 
+      // Wrap the content in a minimal HTML scaffold for HTML→DOCX conversion.
       const htmlWord = `<!doctype html><html><head><meta charset="utf-8">
         <style>        
           @page { margin: 1cm; size: A4; }
@@ -398,7 +473,7 @@ export class SessionsComponent implements OnInit {
       saveAs(docxBlob, `${filenameBase}.docx`);      
       // END: Save as Word
 
-      // START: Save as PDF      
+      // START: Save as PDF (html2pdf)
       this.snckBar.open("PDF wird generiert..." + String(sessionType) + " - " + String(sessionDateApproval), "", {          
         duration: 4000
       });
@@ -419,6 +494,7 @@ export class SessionsComponent implements OnInit {
                   .toPdf()
                   .get('pdf')
                   .then((pdf: any) => {
+                    // Footer injection loop for each page.
                     const total = pdf.internal.getNumberOfPages();
 
                     for (let i = 1; i <= total; i++) {
@@ -441,7 +517,7 @@ export class SessionsComponent implements OnInit {
                       pdf.setFontSize(9);
                       pdf.setTextColor(100);
 
-                      
+                      // Right-aligned footer text, slightly above page bottom.
                       pdf.text(text, w - 10, h - 8, { align: 'right' });
                     }
                   })
@@ -456,6 +532,14 @@ export class SessionsComponent implements OnInit {
         }
     }    
 
+    /**
+     * Transform a flat list of activities into grouped sessions.
+     * Group key is `dateSksPlanned` (ISO string), with "unknown" used as fallback.
+     * Sessions are named "Sitzung N/YYYY" with a per-year counter.
+     *
+     * @param activities Raw activities from the service.
+     * @returns Array of sessions ready for the grid.
+     */
     transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
       // Group activities by ISO date of dateSksPlanned 
       const groups = new Map<string, RoadWorkActivityFeature[]>();
