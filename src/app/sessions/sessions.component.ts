@@ -147,7 +147,7 @@ export class SessionsComponent implements OnInit {
     filter: 'agTextColumnFilter',
     menuTabs: ['filterMenuTab'],
     flex: 1,
-    minWidth: 100,
+    minWidth: 80,
   };
 
   /** Slightly simplified defaults for child grids. */
@@ -238,35 +238,31 @@ export class SessionsComponent implements OnInit {
   ];
 
   /** Columns for the people grids - present users */
-  peopleColDefs: ColDef[] = [
-    { headerName: 'Name', field: 'name', minWidth: 150 },
-    { headerName: 'Werk', field: 'department', minWidth: 100 },
-    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160 },
+  peopleColDefs: ColDef[] = [    
     {
-      headerName: 'Anwesend',
+      headerName: '',
       field: 'isPresent',
       minWidth: 50,
       editable: true,
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
-      valueSetter: params => {
-        // Store boolean only; do NOT recompute lists
+      valueSetter: params => {        
         const v = params.newValue === true || params.newValue === 'true';
         params.data.isPresent = v;
         params.data.shouldBePresent = v;
         return true;
-      }
-    },    
+      },      
+    },  
+    { headerName: 'Name', field: 'name', minWidth: 150 },
+    { headerName: 'Werk', field: 'department', minWidth: 60 },
+    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160 }
   ];
 
 
   /** Columns for the people grids - present users */
-  distributionColDefs: ColDef[] = [
-    { headerName: 'Name', field: 'name', minWidth: 150 },
-    { headerName: 'Werk', field: 'department', minWidth: 60 },
-    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160 },
+  distributionColDefs: ColDef[] = [    
     {
-      headerName: 'Verteiler',
+      headerName: '',
       field: 'isDistributionList',
       minWidth: 50,
       editable: true,
@@ -279,6 +275,9 @@ export class SessionsComponent implements OnInit {
         return true;
       }
     },
+    { headerName: 'Name', field: 'name', minWidth: 150 },
+    { headerName: 'Werk', field: 'department', minWidth: 60 },
+    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160 }
   ];
 
   /**
