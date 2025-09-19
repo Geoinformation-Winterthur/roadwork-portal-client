@@ -1,56 +1,105 @@
 <!--
- Author: Edgar Butwilowski
- Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+  Author: Edgar Butwilowski
+  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
+
+  Sessions view:
+  - Top grid: list of sessions (master list)
+  - Below: three independent child grids that reflect the currently selected session:
+      1) Projects (isRoadworkProject === true)
+      2) Present users (isRoadworkProject === false AND isPresent === true)
+      3) Distribution list users (isRoadworkProject === false AND isDistributionList === true)
 -->
+
+<!-- Hidden container used for report generation (HTML → DOCX/PDF). -->
 <div #reportContainer style="position: fixed; left: -9999px; top: 0; visibility: hidden;"></div>
 
 <div style="margin: 2em;">
-  <h1>Sitzungen ({{ sessionsData?.length }})</h1>
+  <h1>
+    Sitzungen ({{ sessionsData.length }})
+  </h1>
 
-  <div style="margin-bottom: 2em;">
-    <div *ngIf="user">
-      <label class="quick-filter">
-        <span>Filter:</span>
-        <input
-          type="text"
-          id="input-quick-filter"
-          placeholder="Suchen…"
-          (input)="onQuickFilterChanged()"
-        />
-      </label>
 
-      <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
-      <div class="grid-overlay" *ngIf="isDataLoading"></div>
+  <!-- Header controls -->
+  <div style="margin-bottom: 1em;">
+    <label class="quick-filter" style="display:inline-flex; gap:.5em; align-items:center;">
+      <span>Filter:</span>
+      <input
+        type="text"
+        id="input-quick-filter"
+        placeholder="Suchen..."
+        (input)="onQuickFilterChanged()"
+        style="padding:.35em .5em; width: 16rem;"
+      />
+    </label>
+  </div>
 
-      <!-- MASTER GRID -->
+  <!-- Loading indicator overlay -->
+  <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+  <div class="grid-overlay" *ngIf="isDataLoading"></div>
+
+  <!-- Master grid: list of sessions (community edition only) -->
+  <ag-grid-angular
+    class="ag-theme-alpine"
+    [rowData]="sessionsData"
+    [columnDefs]="sessionsColDefs"
+    [defaultColDef]="defaultColDef"
+    rowSelection="single"
+    [includeHiddenColumnsInQuickFilter]="true" 
+    (gridReady)="onSessionsGridReady($event)"
+    (selectionChanged)="onSessionSelectionChanged()"
+    [attr.inert]="isDataLoading ? '' : null"
+    style="width: 100%; height: 20vh;"
+  >
+  </ag-grid-angular>
+
+  <!-- Child grids container -->
+  <div style="display: grid; grid-template-columns: 4fr 3fr 3fr; gap: 1rem; margin-top: 1.5rem;">
+    <h1 style="grid-column: span 3; margin-bottom: .5rem;">      
+      <ng-container *ngIf="selectedSession as s">{{ s.sessionName }}</ng-container>
+    </h1>
+    <!-- Grid 1: Projects -->
+    <div>
+      <h3 style="margin: .25rem 0;">Bauvorhaben ({{ projectRows.length }})</h3>
       <ag-grid-angular
+        #projectsGrid
         class="ag-theme-alpine"
-        [rowData]="sessionsData"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [rowSelection]="'single'"
-        [localeText]="localeText"
-        (gridReady)="onGridReady($event)"
-        (selectionChanged)="onSelectionChanged()"
-        [attr.inert]="isDataLoading ? '' : null"
-        style="width: 100%; height: 40vh;"
+        [rowData]="projectRows"
+        [columnDefs]="projectsColDefs"
+        [defaultColDef]="childDefaultColDef"
+        style="width: 100%; height: 42vh;"
+        (firstDataRendered)="autoSizeAll($event)"
       >
       </ag-grid-angular>
+    </div>
 
-      <!-- CHILD GRID BELOW -->
-      <div style="margin-top: 1.5rem" *ngIf="selectedChildren?.length">
-        <h3>Teilnehmende & Projekte ({{ selectedChildren.length }})</h3>
-        <ag-grid-angular
-          class="ag-theme-alpine"
-          [rowData]="selectedChildren"
-          [columnDefs]="childColumnDefs"
-          [defaultColDef]="childDefaultColDef"
-          [suppressRowClickSelection]="true"
-          [localeText]="localeText"
-          style="width: 100%; height: 30vh;"
-        >
-        </ag-grid-angular>
-      </div>
+    <!-- Grid 2: Present users -->
+    <div>
+      <h3 style="margin: .25rem 0;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h3>
+      <ag-grid-angular
+        #presentGrid
+        class="ag-theme-alpine"
+        [rowData]="presentUserRows"
+        [columnDefs]="peopleColDefs"
+        [defaultColDef]="childDefaultColDef"
+        style="width: 100%; height: 42vh;"
+        (firstDataRendered)="autoSizeAll($event)"
+      >
+      </ag-grid-angular>
+    </div>
+
+    <!-- Grid 3: Distribution list users -->
+    <div>
+      <h3 style="margin: .25rem 0;">E-Mail-Verteiler ({{ getDistributionListCount(distributionUserRows) }})</h3>
+      <ag-grid-angular
+        #distributionGrid
+        class="ag-theme-alpine"
+        [rowData]="distributionUserRows"
+        [columnDefs]="distributionColDefs"
+        [defaultColDef]="childDefaultColDef"
+        style="width: 100%; height: 42vh;"
+        (firstDataRendered)="autoSizeAll($event)"
+      >
+      </ag-grid-angular>
     </div>
   </div>
 </div>
