@@ -120,8 +120,7 @@ export class ReportLoaderService {
                 children
                 .filter(item =>
                     !item.isRoadworkProject === true
-                    && item.isDistributionList === true                    
-                    && item.shouldBeOnDistributionList === true    
+                    && item.isDistributionList === true                                           
                 )                
                 .map(item => ({
                     Name: item.name,
@@ -140,12 +139,17 @@ export class ReportLoaderService {
                 'DATUM_VERSAND_BEDARFSKLAERUNG_2': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult2)),
                 'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateReportStart)),
                 'DATUM_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),                                                                
+                'SKS_Nr': this.wrapPlaceholder(this.roadWorkActivity?.properties?.roadWorkActivityNo ?? "-"),
                 'GM': this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
-                'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                                           
-                'ANWESENDE': "<div>" + htmlTablePresentPersons + "</div>",
-                'ENTSCHULDIGT': "<div>" + htmlTableExcusedPersons + "</div>",
-                'TEILNEHMENDE': "<div>" + htmlTableDistributionListPersons + "</div>",                
+                'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                                                           
+                'VORGEHEN': 'Vorgehen',
+                'ANWESENDE': "<div>" + htmlTablePresentPersons + "</div>",                
+                'ENTSCHULDIGT': "<div>" + htmlTableExcusedPersons + "</div>",                
+                'VERTEILER': "<div>" + htmlTableDistributionListPersons + "</div>",  
+                
             };
+
+            console.log("placeholders--->", placeholders);
 
             placeholders['BAUVORHABEN_LISTE'] = await this.prepareRoadWorkActivity(children);
 
@@ -399,20 +403,16 @@ export class ReportLoaderService {
                 <img src="[PLACEHOLDER_MAP_PERIMETER]"
                 alt="Mapa"
                 style="display:block;width:510.24pt;height:auto;max-height:728.50pt;page-break-inside:avoid;" />
-            </p>
-            <p>Bauvorhaben: [PLACEHOLDER_Titel_Adresse]</p>
-            <p>Abschnitt: [PLACEHOLDER_Abschnitt]</p>
-            <p>**SKS-Nr.: [PLACEHOLDER_SKS_Nr]</p>
+            </p>                                    
             <p>Auslösende:r: [PLACEHOLDER_AUSLOESENDE]</p>
             <p>Auslösendes Werk: [PLACEHOLDER_AUSLOESENDES_WERK]</p>
-            <p>Gebietsmanagement: [PLACEHOLDER_GM]</p>
-            <p>Projekttyp: [PLACEHOLDER_Projekttyp]</p>
+            <p>Gebietsmanagement: [PLACEHOLDER_GM]</p>            
             <p>Lead Realisierung (Phase 5/Baustelle): [PLACEHOLDER_WERK_OE] / [PLACEHOLDER_PL] (Hinweis: wird an SKS definiert)</p>
             <p>Mitwirkende: [PLACEHOLDER_AUSLOESENDES_WERK] sowie [PLACEHOLDER_MITWIRKENDE]</p>
-            <p><strong>Vorgehensvorschlag / Vorgehen</strong></p>
-            <p>Beschreibt, wie was umgesetzt werden soll und warum. </p>
+            
+            <p>[manuell ausfüllen] Beschreibt, wie was umgesetzt werden soll und warum. </p>
             <p>Falls vorhanden, hier ggf. auch Ausgangslage notieren.» </p>
-            <p>2. Vorgehensvorschlag / Vorgehen</p>
+            <p>2. [PLACEHOLDER_VORGEHEN]</p>
             <p><strong>Zugewiesene</strong> (berücksichtigte) Bedarfe</p>
             <p>
             [PLACEHOLDER_ZUGEWIESENE_BEDARFE]
@@ -504,14 +504,10 @@ export class ReportLoaderService {
             const mapUrl = await this.loadProjectPerimeterMap();
 
             const htmlSection = fill(sectionTpl, {
-                TITEL_ADRESSE_ABSCHNITT: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.name ?? "-"} / ${this.roadWorkActivity?.properties?.section ?? "-"}`),
-                Titel_Adresse: this.wrapPlaceholder(this.roadWorkActivity?.properties?.name?? "-"),
-                Abschnitt: this.wrapPlaceholder(this.roadWorkActivity?.properties?.section?? "-"),
-                SKS_Nr: this.wrapPlaceholder(this.roadWorkActivity?.properties?.strabakoNo?? "-"),
+                TITEL_ADRESSE_ABSCHNITT: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.name ?? "-"} / ${this.roadWorkActivity?.properties?.section ?? "-"}`),                                
                 AUSLOESENDE: this.wrapPlaceholder(`${this.primaryNeed?.properties?.orderer?.firstName ?? "-"} ${this.primaryNeed?.properties?.orderer?.lastName ?? "-"}`),
                 AUSLOESENDES_WERK: this.wrapPlaceholder(this.primaryNeed?.properties?.orderer?.organisationalUnit?.abbreviation ?? "-"),
-                GM: this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
-                Projekttyp: this.wrapPlaceholder(this.roadWorkActivity?.properties?.projectType ?? "-"),
+                GM: this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),                
                 WERK_OE: this.wrapPlaceholder(this.roadWorkActivity?.properties?.projectManager? `${this.roadWorkActivity.properties.projectManager.firstName ?? "-"} ${this.roadWorkActivity.properties.projectManager.lastName ?? "-"}`: "- -"),
                 PL: this.wrapPlaceholder(this.managementArea?.properties?.kind?.name ?? '-'),
                 MITWIRKENDE: this.wrapPlaceholder(this.getInvolvedOrgsNames() ?? "-"),

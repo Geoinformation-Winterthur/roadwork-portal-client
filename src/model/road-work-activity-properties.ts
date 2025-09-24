@@ -14,6 +14,9 @@ export class RoadWorkActivityProperties {
     areaManager: User = new User();
     description: string = "";
     comment: string = "";
+    sessionComment1: string = "";
+    sessionComment2: string = ""
+    sessionComment3: string = ""
     section: string = "";
     type: string = "";
     projectType: string = "";
@@ -43,6 +46,7 @@ export class RoadWorkActivityProperties {
     pdbFid: number = 0;
     strabakoNo: string = "";
     projectNo: string = "";
+    roadWorkActivityNo?: string;
     dateSks?: Date;
     dateSksReal?: Date;
     dateSksPlanned?: Date;

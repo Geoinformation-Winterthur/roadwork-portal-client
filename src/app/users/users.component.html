@@ -49,6 +49,28 @@
         <th mat-header-cell *matHeaderCellDef> Organisation </th>
         <td mat-cell *matCellDef="let user"> {{user.organisationalUnit.name}} </td>
       </ng-container>
+
+      <ng-container matColumnDef="isParticipantList">
+        <th mat-header-cell *matHeaderCellDef> Sitzung </th>
+        <td mat-cell *matCellDef="let user">
+          <mat-checkbox
+            [checked]="user.isParticipantList"
+            disabled 
+            aria-label="Teilnehmerliste">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="isDistributionList">
+        <th mat-header-cell *matHeaderCellDef> Verteiler </th>
+        <td mat-cell *matCellDef="let user">
+          <mat-checkbox
+            [checked]="user.isDistributionList"
+            disabled 
+            aria-label="Distributionliste">
+          </mat-checkbox>
+        </td>
+      </ng-container>
   
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

@@ -41,6 +41,13 @@
               <mat-checkbox [(ngModel)]="user.grantedRoles.administrator" (change)="updateUser()"
                 style="margin-right: 1em;">Administration</mat-checkbox>
             </div>
+            <div style="margin-bottom: 2em;">
+              <p><b>Sitzungen</b></p>
+              <mat-checkbox [(ngModel)]="user.isParticipantList" (change)="updateUser()"
+                style="margin-right: 1em;">Teilnehmerliste</mat-checkbox>
+              <mat-checkbox [(ngModel)]="user.isDistributionList" (change)="updateUser()"
+                style="margin-right: 1em;">Verteiler</mat-checkbox>              
+            </div>
             <form class="choose_organisation_form">
               <mat-form-field appearance="fill">
                 <mat-label>Organisationseinheit</mat-label>

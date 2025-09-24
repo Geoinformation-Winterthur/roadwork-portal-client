@@ -22,7 +22,7 @@ import { User } from '../../model/user';
 export class UsersComponent {
 
   /** Column definition for the users material table. */
-  displayedColumns: string[] = ['editAction', 'firstName', 'lastName', 'mailAddress', 'role', 'organisation'];
+  displayedColumns: string[] = ['editAction', 'firstName', 'lastName', 'mailAddress', 'role', 'organisation', 'isDistributionList', 'isParticipantList'];
 
   /** Table datasource containing all users fetched from the backend. */
   dataSource: User[] = [];

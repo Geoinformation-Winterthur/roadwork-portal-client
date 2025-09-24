@@ -70,6 +70,12 @@
                                     <div style="display:flex;flex-direction:column;">
                                         <mat-form-field>
                                             <input matInput type="text"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.roadWorkActivityNo"
+                                                placeholder="Nummer-Bauvorhaben"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                        <mat-form-field>
+                                            <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.strabakoNo"
                                                 placeholder="Strabako-Nummer"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
@@ -515,150 +521,7 @@
                                     </mat-card-content>
                                 </mat-card>
                             </div>
-                        </div>
-                        <div style="margin: 1em;">
-                            <h2>Genehmigungen</h2>
-                            <div fxLayout="row wrap padding">
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-header>
-                                        <mat-card-title>Sitzungen, berechnet</mat-card-title>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div style="display:flex;flex-direction:column;">
-                                            <div
-                                                style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                                Strategische Koord. (SKS):<br>
-                                                <b>
-                                                    <span *ngIf="roadWorkActivityFeature.properties.dateSks">
-                                                        {{roadWorkActivityFeature.properties.dateSks |
-                                                        date:'dd.MM.yyyy'}}
-                                                    </span>
-                                                    <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
-                                                        Sitzung konnte nicht ermittelt werden
-                                                    </span>
-                                                </b>
-                                            </div>
-                                            <div
-                                                style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                                Koordinationsausschuss Projekte (KAP):<br>
-                                                <b>
-                                                    <span *ngIf="roadWorkActivityFeature.properties.dateKap">
-                                                        {{roadWorkActivityFeature.properties.dateKap |
-                                                        date:'dd.MM.yyyy'}}
-                                                    </span>
-                                                    <span *ngIf="!roadWorkActivityFeature.properties.dateKap">
-                                                        Sitzung konnte nicht ermittelt werden
-                                                    </span>
-                                                </b>
-                                            </div>
-                                            <form>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Geschäftsleitung Tiefbau (GL TBA)</mat-label>
-                                                    <input matInput name="dateGlTba"
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
-                                                        [matDatepicker]="dateGlTba"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateGlTba></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateGlTba"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                            </form>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-header>
-                                        <mat-card-title>Sitzungen, terminiert</mat-card-title>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div style="display:flex;flex-direction:column;">
-                                            <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Strategische Koord. (SKS)</mat-label>
-                                                    <mat-select
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
-                                                        [formControl]="dateSksPlannedControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option
-                                                            *ngFor="let plannedDateSks of configurationData.plannedDatesSks"
-                                                            value="{{plannedDateSks}}">{{plannedDateSks |
-                                                            date:'dd.MM.yyyy'}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                            </form>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-header>
-                                        <mat-card-title>Sitzungen, genehmigt</mat-card-title>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div style="display:flex;flex-direction:column;">
-                                            <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
-                                                    <mat-select
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateSksReal"
-                                                        [formControl]="dateSksControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option
-                                                            *ngFor="let plannedDateSks of configurationData.plannedDatesSks"
-                                                            value="{{plannedDateSks}}">{{plannedDateSks |
-                                                            date:'dd.MM.yyyy'}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                            </form>
-                                            <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
-                                                    <mat-select
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateKapReal"
-                                                        [formControl]="dateKapControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option
-                                                            *ngFor="let plannedDateKap of configurationData.plannedDatesKap"
-                                                            value="{{plannedDateKap}}">
-                                                            {{plannedDateKap | date:'dd.MM.yyyy'}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                            </form>
-                                            <form>
-                                                <mat-form-field appearance="fill">
-                                                    <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
-                                                    <mat-select
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateOksReal"
-                                                        [formControl]="dateOksControl"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-option
-                                                            *ngFor="let plannedDateOks of configurationData.plannedDatesOks"
-                                                            value="{{plannedDateOks}}">
-                                                            {{plannedDateOks | date:'dd.MM.yyyy'}}
-                                                        </mat-option>
-                                                    </mat-select>
-                                                </mat-form-field>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Geschäftsleitung Tiefbau (GL TBA)</mat-label>
-                                                    <input matInput name="dateGlTbaReal"
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
-                                                        [matDatepicker]="dateGlTbaReal"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateGlTbaReal></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateGlTbaReal"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                            </form>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                            </div>
-                        </div>
+                        </div>                        
                         <div style="margin: 1em;">
                             <h2>Auflageverfahren</h2>
                             <div fxLayout="row wrap padding" class="tab-content">
@@ -1389,6 +1252,183 @@
 
                             </table>
                         </div>
+                    </mat-tab>
+                    <mat-tab label="Sitzungen" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
+
+                            <div style="margin: 1em;">                                
+                                <div fxLayout="row wrap padding">
+                                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                        fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                        <mat-card-header>
+                                            <mat-card-title>Sitzungen, berechnet</mat-card-title>
+                                        </mat-card-header>
+                                        <mat-card-content>
+                                            <div style="display:flex;flex-direction:column;">
+                                                <div
+                                                    style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                                    Strategische Koord. (SKS):<br>
+                                                    <b>
+                                                        <span *ngIf="roadWorkActivityFeature.properties.dateSks">
+                                                            {{roadWorkActivityFeature.properties.dateSks |
+                                                            date:'dd.MM.yyyy'}}
+                                                        </span>
+                                                        <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
+                                                            Sitzung konnte nicht ermittelt werden
+                                                        </span>
+                                                    </b>
+                                                </div>
+                                                <div
+                                                    style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
+                                                    Koordinationsausschuss Projekte (KAP):<br>
+                                                    <b>
+                                                        <span *ngIf="roadWorkActivityFeature.properties.dateKap">
+                                                            {{roadWorkActivityFeature.properties.dateKap |
+                                                            date:'dd.MM.yyyy'}}
+                                                        </span>
+                                                        <span *ngIf="!roadWorkActivityFeature.properties.dateKap">
+                                                            Sitzung konnte nicht ermittelt werden
+                                                        </span>
+                                                    </b>
+                                                </div>
+                                                <form>
+                                                    <mat-form-field style="margin:10px;">
+                                                        <mat-label>Geschäftsleitung Tiefbau (GL TBA)</mat-label>
+                                                        <input matInput name="dateGlTba"
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
+                                                            [matDatepicker]="dateGlTba"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-datepicker #dateGlTba></mat-datepicker>
+                                                        <mat-datepicker-toggle matSuffix
+                                                            [for]="dateGlTba"></mat-datepicker-toggle>
+                                                    </mat-form-field>
+                                                </form>
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                        fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                        <mat-card-header>
+                                            <mat-card-title>Sitzungen, terminiert {{configurationData.sksNos | json}}</mat-card-title>
+                                        </mat-card-header>
+                                        <mat-card-content>
+                                            <div style="display:flex;flex-direction:column;">
+                                                <form>
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-label>Strategische Koord. (SKS)</mat-label>
+                                                        <mat-select
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
+                                                            [formControl]="dateSksPlannedControl"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                            <mat-option
+                                                                *ngFor="let plannedDateSks of configurationData.plannedDatesSks; let i = index"
+                                                                [value]="plannedDateSks">
+                                                                {{ plannedDateSks | date:'dd.MM.yyyy' }}
+                                                                ({{ configurationData.sksNos?.[i] || '—' }})
+                                                            </mat-option>                                                      
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </form>
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
+                                        fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                                        <mat-card-header>
+                                            <mat-card-title>Sitzungen, genehmigt</mat-card-title>
+                                        </mat-card-header>
+                                        <mat-card-content>
+                                            <div style="display:flex;flex-direction:column;">
+                                                <form>
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-label>Strategische Koordinationssitzung (SKS)</mat-label>
+                                                        <mat-select
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateSksReal"
+                                                            [formControl]="dateSksControl"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                            <mat-option
+                                                                *ngFor="let plannedDateSks of configurationData.plannedDatesSks"
+                                                                value="{{plannedDateSks}}">{{plannedDateSks |
+                                                                date:'dd.MM.yyyy'}}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </form>
+                                                <form>
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-label>Koordinationsausschuss Projekte (KAP)</mat-label>
+                                                        <mat-select
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateKapReal"
+                                                            [formControl]="dateKapControl"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                            <mat-option
+                                                                *ngFor="let plannedDateKap of configurationData.plannedDatesKap"
+                                                                value="{{plannedDateKap}}">
+                                                                {{plannedDateKap | date:'dd.MM.yyyy'}}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </form>
+                                                <form>
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-label>Operative Koordinationssitzung (OKS)</mat-label>
+                                                        <mat-select
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateOksReal"
+                                                            [formControl]="dateOksControl"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                            <mat-option
+                                                                *ngFor="let plannedDateOks of configurationData.plannedDatesOks"
+                                                                value="{{plannedDateOks}}">
+                                                                {{plannedDateOks | date:'dd.MM.yyyy'}}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                    <mat-form-field style="margin:10px;">
+                                                        <mat-label>Geschäftsleitung Tiefbau (GL TBA)</mat-label>
+                                                        <input matInput name="dateGlTbaReal"
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
+                                                            [matDatepicker]="dateGlTbaReal"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-datepicker #dateGlTbaReal></mat-datepicker>
+                                                        <mat-datepicker-toggle matSuffix
+                                                            [for]="dateGlTbaReal"></mat-datepicker-toggle>
+                                                    </mat-form-field>
+                                                </form>
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                </div>
+                            </div>
+                            <div class="form-container" style="margin-left:50px;">
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Beilagen</mat-label>
+                                    <textarea matInput maxlength="1000"
+                                            style="height:100px;"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.sessionComment1"
+                                            placeholder="Bemerkung 1 eingeben.."
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>1. Abnahme SKS-Protokoll</mat-label>
+                                    <textarea matInput maxlength="1000"
+                                            style="height:100px;"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.sessionComment2"
+                                            placeholder="Bemerkung 2 eingeben.."
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>3. Verschiedenes</mat-label>
+                                    <textarea matInput maxlength="1000"
+                                              style="height:100px;"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.sessionComment3"
+                                            placeholder="Bemerkung 3 eingeben.."
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                </mat-form-field>
+                            </div>
                     </mat-tab>
                 </mat-tab-group>
             </mat-tab>

@@ -333,7 +333,7 @@ export class ReportingItemsComponent implements OnInit {
    */
   async generatePDF2(): Promise<void> {    
 
-    const sessionType = "Vor-Protocoll";
+    const sessionType = "Vor-Protokol SKS";
     const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType , [], this.roadWorkActivity.properties.uuid);
     this.reportContainer.nativeElement.innerHTML = html;
 

@@ -66,8 +66,7 @@ interface SessionChild {
   mailAddress?: string;
   isPresent?: boolean;
   shouldBePresent?: boolean;
-  isDistributionList?: boolean;
-  shouldBeOnDistributionList?: boolean;
+  isDistributionList?: boolean;  
 }
 
 /** Allowed report types. */
@@ -104,10 +103,7 @@ export class SessionsComponent implements OnInit {
   private reportLoaderService: ReportLoaderService;
   private snckBar: MatSnackBar;
 
-  /** Environment-provided email prefix sets (lowercased). */
-  presentEmails: string[] = environment.presentEmails ?? [];
-  distributionListEmails: string[] = environment.distributionListEmails ?? [];
-
+  
   /** Locale for AG Grid UI strings. */
   localeText = AG_GRID_LOCALE_DE;
 
@@ -248,8 +244,7 @@ export class SessionsComponent implements OnInit {
       cellEditor: 'agCheckboxCellEditor',
       valueSetter: params => {        
         const v = params.newValue === true || params.newValue === 'true';
-        params.data.isPresent = v;
-        params.data.shouldBePresent = v;
+        params.data.isPresent = v;        
         return true;
       },      
     },  
@@ -270,8 +265,7 @@ export class SessionsComponent implements OnInit {
       cellEditor: 'agCheckboxCellEditor',
       valueSetter: params => {
         const v = params.newValue === true || params.newValue === 'true';
-        params.data.isDistributionList = v;
-        params.data.shouldBeOnDistributionList = v;        
+        params.data.isDistributionList = v;        
         return true;
       }
     },
@@ -310,26 +304,18 @@ export class SessionsComponent implements OnInit {
           );
           this.isDataLoading = false;
         },
-      });
-
-    // Precompute prefix sets (case-insensitive) for people classification.
-    const presentSet = new Set(this.presentEmails.map(e => e.toLowerCase().trim()));
-    const dlSet = new Set(this.distributionListEmails.map(e => e.toLowerCase().trim()));
-
+      });    
+    
     // Activities → Sessions → Sessions + users (present / distribution)
     const sessionsWithUsers$ = this.roadWorkActivityService.getRoadWorkActivities().pipe(
       map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)),
       switchMap((sessions: Session[]) =>
         this.userService.getAllUsers().pipe(
           map(users => {
-            // Map users to SessionChild rows and classify by flags (present / distribution)
-            const people: SessionChild[] = users.map((user, idx) => {
-              const email = (user.mailAddress ?? '').toLowerCase().trim();
-              const presentSet = new Set(this.presentEmails.map(e => e.toLowerCase().trim()));
-              const dlSet = new Set(this.distributionListEmails.map(e => e.toLowerCase().trim()));
 
-              const isPresent = Boolean(email) && [...presentSet].some(p => email.startsWith(p));
-              const isDistributionList = Boolean(email) && [...dlSet].some(p => email.startsWith(p));
+            const people: SessionChild[] = users.map((user, idx) => {
+              const isPresent = user.isParticipantList;
+              const isDistributionList = user.isDistributionList;
 
               return {
                 id: String(idx + 1),
@@ -339,8 +325,7 @@ export class SessionsComponent implements OnInit {
                 mailAddress: user.mailAddress ?? '',
                 isPresent,
                 shouldBePresent: isPresent,
-                isDistributionList,
-                shouldBeOnDistributionList: isDistributionList
+                isDistributionList,                
               };
             });
 

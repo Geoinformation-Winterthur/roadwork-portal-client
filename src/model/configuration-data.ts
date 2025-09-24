@@ -10,5 +10,7 @@ export class ConfigurationData{
     public plannedDatesKap: Date[] = [];
     public plannedDatesOks: Date[] = [];
 
+    public sksNos: string[] = [];
+
     public errorMessage: string = "";
 }

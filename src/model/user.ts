@@ -20,4 +20,6 @@ export class User {
         = new OrganisationalUnit();
     token: string = "";
     errorMessage: string = "";
+    isDistributionList: boolean = false;
+    isParticipantList: boolean = false;
 }

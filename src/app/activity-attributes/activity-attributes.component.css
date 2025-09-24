@@ -25,3 +25,14 @@ mat-selection-list {
   pointer-events: none;
   opacity: 0.5;
 }
+
+.form-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 12px;              
+  width: 95%;
+}
+
+.full-width {
+  width: 100%;            
+}
