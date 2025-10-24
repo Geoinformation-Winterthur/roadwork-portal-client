@@ -33,42 +33,66 @@
                     <mat-card-content>
                         <div style="display: flex;flex-direction: column;">
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Termin 1</mat-label>
+                                <mat-label>Termin 1
+                                        <span *ngIf="configurationData.sksNos?.[0]">
+                                            ({{ configurationData.sksNos[0] }})
+                                        </span>
+                                </mat-label>
                                 <input matInput [ngModel]="configurationData.plannedDatesSks[0]" [formControl]="dateSks1Control"
                                     [matDatepicker]="dateSks1" (dateChange)="update()">
                                 <mat-datepicker #dateSks1></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks1"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Termin 2</mat-label>
+                                <mat-label>Termin 2
+                                        <span *ngIf="configurationData.sksNos?.[1]">
+                                            ({{ configurationData.sksNos[1] }})
+                                        </span>
+                                </mat-label>
                                 <input matInput [ngModel]="configurationData.plannedDatesSks[1]" [formControl]="dateSks2Control"
                                     [matDatepicker]="dateSks2" (dateChange)="update()">
                                 <mat-datepicker #dateSks2></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks2"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Termin 3</mat-label>
+                                <mat-label>Termin 3
+                                        <span *ngIf="configurationData.sksNos?.[2]">
+                                            ({{ configurationData.sksNos[2] }})
+                                        </span>
+                                </mat-label>
                                 <input matInput [ngModel]="configurationData.plannedDatesSks[2]" [formControl]="dateSks3Control"
                                     [matDatepicker]="dateSks3" (dateChange)="update()">
                                 <mat-datepicker #dateSks3></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks3"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Termin 4</mat-label>
+                                <mat-label>Termin 4
+                                        <span *ngIf="configurationData.sksNos?.[3]">
+                                            ({{ configurationData.sksNos[3] }})
+                                        </span>
+                                </mat-label>
                                 <input matInput [ngModel]="configurationData.plannedDatesSks[3]" [formControl]="dateSks4Control"
                                     [matDatepicker]="dateSks4" (dateChange)="update()">
                                 <mat-datepicker #dateSks4></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks4"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Termin 5</mat-label>
+                                <mat-label>Termin 5
+                                        <span *ngIf="configurationData.sksNos?.[4]">
+                                            ({{ configurationData.sksNos[4] }})
+                                        </span>
+                                </mat-label>
                                 <input matInput [ngModel]="configurationData.plannedDatesSks[4]" [formControl]="dateSks5Control"
                                     [matDatepicker]="dateSks5" (dateChange)="update()">
                                 <mat-datepicker #dateSks5></mat-datepicker>
                                 <mat-datepicker-toggle matSuffix [for]="dateSks5"></mat-datepicker-toggle>
                             </mat-form-field>
                             <mat-form-field style="margin:10px;">
-                                <mat-label>Termin 6</mat-label>
+                                <mat-label>Termin 6
+                                        <span *ngIf="configurationData.sksNos?.[5]">
+                                            ({{ configurationData.sksNos[5] }})
+                                        </span>
+                                </mat-label>
                                 <input matInput [ngModel]="configurationData.plannedDatesSks[5]" [formControl]="dateSks6Control"
                                     [matDatepicker]="dateSks6" (dateChange)="update()">
                                 <mat-datepicker #dateSks6></mat-datepicker>

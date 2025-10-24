@@ -22,6 +22,7 @@ import {
   GridApi,
   GridReadyEvent,
   FirstDataRenderedEvent,
+  IRowNode
 } from 'ag-grid-community';
 
 import { UserService } from 'src/services/user.service';
@@ -37,6 +38,11 @@ import { asBlob } from 'html-docx-js-typescript';
 import html2pdf from 'html2pdf.js';
 import { environment } from 'src/environments/environment';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
+import { SessionService } from 'src/services/session.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { debounceTime, filter } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+
 
 /** Top-level row model representing one session. */
 interface Session {
@@ -46,6 +52,12 @@ interface Session {
   sessionDateApproval: string;
   sessionCreator: string;
   sessionDate: string;
+  attachments : string;
+  acceptance1 : string;
+  miscItems : string;
+  plannedDate?: Date;
+  sksNo?: number;
+  errorMessage?: string;
 
   /** Legacy combined list (projects + people) – still used for report generation. */
   children: SessionChild[];
@@ -86,7 +98,7 @@ export class SessionsComponent implements OnInit {
   sessionsColumnApi!: ColumnApi;
 
   /** Data for the sessions (master) grid. */
-  sessionsData: Session[] = [];
+  sessionsData: any[] = [];
   /** Actually selected session */
   selectedSession: Session | null = null;
 
@@ -94,10 +106,12 @@ export class SessionsComponent implements OnInit {
   projectRows: SessionChild[] = [];
   presentUserRows: SessionChild[] = [];
   distributionUserRows: SessionChild[] = [];
+  peopleDirty = false;
 
   /** Cached user and injected services. */
-  user: User = new User();
+  //user: User = new User();
   userService: UserService;
+  sessionService: SessionService;
 
   private roadWorkActivityService: RoadWorkActivityService;
   private reportLoaderService: ReportLoaderService;
@@ -114,52 +128,145 @@ export class SessionsComponent implements OnInit {
   @ViewChild('reportContainer', { static: false }) reportContainer!: ElementRef;
 
   /** Optional references to child grids (used only for convenience). */
-  @ViewChild('projectsGrid') projectsGrid?: AgGridAngular;
+  @ViewChild('projectGrid') projectGrid?: AgGridAngular;
   @ViewChild('presentGrid') presentGrid?: AgGridAngular;
   @ViewChild('distributionGrid') distributionGrid?: AgGridAngular;
+  @ViewChild('sessionsGrid') sessionsGrid!: AgGridAngular;
 
   constructor(
     roadWorkActivityService: RoadWorkActivityService,
     reportLoaderService: ReportLoaderService,
     userService: UserService,
-    snckBar: MatSnackBar
+    sessionService: SessionService,
+    snckBar: MatSnackBar,
+    private fb: FormBuilder
   ) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
+    this.sessionService = sessionService;
     this.reportLoaderService = reportLoaderService;
     this.snckBar = snckBar;
     this.isDataLoading = true;
+
+    // Push edits from the form back into the selected row (debounced)
+    this.detailsForm.valueChanges
+      .pipe(
+        debounceTime(200),
+        filter(() => !!this.selectedNode && this.detailsForm.enabled)
+      )
+      .subscribe(values => {
+        if (!this.selectedNode) return;
+        // Update row data
+        Object.assign(this.selectedNode.data, {
+          acceptance1: values.acceptance1 ?? '',
+          attachments: values.attachments ?? '',
+          miscItems: values.miscItems ?? '',
+        });
+        // Refresh just the three columns for this row
+        this.sessionsGrid.api.refreshCells({
+          rowNodes: [this.selectedNode],
+          columns: ['acceptance1', 'attachments', 'miscItems'],
+          force: true,
+        });
+      });
   }
 
-  /**
-   * Grid defaults (community-only features):
-   * - Sorting/resizing
-   * - Text filter
-   * - Single-click edit where relevant
-   */
-  defaultColDef: ColDef = {
-    sortable: true,
-    resizable: true,
-    filter: 'agTextColumnFilter',
-    menuTabs: ['filterMenuTab'],
-    flex: 1,
-    minWidth: 80,
-  };
+
+  detailsForm = this.fb.group({
+    acceptance1: ['', [Validators.maxLength(1000)]],
+    attachments: ['', [Validators.maxLength(1000)]],
+    miscItems: ['', [Validators.maxLength(1000)]],
+  });
+
+  selectedNode: IRowNode | null = null;
 
   /** Slightly simplified defaults for child grids. */
   childDefaultColDef: ColDef = {
     sortable: true,
     resizable: true,
     filter: 'agTextColumnFilter',
-    menuTabs: ['filterMenuTab'],
-    flex: 1,
+    menuTabs: ['filterMenuTab'],    
     minWidth: 30,
   };
 
-  /** Columns for the sessions (master) grid. */
-  sessionsColDefs: ColDef[] = [
+  /** Columns for the projects grid. */
+  projectsColDefs: ColDef[] = [
+    { headerName: 'Id', field: 'id', suppressSizeToFit: true, width: 310, tooltipField: 'id' },
+    { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
+  ];
+
+  /** Columns for the people grids - present users */
+  peopleColDefs: ColDef[] = [    
+    {
+      headerName: '',
+      field: 'isPresent',
+      minWidth: 50,
+      editable: true,
+      cellRenderer: 'agCheckboxCellRenderer',
+      cellEditor: 'agCheckboxCellEditor',
+      valueSetter: params => {        
+        const v = params.newValue === true || params.newValue === 'true';
+        params.data.isPresent = v;        
+        return true;
+      },      
+    },  
+    { headerName: 'Name', field: 'name', minWidth: 150 },
+    { headerName: 'Werk', field: 'department', minWidth: 60 },
+    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160,  flex: 1  }
+  ];
+
+
+  /** Columns for the people grids - present users */
+  distributionColDefs: ColDef[] = [    
+    {
+      headerName: '',
+      field: 'isDistributionList',
+      minWidth: 50,
+      editable: true,
+      cellRenderer: 'agCheckboxCellRenderer',
+      cellEditor: 'agCheckboxCellEditor',
+      valueSetter: params => {
+        const v = params.newValue === true || params.newValue === 'true';
+        params.data.isDistributionList = v;        
+        return true;
+      }
+    },
+    { headerName: 'Name', field: 'name', minWidth: 150 },
+    { headerName: 'Werk', field: 'department', minWidth: 60 },
+    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160, flex: 1 }
+  ];
+
+dtf = new Intl.DateTimeFormat('de-CH', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+fmtDate = (d: any) => d ? new Date(d).toISOString().slice(0, 10) : '';
+
+defaultColDef: ColDef = {
+  sortable: true,
+  resizable: true,
+  filter: true,               
+  menuTabs: ['filterMenuTab'], 
+  minWidth: 100  
+};
+
+sessionsColDefs: ColDef[] = [
+    {
+      headerName: 'ID',
+      field: 'id',
+      hide: true,
+      width: 90,
+      suppressSizeToFit: true,
+      filter: 'agNumberColumnFilter',
+      type: 'numericColumn',
+    },
+    {
+      headerName: 'SKS No',
+      field: 'sksNo',
+      width: 110,
+      suppressSizeToFit: true,
+      filter: 'agNumberColumnFilter',
+    },
     { headerName: 'Sitzung', field: 'sessionName', minWidth: 220 },
-    { headerName: 'Datum Genehmigung', field: 'sessionDateApproval', minWidth: 160 },
+    { headerName: 'Datum Genehmigung', field: 'plannedDate', minWidth: 160 },
     {
       headerName: 'Berichtsstatus',
       field: 'sessionType',
@@ -173,33 +280,78 @@ export class SessionsComponent implements OnInit {
       },
       minWidth: 180,
       cellClass: 'report-combo-cell',
+      flex: 1
+    },     
+    {
+      headerName: '1. Abnahme SKS-Protokoll',
+      field: 'acceptance1',
+      minWidth: 200,
+      tooltipField: 'acceptance1',
+      flex: 1
+    },
+    {
+      headerName: 'Beilagen',
+      field: 'attachments',
+      minWidth: 160,
+      tooltipField: 'attachments',
+    },
+    {
+      headerName: 'Verschiedenes',
+      field: 'miscItems',
+      minWidth: 180,
+      tooltipField: 'miscItems',
+    },
+    {
+      headerName: 'Teilnehmerliste',
+      field: 'presentUserIds',
+      minWidth: 180,
+      tooltipField: 'presentUserIds',
+    },
+    {
+      headerName: 'E-Mail-Verteiler',
+      field: 'distributionUserIds',
+      minWidth: 180,
+      tooltipField: 'distributionUserIds',
+    },
+    {
+      headerName: 'Fehlernachricht',
+      field: 'errorMessage',
+      minWidth: 180,
+      tooltipField: 'errorMessage'
     },
     {
       headerName: 'Bericht',
       minWidth: 160,
       cellRenderer: (params: any) => {
-        // Simple DOM button avoids any enterprise renderers.
         const btn = document.createElement('button');
         btn.textContent = 'Bericht anzeigen';
-        btn.addEventListener('click', () =>
-          this.generateSessionPDF(
-            params.data.id,
-            params.data.sessionType,
-            params.data.sessionDateApproval,
-            params.data.children
-          )
-        );
+
+        // Disable button if the row has no valid id
+        if (!params.data?.id) {
+          btn.disabled = true;
+          btn.style.opacity = '0.5';           // Optional: visual cue
+          btn.style.cursor = 'not-allowed';    // Optional: show disabled cursor
+        } else {
+          btn.addEventListener('click', () => {                  
+            this.generateSessionPDF(
+              params.data.sessionType,
+              params.data.sessionDateApproval,
+              params.data.children
+            );
+          });
+        }
+
         return btn;
       },
       filter: false,
       sortable: false,
-    },
-   {
-    // Hidden helper column feeding the quick filter with project names too.
-    headerName: 'Search helper',
-    colId: 'q',
-    hide: true,
-    valueGetter: p => {
+    },    
+    {
+      // Hidden helper column feeding the quick filter with project names too.
+      headerName: 'Search helper',
+      colId: 'q',
+      hide: true,
+      valueGetter: p => {
         const d = p.data ?? {};
         // Prefer new split lists; fall back to legacy `children`
         const projects: any[] =
@@ -226,97 +378,67 @@ export class SessionsComponent implements OnInit {
       },
     },
   ];
-
-  /** Columns for the projects grid. */
-  projectsColDefs: ColDef[] = [
-    { headerName: 'Id', field: 'id', minWidth: 120 },
-    { headerName: 'Bauvorhaben', field: 'name', minWidth: 220 },
-  ];
-
-  /** Columns for the people grids - present users */
-  peopleColDefs: ColDef[] = [    
-    {
-      headerName: '',
-      field: 'isPresent',
-      minWidth: 50,
-      editable: true,
-      cellRenderer: 'agCheckboxCellRenderer',
-      cellEditor: 'agCheckboxCellEditor',
-      valueSetter: params => {        
-        const v = params.newValue === true || params.newValue === 'true';
-        params.data.isPresent = v;        
-        return true;
-      },      
-    },  
-    { headerName: 'Name', field: 'name', minWidth: 150 },
-    { headerName: 'Werk', field: 'department', minWidth: 60 },
-    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160 }
-  ];
-
-
-  /** Columns for the people grids - present users */
-  distributionColDefs: ColDef[] = [    
-    {
-      headerName: '',
-      field: 'isDistributionList',
-      minWidth: 50,
-      editable: true,
-      cellRenderer: 'agCheckboxCellRenderer',
-      cellEditor: 'agCheckboxCellEditor',
-      valueSetter: params => {
-        const v = params.newValue === true || params.newValue === 'true';
-        params.data.isDistributionList = v;        
-        return true;
-      }
-    },
-    { headerName: 'Name', field: 'name', minWidth: 150 },
-    { headerName: 'Werk', field: 'department', minWidth: 60 },
-    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160 }
-  ];
-
-  /**
-   * Initialization:
-   * - Load current user
-   * - Load activities → transform to sessions
-   * - Enrich sessions with people (present/distribution) derived from env rules
-   */
+  
   ngOnInit(): void {
-    this.userService
-      .getUserFromDB(this.userService.getLocalUser().mailAddress)
-      .subscribe({
-        next: users => {
-          if (users && users.length > 0 && users[0]) {
-            const u = users[0];
-            ErrorMessageEvaluation._evaluateErrorMessage(u);
-            if (u?.errorMessage?.trim().length) {
-              this.snckBar.open(u.errorMessage, '', { duration: 4000 });
-            } else {
-              this.user = u;
+    this.isDataLoading = true;
+
+    // Helper: normalize any Date/string to YYYY-MM-DD for joining
+    const toIsoDateOnly = (d?: Date | string | null): string => {
+      if (!d) return '';
+      if (d instanceof Date) return d.toISOString().slice(0, 10);
+      return new Date(d).toISOString().slice(0, 10);
+    };
+
+    this.sessionService.getAll().pipe(
+      // Step 1: Build base sessions into this.sessionsData
+      map((rows) => {
+        const toIsoDate = (d?: Date) => (d instanceof Date ? d.toISOString().slice(0, 10) : '');
+        this.sessionsData = rows.map((row, idx) => ({
+          id: idx + 1,
+          sessionType: 'Vor-Protokol SKS',
+          sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() +1) + '-' + row.plannedDate?.getFullYear(),
+          sessionDateApproval: toIsoDate(row.plannedDate),
+          sessionDate: row.plannedDate?.toString() ?? '',
+          plannedDate: row.plannedDate,
+          sksNo: row.sksNo,
+          sessionCreator: row.sessionCreator ?? '',
+          acceptance1: row.acceptance1 || '-',
+          attachments: row.attachments || '-',
+          miscItems: row.miscItems || '-',
+          errorMessage: row.errorMessage || '',
+          presentUserIds: row.presentUserIds || '',
+          distributionUserIds: row.distributionUserIds || '',
+          // Will be filled below
+          childrenPresent: [],
+          childrenDistribution: [],
+          childrenProjects: [],
+          children: []
+        }));
+        return this.sessionsData;
+      }),
+
+      // Step 2: Fetch activities and users, then enrich sessions
+      switchMap((sessions) => {
+        // Short-circuit if there are no sessions
+        if (!sessions || sessions.length === 0) return of([]);
+
+        return forkJoin({
+          activities: this.roadWorkActivityService.getRoadWorkActivities(),
+          users: this.userService.getAllUsers()
+        }).pipe(
+          map(({ activities, users }) => {
+            // Group activities by dateSksPlanned (YYYY-MM-DD)
+            const actsByDate = new Map<string, RoadWorkActivityFeature[]>();
+            for (const a of activities ?? []) {
+              const key = toIsoDateOnly(a?.properties?.dateSksPlanned);
+              if (!actsByDate.has(key)) actsByDate.set(key, []);
+              actsByDate.get(key)!.push(a);
             }
-          }
-          this.isDataLoading = false;
-        },
-        error: () => {
-          this.snckBar.open(
-            'Beim Laden von Benutzerdaten ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.',
-            '',
-            { duration: 4000 }
-          );
-          this.isDataLoading = false;
-        },
-      });    
-    
-    // Activities → Sessions → Sessions + users (present / distribution)
-    const sessionsWithUsers$ = this.roadWorkActivityService.getRoadWorkActivities().pipe(
-      map((activities: RoadWorkActivityFeature[]) => this.transformToSessions(activities)),
-      switchMap((sessions: Session[]) =>
-        this.userService.getAllUsers().pipe(
-          map(users => {
 
-            const people: SessionChild[] = users.map((user, idx) => {
-              const isPresent = user.isParticipantList;
-              const isDistributionList = user.isDistributionList;
-
+            // Build user-derived lists once
+            const people = (users ?? []).map((user, idx) => {
+              const isPresent = user.isParticipantList === true;
+              const isDistributionList = user.isDistributionList === true;
               return {
                 id: String(idx + 1),
                 name: `${user.firstName} ${user.lastName}`,
@@ -325,56 +447,142 @@ export class SessionsComponent implements OnInit {
                 mailAddress: user.mailAddress ?? '',
                 isPresent,
                 shouldBePresent: isPresent,
-                isDistributionList,                
-              };
+                isDistributionList,
+              } as SessionChild;
             });
 
-            // Build all three independent lists ONCE per session
-            return sessions.map(session => {
-              // 1) Projects are already in session.children from transformToSessions
-              const childrenProjects = session.children.filter(c => c.isRoadworkProject === true);
+            const childrenPresent = people.filter(p => p.isPresent);
+            const childrenDistribution = people.filter(p => p.isDistributionList);
 
-              // 2) People lists are independent (not derived from 'children' at runtime)
-              const childrenPresent = people.filter(p => p.isPresent === true);
-              const childrenDistribution = people.filter(p => p.isDistributionList === true);
+            // Track matched activity UUIDs to later build the "Unbekannt" session
+            const matchedActivityIds = new Set<string>();
 
-              // Keep legacy 'children' for report generation (deduplicated people)
-              const uniqueByEmail = new Map<string, SessionChild>();
-              for (const p of [...childrenPresent, ...childrenDistribution]) {
-                const key = (p.mailAddress ?? p.id).toLowerCase();
-                if (!uniqueByEmail.has(key)) uniqueByEmail.set(key, p);
+            // Enrich each real session with projects and users
+            const enriched = sessions.map(s => {
+              const key = toIsoDateOnly(s.plannedDate);
+              const acts = actsByDate.get(key) ?? [];
+
+              // Mark matched activities
+              for (const act of acts) {
+                const uuid = act?.properties?.uuid;
+                if (uuid) matchedActivityIds.add(uuid);
               }
-              const allPeople = Array.from(uniqueByEmail.values());
-              const combinedChildren = [...childrenProjects, ...allPeople];
+
+              // Projects linked by date
+              const childrenProjects: SessionChild[] = acts.map(act => ({
+                id: act.properties.uuid,
+                name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
+                isRoadworkProject: true,
+              }));
+
+              // Merge unique users (Present + Distribution)
+              const uniq = new Map<string, SessionChild>();
+              for (const p of [...childrenPresent, ...childrenDistribution]) {
+                const k = (p.mailAddress || p.id).toLowerCase();
+                if (!uniq.has(k)) uniq.set(k, p);
+              }
+              const allPeople = Array.from(uniq.values());
+              const children = [...childrenProjects, ...allPeople];
 
               return {
-                ...session,
-                children: combinedChildren,
+                ...s,
                 childrenProjects,
                 childrenPresent,
-                childrenDistribution
+                childrenDistribution,
+                children,
               };
             });
-          })
-        )
-      )
-    );
 
-    sessionsWithUsers$.subscribe({
-      next: sessions => {
-        this.sessionsData = sessions;
-        // Auto-select the first session after data arrives.
+            // Build dummy "Unbekannt" session for activities that were not matched by date
+            const unmatchedActs = (activities ?? []).filter(
+              a => a?.properties?.uuid && !matchedActivityIds.has(a.properties.uuid)
+            );
+
+            if (unmatchedActs.length > 0) {
+              const unknownProjects: SessionChild[] = unmatchedActs.map(act => ({
+                id: act.properties.uuid,
+                name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
+                isRoadworkProject: true,
+              }));
+
+              // Reuse the same people lists for the dummy session
+              const uniq = new Map<string, SessionChild>();
+              for (const p of [...childrenPresent, ...childrenDistribution]) {
+                const k = (p.mailAddress || p.id).toLowerCase();
+                if (!uniq.has(k)) uniq.set(k, p);
+              }
+              const allPeople = Array.from(uniq.values());
+
+              const unknownSession: Session = {
+                id: null as any,
+                sessionType: '-',
+                sessionName: 'Sitzung Unbekannt',  
+                sessionDateApproval: '',
+                sessionDate: '',
+                plannedDate: null as any,    
+                sksNo: undefined as any,
+                sessionCreator: '',
+                acceptance1: '-',
+                attachments: '-',
+                miscItems: '-',
+                errorMessage: '',
+                childrenProjects: unknownProjects,
+                childrenPresent,
+                childrenDistribution,
+                children: [...unknownProjects, ...allPeople],
+              };
+
+              enriched.push(unknownSession);
+            }
+
+            // Optional: keep "Unbekannt" at the end; otherwise keep current order
+            const sorted = enriched.sort((a, b) => {
+              if (a.id === 'unbekannt') return 1;
+              if (b.id === 'unbekannt') return -1;
+              // If both have plannedDate, sort by date ascending; otherwise preserve order
+              const ad = a.plannedDate ? new Date(a.plannedDate as any).getTime() : NaN;
+              const bd = b.plannedDate ? new Date(b.plannedDate as any).getTime() : NaN;
+              if (isNaN(ad) || isNaN(bd)) return 0;
+              return bd - ad;
+            });
+
+            return sorted;
+          })
+        );
+      })
+    ).subscribe({
+      next: (enrichedSessions) => {
+        // Store enriched sessions directly in sessionsData
+        this.sessionsData = enrichedSessions ?? [];
+
+        // Auto-select the first row in the sessions grid
         setTimeout(() => {
           if (this.sessionsApi && this.sessionsData.length > 0) {
             this.sessionsApi.ensureIndexVisible(0);
             const first = this.sessionsApi.getDisplayedRowAtIndex(0);
             first?.setSelected(true);
+          } else if (this.sessionsGrid?.api && this.sessionsData.length > 0) {
+            const first = this.sessionsGrid.api.getDisplayedRowAtIndex(0);
+            first?.setSelected(true);
           }
         }, 0);
+
+        this.isDataLoading = false;
       },
-      error: console.error,
+      error: (err) => {
+        console.error('Error loading sessions, activities, or users:', err);
+        // User-facing message stays in German
+        this.snckBar.open(
+          'Beim Laden der *Sitzungen* ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.',
+          '',
+          { duration: 4000 }
+        );
+        this.isDataLoading = false;
+      }
     });
   }
+
+
 
   /** AG Grid callback for the sessions grid. */
   onSessionsGridReady(e: GridReadyEvent) {
@@ -383,24 +591,50 @@ export class SessionsComponent implements OnInit {
   }
 
   /** Handle selection change on the sessions grid and push prebuilt lists into child grids. */
-  onSessionSelectionChanged() {
-    const selected = this.sessionsApi?.getSelectedRows?.() ?? [];
-    this.selectedSession = selected[0];
-    const session: Session | undefined = selected[0];    
+  onSessionSelectionChanged(): void {
+    this.peopleDirty = false;
+    // Get the currently selected node from the sessions grid
+    const nodes = this.sessionsGrid?.api?.getSelectedNodes?.() ?? [];
+    this.selectedNode = nodes[0] ?? null;
 
-    if (!session) {
+    // If nothing is selected: clear child grids and disable/clear details form
+    if (!this.selectedNode) {
       this.projectRows = [];
       this.presentUserRows = [];
       this.distributionUserRows = [];
+
+      this.detailsForm.reset({ acceptance1: '', attachments: '', miscItems: '' });
+      this.detailsForm.disable({ emitEvent: false });
       return;
     }
 
-    // Use prebuilt independent lists stored on the session
-    this.projectRows = session.childrenProjects ?? [];
-    this.presentUserRows = session.childrenPresent ?? [];
-    this.distributionUserRows = session.childrenDistribution ?? [];
-  }
+    // Extract selected session data
+    const session: Session = this.selectedNode.data;
 
+    // Enable and patch the details form with values from the selected session
+    this.detailsForm.enable({ emitEvent: false });
+    this.detailsForm.patchValue(
+      {
+        acceptance1: session?.acceptance1 ?? '',
+        attachments: session?.attachments ?? '',
+        miscItems: session?.miscItems ?? '',
+      },
+      { emitEvent: false }
+    );
+
+    // Push prebuilt independent lists into the three child grids
+    this.projectRows = session?.childrenProjects ?? [];
+    this.presentUserRows = session?.childrenPresent ?? [];
+    this.distributionUserRows = session?.childrenDistribution ?? [];
+
+    
+    setTimeout(() => {
+      this.projectGrid?.api?.refreshCells?.({ force: true });
+      this.presentGrid?.api?.refreshCells?.({ force: true });
+      this.distributionGrid?.api?.refreshCells?.({ force: true });
+      
+    }, 0);
+  }
   /** Apply the top quick filter to the sessions grid. */
   onQuickFilterChanged() {
     const value =
@@ -421,8 +655,7 @@ export class SessionsComponent implements OnInit {
    * - Save as .docx (html-docx-js-typescript)
    * - Save as .pdf (html2pdf) with a footer on each page
    */
-  async generateSessionPDF(
-    id: string,
+  async generateSessionPDF(    
     sessionType: string,
     sessionDateApproval: string,
     children: any[]
@@ -433,8 +666,7 @@ export class SessionsComponent implements OnInit {
       const html = await this.reportLoaderService.generateReport(
         'report_roadwork_activity',
         sessionType,
-        children,
-        id
+        children,        
       );
 
       // Inject HTML into hidden container.
@@ -530,68 +762,7 @@ export class SessionsComponent implements OnInit {
     }
   }
 
-  /**
-   * Transform a flat list of activities into grouped sessions.
-   * Group key: `dateSksPlanned` (as string) or "unknown".
-   * Session label: "Sitzung N/YYYY" with per-year numbering.
-   * Each session initially contains only project children. People are added later.
-   */
-  private transformToSessions(activities: RoadWorkActivityFeature[]): Session[] {
-    const groups = new Map<string, RoadWorkActivityFeature[]>();
-
-    for (const act of activities) {
-      const dateKey = act.properties.dateSksPlanned?.toString() ?? 'unknown';
-      if (!groups.has(dateKey)) groups.set(dateKey, []);
-      groups.get(dateKey)!.push(act);
-    }
-
-    const knownKeys = [...groups.keys()].filter(k => k !== 'unknown').sort();
-    const dateKeys = [...knownKeys, ...(groups.has('unknown') ? ['unknown'] : [])];
-
-    const yearCount = new Map<string, number>();
-    const sessions: Session[] = [];
-
-    for (const dateKey of dateKeys) {
-      const acts = groups.get(dateKey)!;
-      const first = acts[0];
-
-      let sessionName = 'Sitzung ?/unbekannt';
-      if (dateKey !== 'unknown') {
-        const year = dateKey.slice(0, 4);
-        const n = (yearCount.get(year) ?? 0) + 1;
-        yearCount.set(year, n);
-        sessionName = `Sitzung ${n}/${year}`;
-      }
-
-      
-      const projectChildren: SessionChild[] = acts.map(act => ({
-        id: act.properties.uuid,
-        name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
-        isRoadworkProject: true,
-      }));
-
-      sessions.push({
-        id: first.properties.uuid,
-        sessionType: 'Vor-Protokol SKS',
-        sessionName,
-        sessionDateApproval: (dateKey.split('T')[0] || '').trim(),
-        sessionCreator: first.properties.areaManager?.firstName ?? '',
-        sessionDate: first.properties.created?.toString() ?? '',
-
-        // legacy combined list (projects only for now; people get added later)
-        children: [...projectChildren],
-
-        // three independent lists (prebuilt; people will be filled later)
-        childrenProjects: [...projectChildren],
-        childrenPresent: [],
-        childrenDistribution: [],
-      });
-
-    }
-
-    return sessions;
-  }
-
+  
   // Counts only rows with isPresent === true
   getPresentListCount(rows: SessionChild[] = []): number {
     return rows.reduce((n, r) => n + (r.isPresent === true ? 1 : 0), 0);
@@ -601,4 +772,84 @@ export class SessionsComponent implements OnInit {
   getDistributionListCount(rows: SessionChild[] = []): number {
     return rows.reduce((n, r) => n + (r.isDistributionList === true ? 1 : 0), 0);
   }
+
+  // Call this after user clicks "Speichern"
+  saveDetails(): void {
+    // Guard: no selection or invalid form or invalid id
+    const session = this.selectedNode?.data;
+    if (!session || !session.id || this.detailsForm.invalid) return;
+
+    // Build payload from form
+    const patch = {
+      attachments: this.detailsForm.value.attachments ?? '',
+      acceptance1: this.detailsForm.value.acceptance1 ?? '',
+      miscItems: this.detailsForm.value.miscItems ?? ''
+    };
+
+    // Optimistic UI: update local row immediately
+    Object.assign(session, patch);
+    this.sessionsGrid?.api?.refreshCells?.({
+      rowNodes: [this.selectedNode!],
+      columns: ['attachments', 'acceptance1', 'miscItems'],
+      force: true
+    });
+
+    // Persist to backend
+    this.sessionService.updateSessionDetails(session.sksNo, patch).subscribe({
+      next: () => {
+        this.detailsForm.markAsPristine();
+        this.snckBar.open('Änderungen wurden gespeichert.', '', { duration: 2500 });
+      },
+      error: (err: any) => {
+        console.error('Update failed', err);
+        this.snckBar.open(
+          'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
+          '',
+          { duration: 4000 }
+        );
+      }
+    });
+  }
+
+  savePeopleAsCsv(): void {
+    const session = this.selectedNode?.data;
+    if (!session?.sksNo) return;
+
+    // Safely read current row arrays bound to the two child grids
+    const presentRows = this.presentUserRows ?? [];
+    const distributionRows = this.distributionUserRows ?? [];
+
+    // Collect emails from rows where the checkbox is checked
+    const presentUserIds = presentRows
+      .filter((r: any) => r?.isPresent === true)
+      .map((r: any) => r?.id)
+      .filter((e: any) => !!e)
+      .map((e: string) => e.trim().toLowerCase());
+
+    const distributionUserIds = distributionRows
+      .filter((r: any) => r?.isDistributionList === true)
+      .map((r: any) => r?.id)
+      .filter((e: any) => !!e)
+      .map((e: string) => e.trim().toLowerCase());
+
+    // Build CSV payloads
+    const presentCsv = presentUserIds.join(',');
+    const distributionCsv = distributionUserIds.join(',');
+
+    // Persist
+    this.sessionService.updateSessionUsers(session.sksNo, presentCsv, distributionCsv)
+      .subscribe({
+        next: () => {            
+            this.peopleDirty = false;
+            this.snckBar.open('Teilnehmerlisten wurden gespeichert.', '', { duration: 2500 });
+        },
+        error: () =>
+          this.snckBar.open(
+            'Beim Speichern der Teilnehmerlisten ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
+            '',
+            { duration: 4000 }
+          ),
+      });
+  }
+
 }

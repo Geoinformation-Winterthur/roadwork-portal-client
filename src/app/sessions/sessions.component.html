@@ -27,7 +27,15 @@
           style="padding:.35em .5em; width: 16rem;"
         />
       </label>
-      </h3>
+
+      <button mat-button (click)="saveDetails(); savePeopleAsCsv(); ngOnInit();"
+              [disabled]="!selectedNode?.data?.sksNo || ( !detailsForm.dirty && !peopleDirty ) || detailsForm.invalid"
+              style="margin: 1em;background-color: rgb(236,236,234);">
+              <mat-icon aria-label="Icon zeigt Diskette">save</mat-icon>&nbsp;SPEICHERN
+      </button>
+      
+    </h3> 
+      
   </div>
  
   <!-- Loading indicator overlay -->
@@ -35,48 +43,34 @@
   
   <div class="grid-overlay" *ngIf="isDataLoading"></div>
 
-  <!-- Master grid: list of sessions (community edition only) -->
+  <!-- Master grid: list of sessions -->  
   <ag-grid-angular
+    #sessionsGrid
     class="ag-theme-alpine"
+    rowSelection="single"
     [rowData]="sessionsData"
     [columnDefs]="sessionsColDefs"
-    [defaultColDef]="defaultColDef"
-    rowSelection="single"
+    [defaultColDef]="defaultColDef"    
     [rowHeight]="28"
     [headerHeight]="28"
     [includeHiddenColumnsInQuickFilter]="true" 
-    (gridReady)="onSessionsGridReady($event)"
-    (selectionChanged)="onSessionSelectionChanged()"
     [attr.inert]="isDataLoading ? '' : null"
-    style="width: 100%; height: 20vh;"
+    [localeText]="localeText"
+    (gridReady)="onSessionsGridReady($event)"
+    (selectionChanged)="onSessionSelectionChanged()"        
+    style="width: 100%; height: 20vh;"    
   >
   </ag-grid-angular>
 
+  
   <!-- Child grids container -->
-  <div style="display: grid; grid-template-columns: 40fr 32fr 28fr; gap: 1rem; margin-top: 1rem;">
-    <h3 style="grid-column: span 3; margin-bottom: .5rem;">      
+  <div style="display: grid; grid-template-columns: 40fr 60fr; gap: 3rem;">
+    <h3 style="grid-column: span 2; margin-bottom: .5rem;">      
       <ng-container *ngIf="selectedSession as s">{{ s.sessionName }}</ng-container>
     </h3>
-    <!-- Grid 1: Projects -->
-    <div>
-      <h4 style="margin: .25rem 0;">Bauvorhaben ({{ projectRows.length }})</h4>
-      <ag-grid-angular
-        #projectsGrid
-        class="ag-theme-alpine"
-        [rowHeight]="28"
-        [headerHeight]="28"
-        [rowData]="projectRows"
-        [columnDefs]="projectsColDefs"
-        [defaultColDef]="childDefaultColDef"        
-        style="width: 100%; height:50vh;"
-        (firstDataRendered)="autoSizeAll($event)"
-      >
-      </ag-grid-angular>
-    </div>
-
-    <!-- Grid 2: Present users -->
-    <div>
-      <h4 style="margin: .25rem 0;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h4>
+        <!-- Projects, Present and distribution users -->
+    <div>      
+      <h4 style="margin: .25rem;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h4>
       <ag-grid-angular
         #presentGrid
         class="ag-theme-alpine"
@@ -85,15 +79,13 @@
         [rowData]="presentUserRows"
         [columnDefs]="peopleColDefs"
         [defaultColDef]="childDefaultColDef"
-        style="width: 100%; height: 50vh;"
-        (firstDataRendered)="autoSizeAll($event)"
+        [localeText]="localeText"
+        style="width: 100%; height: 15vh;"        
+        (cellValueChanged)="peopleDirty=true"
       >
       </ag-grid-angular>
-    </div>
 
-    <!-- Grid 3: Distribution list users -->
-    <div>
-      <h4 style="margin: .25rem 0;">E-Mail-Verteiler ({{ getDistributionListCount(distributionUserRows) }})</h4>
+      <h4 style="margin: .25rem;margin-top: 1rem">E-Mail-Verteiler ({{ getDistributionListCount(distributionUserRows) }})</h4>
       <ag-grid-angular
         #distributionGrid        
         class="ag-theme-alpine"
@@ -102,10 +94,67 @@
         [rowData]="distributionUserRows"
         [columnDefs]="distributionColDefs"
         [defaultColDef]="childDefaultColDef"
-        style="width: 100%; height: 50vh;"
-        (firstDataRendered)="autoSizeAll($event)"
+        [localeText]="localeText"
+        style="width: 100%; height: 15vh;"     
+        (cellValueChanged)="peopleDirty=true"
+      >
+      </ag-grid-angular>
+
+      <h4 style="margin: .25rem;margin-top: 1rem;">Bauvorhaben ({{ projectRows.length }})</h4>
+      <ag-grid-angular
+        #projectGrid
+        class="ag-theme-alpine"
+        [rowHeight]="28"
+        [headerHeight]="28"
+        [rowData]="projectRows"
+        [columnDefs]="projectsColDefs"
+        [defaultColDef]="childDefaultColDef"        
+        [localeText]="localeText"
+        style="width: 100%; height:15vh;"        
       >
       </ag-grid-angular>
     </div>
+    <!-- Acceptance, attachments, misc -->   
+    <div>   
+      <form [formGroup]="detailsForm" class="details-form">
+        <div class="field">
+          <label for="acceptance1"> 1. Abnahme SKS-Protokoll </label>
+          <textarea
+            id="acceptance1"
+            formControlName="acceptance1"
+            maxlength="10000"
+            rows="11"
+            placeholder="Bitte Text hiereingeben..."
+          ></textarea>
+          <small>{{detailsForm.get('acceptance1')?.value?.length || 0}} / 10000</small>
+        </div>
+
+        <div class="field">
+          <label for="attachments"> Beilage </label>
+          <textarea
+            id="attachments"
+            formControlName="attachments"
+            maxlength="10000"
+            rows="11"
+            placeholder="Bitte Text hiereingeben..."
+          ></textarea>
+          <small>{{detailsForm.get('attachments')?.value?.length || 0}} / 10000</small>
+        </div>
+
+        <div class="field">
+          <label for="miscItems"> Verschiedenes </label>
+          <textarea
+            id="miscItems"
+            formControlName="miscItems"
+            maxlength="10000"
+            rows="11"
+            placeholder="Bitte Text hiereingeben..."
+          ></textarea>
+          <small>{{detailsForm.get('miscItems')?.value?.length || 0}} / 10000</small>
+        </div>
+      </form>
+
+    </div>
+
   </div>
 </div>

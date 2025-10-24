@@ -47,18 +47,14 @@ export class ReportLoaderService {
 
     }
 
-    async generateReport(templateName: string, sessionType: string, children: any[], uuid: string) {        
-        await firstValueFrom(this.loadRoadWorkActivity$(uuid));        
-        const html: string = await this.loadReport(templateName, sessionType, children, { uuid });
+    async generateReport(templateName: string, sessionType: string, children: any[]) {                
+        const html: string = await this.loadReport(templateName, sessionType, children);
         return html;
     }
 
 
-    async loadReport(templateName: string, sessionType: string, children: any[], values: { [key: string]: string }): Promise<string> {
-        
-        if (values["uuid"] === undefined || values["uuid"] === null) {
-            return `<pre style="color:red;">Error: UUID not provided.</pre>`;
-        }
+    async loadReport(templateName: string, sessionType: string, children: any[]): Promise<string> {
+                
         
         if (templateName === undefined || templateName === null) {
             return `<pre style="color:red;">Error: Template name not provided.</pre>`;

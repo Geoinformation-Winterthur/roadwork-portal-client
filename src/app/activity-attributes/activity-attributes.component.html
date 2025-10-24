@@ -77,10 +77,10 @@
                                         <mat-form-field>
                                             <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.strabakoNo"
-                                                placeholder="Strabako-Nummer"
+                                                placeholder="SKS-Nr"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
-                                        <mat-form-field>
+                                        <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
                                             <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.projectNo"
                                                 placeholder="Transfernummer"
@@ -1308,7 +1308,7 @@
                                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                         fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                         <mat-card-header>
-                                            <mat-card-title>Sitzungen, terminiert {{configurationData.sksNos | json}}</mat-card-title>
+                                            <mat-card-title>Sitzungen, terminiert ({{configurationData?.sksNos?.length }})</mat-card-title>
                                         </mat-card-header>
                                         <mat-card-content>
                                             <div style="display:flex;flex-direction:column;">
@@ -1400,34 +1400,25 @@
                             </div>
                             <div class="form-container" style="margin-left:50px;">
                                 <mat-form-field appearance="outline" class="full-width">
-                                    <mat-label>Beilagen</mat-label>
+                                    <mat-label>2. Vorgehensvorschlag / Vorgehen</mat-label>
                                     <textarea matInput maxlength="1000"
                                             style="height:100px;"
                                             [(ngModel)]="roadWorkActivityFeature.properties.sessionComment1"
-                                            placeholder="Bemerkung 1 eingeben.."
+                                            placeholder="Keine Informationnen"
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
 
                                 <mat-form-field appearance="outline" class="full-width">
-                                    <mat-label>1. Abnahme SKS-Protokoll</mat-label>
+                                    <mat-label>Beschluss</mat-label>
                                     <textarea matInput maxlength="1000"
                                             style="height:100px;"
                                             [(ngModel)]="roadWorkActivityFeature.properties.sessionComment2"
-                                            placeholder="Bemerkung 2 eingeben.."
+                                            placeholder="Keine Informationnen"
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
-
-                                <mat-form-field appearance="outline" class="full-width">
-                                    <mat-label>3. Verschiedenes</mat-label>
-                                    <textarea matInput maxlength="1000"
-                                              style="height:100px;"
-                                            [(ngModel)]="roadWorkActivityFeature.properties.sessionComment3"
-                                            placeholder="Bemerkung 3 eingeben.."
-                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                    </textarea>
-                                </mat-form-field>
+                                
                             </div>
                     </mat-tab>
                 </mat-tab-group>

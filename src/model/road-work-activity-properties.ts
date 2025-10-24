@@ -14,9 +14,9 @@ export class RoadWorkActivityProperties {
     areaManager: User = new User();
     description: string = "";
     comment: string = "";
-    sessionComment1: string = "";
-    sessionComment2: string = ""
-    sessionComment3: string = ""
+    sessionComment1: string = "Keine Informationnen";
+    sessionComment2: string = "Keine Informationnen"
+    sessionComment3: string = "Keine Informationnen"
     section: string = "";
     type: string = "";
     projectType: string = "";
