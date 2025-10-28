@@ -333,8 +333,8 @@ export class ReportingItemsComponent implements OnInit {
    */
   async generatePDF2(): Promise<void> {    
 
-    const sessionType = "Vor-Protokol SKS";
-    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", sessionType , []);
+    const reportType = "Vor-Protokol SKS";
+    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", reportType , []);
     this.reportContainer.nativeElement.innerHTML = html;
 
     this.snckBar.open("PDF wird generiert...", "", {
@@ -349,7 +349,7 @@ export class ReportingItemsComponent implements OnInit {
 
     html2pdf().from(target)
                 .set({
-                    filename: 'Strategische Koordinationssitzung (SKS)' + ' - ' + sessionType + '.pdf',
+                    filename: 'Strategische Koordinationssitzung (SKS)' + ' - ' + reportType + '.pdf',
                     margin: 10,
                     html2canvas: {
                         scale: 2,

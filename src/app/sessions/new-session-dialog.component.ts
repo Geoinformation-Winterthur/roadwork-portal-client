@@ -8,8 +8,18 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   <h2 mat-dialog-title>Neue Sitzung erstellen</h2>
   <mat-dialog-content [formGroup]="form" style="display:grid; gap:12px; padding-top:8px;">
     <mat-form-field appearance="outline">
-      <mat-label>Geplantes Datum</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="plannedDate" placeholder="YYYY-MM-DD">
+      <mat-label>Geplantes Datum</mat-label>      
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="plannedDate"
+        placeholder="YYYY-MM-DD"
+        autocomplete="off"
+        inputmode="none"
+        readonly
+        appPreventTyping
+       
+      />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       <mat-error *ngIf="form.controls['plannedDate']?.hasError('required')">
@@ -17,8 +27,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       </mat-error>
     </mat-form-field>
 
-    <label>Die folgenden Felder kannst du auch später ausfüllen.</label>
     <br/>
+    <label>Die folgenden Felder können auch später ergänzt werden.</label>    
 
     <mat-form-field appearance="outline">
       <mat-label>1. Abnahme SKS-Protokoll</mat-label>

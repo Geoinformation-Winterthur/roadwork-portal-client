@@ -10,6 +10,7 @@ const BASE_URL = `${environment.apiUrl}/Session`;
 
 export interface CreateSessionDto {
   plannedDate: string;               // 'YYYY-MM-DD'
+  reportType: string;
   acceptance1?: string;
   attachments?: string;
   miscItems?: string;
@@ -20,6 +21,7 @@ export interface CreateSessionDto {
 export interface SessionDto {
   plannedDate: string;
   sksNo: number;
+  reportType: string;
   acceptance1: string;
   attachments: string;
   miscItems: string;
@@ -52,7 +54,13 @@ export class SessionService {
   // PATCH session details (attachments, acceptance1, miscItems)
   updateSessionDetails(
     sksNo: number | string,
-    patch: { attachments: string; acceptance1: string; miscItems: string }
+    patch: {
+      attachments?: string;
+      acceptance1?: string;
+      miscItems?: string;
+      plannedDate?: string | null;
+      reportType?: string | null; 
+    }
   ) {
     return this.http.patch(`${BASE_URL}/${sksNo}`, patch);
   }

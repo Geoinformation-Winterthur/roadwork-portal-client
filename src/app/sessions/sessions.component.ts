@@ -40,7 +40,7 @@ import { environment } from 'src/environments/environment';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 import { SessionService } from 'src/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime, filter, finalize } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NewSessionDialogComponent } from './new-session-dialog.component';
@@ -49,7 +49,7 @@ import { NewSessionDialogComponent } from './new-session-dialog.component';
 /** Top-level row model representing one session. */
 interface Session {
   id: string;
-  sessionType: string;
+  reportType: string;
   sessionName: string;
   sessionDateApproval: string;
   sessionCreator: string;
@@ -88,8 +88,6 @@ interface SessionChild {
   isDistributionList?: boolean;  
 }
 
-/** Allowed report types. */
-type ReportType = 'Vor-Protokol SKS' | 'Protokol SKS';
 
 @Component({
   selector: 'app-sessions',
@@ -117,21 +115,17 @@ export class SessionsComponent implements OnInit {
   peopleDirty = false;
 
   /** Cached user and injected services. */
-  //user: User = new User();
   userService: UserService;
   sessionService: SessionService;
 
   private roadWorkActivityService: RoadWorkActivityService;
   private reportLoaderService: ReportLoaderService;
   private snckBar: MatSnackBar;
-
   
   /** Locale for AG Grid UI strings. */
   localeText = AG_GRID_LOCALE_DE;
 
-  /** Values for the report type combo. */
-  reportTypeOptions: ReportType[] = ['Vor-Protokol SKS', 'Protokol SKS'];
-
+  
   /** Reference to the hidden report container. */
   @ViewChild('reportContainer', { static: false }) reportContainer!: ElementRef;
 
@@ -170,11 +164,15 @@ export class SessionsComponent implements OnInit {
           acceptance1: values.acceptance1 ?? '',
           attachments: values.attachments ?? '',
           miscItems: values.miscItems ?? '',
+          plannedDate: values.plannedDate ?? '',
+          reportType: values.reportType ?? '',
+          presentUserIds: values.presentUserIds ?? '',
+          distributionUserIds: values.distributionUserIds ?? '',
         });
-        // Refresh just the three columns for this row
+        
         this.sessionsGrid.api.refreshCells({
           rowNodes: [this.selectedNode],
-          columns: ['acceptance1', 'attachments', 'miscItems'],
+          columns: ['acceptance1', 'attachments', 'miscItems', 'plannedDate', 'reportType', 'presentUserIds', 'distributionUserIds'],
           force: true,
         });
       });
@@ -186,6 +184,21 @@ export class SessionsComponent implements OnInit {
 
   /** Unique helper. */
   private unique<T>(arr: T[]) { return Array.from(new Set(arr)); }
+
+  // UI → DB
+  readonly SESSION_TYPE_TO_DB: Record<string, 'PRE_PROTOCOL' | 'PROTOCOL'> = {
+    'Vor-Protokol SKS': 'PRE_PROTOCOL',
+    'Protokol SKS':     'PROTOCOL',
+  };
+
+  // DB → UI
+  readonly SESSION_TYPE_TO_UI: Record<string, string> = {
+    'PRE_PROTOCOL': 'Vor-Protokol SKS',
+    'PROTOCOL':     'Protokol SKS',
+  };
+
+  readonly SESSION_TYPE_OPTIONS = Object.keys(this.SESSION_TYPE_TO_DB);
+
 
   /** Build CSV from checked rows for the given flag, using mailAddress (id) as the key. */
   private usersToCsvIdm(
@@ -239,7 +252,7 @@ export class SessionsComponent implements OnInit {
 
   detailsForm = this.fb.group({
     plannedDate: [null, [Validators.required]],
-    sessionType: ['', [Validators.required]],
+    reportType: ['', [Validators.required]],
     acceptance1: ['', [Validators.maxLength(1000)]],
     attachments: ['', [Validators.maxLength(1000)]],
     miscItems: ['', [Validators.maxLength(1000)]],
@@ -336,26 +349,17 @@ export class SessionsComponent implements OnInit {
       filter: 'agNumberColumnFilter',
     },
     { headerName: 'Sitzung', field: 'sessionName', minWidth: 220,  flex: 1 },
-    { headerName: 'Datum Genehmigung', field: 'plannedDate', minWidth: 160,  flex: 1 },
+    { headerName: 'Datum', field: 'plannedDate', minWidth: 160,  flex: 1 },
     {
       headerName: 'Berichtsstatus',
-      field: 'sessionType',
-      editable: true,
-      singleClickEdit: true,
-      cellEditor: 'agSelectCellEditor',
-      cellEditorParams: { values: this.reportTypeOptions },
-      valueParser: p => {
-        const v = String(p.newValue ?? '');
-        return this.reportTypeOptions.includes(v as ReportType) ? v : p.oldValue;
-      },
-      minWidth: 180,
-      cellClass: 'report-combo-cell',
+      field: 'reportType',
+      minWidth: 180,      
       flex: 1
     },     
-    /* {
+    {
       headerName: '1. Abnahme SKS-Protokoll',
       field: 'acceptance1',
-      minWidth: 200,
+      minWidth: 400,
       tooltipField: 'acceptance1',
       flex: 1
     },
@@ -370,8 +374,8 @@ export class SessionsComponent implements OnInit {
       field: 'miscItems',
       minWidth: 180,
       tooltipField: 'miscItems',
-    }, */
-   {
+    },
+    {
       headerName: 'Teilnehmerliste',
       field: 'presentUserIds',
       minWidth: 140,
@@ -424,7 +428,7 @@ export class SessionsComponent implements OnInit {
         } else {
           btn.addEventListener('click', () => {                  
             this.generateSessionPDF(
-              params.data.sessionType,
+              params.data.reportType,
               params.data.sessionDateApproval,
               params.data.children
             );
@@ -455,7 +459,7 @@ export class SessionsComponent implements OnInit {
           .join(' ');
 
         return [
-          d.sessionType,
+          d.reportType,
           d.sessionName,
           d.sessionDateApproval,
           d.sessionCreator,
@@ -481,10 +485,10 @@ export class SessionsComponent implements OnInit {
     this.sessionService.getAll().pipe(
       // Step 1: Build base sessions into this.sessionsData
       map((rows) => {
-        const toIsoDate = (d?: Date) => (d instanceof Date ? d.toISOString().slice(0, 10) : '');
+        const toIsoDate = (d?: Date) => (d instanceof Date ? d.toISOString().slice(0, 10) : '');        
         this.sessionsData = rows.map((row, idx) => ({
           id: String(idx + 1),
-          sessionType: 'Vor-Protokol SKS',
+          reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
           sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() +1) + '-' + row.plannedDate?.getFullYear(),
           sessionDateApproval: toIsoDate(row.plannedDate),
           sessionDate: row.plannedDate?.toString() ?? '',
@@ -608,7 +612,7 @@ export class SessionsComponent implements OnInit {
 
               const unknownSession: Session = {
                 id: null as any,
-                sessionType: '-',
+                reportType: '-',
                 sessionName: 'Sitzung Unbekannt',  
                 sessionDateApproval: '',
                 sessionDate: '',
@@ -704,7 +708,7 @@ export class SessionsComponent implements OnInit {
     this.detailsForm.patchValue(
       {
         plannedDate: session?.plannedDate ?? null,
-        sessionType: session?.sessionType ?? '',
+        reportType: session?.reportType ?? '',
         acceptance1: session?.acceptance1 ?? '',
         attachments: session?.attachments ?? '',
         miscItems: session?.miscItems ?? '',
@@ -742,7 +746,7 @@ export class SessionsComponent implements OnInit {
    * Report generation (DOCX + PDF).
    */
   async generateSessionPDF(    
-    sessionType: string,
+    reportType: string,
     sessionDateApproval: string,
     children: any[]
   ): Promise<void> {
@@ -751,7 +755,7 @@ export class SessionsComponent implements OnInit {
     try {
       const html = await this.reportLoaderService.generateReport(
         'report_roadwork_activity',
-        sessionType,
+        reportType,
         children,        
       );
 
@@ -763,12 +767,12 @@ export class SessionsComponent implements OnInit {
 
       // --- DOCX ---
       this.snckBar.open(
-        'Word-Dokument wird generiert… ' + String(sessionType) + ' - ' + String(sessionDateApproval),
+        'Word-Dokument wird generiert… ' + String(reportType) + ' - ' + String(sessionDateApproval),
         '',
         { duration: 4000 }
       );
 
-      const filenameBase = `Strategische Koordinationssitzung (SKS) - ${sessionType}`;
+      const filenameBase = `Strategische Koordinationssitzung (SKS) - ${reportType}`;
       const cmToTwips = (cm: number) => Math.round((1440 / 2.54) * cm);
 
       const margins = {
@@ -799,7 +803,7 @@ export class SessionsComponent implements OnInit {
 
       // --- PDF ---
       this.snckBar.open(
-        'PDF wird generiert… ' + String(sessionType) + ' - ' + String(sessionDateApproval),
+        'PDF wird generiert… ' + String(reportType) + ' - ' + String(sessionDateApproval),
         '',
         { duration: 4000 }
       );
@@ -807,7 +811,7 @@ export class SessionsComponent implements OnInit {
       await html2pdf()
         .from(target)
         .set({
-          filename: `Strategische Koordinationssitzung (SKS)-${sessionType}.pdf`,
+          filename: `Strategische Koordinationssitzung (SKS)-${reportType}.pdf`,
           margin: [10, 10, 16, 10],
           html2canvas: { scale: 2, useCORS: true },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -824,7 +828,7 @@ export class SessionsComponent implements OnInit {
             const w = ps.getWidth ? ps.getWidth() : ps.width;
             const h = ps.getHeight ? ps.getHeight() : ps.height;
 
-            const text = `SKS-${sessionType}_${sessionDateApproval}, Seite ${i} von ${total}`;
+            const text = `SKS-${reportType}_${sessionDateApproval}, Seite ${i} von ${total}`;
             const textWidth = pdf.getTextWidth(text);
             const textHeight = 4;
             const x = w - 10 - textWidth;
@@ -865,7 +869,7 @@ export class SessionsComponent implements OnInit {
 
     const patch = {
       plannedDate: this.detailsForm.value.plannedDate,
-      sessionType: this.detailsForm.value.sessionType,
+      reportType:  this.SESSION_TYPE_TO_DB[this.detailsForm.value.reportType || ''] ?? null, 
       attachments: this.detailsForm.value.attachments ?? '',
       acceptance1: this.detailsForm.value.acceptance1 ?? '',
       miscItems: this.detailsForm.value.miscItems ?? ''
@@ -875,11 +879,14 @@ export class SessionsComponent implements OnInit {
     Object.assign(session, patch);
     this.sessionsGrid?.api?.refreshCells?.({
       rowNodes: [this.selectedNode!],
-      columns: ['attachments', 'acceptance1', 'miscItems'],
+      columns: ['acceptance1', 'attachments', 'miscItems', 'plannedDate', 'reportType', 'presentUserIds', 'distributionUserIds'],
       force: true
     });
 
-    this.sessionService.updateSessionDetails(session.sksNo, patch).subscribe({
+    this.isDataLoading = true; 
+    this.sessionService.updateSessionDetails(session.sksNo, patch).pipe(
+      finalize(() => this.isDataLoading = false)
+    ).subscribe({
       next: () => {
         this.detailsForm.markAsPristine();
         this.snckBar.open('Änderungen wurden gespeichert.', '', { duration: 2500 });
@@ -918,7 +925,10 @@ export class SessionsComponent implements OnInit {
     });
 
     // Persist
-    this.sessionService.updateSessionUsers(session.sksNo, presentCsv, distributionCsv)
+    this.isDataLoading = true
+    this.sessionService.updateSessionUsers(session.sksNo, presentCsv, distributionCsv).pipe(
+      finalize(() => this.isDataLoading = false)
+    )
       .subscribe({
         next: () => {            
           this.peopleDirty = false;
@@ -944,18 +954,20 @@ export class SessionsComponent implements OnInit {
       this.isDataLoading = true;
       this.sessionService.createSession({
         plannedDate: payload.plannedDate,
+        reportType:  this.SESSION_TYPE_TO_DB[payload.reportType] ?? 'PRE_PROTOCOL',
         acceptance1: payload.acceptance1,
         attachments: payload.attachments,
-        miscItems: payload.miscItems,
-        // optional: present/distribution initially empty
+        miscItems: payload.miscItems,        
         presentUserIds: '',
         distributionUserIds: '',
-      }).subscribe({
+      }).pipe(
+        finalize(() => this.isDataLoading = false)
+      ).subscribe({
         next: (created) => {
           // Insert into grid model and re-enrich minimally
           const sessionRow = {
             id: this.sessionsData.length + 1,
-            sessionType: 'Vor-Protokol SKS',
+            reportType: this.SESSION_TYPE_TO_UI[created.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
             sessionName: 'Sitzung ' + (new Date(created.plannedDate).getMonth()+1) + '-' + new Date(created.plannedDate).getFullYear(),
             sessionDateApproval: String(created.plannedDate).slice(0,10),
             sessionDate: String(created.plannedDate),

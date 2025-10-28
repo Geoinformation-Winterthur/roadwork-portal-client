@@ -87,6 +87,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { UtcDatesInterceptor } from '../helper/utc-dates.intrerceptor';
 import { NewSessionDialogComponent } from './sessions/new-session-dialog.component';
+import { PreventTypingDirective } from './directives/prevent-typing.directive';
 
  
 export function getToken(){
@@ -147,7 +148,8 @@ export const CH_DATE_FORMATS = {
      ConsultationItemsComponent,
      ReportingItemsComponent,
      DeleteActivityDialogComponent,
-     NewSessionDialogComponent
+     NewSessionDialogComponent,
+     PreventTypingDirective
    ],
    imports: [
      BrowserModule,

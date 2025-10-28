@@ -78,40 +78,55 @@
       
     <form [formGroup]="detailsForm" class="details-form">
 
-        <!-- 🔹 Planned Date + Session Type obok siebie -->
-        <div class="form-row">
-          <!-- Planned Date -->
-          <mat-form-field appearance="outline" >
-            <mat-label>Geplantes Datum</mat-label>
-            <input
-              matInput
-              [matDatepicker]="picker"
-              formControlName="plannedDate"
-              placeholder="YYYY-MM-DD"
-            />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error *ngIf="detailsForm.get('plannedDate')?.hasError('required')">
-              Pflichtfeld
-            </mat-error>
-          </mat-form-field>
+      <!-- Planned Date + Session Type -->
+      <!-- Row 1: 50/50 (6 cols + 6 cols) -->
+      <div style="margin-top: 10px;grid-column: 1 / -1; display:grid; grid-template-columns: repeat(12, 1fr); gap:16px;">
 
-          <!-- Session Type -->
-          <mat-form-field appearance="outline" >
-            <mat-label>Sitzungstyp</mat-label>
-            <mat-select formControlName="sessionType">
-              <mat-option value="Vor-Protokol SKS">Vor-Protokol SKS</mat-option>
-              <mat-option value="Protokol SKS">Protokol SKS</mat-option>
-            </mat-select>
-            <mat-error *ngIf="detailsForm.get('sessionType')?.hasError('required')">
-              Pflichtfeld
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <!-- Planned Date -->
+        <mat-form-field appearance="outline" style="grid-column: span 6; width: 100%;">
+          <mat-label><label style="font-size:18px; font-weight:bold;color:black" for="plannedDateInput">Geplantes Datum</label></mat-label>                                        
+          <input
+            matInput
+            #plannedDateInput
+            [matDatepicker]="picker"
+            formControlName="plannedDate"
+            placeholder="YYYY-MM-DD"
+            autocomplete="off"
+            inputmode="none"
+            readonly
+            appPreventTyping
+            (focus)="picker.open()"
+          />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="detailsForm.get('plannedDate')?.hasError('required')">
+            Pflichtfeld
+          </mat-error>
+        </mat-form-field>
 
-        <!-- 🔹 Acceptance -->
+        <!-- Session Type -->
+        <mat-form-field appearance="outline" style="grid-column: span 6; width: 100%;">
+          <mat-label>
+          <label style="font-size:18px;font-weight: bold; color:black" for="reportTypeInput">
+            Berichtsstatus
+          </label>
+        </mat-label>
+
+        <mat-select #reportTypeInput formControlName="reportType">
+          <mat-option *ngFor="let option of SESSION_TYPE_OPTIONS" [value]="option">
+            {{ option }}
+          </mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="detailsForm.get('reportType')?.hasError('required')">
+          Pflichtfeld
+        </mat-error>
+        </mat-form-field>
+      </div>
+
+        <!-- Acceptance -->
         <div class="field">
-          <label for="acceptance1">1. Abnahme SKS-Protokoll</label>
+          <h5  style="margin: .25rem;">1. Abnahme SKS-Protokoll</h5>
           <textarea
             id="acceptance1"
             formControlName="acceptance1"
@@ -122,22 +137,22 @@
           <small>{{ detailsForm.get('acceptance1')?.value?.length || 0 }} / 10000</small>
         </div>
 
-        <!-- 🔹 Attachments -->
+        <!-- Attachments -->
         <div class="field">
-          <label for="attachments">Beilage</label>
+          <h5 style="margin: .25rem;">Beilage</h5>
           <textarea
             id="attachments"
             formControlName="attachments"
             maxlength="10000"
             rows="9"
-            placeholder="Bitte Text hiereingeben..."
+            placeholder="Bitte Text hiereingeben..."            
           ></textarea>
           <small>{{ detailsForm.get('attachments')?.value?.length || 0 }} / 10000</small>
         </div>
 
-        <!-- 🔹 Misc Items -->
+        <!-- Misc Items -->
         <div class="field">
-          <label for="miscItems">Verschiedenes</label>
+          <h5  style="margin: .25rem;">Verschiedenes</h5>
           <textarea
             id="miscItems"
             formControlName="miscItems"
@@ -151,8 +166,8 @@
     </form>
 
     <!-- Projects, Present and distribution users -->
-    <div>      
-      <h4 style="margin: .25rem;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h4>
+    <div>            
+      <h5 style="margin: .25rem;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h5>
       <ag-grid-angular
         #presentGrid
         class="ag-theme-alpine"
@@ -167,7 +182,7 @@
       >
       </ag-grid-angular>
 
-      <h4 style="margin: .25rem;margin-top: 1rem">E-Mail-Verteiler ({{ getDistributionListCount(distributionUserRows) }})</h4>
+      <h5 style="margin: .25rem;margin-top: 1rem">E-Mail-Verteiler ({{ getDistributionListCount(distributionUserRows) }})</h5>
       <ag-grid-angular
         #distributionGrid        
         class="ag-theme-alpine"
@@ -182,7 +197,7 @@
       >
       </ag-grid-angular>
 
-      <h4 style="margin: .25rem;margin-top: 1rem;">Bauvorhaben ({{ projectRows.length }})</h4>
+      <h5 style="margin: .25rem;margin-top: 1rem;">Bauvorhaben ({{ projectRows.length }})</h5>
       <ag-grid-angular
         #projectGrid
         class="ag-theme-alpine"
@@ -192,7 +207,7 @@
         [columnDefs]="projectsColDefs"
         [defaultColDef]="childDefaultColDef"        
         [localeText]="localeText"
-        style="width: 100%; height:15vh;"        
+        style="width: 100%; height:17vh;"        
       >
       </ag-grid-angular>
     </div>

@@ -47,13 +47,13 @@ export class ReportLoaderService {
 
     }
 
-    async generateReport(templateName: string, sessionType: string, children: any[]) {                
-        const html: string = await this.loadReport(templateName, sessionType, children);
+    async generateReport(templateName: string, reportType: string, children: any[]) {                
+        const html: string = await this.loadReport(templateName, reportType, children);
         return html;
     }
 
 
-    async loadReport(templateName: string, sessionType: string, children: any[]): Promise<string> {
+    async loadReport(templateName: string, reportType: string, children: any[]): Promise<string> {
                 
         
         if (templateName === undefined || templateName === null) {
@@ -74,7 +74,7 @@ export class ReportLoaderService {
 
             const htmlTableAssignedRoadWorkNeeds = this.prepareHtmlTable(
                 this.needsOfActivityService.assignedRoadWorkNeeds.map((item) => ({
-                    'Titel & Abschnitt': item.properties.name + '-' + sessionType,
+                    'Titel & Abschnitt': item.properties.name + '-' + reportType,
                     'Auslösegrund': item.properties.description,
                     'Auslösende:r': `${item.properties.orderer.firstName} ${item.properties.orderer.lastName}`,
                     'Werk': item.properties.orderer.organisationalUnit.abbreviation,
@@ -126,7 +126,7 @@ export class ReportLoaderService {
             );
 
             const placeholders: Record<string, string> = {
-                'SESSION_TYPE': sessionType,
+                'SESSION_TYPE': reportType,
                 'VORSITZ': this.wrapPlaceholder('Stefan Gahler (TBA APK)'),
                 'DATUM': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
                 'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSksPlanned)),
@@ -518,7 +518,7 @@ export class ReportLoaderService {
                 Planauflage_16: this.wrapPlaceholder(this.roadWorkActivity.properties.isPlanCirc ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
                 ZUGEWIESENE_BEDARFE: "<div>" + this.prepareHtmlTable(
                     this.needsOfActivityService.assignedRoadWorkNeeds.map((item) => ({
-                        'Titel & Abschnitt': item.properties.name + '-' + project.sessionType,
+                        'Titel & Abschnitt': item.properties.name + '-' + project.reportType,
                         'Auslösegrund': item.properties.description,
                         'Auslösende:r': `${item.properties.orderer.firstName} ${item.properties.orderer.lastName}`,
                         'Werk': item.properties.orderer.organisationalUnit.abbreviation,
