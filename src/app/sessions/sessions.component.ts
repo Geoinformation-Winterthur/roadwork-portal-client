@@ -42,6 +42,8 @@ import { SessionService } from 'src/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { debounceTime, filter } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { NewSessionDialogComponent } from './new-session-dialog.component';
 
 
 /** Top-level row model representing one session. */
@@ -64,11 +66,16 @@ interface Session {
 
   /** Independent lists built once and kept on the session object. */
   childrenProjects: SessionChild[];        // only isRoadworkProject === true
-  childrenPresent: SessionChild[];         // only people with isPresent === true
-  childrenDistribution: SessionChild[];    // only people with isDistributionList === true
+  childrenPresent: SessionChild[];         // people list with isPresent flags applied from CSV
+  childrenDistribution: SessionChild[];    // people list with isDistributionList flags applied from CSV
+
+  /** Persisted CSVs (emails) */
+  presentUserIds?: string;
+  distributionUserIds?: string;
 }
 /** Child row model representing either a project (isRoadworkProject === true) or a person. */
 interface SessionChild {
+  /** For people: use mailAddress as id; for projects: uuid */
   id: string;
   name: string;
   isRoadworkProject: boolean;
@@ -104,6 +111,7 @@ export class SessionsComponent implements OnInit {
 
   /** Derived child lists for the selected session. */
   projectRows: SessionChild[] = [];
+  /** We show full people list in both grids; each grid edits its own flag. */
   presentUserRows: SessionChild[] = [];
   distributionUserRows: SessionChild[] = [];
   peopleDirty = false;
@@ -139,7 +147,8 @@ export class SessionsComponent implements OnInit {
     userService: UserService,
     sessionService: SessionService,
     snckBar: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog,
   ) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.userService = userService;
@@ -171,8 +180,66 @@ export class SessionsComponent implements OnInit {
       });
   }
 
+  // ----------------- CSV flag helpers for people lists -----------------
+  /** Normalize email/id for safe matching. */
+  private normalizeEmail = (s?: string | null) => (s ?? '').trim().toLowerCase();
+
+  /** Unique helper. */
+  private unique<T>(arr: T[]) { return Array.from(new Set(arr)); }
+
+  /** Build CSV from checked rows for the given flag, using mailAddress (id) as the key. */
+  private usersToCsvIdm(
+    users: SessionChild[],
+    pick: 'isPresent' | 'isDistributionList'
+  ): string {
+    const ids = users
+      .filter(u => u?.[pick] === true)
+      .map(u => this.normalizeEmail(u.mailAddress ?? u.id))
+      .filter(e => e.length > 0);
+    return this.unique(ids).join(',');
+  }
+
+  /** Parse CSV of emails into a Set. */
+  private csvToIdmSet(csv?: string | null): Set<string> {
+    if (!csv) return new Set();
+    return new Set(csv.split(',').map(this.normalizeEmail).filter(e => e.length > 0));
+  }
+
+  /**
+   * Apply CSV flags onto a base people list:
+   * - sets isPresent / isDistributionList from CSV,
+   * - returns the updated list (same reference array shape).
+   */
+  private applyCsvFlags(
+    basePeople: SessionChild[],
+    presentCsv?: string | null,
+    distributionCsv?: string | null
+  ): SessionChild[] {
+    const presentProvided = typeof presentCsv === 'string' && presentCsv.trim().length > 0;
+    const distributionProvided = typeof distributionCsv === 'string' && distributionCsv.trim().length > 0;
+
+    const presentSet = presentProvided ? this.csvToIdmSet(presentCsv) : new Set<string>();
+    const distributionSet = distributionProvided ? this.csvToIdmSet(distributionCsv) : new Set<string>();
+
+    return basePeople.map(p => {
+      const idm = this.normalizeEmail(p.mailAddress ?? p.id);
+
+      const isPresent = presentProvided
+        ? presentSet.has(idm)                              // from CSV
+        : (p.isPresent === true || p.shouldBePresent === true); // fallback to defaults
+
+      const isDistributionList = distributionProvided
+        ? distributionSet.has(idm)                         // from CSV
+        : (p.isDistributionList === true);                 // fallback to defaults
+
+      return { ...p, isPresent, isDistributionList } as SessionChild;
+    });
+  }
+  // -------------------------------------------------------------------------------
 
   detailsForm = this.fb.group({
+    plannedDate: [null, [Validators.required]],
+    sessionType: ['', [Validators.required]],
     acceptance1: ['', [Validators.maxLength(1000)]],
     attachments: ['', [Validators.maxLength(1000)]],
     miscItems: ['', [Validators.maxLength(1000)]],
@@ -204,9 +271,11 @@ export class SessionsComponent implements OnInit {
       editable: true,
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
-      valueSetter: params => {        
+      valueSetter: params => {
+        // Mark grid dirty when user toggles checkbox
         const v = params.newValue === true || params.newValue === 'true';
-        params.data.isPresent = v;        
+        params.data.isPresent = v;
+        this.peopleDirty = true;
         return true;
       },      
     },  
@@ -215,8 +284,7 @@ export class SessionsComponent implements OnInit {
     { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160,  flex: 1  }
   ];
 
-
-  /** Columns for the people grids - present users */
+  /** Columns for the people grids - distribution users */
   distributionColDefs: ColDef[] = [    
     {
       headerName: '',
@@ -226,8 +294,10 @@ export class SessionsComponent implements OnInit {
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
       valueSetter: params => {
+        // Mark grid dirty when user toggles checkbox
         const v = params.newValue === true || params.newValue === 'true';
-        params.data.isDistributionList = v;        
+        params.data.isDistributionList = v;
+        this.peopleDirty = true;
         return true;
       }
     },
@@ -236,19 +306,19 @@ export class SessionsComponent implements OnInit {
     { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160, flex: 1 }
   ];
 
-dtf = new Intl.DateTimeFormat('de-CH', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  dtf = new Intl.DateTimeFormat('de-CH', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
-fmtDate = (d: any) => d ? new Date(d).toISOString().slice(0, 10) : '';
+  fmtDate = (d: any) => d ? new Date(d).toISOString().slice(0, 10) : '';
 
-defaultColDef: ColDef = {
-  sortable: true,
-  resizable: true,
-  filter: true,               
-  menuTabs: ['filterMenuTab'], 
-  minWidth: 100  
-};
+  defaultColDef: ColDef = {
+    sortable: true,
+    resizable: true,
+    filter: true,               
+    menuTabs: ['filterMenuTab'], 
+    minWidth: 100  
+  };
 
-sessionsColDefs: ColDef[] = [
+  sessionsColDefs: ColDef[] = [
     {
       headerName: 'ID',
       field: 'id',
@@ -265,14 +335,14 @@ sessionsColDefs: ColDef[] = [
       suppressSizeToFit: true,
       filter: 'agNumberColumnFilter',
     },
-    { headerName: 'Sitzung', field: 'sessionName', minWidth: 220 },
-    { headerName: 'Datum Genehmigung', field: 'plannedDate', minWidth: 160 },
+    { headerName: 'Sitzung', field: 'sessionName', minWidth: 220,  flex: 1 },
+    { headerName: 'Datum Genehmigung', field: 'plannedDate', minWidth: 160,  flex: 1 },
     {
       headerName: 'Berichtsstatus',
       field: 'sessionType',
       editable: true,
       singleClickEdit: true,
-      cellEditor: 'agSelectCellEditor',               // community editor
+      cellEditor: 'agSelectCellEditor',
       cellEditorParams: { values: this.reportTypeOptions },
       valueParser: p => {
         const v = String(p.newValue ?? '');
@@ -282,7 +352,7 @@ sessionsColDefs: ColDef[] = [
       cellClass: 'report-combo-cell',
       flex: 1
     },     
-    {
+    /* {
       headerName: '1. Abnahme SKS-Protokoll',
       field: 'acceptance1',
       minWidth: 200,
@@ -300,25 +370,45 @@ sessionsColDefs: ColDef[] = [
       field: 'miscItems',
       minWidth: 180,
       tooltipField: 'miscItems',
-    },
-    {
+    }, */
+   {
       headerName: 'Teilnehmerliste',
       field: 'presentUserIds',
-      minWidth: 180,
-      tooltipField: 'presentUserIds',
+      minWidth: 140,
+      // show count in the cell
+      valueGetter: p => {
+        const csv = p.data?.presentUserIds as string | undefined;
+        if (!csv) return 0;
+        return csv.split(',').map((s: string) => s.trim()).filter(Boolean).length;
+        // or: return this.csvCount(p.data?.presentUserIds);
+      },
+      // keep full list in tooltip
+      tooltipValueGetter: p => (p.data?.presentUserIds ?? '').split(',').join(', '),
+      type: 'numericColumn',
+      filter: 'agNumberColumnFilter',
+      cellClass: 'ag-right-aligned-cell',
     },
     {
       headerName: 'E-Mail-Verteiler',
       field: 'distributionUserIds',
-      minWidth: 180,
-      tooltipField: 'distributionUserIds',
+      minWidth: 140,
+      valueGetter: p => {
+        const csv = p.data?.distributionUserIds as string | undefined;
+        if (!csv) return 0;
+        return csv.split(',').map((s: string) => s.trim()).filter(Boolean).length;
+        // or: return this.csvCount(p.data?.distributionUserIds);
+      },
+      tooltipValueGetter: p => (p.data?.distributionUserIds ?? '').split(',').join(', '),
+      type: 'numericColumn',
+      filter: 'agNumberColumnFilter',
+      cellClass: 'ag-right-aligned-cell',
     },
-    {
+    /* {
       headerName: 'Fehlernachricht',
       field: 'errorMessage',
       minWidth: 180,
       tooltipField: 'errorMessage'
-    },
+    }, */
     {
       headerName: 'Bericht',
       minWidth: 160,
@@ -329,8 +419,8 @@ sessionsColDefs: ColDef[] = [
         // Disable button if the row has no valid id
         if (!params.data?.id) {
           btn.disabled = true;
-          btn.style.opacity = '0.5';           // Optional: visual cue
-          btn.style.cursor = 'not-allowed';    // Optional: show disabled cursor
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
         } else {
           btn.addEventListener('click', () => {                  
             this.generateSessionPDF(
@@ -353,7 +443,6 @@ sessionsColDefs: ColDef[] = [
       hide: true,
       valueGetter: p => {
         const d = p.data ?? {};
-        // Prefer new split lists; fall back to legacy `children`
         const projects: any[] =
           (d.childrenProjects ??
             (Array.isArray(d.children)
@@ -371,7 +460,7 @@ sessionsColDefs: ColDef[] = [
           d.sessionDateApproval,
           d.sessionCreator,
           d.sessionDate,
-          projectNames, // <- include project names in quick filter text
+          projectNames,
         ]
           .filter(Boolean)
           .join(' ');
@@ -394,7 +483,7 @@ sessionsColDefs: ColDef[] = [
       map((rows) => {
         const toIsoDate = (d?: Date) => (d instanceof Date ? d.toISOString().slice(0, 10) : '');
         this.sessionsData = rows.map((row, idx) => ({
-          id: idx + 1,
+          id: String(idx + 1),
           sessionType: 'Vor-Protokol SKS',
           sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() +1) + '-' + row.plannedDate?.getFullYear(),
           sessionDateApproval: toIsoDate(row.plannedDate),
@@ -419,7 +508,6 @@ sessionsColDefs: ColDef[] = [
 
       // Step 2: Fetch activities and users, then enrich sessions
       switchMap((sessions) => {
-        // Short-circuit if there are no sessions
         if (!sessions || sessions.length === 0) return of([]);
 
         return forkJoin({
@@ -435,29 +523,23 @@ sessionsColDefs: ColDef[] = [
               actsByDate.get(key)!.push(a);
             }
 
-            // Build user-derived lists once
-            const people = (users ?? []).map((user, idx) => {
-              const isPresent = user.isParticipantList === true;
-              const isDistributionList = user.isDistributionList === true;
-              return {
-                id: String(idx + 1),
-                name: `${user.firstName} ${user.lastName}`,
-                isRoadworkProject: false,
-                department: user.organisationalUnit?.abbreviation ?? '',
-                mailAddress: user.mailAddress ?? '',
-                isPresent,
-                shouldBePresent: isPresent,
-                isDistributionList,
-              } as SessionChild;
-            });
-
-            const childrenPresent = people.filter(p => p.isPresent);
-            const childrenDistribution = people.filter(p => p.isDistributionList);
+            // Build base people once; id/mailAddress = email; flags will be set from CSV
+            const basePeople: SessionChild[] = (users ?? []).map((user) => ({
+              id: user.mailAddress,                                  // key = email
+              name: `${user.firstName} ${user.lastName}`,
+              isRoadworkProject: false,
+              department: user.organisationalUnit?.abbreviation ?? '',
+              mailAddress: user.mailAddress ?? '',
+              // keep default flags exactly as before (used when CSV is empty)
+              isPresent: user.isParticipantList === true,
+              shouldBePresent: user.isParticipantList === true,
+              isDistributionList: user.isDistributionList === true
+            }));
 
             // Track matched activity UUIDs to later build the "Unbekannt" session
             const matchedActivityIds = new Set<string>();
 
-            // Enrich each real session with projects and users
+            // Enrich each real session with projects and users+flags from CSV
             const enriched = sessions.map(s => {
               const key = toIsoDateOnly(s.plannedDate);
               const acts = actsByDate.get(key) ?? [];
@@ -470,48 +552,59 @@ sessionsColDefs: ColDef[] = [
 
               // Projects linked by date
               const childrenProjects: SessionChild[] = acts.map(act => ({
-                id: act.properties.uuid,
+                id: String(act.properties.uuid),
                 name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
                 isRoadworkProject: true,
               }));
 
-              // Merge unique users (Present + Distribution)
+              // Unique people by email (base list)
               const uniq = new Map<string, SessionChild>();
-              for (const p of [...childrenPresent, ...childrenDistribution]) {
-                const k = (p.mailAddress || p.id).toLowerCase();
+              for (const p of basePeople) {
+                const k = this.normalizeEmail(p.mailAddress ?? p.id);
                 if (!uniq.has(k)) uniq.set(k, p);
               }
-              const allPeople = Array.from(uniq.values());
-              const children = [...childrenProjects, ...allPeople];
+              const allPeopleBase = Array.from(uniq.values());
 
+              // Apply CSV flags from this session row
+              const allPeopleWithFlags = this.applyCsvFlags(
+                allPeopleBase,
+                s.presentUserIds,
+                s.distributionUserIds
+              );
+
+              // For the legacy combined "children" keep projects + all people
+              const children = [...childrenProjects, ...allPeopleWithFlags];
+
+              // Also keep per-grid source arrays (we show all people in both grids)
               return {
                 ...s,
                 childrenProjects,
-                childrenPresent,
-                childrenDistribution,
+                childrenPresent: allPeopleWithFlags,       // grid uses isPresent flag
+                childrenDistribution: allPeopleWithFlags,  // grid uses isDistributionList flag
                 children,
               };
             });
 
-            // Build dummy "Unbekannt" session for activities that were not matched by date
+            // Build dummy "Unbekannt" session for activities not matched by date
             const unmatchedActs = (activities ?? []).filter(
               a => a?.properties?.uuid && !matchedActivityIds.has(a.properties.uuid)
             );
 
             if (unmatchedActs.length > 0) {
               const unknownProjects: SessionChild[] = unmatchedActs.map(act => ({
-                id: act.properties.uuid,
+                id: String(act.properties.uuid),
                 name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
                 isRoadworkProject: true,
               }));
 
-              // Reuse the same people lists for the dummy session
+              // Reuse base people; unknown session has empty CSV (no pre-selections)
               const uniq = new Map<string, SessionChild>();
-              for (const p of [...childrenPresent, ...childrenDistribution]) {
-                const k = (p.mailAddress || p.id).toLowerCase();
+              for (const p of basePeople) {
+                const k = this.normalizeEmail(p.mailAddress ?? p.id);
                 if (!uniq.has(k)) uniq.set(k, p);
               }
-              const allPeople = Array.from(uniq.values());
+              const allPeopleBase = Array.from(uniq.values());
+              const allPeopleUnknown = this.applyCsvFlags(allPeopleBase, '', '');
 
               const unknownSession: Session = {
                 id: null as any,
@@ -527,19 +620,20 @@ sessionsColDefs: ColDef[] = [
                 miscItems: '-',
                 errorMessage: '',
                 childrenProjects: unknownProjects,
-                childrenPresent,
-                childrenDistribution,
-                children: [...unknownProjects, ...allPeople],
+                childrenPresent: allPeopleUnknown,
+                childrenDistribution: allPeopleUnknown,
+                children: [...unknownProjects, ...allPeopleUnknown],
+                presentUserIds: '',
+                distributionUserIds: ''
               };
 
               enriched.push(unknownSession);
             }
 
-            // Optional: keep "Unbekannt" at the end; otherwise keep current order
+            // Keep "Unbekannt" at the end; otherwise sort by date desc
             const sorted = enriched.sort((a, b) => {
               if (a.id === 'unbekannt') return 1;
               if (b.id === 'unbekannt') return -1;
-              // If both have plannedDate, sort by date ascending; otherwise preserve order
               const ad = a.plannedDate ? new Date(a.plannedDate as any).getTime() : NaN;
               const bd = b.plannedDate ? new Date(b.plannedDate as any).getTime() : NaN;
               if (isNaN(ad) || isNaN(bd)) return 0;
@@ -571,7 +665,6 @@ sessionsColDefs: ColDef[] = [
       },
       error: (err) => {
         console.error('Error loading sessions, activities, or users:', err);
-        // User-facing message stays in German
         this.snckBar.open(
           'Beim Laden der *Sitzungen* ist ein Systemfehler aufgetreten. Bitte wenden Sie sich an den Administrator.',
           '',
@@ -582,8 +675,6 @@ sessionsColDefs: ColDef[] = [
     });
   }
 
-
-
   /** AG Grid callback for the sessions grid. */
   onSessionsGridReady(e: GridReadyEvent) {
     this.sessionsApi = e.api;
@@ -593,11 +684,9 @@ sessionsColDefs: ColDef[] = [
   /** Handle selection change on the sessions grid and push prebuilt lists into child grids. */
   onSessionSelectionChanged(): void {
     this.peopleDirty = false;
-    // Get the currently selected node from the sessions grid
     const nodes = this.sessionsGrid?.api?.getSelectedNodes?.() ?? [];
     this.selectedNode = nodes[0] ?? null;
 
-    // If nothing is selected: clear child grids and disable/clear details form
     if (!this.selectedNode) {
       this.projectRows = [];
       this.presentUserRows = [];
@@ -608,13 +697,14 @@ sessionsColDefs: ColDef[] = [
       return;
     }
 
-    // Extract selected session data
     const session: Session = this.selectedNode.data;
 
     // Enable and patch the details form with values from the selected session
     this.detailsForm.enable({ emitEvent: false });
     this.detailsForm.patchValue(
       {
+        plannedDate: session?.plannedDate ?? null,
+        sessionType: session?.sessionType ?? '',
         acceptance1: session?.acceptance1 ?? '',
         attachments: session?.attachments ?? '',
         miscItems: session?.miscItems ?? '',
@@ -622,19 +712,19 @@ sessionsColDefs: ColDef[] = [
       { emitEvent: false }
     );
 
-    // Push prebuilt independent lists into the three child grids
+    // Push prebuilt lists into the child grids
+    // We show full people list in both grids; each grid edits its own flag.
     this.projectRows = session?.childrenProjects ?? [];
     this.presentUserRows = session?.childrenPresent ?? [];
     this.distributionUserRows = session?.childrenDistribution ?? [];
 
-    
     setTimeout(() => {
       this.projectGrid?.api?.refreshCells?.({ force: true });
       this.presentGrid?.api?.refreshCells?.({ force: true });
       this.distributionGrid?.api?.refreshCells?.({ force: true });
-      
     }, 0);
   }
+
   /** Apply the top quick filter to the sessions grid. */
   onQuickFilterChanged() {
     const value =
@@ -644,16 +734,12 @@ sessionsColDefs: ColDef[] = [
 
   /** Convenience helper: auto-size all columns in a just-rendered child grid. */
   autoSizeAll(e: FirstDataRenderedEvent) {
-    // For large tables, consider sizeColumnsToFit instead.
     const all = e.columnApi.getAllColumns() || [];
     e.columnApi.autoSizeColumns(all);
   }
 
   /**
-   * Report generation (DOCX + PDF):
-   * - Render server-provided HTML into hidden container
-   * - Save as .docx (html-docx-js-typescript)
-   * - Save as .pdf (html2pdf) with a footer on each page
+   * Report generation (DOCX + PDF).
    */
   async generateSessionPDF(    
     sessionType: string,
@@ -762,31 +848,30 @@ sessionsColDefs: ColDef[] = [
     }
   }
 
-  
   // Counts only rows with isPresent === true
   getPresentListCount(rows: SessionChild[] = []): number {
     return rows.reduce((n, r) => n + (r.isPresent === true ? 1 : 0), 0);
   }
 
-    // Counts only rows with isDistributionList === true
+  // Counts only rows with isDistributionList === true
   getDistributionListCount(rows: SessionChild[] = []): number {
     return rows.reduce((n, r) => n + (r.isDistributionList === true ? 1 : 0), 0);
   }
 
   // Call this after user clicks "Speichern"
   saveDetails(): void {
-    // Guard: no selection or invalid form or invalid id
     const session = this.selectedNode?.data;
     if (!session || !session.id || this.detailsForm.invalid) return;
 
-    // Build payload from form
     const patch = {
+      plannedDate: this.detailsForm.value.plannedDate,
+      sessionType: this.detailsForm.value.sessionType,
       attachments: this.detailsForm.value.attachments ?? '',
       acceptance1: this.detailsForm.value.acceptance1 ?? '',
       miscItems: this.detailsForm.value.miscItems ?? ''
     };
 
-    // Optimistic UI: update local row immediately
+    // Optimistic UI update
     Object.assign(session, patch);
     this.sessionsGrid?.api?.refreshCells?.({
       rowNodes: [this.selectedNode!],
@@ -794,7 +879,6 @@ sessionsColDefs: ColDef[] = [
       force: true
     });
 
-    // Persist to backend
     this.sessionService.updateSessionDetails(session.sksNo, patch).subscribe({
       next: () => {
         this.detailsForm.markAsPristine();
@@ -811,37 +895,36 @@ sessionsColDefs: ColDef[] = [
     });
   }
 
+  // Save CSV that contains mailAddress (user id) based on current checkboxes
   savePeopleAsCsv(): void {
     const session = this.selectedNode?.data;
     if (!session?.sksNo) return;
 
-    // Safely read current row arrays bound to the two child grids
+    // Read current arrays shown in grids (full people list in each grid)
     const presentRows = this.presentUserRows ?? [];
     const distributionRows = this.distributionUserRows ?? [];
 
-    // Collect emails from rows where the checkbox is checked
-    const presentUserIds = presentRows
-      .filter((r: any) => r?.isPresent === true)
-      .map((r: any) => r?.id)
-      .filter((e: any) => !!e)
-      .map((e: string) => e.trim().toLowerCase());
+    // Build CSV payloads from mailAddress (id)
+    const presentCsv = this.usersToCsvIdm(presentRows, 'isPresent');
+    const distributionCsv = this.usersToCsvIdm(distributionRows, 'isDistributionList');
 
-    const distributionUserIds = distributionRows
-      .filter((r: any) => r?.isDistributionList === true)
-      .map((r: any) => r?.id)
-      .filter((e: any) => !!e)
-      .map((e: string) => e.trim().toLowerCase());
-
-    // Build CSV payloads
-    const presentCsv = presentUserIds.join(',');
-    const distributionCsv = distributionUserIds.join(',');
+    // Optimistic UI: update the master row cells immediately
+    session.presentUserIds = presentCsv;
+    session.distributionUserIds = distributionCsv;
+    this.sessionsGrid?.api?.refreshCells?.({
+      rowNodes: [this.selectedNode!],
+      columns: ['presentUserIds', 'distributionUserIds'],
+      force: true
+    });
 
     // Persist
     this.sessionService.updateSessionUsers(session.sksNo, presentCsv, distributionCsv)
       .subscribe({
         next: () => {            
-            this.peopleDirty = false;
-            this.snckBar.open('Teilnehmerlisten wurden gespeichert.', '', { duration: 2500 });
+          this.peopleDirty = false;
+          this.snckBar.open('Teilnehmerlisten wurden gespeichert.', '', { duration: 2500 });
+          this.presentGrid?.api?.refreshCells({ force: true });
+          this.distributionGrid?.api?.refreshCells({ force: true });
         },
         error: () =>
           this.snckBar.open(
@@ -850,6 +933,74 @@ sessionsColDefs: ColDef[] = [
             { duration: 4000 }
           ),
       });
+  }
+
+  // Open dialog and create session
+  openNewSessionDialog(): void {
+    const ref = this.dialog.open(NewSessionDialogComponent, { width: '640px' });
+    ref.afterClosed().subscribe(payload => {
+      if (!payload) return;
+
+      this.isDataLoading = true;
+      this.sessionService.createSession({
+        plannedDate: payload.plannedDate,
+        acceptance1: payload.acceptance1,
+        attachments: payload.attachments,
+        miscItems: payload.miscItems,
+        // optional: present/distribution initially empty
+        presentUserIds: '',
+        distributionUserIds: '',
+      }).subscribe({
+        next: (created) => {
+          // Insert into grid model and re-enrich minimally
+          const sessionRow = {
+            id: this.sessionsData.length + 1,
+            sessionType: 'Vor-Protokol SKS',
+            sessionName: 'Sitzung ' + (new Date(created.plannedDate).getMonth()+1) + '-' + new Date(created.plannedDate).getFullYear(),
+            sessionDateApproval: String(created.plannedDate).slice(0,10),
+            sessionDate: String(created.plannedDate),
+            plannedDate: new Date(created.plannedDate),
+            sksNo: created.sksNo,
+            sessionCreator: '',
+            acceptance1: created.acceptance1 ?? '-',
+            attachments: created.attachments ?? '-',
+            miscItems: created.miscItems ?? '-',
+            errorMessage: '',
+            presentUserIds: created.presentUserIds ?? '',
+            distributionUserIds: created.distributionUserIds ?? '',
+            childrenProjects: [],
+            childrenPresent: [],
+            childrenDistribution: [],
+            children: []
+          };
+
+          this.sessionsData = [sessionRow, ...this.sessionsData]
+            .sort((a,b) => {
+              const da = a?.plannedDate ? new Date(a.plannedDate).getTime() : -Infinity;
+              const db = b?.plannedDate ? new Date(b.plannedDate).getTime() : -Infinity;
+              return db - da; // desc
+            });
+
+          // Refresh and select the newly created row
+          setTimeout(() => {
+            this.sessionsGrid?.api?.setRowData(this.sessionsData);
+            const idx = this.sessionsData.findIndex(r => r.sksNo === created.sksNo);
+            if (idx >= 0) {
+              this.sessionsGrid.api.ensureIndexVisible(idx);
+              this.sessionsGrid.api.getDisplayedRowAtIndex(idx)?.setSelected(true);
+            }
+            this.snckBar.open('Neue Sitzung wurde erstellt.', '', { duration: 2500 });
+          }, 0);
+        },
+        error: () => {
+          this.snckBar.open(
+            'Beim Erstellen der Sitzung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
+            '', { duration: 4000 }
+          );
+        },
+        complete: () => this.isDataLoading = false
+      });
+    });
   }
 
 }

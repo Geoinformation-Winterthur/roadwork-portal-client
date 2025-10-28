@@ -17,7 +17,7 @@
 <div style="margin:0;margin-left: 2em;margin-right: 2em;" >
   <div style="margin-bottom: 1em;">
     <h3>
-      Sitzungen ({{ sessionsData.length }})      
+      SKS Sitzungen ({{ sessionsData.length }})      
       <label class="quick-filter" style="display:inline-flex; gap:.5em; align-items:center;">        
         <input
           type="text"
@@ -28,12 +28,19 @@
         />
       </label>
 
-      <button mat-button (click)="saveDetails(); savePeopleAsCsv(); ngOnInit();"
+      <button mat-button 
+            (click)="openNewSessionDialog()"
+            [disabled]="isDataLoading"
+            style="margin: 1em;background-color: rgb(236,236,234);">
+            <mat-icon aria-label="Icon zeigt Plus">add</mat-icon>&nbsp;NEUE SITZUNG
+      </button>
+
+      <button mat-button (click)="saveDetails(); savePeopleAsCsv();"
               [disabled]="!selectedNode?.data?.sksNo || ( !detailsForm.dirty && !peopleDirty ) || detailsForm.invalid"
               style="margin: 1em;background-color: rgb(236,236,234);">
               <mat-icon aria-label="Icon zeigt Diskette">save</mat-icon>&nbsp;SPEICHERN
       </button>
-      
+          
     </h3> 
       
   </div>
@@ -64,11 +71,86 @@
 
   
   <!-- Child grids container -->
-  <div style="display: grid; grid-template-columns: 40fr 60fr; gap: 3rem;">
+  <div style="display: grid; grid-template-columns: 60fr 40fr; gap: 3rem;">
     <h3 style="grid-column: span 2; margin-bottom: .5rem;">      
       <ng-container *ngIf="selectedSession as s">{{ s.sessionName }}</ng-container>
-    </h3>
-        <!-- Projects, Present and distribution users -->
+    </h3>        
+      
+    <form [formGroup]="detailsForm" class="details-form">
+
+        <!-- 🔹 Planned Date + Session Type obok siebie -->
+        <div class="form-row">
+          <!-- Planned Date -->
+          <mat-form-field appearance="outline" >
+            <mat-label>Geplantes Datum</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              formControlName="plannedDate"
+              placeholder="YYYY-MM-DD"
+            />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="detailsForm.get('plannedDate')?.hasError('required')">
+              Pflichtfeld
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Session Type -->
+          <mat-form-field appearance="outline" >
+            <mat-label>Sitzungstyp</mat-label>
+            <mat-select formControlName="sessionType">
+              <mat-option value="Vor-Protokol SKS">Vor-Protokol SKS</mat-option>
+              <mat-option value="Protokol SKS">Protokol SKS</mat-option>
+            </mat-select>
+            <mat-error *ngIf="detailsForm.get('sessionType')?.hasError('required')">
+              Pflichtfeld
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- 🔹 Acceptance -->
+        <div class="field">
+          <label for="acceptance1">1. Abnahme SKS-Protokoll</label>
+          <textarea
+            id="acceptance1"
+            formControlName="acceptance1"
+            maxlength="10000"
+            rows="9"
+            placeholder="Bitte Text hiereingeben..."
+          ></textarea>
+          <small>{{ detailsForm.get('acceptance1')?.value?.length || 0 }} / 10000</small>
+        </div>
+
+        <!-- 🔹 Attachments -->
+        <div class="field">
+          <label for="attachments">Beilage</label>
+          <textarea
+            id="attachments"
+            formControlName="attachments"
+            maxlength="10000"
+            rows="9"
+            placeholder="Bitte Text hiereingeben..."
+          ></textarea>
+          <small>{{ detailsForm.get('attachments')?.value?.length || 0 }} / 10000</small>
+        </div>
+
+        <!-- 🔹 Misc Items -->
+        <div class="field">
+          <label for="miscItems">Verschiedenes</label>
+          <textarea
+            id="miscItems"
+            formControlName="miscItems"
+            maxlength="10000"
+            rows="9"
+            placeholder="Bitte Text hiereingeben..."
+          ></textarea>
+          <small>{{ detailsForm.get('miscItems')?.value?.length || 0 }} / 10000</small>
+        </div>
+
+    </form>
+
+    <!-- Projects, Present and distribution users -->
     <div>      
       <h4 style="margin: .25rem;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h4>
       <ag-grid-angular
@@ -114,47 +196,7 @@
       >
       </ag-grid-angular>
     </div>
-    <!-- Acceptance, attachments, misc -->   
-    <div>   
-      <form [formGroup]="detailsForm" class="details-form">
-        <div class="field">
-          <label for="acceptance1"> 1. Abnahme SKS-Protokoll </label>
-          <textarea
-            id="acceptance1"
-            formControlName="acceptance1"
-            maxlength="10000"
-            rows="11"
-            placeholder="Bitte Text hiereingeben..."
-          ></textarea>
-          <small>{{detailsForm.get('acceptance1')?.value?.length || 0}} / 10000</small>
-        </div>
-
-        <div class="field">
-          <label for="attachments"> Beilage </label>
-          <textarea
-            id="attachments"
-            formControlName="attachments"
-            maxlength="10000"
-            rows="11"
-            placeholder="Bitte Text hiereingeben..."
-          ></textarea>
-          <small>{{detailsForm.get('attachments')?.value?.length || 0}} / 10000</small>
-        </div>
-
-        <div class="field">
-          <label for="miscItems"> Verschiedenes </label>
-          <textarea
-            id="miscItems"
-            formControlName="miscItems"
-            maxlength="10000"
-            rows="11"
-            placeholder="Bitte Text hiereingeben..."
-          ></textarea>
-          <small>{{detailsForm.get('miscItems')?.value?.length || 0}} / 10000</small>
-        </div>
-      </form>
-
-    </div>
+        
 
   </div>
 </div>

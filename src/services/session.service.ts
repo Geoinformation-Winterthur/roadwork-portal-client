@@ -5,7 +5,27 @@ import { map, catchError } from 'rxjs/operators';
 import { SessionData } from '../model/session';
 import { environment } from 'src/environments/environment';
 
+
 const BASE_URL = `${environment.apiUrl}/Session`;
+
+export interface CreateSessionDto {
+  plannedDate: string;               // 'YYYY-MM-DD'
+  acceptance1?: string;
+  attachments?: string;
+  miscItems?: string;
+  presentUserIds?: string;           // CSV of IDs
+  distributionUserIds?: string;      // CSV of IDs
+}
+
+export interface SessionDto {
+  plannedDate: string;
+  sksNo: number;
+  acceptance1: string;
+  attachments: string;
+  miscItems: string;
+  presentUserIds?: string;
+  distributionUserIds?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +43,10 @@ export class SessionService {
       map(rows => rows.map(this.parseSession)),
       catchError(this.handleError)
     );
+  }
+
+  createSession(dto: CreateSessionDto): Observable<SessionDto> {
+    return this.http.post<SessionDto>(`${BASE_URL}`, dto);
   }
   
   // PATCH session details (attachments, acceptance1, miscItems)
