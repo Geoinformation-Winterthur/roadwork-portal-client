@@ -271,8 +271,9 @@ export class SessionsComponent implements OnInit {
 
   /** Columns for the projects grid. */
   projectsColDefs: ColDef[] = [
-    { headerName: 'Id', field: 'id', suppressSizeToFit: true, width: 310, tooltipField: 'id' },
     { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
+    { headerName: 'Uuid', field: 'id' },
+
   ];
 
   /** Columns for the people grids - present users */
@@ -280,7 +281,7 @@ export class SessionsComponent implements OnInit {
     {
       headerName: '',
       field: 'isPresent',
-      minWidth: 50,
+      maxWidth: 30,
       editable: true,
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
@@ -292,9 +293,9 @@ export class SessionsComponent implements OnInit {
         return true;
       },      
     },  
-    { headerName: 'Name', field: 'name', minWidth: 150 },
-    { headerName: 'Werk', field: 'department', minWidth: 60 },
-    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160,  flex: 1  }
+    { headerName: 'Name', field: 'name', width: 180 },
+    { headerName: 'Werk', field: 'department', width: 100 },
+    { headerName: 'E-Mail', field: 'mailAddress', width: 200, flex: 1 }
   ];
 
   /** Columns for the people grids - distribution users */
@@ -302,7 +303,7 @@ export class SessionsComponent implements OnInit {
     {
       headerName: '',
       field: 'isDistributionList',
-      minWidth: 50,
+      maxWidth: 30,
       editable: true,
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
@@ -314,9 +315,9 @@ export class SessionsComponent implements OnInit {
         return true;
       }
     },
-    { headerName: 'Name', field: 'name', minWidth: 150 },
-    { headerName: 'Werk', field: 'department', minWidth: 60 },
-    { headerName: 'E-Mail', field: 'mailAddress', minWidth: 160, flex: 1 }
+    { headerName: 'Name', field: 'name', width: 180 },
+    { headerName: 'Werk', field: 'department', width: 100 },
+    { headerName: 'E-Mail', field: 'mailAddress', width: 200, flex: 1 }
   ];
 
   dtf = new Intl.DateTimeFormat('de-CH', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -382,7 +383,7 @@ export class SessionsComponent implements OnInit {
       // show count in the cell
       valueGetter: p => {
         const csv = p.data?.presentUserIds as string | undefined;
-        if (!csv) return 0;
+        if (!csv) return '';
         return csv.split(',').map((s: string) => s.trim()).filter(Boolean).length;
         // or: return this.csvCount(p.data?.presentUserIds);
       },
@@ -398,7 +399,7 @@ export class SessionsComponent implements OnInit {
       minWidth: 140,
       valueGetter: p => {
         const csv = p.data?.distributionUserIds as string | undefined;
-        if (!csv) return 0;
+        if (!csv) return '';
         return csv.split(',').map((s: string) => s.trim()).filter(Boolean).length;
         // or: return this.csvCount(p.data?.distributionUserIds);
       },
@@ -427,10 +428,23 @@ export class SessionsComponent implements OnInit {
           btn.style.cursor = 'not-allowed';
         } else {
           btn.addEventListener('click', () => {                  
+            const sel = this.selectedNode?.data as Session | undefined;
+            const prevDate = this.getPreviousSessionDateByPlannedDateAsc(sel ?? null) ?? this.getPreviousSessionDateBySksNo(sel ?? null);
+            const nextDate = this.getNextSessionDateByPlannedDateAsc(sel ?? null);
             this.generateSessionPDF(
               params.data.reportType,
               params.data.sessionDateApproval,
-              params.data.children
+              params.data.children,
+              { 
+                'sksNo': this.selectedNode?.data.sksNo,
+                'acceptance1': this.selectedNode?.data.acceptance1, 
+                'attachments': this.selectedNode?.data.attachments, 
+                'miscItems': this.selectedNode?.data.miscItems, 
+                'plannedDate': this.selectedNode?.data.plannedDate, 
+                'reportType': this.selectedNode?.data.reportType,     
+                'previousSessionDate': prevDate,
+                'nextSessionDate': nextDate                 
+              }
             );
           });
         }
@@ -748,15 +762,19 @@ export class SessionsComponent implements OnInit {
   async generateSessionPDF(    
     reportType: string,
     sessionDateApproval: string,
-    children: any[]
+    children: any[],
+    session: any
   ): Promise<void> {
     this.isDataLoading = true;
+
+    console.log("session--->", session);
 
     try {
       const html = await this.reportLoaderService.generateReport(
         'report_roadwork_activity',
         reportType,
         children,        
+        session
       );
 
       // Inject HTML into hidden container.
@@ -867,16 +885,18 @@ export class SessionsComponent implements OnInit {
     const session = this.selectedNode?.data;
     if (!session || !session.id || this.detailsForm.invalid) return;
 
+    const uiLabel = this.detailsForm.value.reportType || '';
+    
     const patch = {
       plannedDate: this.detailsForm.value.plannedDate,
-      reportType:  this.SESSION_TYPE_TO_DB[this.detailsForm.value.reportType || ''] ?? null, 
+      reportType:  this.SESSION_TYPE_TO_DB[uiLabel] ?? null,
       attachments: this.detailsForm.value.attachments ?? '',
       acceptance1: this.detailsForm.value.acceptance1 ?? '',
-      miscItems: this.detailsForm.value.miscItems ?? ''
-    };
+      miscItems:   this.detailsForm.value.miscItems ?? ''
+   };
 
-    // Optimistic UI update
-    Object.assign(session, patch);
+    Object.assign(session, { ...patch, reportType: uiLabel });
+    
     this.sessionsGrid?.api?.refreshCells?.({
       rowNodes: [this.selectedNode!],
       columns: ['acceptance1', 'attachments', 'miscItems', 'plannedDate', 'reportType', 'presentUserIds', 'distributionUserIds'],
@@ -954,7 +974,7 @@ export class SessionsComponent implements OnInit {
       this.isDataLoading = true;
       this.sessionService.createSession({
         plannedDate: payload.plannedDate,
-        reportType:  this.SESSION_TYPE_TO_DB[payload.reportType] ?? 'PRE_PROTOCOL',
+        reportType:  this.SESSION_TYPE_TO_DB[payload.reportType] ?? this.SESSION_TYPE_TO_DB["PRE_PROTOCOL"],
         acceptance1: payload.acceptance1,
         attachments: payload.attachments,
         miscItems: payload.miscItems,        
@@ -1014,5 +1034,66 @@ export class SessionsComponent implements OnInit {
       });
     });
   }
+
+  /** Normalize to YYYY-MM-DD (null → null) */
+  private toIsoDateOnly(d: any): string | null {
+    if (!d) return null;
+    const dt = (d instanceof Date) ? d : new Date(d);
+    return isNaN(+dt) ? null : dt.toISOString().slice(0, 10);
+  }
+
+  private getPreviousSessionDateBySksNo(current: Session | null): string | null {
+    if (!current || typeof current.sksNo !== 'number') return null;
+    const prev = this.sessionsData.find(s => s?.sksNo === current.sksNo! - 1);
+    return prev ? this.toIsoDateOnly(prev.plannedDate) : null;
+  }
+
+  private getPreviousSessionDateByPlannedDateAsc(current: Session | null): string | null {
+    if (!current) return null;
+
+    const withDate = (this.sessionsData ?? [])
+      .filter(s => !!this.toIsoDateOnly(s.plannedDate))
+      .slice();
+
+    // sort ASC
+    withDate.sort((a, b) => {
+      const ad = new Date(a.plannedDate as any).getTime();
+      const bd = new Date(b.plannedDate as any).getTime();
+      return ad - bd;
+    });
+
+    const idx = withDate.findIndex(s =>
+      (typeof s.sksNo === 'number' && typeof current.sksNo === 'number' && s.sksNo === current.sksNo) ||
+      s === current
+    );
+
+    if (idx <= 0) return null; 
+    return this.toIsoDateOnly(withDate[idx - 1].plannedDate);
+  }
+
+  
+  private getNextSessionDateByPlannedDateAsc(current: Session | null): string | null {
+    if (!current) return null;
+  
+    const withDate = (this.sessionsData ?? [])
+      .filter(s => !!this.toIsoDateOnly(s.plannedDate))
+      .slice();
+
+    withDate.sort((a, b) => {
+      const ad = new Date(a.plannedDate as any).getTime();
+      const bd = new Date(b.plannedDate as any).getTime();
+      return ad - bd;
+    });
+
+    const idx = withDate.findIndex(s =>
+      (typeof s.sksNo === 'number' && typeof current.sksNo === 'number' && s.sksNo === current.sksNo) ||
+      s === current
+    );
+
+    if (idx < 0 || idx >= withDate.length - 1) return null;
+    
+    return this.toIsoDateOnly(withDate[idx + 1].plannedDate);
+  }
+
 
 }

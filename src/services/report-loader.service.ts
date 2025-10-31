@@ -47,13 +47,13 @@ export class ReportLoaderService {
 
     }
 
-    async generateReport(templateName: string, reportType: string, children: any[]) {                
-        const html: string = await this.loadReport(templateName, reportType, children);
+    async generateReport(templateName: string, reportType: string, children: any[], session: any) {                
+        const html: string = await this.loadReport(templateName, reportType, children, session);
         return html;
     }
 
 
-    async loadReport(templateName: string, reportType: string, children: any[]): Promise<string> {
+    async loadReport(templateName: string, reportType: string, children: any[], session: any): Promise<string> {
                 
         
         if (templateName === undefined || templateName === null) {
@@ -123,25 +123,27 @@ export class ReportLoaderService {
                     Organisation: item.department,
                     Verteiler: item.isDistributionList ? 'Ja' : 'Nein'
                 }))
-            );
+            );            
 
             const placeholders: Record<string, string> = {
                 'SESSION_TYPE': reportType,
                 'VORSITZ': this.wrapPlaceholder('Stefan Gahler (TBA APK)'),
-                'DATUM': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
-                'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSksPlanned)),
-                'DATUM_LETZTE_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),
-                'DATUM_VERSAND_BEDARFSKLAERUNG_1': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult1)),
-                'DATUM_VERSAND_BEDARFSKLAERUNG_2': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult2)),
-                'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateReportStart)),
-                'DATUM_SKS': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity?.properties?.dateSks)),                                                                
-                'SKS_Nr': this.wrapPlaceholder(this.roadWorkActivity?.properties?.roadWorkActivityNo ?? "-"),
-                'GM': this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
-                'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                                                           
-                'VORGEHEN': 'Vorgehen',
+                'DATUM_SKS': this.wrapPlaceholder(this.formatDate(session.plannedDate)),
                 'ANWESENDE': "<div>" + htmlTablePresentPersons + "</div>",                
                 'ENTSCHULDIGT': "<div>" + htmlTableExcusedPersons + "</div>",                
-                'VERTEILER': "<div>" + htmlTableDistributionListPersons + "</div>",  
+                'VERTEILER': "<div>" + htmlTableDistributionListPersons + "</div>", 
+                'ACCEPTANCE1': this.wrapPlaceholder(session.acceptance1),  
+                'ATTACHMENTS':  this.wrapPlaceholder(session.attachments),
+                'MISCITEMS': this.wrapPlaceholder(session.miscItems), 
+                'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(session.nextSessionDate)),
+                'DATUM_LETZTE_SKS': this.wrapPlaceholder(this.formatDate(session.previousSessionDate)),
+
+                'DATUM_VERSAND_BEDARFSKLAERUNG_1': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult1)),
+                'DATUM_VERSAND_BEDARFSKLAERUNG_2': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult2)),
+                'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateReportStart)),                
+                'SKS_Nr': this.wrapPlaceholder(session.sksNo ?? "-"),
+                'GM': this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
+                'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                                
                 
             };
 
@@ -225,8 +227,10 @@ export class ReportLoaderService {
         }
     }
 
-    private wrapPlaceholder(content: string): string {
-        return `<b>${content}</b>`;
+    wrapPlaceholder(content: any): string {
+        const text = (content ?? '').toString();
+        const html = text.replace(/\r?\n/g, '<br>');
+        return `<span style="background:yellow;">${html}</span>`;
     }
 
  
@@ -402,13 +406,17 @@ export class ReportLoaderService {
             </p>                                    
             <p>Auslösende:r: [PLACEHOLDER_AUSLOESENDE]</p>
             <p>Auslösendes Werk: [PLACEHOLDER_AUSLOESENDES_WERK]</p>
-            <p>Gebietsmanagement: [PLACEHOLDER_GM]</p>            
-            <p>Lead Realisierung (Phase 5/Baustelle): [PLACEHOLDER_WERK_OE] / [PLACEHOLDER_PL] (Hinweis: wird an SKS definiert)</p>
+            <p>Gebietsmanagement: [PLACEHOLDER_GM]</p>                        
             <p>Mitwirkende: [PLACEHOLDER_AUSLOESENDES_WERK] sowie [PLACEHOLDER_MITWIRKENDE]</p>
             
-            <p>[manuell ausfüllen] Beschreibt, wie was umgesetzt werden soll und warum. </p>
-            <p>Falls vorhanden, hier ggf. auch Ausgangslage notieren.» </p>
-            <p>2. [PLACEHOLDER_VORGEHEN]</p>
+            <h5>2. Vorgehensvorschlag / Vorgehen</h5>
+            [PLACEHOLDER_BAUVORHABEN_VORGEHEN]]
+                        
+
+            <h5>Beschluss</h5>
+            [PLACEHOLDER_BAUVORHABEN_BESCHLUSS]                                                                                    
+
+
             <p><strong>Zugewiesene</strong> (berücksichtigte) Bedarfe</p>
             <p>
             [PLACEHOLDER_ZUGEWIESENE_BEDARFE]
@@ -528,6 +536,8 @@ export class ReportLoaderService {
                     }))
                 ) + "</div>",
                 MAP_PERIMETER: mapUrl ?? "",
+                BAUVORHABEN_VORGEHEN: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.sessionComment1 ?? "-"}`),
+                BAUVORHABEN_BESCHLUSS: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.sessionComment2 ?? "-"}`),
             });
 
             sections.push(htmlSection);

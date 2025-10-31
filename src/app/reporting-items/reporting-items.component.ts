@@ -325,40 +325,7 @@ export class ReportingItemsComponent implements OnInit {
       });
 
   }
-
-  /**
-   * Create a PDF for the current activity using a predefined report template.
-   * - Loads HTML through `ReportLoaderService`.
-   * - Renders it into a hidden container and exports as A4 portrait PDF.
-   */
-  async generatePDF2(): Promise<void> {    
-
-    const reportType = "Vor-Protokol SKS";
-    const html = await this.reportLoaderService.generateReport("report_roadwork_activity", reportType , []);
-    this.reportContainer.nativeElement.innerHTML = html;
-
-    this.snckBar.open("PDF wird generiert...", "", {
-      duration: 4000
-    });
-
-    const target = this.reportContainer.nativeElement.firstElementChild as HTMLElement;
-
-    if (!target || target.offsetWidth === 0 || target.offsetHeight === 0) {        
-      return;
-    }
-
-    html2pdf().from(target)
-                .set({
-                    filename: 'Strategische Koordinationssitzung (SKS)' + ' - ' + reportType + '.pdf',
-                    margin: 10,
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                })
-                .save();    
-  }
+  
  
   /**
    * Assign a user to this activity for the current feedback phase.
