@@ -364,7 +364,7 @@ export class SessionsComponent implements OnInit {
       tooltipField: 'acceptance1',
       flex: 1
     },
-    {
+    /* {
       headerName: 'Beilagen',
       field: 'attachments',
       minWidth: 160,
@@ -375,7 +375,7 @@ export class SessionsComponent implements OnInit {
       field: 'miscItems',
       minWidth: 180,
       tooltipField: 'miscItems',
-    },
+    }, */
     {
       headerName: 'Teilnehmerliste',
       field: 'presentUserIds',

@@ -230,7 +230,7 @@ export class ReportLoaderService {
     wrapPlaceholder(content: any): string {
         const text = (content ?? '').toString();
         const html = text.replace(/\r?\n/g, '<br>');
-        return `<span style="background:yellow;">${html}</span>`;
+        return `<span>${html}</span>`;
     }
 
  
@@ -395,7 +395,8 @@ export class ReportLoaderService {
             <table style="width: 100%; margin: 0 auto;">
                 <tr>
                     <td style="background:silver">
-                        <p><strong>Bauvorhaben: [PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT]</strong></p>
+                        <h4>Bauvorhaben:<br>
+                        [PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT]</h4>
                     </td>
                 </tr>
             </table>
@@ -404,94 +405,35 @@ export class ReportLoaderService {
                 alt="Mapa"
                 style="display:block;width:510.24pt;height:auto;max-height:728.50pt;page-break-inside:avoid;" />
             </p>                                    
-            <p>Auslösende:r: [PLACEHOLDER_AUSLOESENDE]</p>
-            <p>Auslösendes Werk: [PLACEHOLDER_AUSLOESENDES_WERK]</p>
-            <p>Gebietsmanagement: [PLACEHOLDER_GM]</p>                        
-            <p>Mitwirkende: [PLACEHOLDER_AUSLOESENDES_WERK] sowie [PLACEHOLDER_MITWIRKENDE]</p>
+            Auslösende:r: [PLACEHOLDER_AUSLOESENDE]<br>
+            Auslösendes Werk: [PLACEHOLDER_AUSLOESENDES_WERK]<br>
+            Gebietsmanagement: [PLACEHOLDER_GM]<br>
+            Mitwirkende: [PLACEHOLDER_AUSLOESENDES_WERK] sowie [PLACEHOLDER_MITWIRKENDE]<br>
             
-            <h5>2. Vorgehensvorschlag / Vorgehen</h5>
-            [PLACEHOLDER_BAUVORHABEN_VORGEHEN]]
+            <br><h4>2. Vorgehensvorschlag / Vorgehen</h4>
+            [PLACEHOLDER_BAUVORHABEN_VORGEHEN]
                         
 
-            <h5>Beschluss</h5>
+            <br><h4>Beschluss</h4>
             [PLACEHOLDER_BAUVORHABEN_BESCHLUSS]                                                                                    
 
 
-            <p><strong>Zugewiesene</strong> (berücksichtigte) Bedarfe</p>
+            <br><h4>Zugewiesene (berücksichtigte) Bedarfe</h4>
             <p>
-            [PLACEHOLDER_ZUGEWIESENE_BEDARFE]
+                [PLACEHOLDER_ZUGEWIESENE_BEDARFE]
             </p>
-            <p><strong>Aspekte/Faktoren </strong></p>
+
+            <br><h4>Aspekte/Faktoren </h4>
             <p>Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:</p>
-            <table style="padding:3px;font-size:12px;border:1px">
-                <tr>
-                    <td>
-                        [PLACEHOLDER_Ist_im_Aggloprogramm]
-                    </td>
-                    <td>
-                        Ist im Aggloprogramm vorgesehen/eingegeben
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        [PLACEHOLDER_Laermschutzverordnung]
-                    </td>
-                    <td>
-                        <p>Untersteht der Lärmschutzverordnung (LSV) / Akustisches Projekt</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        [PLACEHOLDER_Stoerfallverordnung]
-                    </td>
-                    <td>
-                        <p>Störfallverordnung</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        [PLACEHOLDER_Haltekanten]
-                    </td>
-                    <td>
-                        <p>Haltekanten sind betroffen</p>
-                    </td>
-                </tr>
-                <tr> 
-                    <td>
-                        [PLACEHOLDER_Vorstudie_BGK]       
-                    <td>
-                        <p>Vorstudie/BGK ist vorgesehen</p>
-                    </td>
-                </tr> 
-                <tr> 
-                    <td>
-                        [PLACEHOLDER_Uebergeordnete_Massnahme]       
-                    <td>
-                        <p>Uebergeordnete Massnahme</p>
-                    </td>
-                </tr> 
-                <tr> 
-                    <td>
-                        [PLACEHOLDER_Begehrensaeusserung_45]       
-                    <td>
-                        <p>Begehrensäusserung §&nbsp;45</p>
-                    </td>
-                </tr> 
-                <tr> 
-                    <td>
-                        [PLACEHOLDER_Mitwirkungsverfahren_13]       
-                    <td>
-                        <p>Mitwirkungsverfahren §&nbsp;13</p>
-                    </td>
-                </tr> 
-                <tr> 
-                    <td>
-                        [PLACEHOLDER_Planauflage_16]       
-                    <td>
-                        <p>Planauflage §&nbsp;16</p>
-                    </td>
-                </tr> 
-            </table>
+
+            [PLACEHOLDER_Ist_im_Aggloprogramm] &nbsp;&nbsp;&nbsp; Ist im Aggloprogramm vorgesehen/eingegeben<br>
+            [PLACEHOLDER_Haltekanten]  &nbsp;&nbsp;&nbsp; Haltekanten sind betroffen<br>
+            [PLACEHOLDER_Vorstudie_BGK]  &nbsp;&nbsp;&nbsp; Vorstudie/BGK ist vorgesehen<br>
+            [PLACEHOLDER_Uebergeordnete_Massnahme]  &nbsp;&nbsp;&nbsp; Übergeordnete Massnahme<br>
+            [PLACEHOLDER_Begehrensaeusserung_45]  &nbsp;&nbsp;&nbsp; Begehrensäusserung gemäss § 45<br>
+            [PLACEHOLDER_Mitwirkungsverfahren_13]  &nbsp;&nbsp;&nbsp; Mitwirkungsverfahren gemäss § 13<br>
+            [PLACEHOLDER_Planauflage_16]  &nbsp;&nbsp;&nbsp; Planauflage gemäss § 16<br>
+            
             <div class="page-break"></div>
         `;
 
@@ -515,9 +457,7 @@ export class ReportLoaderService {
                 WERK_OE: this.wrapPlaceholder(this.roadWorkActivity?.properties?.projectManager? `${this.roadWorkActivity.properties.projectManager.firstName ?? "-"} ${this.roadWorkActivity.properties.projectManager.lastName ?? "-"}`: "- -"),
                 PL: this.wrapPlaceholder(this.managementArea?.properties?.kind?.name ?? '-'),
                 MITWIRKENDE: this.wrapPlaceholder(this.getInvolvedOrgsNames() ?? "-"),
-                Ist_im_Aggloprogramm: this.wrapPlaceholder(this.roadWorkActivity.properties.isAggloprog ? '[ x ]' : "[&nbsp;&nbsp;&nbsp;]"),
-                Laermschutzverordnung: this.wrapPlaceholder('[ ? ]'),
-                Stoerfallverordnung: this.wrapPlaceholder('[ ? ]'),
+                Ist_im_Aggloprogramm: this.wrapPlaceholder(this.roadWorkActivity.properties.isAggloprog ? '[ x ]' : "[&nbsp;&nbsp;&nbsp;]"),                
                 Haltekanten: this.wrapPlaceholder(this.roadWorkActivity.properties.isStudy ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
                 Vorstudie_BGK: this.wrapPlaceholder(this.roadWorkActivity.properties.isStudy ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
                 Uebergeordnete_Massnahme: this.wrapPlaceholder(this.roadWorkActivity.properties.overarchingMeasure ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
