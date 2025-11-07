@@ -163,7 +163,7 @@ export class ReportLoaderService {
         }
     }
 
-    private async loadProjectPerimeterMap(): Promise<string> {
+    async loadProjectPerimeterMap(): Promise<string> {
         try {                        
             
             const geoJson = {

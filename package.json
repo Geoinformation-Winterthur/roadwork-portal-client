@@ -34,6 +34,7 @@
     "angular-oauth2-oidc": "^13.0.1",
     "angular-oauth2-oidc-jwks": "^13.0.1",
     "chart.js": "^2.9.4",
+    "docx": "^9.5.1",
     "file-saver": "^2.0.5",
     "html-docx-js-typescript": "^0.1.5",
     "html2pdf.js": "^0.10.3",

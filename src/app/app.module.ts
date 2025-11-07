@@ -89,6 +89,8 @@ import { UtcDatesInterceptor } from '../helper/utc-dates.intrerceptor';
 import { NewSessionDialogComponent } from './sessions/new-session-dialog.component';
 import { PreventTypingDirective } from './directives/prevent-typing.directive';
 
+import { DocxWordService } from 'src/services/docx-export.service';
+
  
 export function getToken(){
   let userTokenTemp = localStorage.getItem(UserService.userTokenName);
@@ -200,7 +202,7 @@ export const CH_DATE_FORMATS = {
       AgGridModule,
       TextFieldModule
    ],
-   providers: [UserService, MatDatepickerModule,
+   providers: [UserService, MatDatepickerModule, DocxWordService,
     { provide: MAT_DATE_FORMATS, useValue: CH_DATE_FORMATS },
     { provide: MAT_DATE_LOCALE, useValue: 'de-CH' },
     { provide: HTTP_INTERCEPTORS, useClass: UtcDatesInterceptor, multi: true },
