@@ -22,4 +22,5 @@ export class User {
     errorMessage: string = "";
     isDistributionList: boolean = false;
     isParticipantList: boolean = false;
+    workArea: string = "";
 }

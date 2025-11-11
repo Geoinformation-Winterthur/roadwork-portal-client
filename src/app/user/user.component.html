@@ -9,19 +9,24 @@
       <mat-card class="maincard mat-elevation-z0" fxFlex.xs="100" fxFlex="31" fxFlex.md="31" fxFlex.sm="50">
         <mat-card-content style="margin: 0.5em;">
           <div style="width: 80%; margin-right: 1em;">
-            <mat-form-field>
+            <mat-form-field style="width:80%">
               <input matInput [(ngModel)]="user.lastName" (focusout)="updateUser()" type="text" placeholder="Nachname"
                 required>
             </mat-form-field>
             <br />
-            <mat-form-field>
+            <mat-form-field style="width:80%">
               <input matInput [(ngModel)]="user.firstName" (focusout)="updateUser()" type="text" placeholder="Vorname"
                 required>
             </mat-form-field>
             <br />
-            <mat-form-field>
+            <mat-form-field style="width:80%">
               <input matInput [(ngModel)]="user.mailAddress" (focusout)="updateUser()" type="text"
                 placeholder="E-Mail-Adresse" required>
+            </mat-form-field>
+            <br />
+            <mat-form-field style="width:80%">
+              <input matInput [(ngModel)]="user.workArea" (focusout)="updateUser()" type="text"
+                placeholder="Tätigkeitsgebiet" required>
             </mat-form-field>
             <br />
             <div style="margin-bottom: 2em;">

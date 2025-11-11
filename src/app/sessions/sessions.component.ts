@@ -41,6 +41,7 @@ import { DocxWordService } from '../../services/docx-export.service';
 
 // Only those docx symbols actually used here
 import { Paragraph, AlignmentType, BorderStyle, TextRun, Table } from 'docx';
+import { environment } from 'src/environments/environment';
 
 /** Top-level row model representing one session. */
 interface Session {
@@ -79,6 +80,7 @@ interface SessionChild {
 
   // fields mainly used by people rows
   department?: string;
+  workArea?: string;
   mailAddress?: string;
   isPresent?: boolean;
   shouldBePresent?: boolean;
@@ -296,6 +298,7 @@ export class SessionsComponent implements OnInit {
     },
     { headerName: 'Name', field: 'name', width: 180 },
     { headerName: 'Werk', field: 'department', width: 100 },
+    { headerName: 'Tätigkeitsgebiet', field: 'workArea', width: 100, flex: 1 },
     { headerName: 'E-Mail', field: 'mailAddress', width: 200, flex: 1 }
   ];
 
@@ -319,6 +322,7 @@ export class SessionsComponent implements OnInit {
     },
     { headerName: 'Name', field: 'name', width: 180 },
     { headerName: 'Werk', field: 'department', width: 100 },
+    { headerName: 'Tätigkeitsgebiet', field: 'workArea', width: 100, flex: 1 },
     { headerName: 'E-Mail', field: 'mailAddress', width: 200, flex: 1 }
   ];
 
@@ -416,12 +420,12 @@ export class SessionsComponent implements OnInit {
               params.data.sessionDateApproval,
               params.data.children,
               {
-                'sksNo': this.selectedNode?.data.sksNo,
+                'sksNo': String(this.selectedNode?.data.sksNo),
                 'acceptance1': this.selectedNode?.data.acceptance1,
                 'attachments': this.selectedNode?.data.attachments,
                 'miscItems': this.selectedNode?.data.miscItems,
-                'plannedDate': this.selectedNode?.data.plannedDate,
-                'reportType': this.selectedNode?.data.reportType,
+                'plannedDate': this.formatDate(this.selectedNode?.data.plannedDate),
+                'isPreProtocol': this.SESSION_TYPE_TO_DB[this.selectedNode?.data.reportType] === 'PRE_PROTOCOL',
                 'previousSessionDate': prevDate,
                 'nextSessionDate': nextDate
               }
@@ -527,6 +531,7 @@ export class SessionsComponent implements OnInit {
               name: `${user.firstName} ${user.lastName}`,
               isRoadworkProject: false,
               department: user.organisationalUnit?.abbreviation ?? '',
+              workArea: user.workArea ?? '',
               mailAddress: user.mailAddress ?? '',
               // keep default flags exactly as before (used when CSV is empty)
               isPresent: user.isParticipantList === true,
@@ -749,10 +754,10 @@ export class SessionsComponent implements OnInit {
     this.isDataLoading = true;
 
     try {
-      await this.downloadWord(children, reportType);
-      // (PDF wyłączony – jeśli chcesz, włącz później html2pdf, ale DOCX już działa poprawnie)
+      await this.downloadWord(children, reportType, session);      
     } catch (error) {
       this.snckBar.open('Fehler beim Generieren des Berichts.', '', { duration: 4000 });
+      console.log(error);
     } finally {
       this.isDataLoading = false;
     }
@@ -985,7 +990,7 @@ export class SessionsComponent implements OnInit {
 
   // ----------------------------- DOCX download -------------------------------
 
-  async downloadWord(children: SessionChild[], reportType: string) {
+  async downloadWord(children: SessionChild[], reportType: string, session: any) {
     // Build intro elements as normal body children (not a header)
     const intro = await this.docxWordService.makeIntroBlock.call(this.docxWordService, {
       logoUrl: "assets/win_logo.png",
@@ -1002,12 +1007,12 @@ export class SessionsComponent implements OnInit {
 
     // 1) Info + three canonical tables
     const projectInfo = [
-      { key: 'Datum und Zeit', value: '30.03.2026 / von 10.30 - 12.00 Uhr' },
+      { key: 'Datum und Zeit', value: String(session.plannedDate) + ' / von 10.30 - 12.00 Uhr' },
       { key: 'Ort', value: 'Stadt Winterthur, Departement Bau und Mobilität, Tiefbauamt, Superblock' },
       { key: '', value: 'Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)' },
-      { key: 'Vorsitz', value: 'Stefan Gahler (TBA APK)' },
-      { key: 'Protokoll', value: 'Tobias Juon (TBA APK)' },
-      { key: 'SKS-Nr', value: '1033' },
+      { key: 'Vorsitz', value: environment.reportChairperson + '.' },
+      { key: 'Protokoll', value: environment.reportWriter  + '.'},
+      { key: 'SKS-Nr', value: String(session.sksNo) },
     ];
 
     const tableInfo        = this.docxWordService.makeInfoTable(projectInfo);
@@ -1022,12 +1027,18 @@ export class SessionsComponent implements OnInit {
     const gap = this.docxWordService.spacer();
     const smallGap = this.docxWordService.smallGap();
 
-    const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection( { protocolDate: "08.12.2025", attachments: "meine Beilage 1, Foto 2, Schemat 3" } );
+    const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection( { 
+                                                                                  protocolDate: String(session.plannedDate), 
+                                                                                  attachments: session.attachments,
+                                                                                  isPreProtocol: session.isPreProtocol } );
 
-    const protocolSections = this.docxWordService.makeProtocolSections({
-      lastSksDate: '08.12.2025',
-      nextSksDate: '30.03.2026',
-      acceptanceText: this.detailsForm.get('acceptance1')?.value || '',
+    const protocolSection = this.docxWordService.makeProtocolSections({
+      lastSksDate: session.previousSessionDate,
+      sksDate: session.plannedDate,
+      nextSksDate: session.nextSessionDate,
+      acceptanceText: session.acceptance1 || '',
+      reportType: reportType,
+      isPreProtocol: session.isPreProtocol,
     });
 
     // 2) Attach project images (100% content width), each with title/department
@@ -1037,10 +1048,19 @@ export class SessionsComponent implements OnInit {
     for (const activity of activities) {    
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
-          `Bauvorhaben: ${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.name ?? ''} / ${activity.project.section ?? ''}`,
-          { bgColor: "E0E0E0", sizeHalfPt: 34 } 
+          `Bauvorhaben:`,
+          { bgColor: "E0E0E0", sizeHalfPt: 34, pageBreakBefore:true } 
         )
       );
+      allProjectBlocks.push(
+        this.docxWordService.makeFullWidthTitle(
+          `${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.name ?? ''} / ${activity.project.section ?? ''}`,
+          { bgColor: "E0E0E0", sizeHalfPt: 34, pageBreakBefore: false } 
+        )
+      );
+
+      const smallGap = this.docxWordService.smallGap();
+      allProjectBlocks.push(smallGap);
 
       // map
       const imageRun = await this.docxWordService.imageFromUrlFitted(activity.mapUrl, 520);
@@ -1053,13 +1073,44 @@ export class SessionsComponent implements OnInit {
 
       // Assigned Needs (per projekt)
       allProjectBlocks.push(
-        this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),
         this.docxWordService.smallGap(),
+        this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),        
         this.docxWordService.makeAssignedNeedsTableFromRows(activity.assignedNeedsRows, reportType),
         this.docxWordService.spacer()
       );
-    }
+      
+      const approachText = "PLACEHOLDER_approachText";
+      const decisionText = "PLACEHOLDER_decisionText";
+      const notAssignedNeeds = "PLACEHOLDER_notAssignedNeeds";
 
+      allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme'));      
+      allProjectBlocks.push(this.docxWordService.p(''));
+
+      allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));    
+      allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));
+
+      allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));      
+      allProjectBlocks.push(this.docxWordService.p(notAssignedNeeds));
+   
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold(`Beschluss:`));      
+      allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment2));   
+    }    
+
+    // 3. Verschiedenes    
+    const miscItemsSection = this.docxWordService.makeMiscItemsSection({miscItems: session.miscItems});    
+
+    // 4. Nächste Sitzungen
+    const nextSessionSection = this.docxWordService.makeNextSessionSection({
+      nextSKSDate: session.nextSessionDate,
+      nextOKSDate: session.nextOKSDate || '-',
+      nextKAPDate:  session.nextKAPDate || '-',
+      currentDate:  this.formatDate(new Date()),
+      reportWriter: environment.reportWriter || '-',
+    });
+
+
+ 
     const separator = new Paragraph({
       border: { bottom: { style: BorderStyle.SINGLE, color: 'CCCCCC', size: 6 } },
       spacing: { before: 60, after: 120 },
@@ -1078,14 +1129,26 @@ export class SessionsComponent implements OnInit {
         tableInfo, gap,
         t1, tablePresent, gap,
         t2, tableExcused, gap,
-        t3, tableDistribution, gap,        
+        t3, tableDistribution, gap,
         ...agendaSection,
         gap,
-        ...protocolSections,
+        ...protocolSection,
         ...allProjectBlocks,
+        ...miscItemsSection,
+        ...nextSessionSection
       ],
     });
 
     saveAs(blob, 'WOW-Strategische Koordinationssitzung (SKS) - ' + reportType + '.docx');
   }
+
+  
+  formatDate(dateInput: string | Date): string {
+    const d = new Date(dateInput);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
+
 }

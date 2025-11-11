@@ -34,6 +34,7 @@ export interface DocxBuildOptions {
 export interface ChildItem {
   name: string;
   department: string;
+  workArea?: string;
   isPresent: boolean;
   shouldBePresent: boolean;
   isRoadworkProject?: boolean;
@@ -111,13 +112,13 @@ export class DocxWordService {
 
     const header = new Header({ children: headerParas });
 
-    // ---------- Footer (username + page X / Y) ----------
+    // ---------- Footer (date + username + page X / Y) ----------
     const footer = new Footer({
       children: [
         new Paragraph({
           alignment: AlignmentType.RIGHT,
           children: [
-            new TextRun({ text: `${this.sanitizeText(username)}, Seite `, size: 18, color: '666666' }),
+            new TextRun({ text: `${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}, ${this.sanitizeText(username)}, Seite `, size: 18, color: '666666' }),
             new SimpleField('PAGE'),
             new TextRun({ text: ' / ', size: 18, color: '666666' }),
             new SimpleField('NUMPAGES'),
@@ -203,6 +204,14 @@ export class DocxWordService {
     return this.p(text, { bold: true, align });
   }
 
+  /** Convenience: italic paragraph */
+  pItalic(text: string): Paragraph {
+    const p = new Paragraph({
+      children: [new TextRun({ text, italics: true })],
+    });
+    return p;
+  }
+
   /** Small vertical spacer paragraph. */
   spacer(): Paragraph {
     return new Paragraph({ children: [new TextRun({ text: '' })], spacing: { before: 120, after: 120 } });
@@ -256,30 +265,33 @@ export class DocxWordService {
       .map((item) => ({
         Name: item.name,
         Organisation: item.department,
+        Workarea: item.workArea,
         Anwesend: item.isPresent ? 'Ja' : 'Nein',
       }));
 
     const header = new TableRow({
       tableHeader: true,
       children: [
-        new TableCell({ children: [this.pBold('Name')] }),
-        new TableCell({ children: [this.pBold('Organisation')] }),
-        new TableCell({ children: [this.pBold('Anwesend')] }),
+        new TableCell({ width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pBold('Name')] }),
+        new TableCell({ width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pBold('Organisation')] }),
+        new TableCell({ width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pBold('Workarea')] }),
+        new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pBold('Anwesend')] }),
       ],
     });
 
     const body = rowsData.map(
       (r) =>
-        new TableRow({
+        new TableRow({          
           children: [
             new TableCell({ children: [this.p(r.Name)] }),
             new TableCell({ children: [this.p(r.Organisation)] }),
+            new TableCell({ children: [this.p(r.Workarea)] }),
             new TableCell({ children: [this.p(r.Anwesend)] }),
           ],
         })
     );
 
-    const safeBody = this.ensureNonEmpty(body, 3);
+    const safeBody = this.ensureNonEmpty(body, 4);
     return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, rows: [header, ...safeBody] });
   }
 
@@ -290,15 +302,15 @@ export class DocxWordService {
       .map((item) => ({
         Name: item.name,
         Organisation: item.department,
-        Verteiler: item.isDistributionList ? 'Ja' : 'Nein',
+        Workarea: item.workArea,        
       }));
 
     const header = new TableRow({
       tableHeader: true,
       children: [
-        new TableCell({ children: [this.pBold('Name')] }),
-        new TableCell({ children: [this.pBold('Organisation')] }),
-        new TableCell({ children: [this.pBold('Verteiler')] }),
+        new TableCell({ width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pBold('Name')] }),
+        new TableCell({ width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pBold('Organisation')] }),
+        new TableCell({ width: { size: 57, type: WidthType.PERCENTAGE }, children: [this.pBold('Workarea')] }),        
       ],
     });
 
@@ -308,12 +320,12 @@ export class DocxWordService {
           children: [
             new TableCell({ children: [this.p(r.Name)] }),
             new TableCell({ children: [this.p(r.Organisation)] }),
-            new TableCell({ children: [this.p(r.Verteiler)] }),
+            new TableCell({ children: [this.p(r.Workarea)] }),
           ],
         })
     );
 
-    const safeBody = this.ensureNonEmpty(body, 3);
+    const safeBody = this.ensureNonEmpty(body, 4);
     return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, rows: [header, ...safeBody] });
   }
 
@@ -324,15 +336,17 @@ export class DocxWordService {
       .map((item) => ({
         Name: item.name,
         Organisation: item.department,
+        Workarea: item.workArea,
         Anwesend: item.isPresent ? 'Ja' : 'Nein',
       }));
 
     const header = new TableRow({
       tableHeader: true,
       children: [
-        new TableCell({ children: [this.pBold('Name')] }),
-        new TableCell({ children: [this.pBold('Organisation')] }),
-        new TableCell({ children: [this.pBold('Anwesend')] }),
+        new TableCell({ width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pBold('Name')] }),
+        new TableCell({ width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pBold('Organisation')] }),
+        new TableCell({ width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pBold('Workarea')] }),
+        new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pBold('Anwesend')] }),
       ],
     });
 
@@ -342,12 +356,13 @@ export class DocxWordService {
           children: [
             new TableCell({ children: [this.p(r.Name)] }),
             new TableCell({ children: [this.p(r.Organisation)] }),
+            new TableCell({ children: [this.p(r.Workarea)] }),            
             new TableCell({ children: [this.p(r.Anwesend)] }),
           ],
         })
     );
 
-    const safeBody = this.ensureNonEmpty(body, 3);
+    const safeBody = this.ensureNonEmpty(body, 4);
     return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, rows: [header, ...safeBody] });
   }
 
@@ -829,14 +844,15 @@ export class DocxWordService {
   makeAgendaAndAttachmentsSection(opts: {
     protocolDate: string;      // e.g. "08.12.2025"
     attachments: string;       // single string, comma- or newline-separated
+    isPreProtocol?: boolean;
   }): Paragraph[] {
-    const { protocolDate, attachments } = opts;
+    const { protocolDate, attachments, isPreProtocol } = opts;
 
     // Traktanden (agenda)
     const blocks: Paragraph[] = [
       this.pBold('Traktanden'),
       this.p(`1. Abnahme SKS-Protokoll vom ${this.sanitizeText(protocolDate)}`),
-      this.p('2. Koordination künftige Bauvorhaben'),
+      isPreProtocol? this.p('2. Koordination künftige Bauvorhaben') :  this.p('2. Koordination Bauvorhaben'),
       this.p('3. Verschiedenes'),
       this.p('4. Nächste Sitzungen'),
       this.smallGap(),
@@ -852,34 +868,50 @@ export class DocxWordService {
       const items = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
       for (const it of items) {
         // simple hyphen list; avoids numbering definitions
-        blocks.push(this.p(`- ${this.sanitizeText(it)}`));
+        blocks.push(this.p(`${this.sanitizeText(it)}`));
       }
     }
 
     return blocks;
   }
 
-  /** Builds protocol paragraphs used at the end of the document. */
+  /** Approach-Proposal / Approach **/
   makeProtocolSections(opts: {
-    lastSksDate: string;     // e.g. "08.12.2025"
-    nextSksDate: string;     // e.g. "30.03.2026"
-    acceptanceText: string;  // free text from form
+    lastSksDate: string;
+    sksDate: string;
+    nextSksDate: string;
+    acceptanceText: string;
+    reportType?: string;
+    isPreProtocol?: boolean;
   }): Paragraph[] {
-    const { lastSksDate, nextSksDate, acceptanceText } = opts;
+    const { lastSksDate, sksDate, nextSksDate, acceptanceText, reportType, isPreProtocol } = opts;
+    
 
-    return [
-      this.smallGap(),
-      this.pBold(`Abnahme SKS-Protokoll vom ${this.sanitizeText(lastSksDate)}`),
-      this.p(acceptanceText || '–', { colorHex: '333333' }),
+    let approach = [];    
+    approach.push(this.smallGap());
+    approach.push(this.pBold(`1. Abnahme SKS-Protokoll vom ${this.sanitizeText(lastSksDate)}`));
+    approach.push(this.p(acceptanceText || '–', { colorHex: '333333' }));
 
-      this.smallGap(),
-      this.pBold('Koordination künftige Bauvorhaben'),
-      this.p('Gerne haben wir die erfassten Bedarfe geprüft und koordiniert.'),
-      this.p(`Die nachfolgenden Vorgehen werden voraussichtlich an der SKS vom ${this.sanitizeText(nextSksDate)} behandelt.`),
-    ];
+    if (isPreProtocol) {      
+      approach.push(this.smallGap());
+      approach.push(this.pBold(`2. Koordination künftige Bauvorhaben`));
+      approach.push(this.p(`Gerne haben wir die erfassten Bedarfe geprüft und koordiniert.`));
+      approach.push(this.p("Die nachfolgenden Vorgehensvorschläge wurden mit Versand der Bedarfsklärung vom " + 
+                    this.formatDate(lastSksDate) +
+                    " erstmalig zur Prüfung versendet. Mit Stellungnahme vom " +
+                    this.formatDate(sksDate) +
+                    " erfolgt der aktualisierte Versand zur endgültigen Prüfung."));                        
+    } else {
+      approach.push(this.smallGap());
+      approach.push(this.pBold(`2. Koordination Bauvorhaben`));
+      approach.push(this.p("Die nachfolgenden Vorgehen werden voraussichtlich an der SKS vom " +
+                    this.formatDate(nextSksDate) +
+                    " behandelt."));      
+    }
+    return approach
   }
 
-  /**
+ /**
  * Generates a full-width gray title bar (like a section header) that spans the page width.
  * Used for project or section titles such as “Bauvorhaben: …”.
  */
@@ -916,7 +948,7 @@ export class DocxWordService {
               shading: { fill: bgColor },
               borders: noBorders,
               verticalAlign: "center",
-              margins: { top: 120, bottom: 120, left: 200, right: 200 }, // padding inside cell
+              margins: { top: 50, bottom: 30, left: 200, right: 200 }, // padding inside cell
               children: [
                 new Paragraph({
                   alignment: AlignmentType.LEFT,
@@ -939,5 +971,75 @@ export class DocxWordService {
       ],
     });
   }
+
+  /** “Verschiedenes” */
+  makeMiscItemsSection(opts: {    
+    miscItems: string;       // single string, comma- or newline-separated
+  }): Paragraph[] {
+    const { miscItems } = opts;
+
+    const blocks: Paragraph[] = [      
+      this.smallGap(),
+      this.pBold('3. Verschiedenes'),
+    ];
+
+    // Vierschiedenes (miscItems) from a single string
+    const raw = (miscItems ?? '').trim();
+    if (raw.length === 0) {
+      blocks.push(this.p('–'));
+    } else {
+      // split by comma or newline
+      const items = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      for (const it of items) {
+        // simple hyphen list; avoids numbering definitions
+        blocks.push(this.p(`${this.sanitizeText(it)}`));
+      }
+    }
+
+    return blocks;
+  }
+
+  makeNextSessionSection(opts: {
+    nextSKSDate?: string;
+    nextOKSDate?: string;
+    nextKAPDate?: string;
+    currentDate?: string;
+    reportWriter: string;
+  }): Paragraph[] {
+    const {
+      nextSKSDate = '«Datum nächste SKS»',
+      nextOKSDate = '«Datum nächste OKS»',
+      nextKAPDate = '«Datum nächste KAP»',
+      currentDate = '«Aktuelles Datum der Protokollerstellung»',
+      reportWriter = '«Name Protokollführer:in»'
+    } = opts;
+
+    const blocks: Paragraph[] = [
+      this.smallGap(),
+      this.pBold('4. Nächste Sitzungen'),
+
+      this.pBold('SKS'),
+      this.p(`Die nächste SKS findet voraussichtlich am ${nextSKSDate} statt.`),
+      this.pItalic('Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)'),
+
+      this.pBold('OKS'),
+      this.p(`Die nächste OKS findet voraussichtlich am ${nextOKSDate} statt.`),
+      this.pItalic('Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)'),
+
+      this.pBold('KAP'),
+      this.p(`Die nächste KAP findet voraussichtlich am ${nextKAPDate} statt.`),
+      this.pItalic('Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B012 PION5)'),
+
+      this.smallGap(),
+      this.p('Für das Protokoll'),
+      this.p(`Winterthur, ${currentDate}`),
+      this.p('Abteilung Planung und Koordination (APK)'),      
+      this.pItalic(`${reportWriter}`),
+    ];
+
+    return blocks;
+  }
+
+
 
 }
