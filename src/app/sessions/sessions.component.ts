@@ -355,7 +355,7 @@ export class SessionsComponent implements OnInit {
       suppressSizeToFit: true,
       filter: 'agNumberColumnFilter',
     },
-    { headerName: 'Sitzung', field: 'sessionName', minWidth: 220, flex: 1 },
+    /* { headerName: 'Sitzung', field: 'sessionName', minWidth: 220, flex: 1 }, */
     { headerName: 'Datum', field: 'plannedDate', minWidth: 160, flex: 1 },
     {
       headerName: 'Berichtsstatus',
@@ -568,7 +568,11 @@ export class SessionsComponent implements OnInit {
                     isRoadworkProject: true,
                     sessionComment1: act.properties.sessionComment1,
                     sessionComment2: act.properties.sessionComment2,
-                    notAssignedNeeds: [],
+                    notAssignedNeeds: [],                    
+                    isAggloprog: act.properties.isAggloprog || false,
+                    isParticip: act.properties.isParticip || false,
+                    isPlanCirc: act.properties.isPlanCirc || false,
+                    isTrafficRegulationRequired: act.properties.isTrafficRegulationRequired || false
                   };
                 }
               );
@@ -1099,7 +1103,21 @@ export class SessionsComponent implements OnInit {
         this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows, reportType),
         this.docxWordService.spacer()
       );
-                  
+
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren')); 
+      allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"))      
+      const rows = [
+        { label: "Ist im Aggloprogramm vorgesehen/eingegeben", value: activity.project.isAggloprog ? '[ x ]' : '[   ]' },      
+        { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? '[ x ]' : '[   ]' },
+        { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? '[ x ]' : '[   ]'},
+        { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? '[ x ]' : '[   ]'},
+      ];
+      for (const r of rows) {
+        const line = this.docxWordService.p(`${r.value} : ${r.label}`);
+        allProjectBlocks.push(line);
+      }
+
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme'));      
 
@@ -1107,9 +1125,42 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));
       allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));
 
+      /* 
+            <p><strong>Strasseneigentümer (APK)</strong> </p>
+      <p>Strassenzustand (Index i1: Oberflächenschäden). Wert im vorliegenden Perimeter: 0.5. </p>
+      <p>Es liegen keine Schäden im Bauperimeter vor, APK sieht keinen Handlungsbedarf.</p>
+      <p>Bausperre und Aufbruchsperre: Im vorliegenden Perimeter liegt eine Bausperre vor (letzte Erstellung Deckbelag in
+          Längsrichtung: Dezember 2023). Gem. Art. 17. Der Baukoordinationsverordnung können Ausnahmen gelten gemacht werden.
+      </p>
+      <p>Zu berücksichtigende Bauvorhaben: Seebahnstrasse, Ecke Zweig- bis Rudolfweg, neuer Deckbelag TBA über
+          Kleinmassnahmen, geplanter Realisierungszeitraum: 3. Quartal 2025</p>
+      <p><strong>Beteiligter: EC </strong></p>
+      <p><strong>Bedarfsklärung</strong></p>
+          
+
+      <p>Wenn TE baut, bauen wir mit</p>
+      <p><strong>Stellungnahme</strong></p>
+          
+      <p><strong>Übergeordnete Massnahmen</strong></p>
+      <p>
+          
+      </p>
+      <table>
+          <tr>
+              <td>
+                  <p><strong>Weitere, vorhabenbezogene Informationen</strong></p>
+              </td>
+          </tr>
+      </table>
+      <p><strong>Nicht zugewiesene</strong> <strong>Bedarfe</strong> in Vorhabenfläche</p> */
+
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));
-      allProjectBlocks.push(this.docxWordService.makeNeedsTableFromRows(activity.notAssignedNeedsRows, reportType));
+      if (activity.notAssignedNeedsRows.length > 0) {
+        allProjectBlocks.push(this.docxWordService.makeNeedsTableFromRows(activity.notAssignedNeedsRows, reportType));
+      } else {
+        allProjectBlocks.push(this.docxWordService.p('Keine.'));
+      }
       allProjectBlocks.push(this.docxWordService.spacer());
    
       allProjectBlocks.push(this.docxWordService.smallGap());
@@ -1159,7 +1210,7 @@ export class SessionsComponent implements OnInit {
       ],
     });
 
-    saveAs(blob, 'WOW-Strategische Koordinationssitzung (SKS) - ' + reportType + '.docx');
+    saveAs(blob, 'Strategische Koordinationssitzung (SKS) - ' + reportType + '.docx');
   }
 
   

@@ -626,7 +626,7 @@ export class DocxWordService {
           erstelltAm: this.formatDate(item?.properties?.created),
           wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
           ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
-        })).slice(0, 5);;
+        })).slice(0, 3); // remove this limit after using it in PROD
 
         // 7) Add the fully prepared project entry to the output array
         items.push({

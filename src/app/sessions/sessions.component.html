@@ -125,11 +125,14 @@
       </div>
 
         <!-- Acceptance -->
-        <div class="field">
+        <div class="field"
+             [ngStyle]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL' ? {'pointer-events':'none','opacity':'0.6'} : null">
           <h5  style="margin: .25rem;">1. Abnahme SKS-Protokoll</h5>
           <textarea
             id="acceptance1"
             formControlName="acceptance1"
+            [readonly]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL'"
+            [disabled]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL'"
             maxlength="10000"
             rows="9"
             placeholder="Bitte Text hiereingeben..."

@@ -65,6 +65,7 @@ export class RoadWorkActivityProperties {
     dateAccept?: Date;
     dateGuarantee?: Date;
     isStudy: boolean = false;
+    isTrafficRegulationRequired: boolean = false;
     dateStudyStart?: Date;
     dateStudyEnd?: Date;
     projectStudyApproved?: Date;

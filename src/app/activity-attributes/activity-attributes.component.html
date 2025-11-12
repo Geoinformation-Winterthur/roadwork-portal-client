@@ -219,6 +219,10 @@
                                             style="margin:10px;" disabled>
                                             Vorstudie
                                         </mat-checkbox>
+                                        <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isTrafficRegulationRequired"
+                                            style="margin:10px;">
+                                            Verkehrsanordnung ist notwendig
+                                        </mat-checkbox>
                                     </div>
                                 </mat-card-content>
                             </mat-card>
@@ -504,7 +508,7 @@
                                 </mat-card>
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"
-                                    [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
+                                    >
                                     <mat-card-header>
                                         <mat-card-title>Aggloprogramm</mat-card-title>
                                     </mat-card-header>
