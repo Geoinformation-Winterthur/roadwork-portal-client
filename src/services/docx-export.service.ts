@@ -18,6 +18,7 @@ import {
   BorderStyle  
 } from 'docx';
 import { firstValueFrom } from 'rxjs';
+import { RoadWorkNeedService } from './roadwork-need.service';
 
 /** Public options for document generation. */
 export interface DocxBuildOptions {
@@ -60,7 +61,9 @@ const clamp = (n: number, min = 1, max = 10000) =>
 
 @Injectable({ providedIn: 'root' })
 export class DocxWordService {
-  constructor(private reportLoaderService: ReportLoaderService) {}
+  constructor(private reportLoaderService: ReportLoaderService,
+              private roadWorkNeedService: RoadWorkNeedService) {
+  }
 
   // -------- sanitize text (remove control chars that can break XML)
   private sanitizeText(s: string) {
@@ -239,12 +242,12 @@ export class DocxWordService {
         new TableRow({
           children: [
             new TableCell({
-              width: { size: 30, type: WidthType.PERCENTAGE },
+              width: { size: 25, type: WidthType.PERCENTAGE },
               borders: noBorders,
               children: [new Paragraph({ children: [new TextRun({ text: this.sanitizeText(item.key), bold: true })] })],
             }),
             new TableCell({
-              width: { size: 70, type: WidthType.PERCENTAGE },
+              width: { size: 75, type: WidthType.PERCENTAGE },
               borders: noBorders,
               children: [new Paragraph({ children: [new TextRun({ text: this.sanitizeText(item.value) })] })],
             }),
@@ -457,7 +460,7 @@ export class DocxWordService {
       const { bytes, mime, naturalW, naturalH } = await this.fetchImageNatural(src);
       const safeW = clamp(Math.min(naturalW || fitWidthPx, fitWidthPx), 1);
       const safeH = clamp(naturalW ? (naturalH * safeW) / naturalW : fitWidthPx, 1);
-      const type = (mime && mime.startsWith('image/')) ? (mime as any) : ('image/png' as any);
+      const type = 'png';
 
       return new ImageRun({
         data: bytes,
@@ -541,6 +544,7 @@ export class DocxWordService {
    *  - and a normalized assigned-needs row set for table rendering.
    */
   async prepareRoadWorkActivity(projects: any[]) {
+    // Array to collect data for all projects
     const items: Array<{
       project: any;
       mapUrl: string;
@@ -550,6 +554,15 @@ export class DocxWordService {
         gm: string;
         mitwirkende: string;
       };
+      notAssignedNeedsRows: Array<{
+        titelAbschnitt: string;
+        ausloesegrund: string;
+        ausloesende: string;
+        werk: string;
+        erstelltAm: string;
+        wunschtermin: string;
+        ausloesend: string;
+      }>;
       assignedNeedsRows: Array<{
         titelAbschnitt: string;
         ausloesegrund: string;
@@ -561,51 +574,78 @@ export class DocxWordService {
       }>;
     }> = [];
 
+    // Process each project one by one
     for (const project of projects ?? []) {
       if (!project?.isRoadworkProject) continue;
-
-      // Load + populate loader’s state (roadWorkActivity, primaryNeed, managementArea, needsOfActivityService, …)
-      await firstValueFrom(this.reportLoaderService.loadRoadWorkActivity$(project.id));
-
-      // Map image (data URL)
-      const mapUrl = await this.reportLoaderService.loadProjectPerimeterMap();
-
-      // Meta fields (use old service’s data)
-      const primary = (this.reportLoaderService as any)?.primaryNeed;
-      const mgmt = (this.reportLoaderService as any)?.managementArea;
-
-      const ausloesende = `${primary?.properties?.orderer?.firstName ?? '-'} ${primary?.properties?.orderer?.lastName ?? '-'}`;
-      const ausloesendesWerk = primary?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-';
-      const gm = `${mgmt?.manager?.firstName ?? '-'} ${mgmt?.manager?.lastName ?? '-'}`;
-
-      let mitwirkende = '-';
+      
       try {
-        const f = (this.reportLoaderService as any)?.getInvolvedOrgsNames;
-        mitwirkende = typeof f === 'function' ? f.call(this.reportLoaderService) : '-';
-      } catch { /* ignore */ }
+        // 1) Load the project context (roadWorkActivity, primaryNeed, etc.)
+        await firstValueFrom(this.reportLoaderService.loadRoadWorkActivity$(project.id));
 
-      // Assigned needs rows for a per-project table
-      const assigned = this.reportLoaderService?.needsOfActivityService?.assignedRoadWorkNeeds ?? [];
-      const assignedRows = assigned.map((item: any) => ({
-        titelAbschnitt: `${item?.properties?.name ?? '-'}`,            // reportType możesz dopisać przy renderowaniu
-        ausloesegrund: item?.properties?.description ?? '-',
-        ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
-        werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
-        erstelltAm: this.formatDate(item?.properties?.created),
-        wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
-        ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
-      }));
+        // 2) Load a map image (data URL for DOCX embedding)
+        const mapUrl = await this.reportLoaderService.loadProjectPerimeterMap();
 
-      items.push({
-        project,
-        mapUrl,
-        meta: { ausloesende, ausloesendesWerk, gm, mitwirkende },
-        assignedNeedsRows: assignedRows,
-      });
+        // 3) Collect meta information (triggering person, manager, etc.)
+        const primary = (this.reportLoaderService as any)?.primaryNeed;
+        const mgmt = (this.reportLoaderService as any)?.managementArea;
+
+        const ausloesende = `${primary?.properties?.orderer?.firstName ?? '-'} ${primary?.properties?.orderer?.lastName ?? '-'}`;
+        const ausloesendesWerk = primary?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-';
+        const gm = `${mgmt?.manager?.firstName ?? '-'} ${mgmt?.manager?.lastName ?? '-'}`;
+
+        let mitwirkende = '-';
+        try {
+          // Optional helper to get names of involved organisations
+          const f = (this.reportLoaderService as any)?.getInvolvedOrgsNames;
+          mitwirkende = typeof f === 'function' ? f.call(this.reportLoaderService) : '-';
+        } catch { /* ignore errors safely */ }
+
+        // 4) Prepare table rows for assigned road work needs
+        const assigned = this.reportLoaderService?.needsOfActivityService?.assignedRoadWorkNeeds ?? [];
+        const assignedRows = assigned.map((item: any) => ({
+          titelAbschnitt: `${item?.properties?.name ?? '-'}`,
+          ausloesegrund: item?.properties?.description ?? '-',
+          ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
+          werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
+          erstelltAm: this.formatDate(item?.properties?.created),
+          wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
+          ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
+        }));
+
+        // 5) Fetch intersecting road work needs asynchronously
+        const roadWorkNeeds: any[] = await firstValueFrom(
+          this.roadWorkNeedService.getIntersectingRoadWorkNeeds(project.id)
+        );
+
+        // 6) Map them into rows for the "Not Assigned" table
+        const notAssignedNeedsRows = roadWorkNeeds.map((item: any) => ({
+          titelAbschnitt: `${item?.properties?.name ?? '-'}`,
+          ausloesegrund: item?.properties?.description ?? '-',
+          ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
+          werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
+          erstelltAm: this.formatDate(item?.properties?.created),
+          wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
+          ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
+        })).slice(0, 5);;
+
+        // 7) Add the fully prepared project entry to the output array
+        items.push({
+          project,
+          mapUrl,
+          meta: { ausloesende, ausloesendesWerk, gm, mitwirkende },
+          assignedNeedsRows: assignedRows,
+          notAssignedNeedsRows,
+        });
+      } catch (err) {
+        // Any error while processing a project will be logged, but other projects continue
+        console.error('prepareRoadWorkActivity: project failed', project?.id, err);
+      }
     }
 
+    // 8) Return all collected results after all projects are processed
     return items;
   }
+
 
   /**
    * Render meta-section (four lines) under a project.
@@ -653,7 +693,7 @@ export class DocxWordService {
    * Builds a compact “Assigned Needs” table with smaller font size and automatic line wrapping.
    * Long text values will wrap inside cells instead of overflowing.
    */
-  makeAssignedNeedsTableFromRows(
+  makeNeedsTableFromRows(
     rows: Array<{
       titelAbschnitt: string;
       ausloesegrund: string;
@@ -1033,6 +1073,7 @@ export class DocxWordService {
       this.smallGap(),
       this.p('Für das Protokoll'),
       this.p(`Winterthur, ${currentDate}`),
+      this.smallGap(),
       this.p('Abteilung Planung und Koordination (APK)'),      
       this.pItalic(`${reportWriter}`),
     ];

@@ -554,12 +554,24 @@ export class SessionsComponent implements OnInit {
               }
 
               // Projects linked by date
-              const childrenProjects: SessionChild[] = acts.map(act => ({
-                id: String(act.properties.uuid),
-                name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
-                roadWorkActivityNo: act.properties.roadWorkActivityNo,
-                isRoadworkProject: true,
-              }));
+              const childrenProjects: SessionChild[] = acts.map(act => {
+                const { type, section, name } = act.properties;
+    
+                const joinedName = [type, section, name]
+                    .filter((v) => v && String(v).trim().length > 0)
+                    .join(' / ');
+
+                  return {
+                    id: String(act.properties.uuid),
+                    name: joinedName, 
+                    roadWorkActivityNo: act.properties.roadWorkActivityNo,
+                    isRoadworkProject: true,
+                    sessionComment1: act.properties.sessionComment1,
+                    sessionComment2: act.properties.sessionComment2,
+                    notAssignedNeeds: [],
+                  };
+                }
+              );
 
               // Unique people by email (base list)
               const uniq = new Map<string, SessionChild>();
@@ -595,11 +607,20 @@ export class SessionsComponent implements OnInit {
             );
 
             if (unmatchedActs.length > 0) {
-              const unknownProjects: SessionChild[] = unmatchedActs.map(act => ({
+              const unknownProjects: SessionChild[] = unmatchedActs.map(act => {
+              const { type, section, name } = act.properties;
+              
+              const joinedName = [type, section, name]
+                .filter(v => v && String(v).trim().length > 0)
+                .join(' / ');
+
+              return {
                 id: String(act.properties.uuid),
-                name: `${act.properties.type} / ${act.properties.section || act.properties.name}`,
+                name: joinedName,
                 isRoadworkProject: true,
-              }));
+                roadWorkActivityNo: act.properties.roadWorkActivityNo,
+              };
+            });
 
               // Reuse base people; unknown session has empty CSV (no pre-selections)
               const uniq = new Map<string, SessionChild>();
@@ -1075,25 +1096,24 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(
         this.docxWordService.smallGap(),
         this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),        
-        this.docxWordService.makeAssignedNeedsTableFromRows(activity.assignedNeedsRows, reportType),
+        this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows, reportType),
         this.docxWordService.spacer()
       );
-      
-      const approachText = "PLACEHOLDER_approachText";
-      const decisionText = "PLACEHOLDER_decisionText";
-      const notAssignedNeeds = "PLACEHOLDER_notAssignedNeeds";
-
+                  
+      allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme'));      
-      allProjectBlocks.push(this.docxWordService.p(''));
 
-      allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));    
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));
       allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));
 
-      allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));      
-      allProjectBlocks.push(this.docxWordService.p(notAssignedNeeds));
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));
+      allProjectBlocks.push(this.docxWordService.makeNeedsTableFromRows(activity.notAssignedNeedsRows, reportType));
+      allProjectBlocks.push(this.docxWordService.spacer());
    
       allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold(`Beschluss:`));      
+      allProjectBlocks.push(this.docxWordService.pBold(`Beschluss:`));
       allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment2));   
     }    
 

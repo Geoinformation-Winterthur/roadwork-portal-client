@@ -343,6 +343,7 @@ export class ReportLoaderService {
         if (!uuids || uuids.length === 0) {
             
             this.needsOfActivityService.assignedRoadWorkNeeds = [];
+            this.needsOfActivityService.nonAssignedRoadWorkNeeds = [];
             this.needsOfActivityService.registeredRoadWorkNeeds = [];
             return of(void 0);
         }
@@ -363,6 +364,7 @@ export class ReportLoaderService {
             }
 
             this.needsOfActivityService.assignedRoadWorkNeeds = assigned;
+            this.needsOfActivityService.nonAssignedRoadWorkNeeds = registered;
             this.needsOfActivityService.registeredRoadWorkNeeds = registered;
             }),
             map(() => void 0),
