@@ -15,10 +15,12 @@ import {
   TextRun,
   WidthType,
   PageOrientation,
-  BorderStyle  
+  BorderStyle,  
+  VerticalAlign
 } from 'docx';
 import { firstValueFrom } from 'rxjs';
 import { RoadWorkNeedService } from './roadwork-need.service';
+import { ConsultationService } from './consultation.service';
 
 /** Public options for document generation. */
 export interface DocxBuildOptions {
@@ -62,7 +64,8 @@ const clamp = (n: number, min = 1, max = 10000) =>
 @Injectable({ providedIn: 'root' })
 export class DocxWordService {
   constructor(private reportLoaderService: ReportLoaderService,
-              private roadWorkNeedService: RoadWorkNeedService) {
+              private roadWorkNeedService: RoadWorkNeedService,
+              private consultationService: ConsultationService) {
   }
 
   // -------- sanitize text (remove control chars that can break XML)
@@ -185,18 +188,21 @@ export class DocxWordService {
   /** Create a simple paragraph. */
   p(
     text: string,
-    opts?: { bold?: boolean; italic?: boolean; align?: AlignmentTypeValue; colorHex?: string; sizeHalfPt?: number }
+    opts?: { bold?: boolean; italic?: boolean; align?: AlignmentTypeValue; colorHex?: string; sizeHalfPt?: number, lineSpacing?: number }
   ) {
-    const { bold, italic, align, colorHex, sizeHalfPt } = opts || {};
+    const { bold, italic, align, colorHex, sizeHalfPt, lineSpacing } = opts || {};
     return new Paragraph({
       alignment: align,
+      spacing: {
+        line: lineSpacing ?? 250, 
+      },
       children: [
         new TextRun({
           text: this.sanitizeText(text),
           bold: bold || undefined,
           italics: italic || undefined,
           color: colorHex,
-          size: sizeHalfPt,
+          size: sizeHalfPt,          
         }),
       ],
     });
@@ -261,8 +267,8 @@ export class DocxWordService {
     });
   }
 
-  /** Anwesende Personen (present & should be present) */
-  makePresentPersonsTable(children: any[]): Table {
+  /** Present persons (present & should be present) */
+  makePresentPersonsTable(children: any[]): Table {    
     const rowsData = (children || [])
       .filter((item) => item && item.isRoadworkProject !== true && item.isPresent === true && item.shouldBePresent === true)
       .map((item) => ({
@@ -275,10 +281,10 @@ export class DocxWordService {
     const header = new TableRow({
       tableHeader: true,
       children: [
-        new TableCell({ width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pBold('Name')] }),
-        new TableCell({ width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pBold('Organisation')] }),
-        new TableCell({ width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pBold('Workarea')] }),
-        new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pBold('Anwesend')] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pSmall('Name', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pSmall('Organisation', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pSmallNoBreak('Tätigkeitsgebiet', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pSmall('Anwesend', true)] }),        
       ],
     });
 
@@ -286,16 +292,20 @@ export class DocxWordService {
       (r) =>
         new TableRow({          
           children: [
-            new TableCell({ children: [this.p(r.Name)] }),
-            new TableCell({ children: [this.p(r.Organisation)] }),
-            new TableCell({ children: [this.p(r.Workarea)] }),
-            new TableCell({ children: [this.p(r.Anwesend)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Name)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Organisation)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Workarea)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Anwesend)] }),
           ],
         })
     );
 
     const safeBody = this.ensureNonEmpty(body, 4);
-    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, rows: [header, ...safeBody] });
+    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, 
+      margins: { top: 40, bottom: 40, left: 40, right: 40 }, 
+      rows: [header, ...safeBody] 
+    });
+
   }
 
   /** Verteiler (distribution list) */
@@ -311,9 +321,9 @@ export class DocxWordService {
     const header = new TableRow({
       tableHeader: true,
       children: [
-        new TableCell({ width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pBold('Name')] }),
-        new TableCell({ width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pBold('Organisation')] }),
-        new TableCell({ width: { size: 57, type: WidthType.PERCENTAGE }, children: [this.pBold('Workarea')] }),        
+        new TableCell({ verticalAlign: 'top', width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pSmall('Name', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pSmall('Organisation', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 57, type: WidthType.PERCENTAGE }, children: [this.pSmallNoBreak('Tätigkeitsgebiet', true)] }),        
       ],
     });
 
@@ -321,15 +331,18 @@ export class DocxWordService {
       (r) =>
         new TableRow({
           children: [
-            new TableCell({ children: [this.p(r.Name)] }),
-            new TableCell({ children: [this.p(r.Organisation)] }),
-            new TableCell({ children: [this.p(r.Workarea)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Name)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Organisation)] }),
+            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Workarea)] }),
           ],
         })
     );
 
     const safeBody = this.ensureNonEmpty(body, 4);
-    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, rows: [header, ...safeBody] });
+    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, 
+        margins: { top: 40, bottom: 40, left: 40, right: 40 }, 
+        rows: [header, ...safeBody] 
+    });
   }
 
   /** Entschuldigte Personen (not present but should be present) */
@@ -346,10 +359,10 @@ export class DocxWordService {
     const header = new TableRow({
       tableHeader: true,
       children: [
-        new TableCell({ width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pBold('Name')] }),
-        new TableCell({ width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pBold('Organisation')] }),
-        new TableCell({ width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pBold('Workarea')] }),
-        new TableCell({ width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pBold('Anwesend')] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pSmall('Name', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pSmall('Organisation', true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pSmallNoBreak("Tätigkeitsgebiet", true)] }),
+        new TableCell({ verticalAlign: 'top', width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pSmall('Anwesend', true)] }),
       ],
     });
 
@@ -357,16 +370,19 @@ export class DocxWordService {
       (r) =>
         new TableRow({
           children: [
-            new TableCell({ children: [this.p(r.Name)] }),
-            new TableCell({ children: [this.p(r.Organisation)] }),
-            new TableCell({ children: [this.p(r.Workarea)] }),            
-            new TableCell({ children: [this.p(r.Anwesend)] }),
+            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Name)] }),
+            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Organisation)] }),
+            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Workarea)] }),            
+            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Anwesend)] }),
           ],
         })
     );
 
     const safeBody = this.ensureNonEmpty(body, 4);
-    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, rows: [header, ...safeBody] });
+    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, 
+      margins: { top: 40, bottom: 40, left: 40, right: 40 }, 
+      rows: [header, ...safeBody] 
+    });
   }
 
   /**
@@ -689,6 +705,23 @@ export class DocxWordService {
     return this.p(this.hyphenateLongTokens(text), { sizeHalfPt: 18, bold });
   }
 
+  private pSmallNoBreak(text: string, pBold = false) {
+    
+    let safeText = (text ?? "").replace(/\u00AD/g, "");
+
+    const noBreakText = [...safeText].join("\u2060");
+
+    return new Paragraph({
+      children: [
+        new TextRun({
+          size: 18,
+          text: noBreakText,
+          bold: pBold,
+        }),
+      ],
+    });
+  }
+
   /**
    * Builds a compact “Assigned Needs” table with smaller font size and automatic line wrapping.
    * Long text values will wrap inside cells instead of overflowing.
@@ -936,11 +969,14 @@ export class DocxWordService {
       approach.push(this.smallGap());
       approach.push(this.pBold(`2. Koordination künftige Bauvorhaben`));
       approach.push(this.p(`Gerne haben wir die erfassten Bedarfe geprüft und koordiniert.`));
-      approach.push(this.p("Die nachfolgenden Vorgehensvorschläge wurden mit Versand der Bedarfsklärung vom " + 
+
+      let approachText = "Die nachfolgenden Vorgehensvorschläge wurden mit Versand der Bedarfsklärung vom " + 
                     this.formatDate(lastSksDate) +
                     " erstmalig zur Prüfung versendet. Mit Stellungnahme vom " +
                     this.formatDate(sksDate) +
-                    " erfolgt der aktualisierte Versand zur endgültigen Prüfung."));                        
+                    " erfolgt der aktualisierte Versand zur endgültigen Prüfung.";                        
+      approach.push(this.p(approachText, { lineSpacing: 400 }));
+
     } else {
       approach.push(this.smallGap());
       approach.push(this.pBold(`2. Koordination Bauvorhaben`));
@@ -948,7 +984,7 @@ export class DocxWordService {
                     this.formatDate(nextSksDate) +
                     " behandelt."));      
     }
-    return approach
+    return approach;
   }
 
  /**
@@ -1072,8 +1108,8 @@ export class DocxWordService {
 
       this.smallGap(),
       this.p('Für das Protokoll'),
-      this.p(`Winterthur, ${currentDate}`),
       this.smallGap(),
+      this.p(`Winterthur, ${currentDate}`),      
       this.p('Abteilung Planung und Koordination (APK)'),      
       this.pItalic(`${reportWriter}`),
     ];
@@ -1081,6 +1117,141 @@ export class DocxWordService {
     return blocks;
   }
 
+ 
+  async makeConsultationInputsSection(opts: {
+    uuid: string;
+    feedbackPhase: string;   
+    header: string; 
+  }): Promise<(Paragraph | Table)[]> {
+    const { uuid, feedbackPhase, header } = opts;
 
+     const allInputs = await firstValueFrom(
+      this.consultationService.getConsultationInputs(uuid)
+    );
+
+    // Keep only inputs for the active phase
+    const filtered = (allInputs ?? []).filter(ci => ci?.feedbackPhase === feedbackPhase);    
+
+    const collator = new Intl.Collator("de-CH", {
+      sensitivity: "base",
+      ignorePunctuation: true,
+      numeric: true,
+    });
+
+    const consultationInputs = filtered.slice().sort((a, b) => {
+      const aOrg = a?.inputBy?.organisationalUnit?.abbreviation ?? '';
+      const bOrg = b?.inputBy?.organisationalUnit?.abbreviation ?? '';
+      const orgCmp = collator.compare(aOrg, bOrg);
+      if (orgCmp !== 0) return orgCmp;
+
+      const aName = `${a?.inputBy?.firstName ?? ''} ${a?.inputBy?.lastName ?? ''}`.trim();
+      const bName = `${b?.inputBy?.firstName ?? ''} ${b?.inputBy?.lastName ?? ''}`.trim();
+      return collator.compare(aName, bName);
+    });
+
+    // Optional heading paragraph
+    const headerPara = new Paragraph({
+      spacing: { after: 120 },
+      children: [new TextRun({ text: header, bold: true, size: 24 })],
+    });
+
+    // If no data, return a simple message
+    if (!consultationInputs.length) {
+      const none = new Paragraph({
+        children: [new TextRun({ text: "No consultation inputs for this phase.", italics: true })],
+      });
+      return [headerPara, none];
+    }
+
+    // Table header
+    const th = new TableRow({
+      tableHeader: true,
+      children: [
+        new TableCell({
+          verticalAlign: VerticalAlign.CENTER,
+          width: { size: 18, type: WidthType.PERCENTAGE },
+          margins: { top: 100, bottom: 100, left: 200, right: 100 },
+          children: [this.pSmall("Organisation", true)],
+        }),
+        new TableCell({
+          verticalAlign: VerticalAlign.CENTER,
+          width: { size: 22, type: WidthType.PERCENTAGE },
+          margins: { top: 100, bottom: 100, left: 200, right: 100 },
+          children: [this.pSmall("Name", true)],
+        }),
+        new TableCell({
+          verticalAlign: VerticalAlign.CENTER,
+          width: { size: 12, type: WidthType.PERCENTAGE },
+          margins: { top: 100, bottom: 100, left: 200, right: 100 },
+          children: [this.pSmall("Valuation", true)],
+        }),
+        new TableCell({
+          verticalAlign: VerticalAlign.CENTER,
+          width: { size: 12, type: WidthType.PERCENTAGE },
+          margins: { top: 100, bottom: 100, left: 200, right: 100 },
+          children: [this.pSmall("Declined", true)],
+        }),
+        new TableCell({
+          verticalAlign: VerticalAlign.CENTER,
+          width: { size: 36, type: WidthType.PERCENTAGE },
+          margins: { top: 100, bottom: 100, left: 200, right: 100 },
+          children: [this.pSmall("Feedback (short)", true)],
+        }),
+      ],
+    });
+
+    // Body rows
+    const bodyRows = consultationInputs.map((ci) => {
+      const org   = ci?.inputBy?.organisationalUnit?.abbreviation ?? "-";
+      const name  = `${ci?.inputBy?.firstName ?? ""} ${ci?.inputBy?.lastName ?? ""}`.trim() || "-";
+      const val = String(ci?.valuation ?? '') === '' ? '-' : String(ci?.valuation);
+      const decl  = ci?.decline ? "Yes" : "No";
+      const fbRaw = (ci?.ordererFeedback || ci?.managerFeedback || "").toString().replace(/\s+/g, " ").trim();
+      const fb    = fbRaw.length > 160 ? fbRaw.slice(0, 157) + "…" : (fbRaw || "-");
+
+      return new TableRow({
+        children: [
+          new TableCell({
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 100, bottom: 100, left: 200, right: 100 },
+            children: [this.pSmall(org)],
+          }),
+          new TableCell({
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 100, bottom: 100, left: 200, right: 100 },
+            children: [this.pSmall(name)],
+          }),
+          new TableCell({
+            verticalAlign: VerticalAlign.CENTER,            
+            margins: { top: 100, bottom: 100, left: 200, right: 100 },
+            children: [this.pSmall(val)],
+          }),
+          new TableCell({
+            verticalAlign: VerticalAlign.CENTER,            
+            margins: { top: 100, bottom: 100, left: 200, right: 100 },
+            children: [this.pSmall(decl)],
+          }),
+          new TableCell({
+            verticalAlign: VerticalAlign.CENTER,
+            margins: { top: 100, bottom: 100, left: 200, right: 100 },
+            children: [this.pSmall(fb)],
+          }),
+        ],
+      });
+    });
+
+    const table = new Table({
+      width: { type: WidthType.PERCENTAGE, size: 100 },      
+      rows: [th, ...bodyRows],
+      borders: {
+        top:    { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+        bottom: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+        left:   { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
+        right:  { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },        
+      },
+    });
+
+    return [headerPara, table];
+  }
 
 }

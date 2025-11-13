@@ -275,7 +275,7 @@ export class SessionsComponent implements OnInit {
   projectsColDefs: ColDef[] = [
     { headerName: 'Bauvorhaben-Nummer', field: 'roadWorkActivityNo', maxWidth: 200, flex: 1 },
     { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
-    { headerName: 'Uuid', field: 'id' },
+    { headerName: 'Uuid', field: 'id', flex: 1, maxWidth: 300 },  
   ];
 
   /** Columns for the people grids - present users */
@@ -1108,7 +1108,7 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren')); 
       allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"))      
       const rows = [
-        { label: "Ist im Aggloprogramm vorgesehen/eingegeben", value: activity.project.isAggloprog ? '[ x ]' : '[   ]' },      
+        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? '[ x ]' : '[   ]' },      
         { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? '[ x ]' : '[   ]' },
         { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? '[ x ]' : '[   ]'},
         { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? '[ x ]' : '[   ]'},
@@ -1116,14 +1116,34 @@ export class SessionsComponent implements OnInit {
       for (const r of rows) {
         const line = this.docxWordService.p(`${r.value} : ${r.label}`);
         allProjectBlocks.push(line);
-      }
+      }      
 
-      allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme'));      
+      allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung'));            
+
+      const consultationSection1 = await this.docxWordService.makeConsultationInputsSection({
+        uuid: activity.project.id,
+        feedbackPhase: "inconsult1",
+        header: "Bedarfsklärung - 1.Iteration",
+      });
+      allProjectBlocks.push(...consultationSection1);
+
+      const consultationSection2 = await this.docxWordService.makeConsultationInputsSection({
+        uuid: activity.project.id,
+        feedbackPhase: "inconsult2",
+        header: "Bedarfsklärung - 2.Iteration",
+      });
+      allProjectBlocks.push(...consultationSection2);
+
+      const consultationSection3 = await this.docxWordService.makeConsultationInputsSection({
+        uuid: activity.project.id,
+        feedbackPhase: "reporting",
+        header: "Stellungnahme",
+      });      
+      allProjectBlocks.push(...consultationSection3);
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));
-      allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));
+      allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));      
 
       /* 
             <p><strong>Strasseneigentümer (APK)</strong> </p>
@@ -1134,25 +1154,15 @@ export class SessionsComponent implements OnInit {
       </p>
       <p>Zu berücksichtigende Bauvorhaben: Seebahnstrasse, Ecke Zweig- bis Rudolfweg, neuer Deckbelag TBA über
           Kleinmassnahmen, geplanter Realisierungszeitraum: 3. Quartal 2025</p>
+
       <p><strong>Beteiligter: EC </strong></p>
       <p><strong>Bedarfsklärung</strong></p>
           
 
       <p>Wenn TE baut, bauen wir mit</p>
-      <p><strong>Stellungnahme</strong></p>
-          
+                      
       <p><strong>Übergeordnete Massnahmen</strong></p>
-      <p>
-          
-      </p>
-      <table>
-          <tr>
-              <td>
-                  <p><strong>Weitere, vorhabenbezogene Informationen</strong></p>
-              </td>
-          </tr>
-      </table>
-      <p><strong>Nicht zugewiesene</strong> <strong>Bedarfe</strong> in Vorhabenfläche</p> */
+      */
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));
