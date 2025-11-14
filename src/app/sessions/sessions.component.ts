@@ -1074,13 +1074,13 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
           `Bauvorhaben:`,
-          { bgColor: "E0E0E0", sizeHalfPt: 34, pageBreakBefore:true } 
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore:true } 
         )
       );
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
           `${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.name ?? ''} / ${activity.project.section ?? ''}`,
-          { bgColor: "E0E0E0", sizeHalfPt: 34, pageBreakBefore: false } 
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false } 
         )
       );      
 

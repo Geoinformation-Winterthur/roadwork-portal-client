@@ -171,7 +171,14 @@ export class ChooseActivityComponent implements OnInit {
       sortable: true,
       filter: true
     },
-    // --- Title/Name column: renders a link to the activity details; tooltip includes section.
+    {
+      headerName: 'Bauvorhaben-Nummer',
+      valueGetter: ({ data }) => data?.properties?.roadWorkActivityNo || '',        
+      cellRenderer: ({ value }: any) => value || '–',
+      sortable: true,
+      filter: true
+    },
+    // --- Title/Name column: renders a link to the activity details; tooltip includes section.    
     {
       headerName: 'Bezeichnung',
       minWidth: 400, 
@@ -224,12 +231,12 @@ export class ChooseActivityComponent implements OnInit {
       filter: true
     },
     // --- Lead of realization: shows the activity kind (domain-specific label).
-    {
+    /* {
       headerName: 'Lead Realisierung',
       valueGetter: ({ data }) => data?.properties?.kind?.name ?? '',
       sortable: true,
       filter: true
-    },
+    }, */
     // --- Project Manager (PL): user full name or blank.
     {
       headerName: 'PL',

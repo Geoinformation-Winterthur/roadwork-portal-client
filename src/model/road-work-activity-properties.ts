@@ -15,8 +15,7 @@ export class RoadWorkActivityProperties {
     description: string = "";
     comment: string = "";
     sessionComment1: string = "Keine Informationnen";
-    sessionComment2: string = "Keine Informationnen"
-    sessionComment3: string = "Keine Informationnen"
+    sessionComment2: string = "Keine Informationnen";    
     section: string = "";
     type: string = "";
     projectType: string = "";
