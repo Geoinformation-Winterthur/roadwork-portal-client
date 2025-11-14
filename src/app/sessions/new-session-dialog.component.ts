@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -55,7 +56,7 @@ export class NewSessionDialogComponent {
   // Keep payload minimal; DB has defaults.
   form = this.fb.group({
     plannedDate: [new Date(), Validators.required],
-    acceptance1: ['Das Protokoll wird ohne Anmerkungen verdankt.'],
+    acceptance1: ['-'],
     attachments: ['Keine'],
     miscItems: ['Keine'],
   });
@@ -69,10 +70,12 @@ export class NewSessionDialogComponent {
   submit() {
     if (this.form.invalid) return;
     const v = this.form.value;
-    // Normalize date to YYYY-MM-DD string
+
     const plannedDate = v.plannedDate instanceof Date
-      ? v.plannedDate.toISOString().slice(0,10)
+      ? formatDate(v.plannedDate, 'yyyy-MM-dd', 'en-CH')
       : v.plannedDate;
+
     this.dialogRef.close({ ...v, plannedDate });
   }
+  
 }

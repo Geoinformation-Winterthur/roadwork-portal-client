@@ -16,7 +16,9 @@ import {
   WidthType,
   PageOrientation,
   BorderStyle,  
-  VerticalAlign
+  VerticalAlign,
+  TextDirection,
+  HeightRule
 } from 'docx';
 import { firstValueFrom } from 'rxjs';
 import { RoadWorkNeedService } from './roadwork-need.service';
@@ -961,7 +963,7 @@ export class DocxWordService {
     
 
     let approach = [];    
-    approach.push(this.smallGap());
+    approach.push(this.smallGap());    
     approach.push(this.pBold(`1. Abnahme SKS-Protokoll vom ${this.sanitizeText(lastSksDate)}`));
     approach.push(this.p(acceptanceText || '–', { colorHex: '333333' }));
 
@@ -1117,23 +1119,41 @@ export class DocxWordService {
     return blocks;
   }
 
- 
-  async makeConsultationInputsSection(opts: {
+  
+  async makeConsultationInputsSection3(opts: {
     uuid: string;
-    feedbackPhase: string;   
-    header: string; 
+    feedbackPhase: string;
+    isPhaseReporting: boolean;
   }): Promise<(Paragraph | Table)[]> {
-    const { uuid, feedbackPhase, header } = opts;
+    const { uuid, feedbackPhase, isPhaseReporting } = opts;
 
-     const allInputs = await firstValueFrom(
-      this.consultationService.getConsultationInputs(uuid)
-    );
+    // --- Visual tuning constants (very compact)
+    const FONT_SMALL = 14;            // ~7 pt
+    const LINE_SPACING = 180;         // ~ single / slightly tight
+    const CELL_MARG = { top: 10, bottom: 10, left: 10, right: 10 }; // tiny margins (twips)
+    const HEADER_ROW_HEIGHT = 1300;   // taller header row for vertical text (twips, ~55pt)
+    const BODY_ROW_HEIGHT = 360;      // slightly taller body rows for some vertical padding (twips)
 
-    // Keep only inputs for the active phase
-    const filtered = (allInputs ?? []).filter(ci => ci?.feedbackPhase === feedbackPhase);    
+    // Helper: compact paragraph (optionally bold, optional no-break)
+    const pTiny = (text: string, bold = false, noBreak = false) =>
+      new Paragraph({
+        spacing: { line: LINE_SPACING, before: 0, after: 0 },
+        children: [
+          new TextRun({
+            text: noBreak ? (text ?? '').replace(/\s/g, '\u00A0') : (text ?? '-'),
+            bold: bold || undefined,
+            size: FONT_SMALL,
+          }),
+        ],
+      });
 
-    const collator = new Intl.Collator("de-CH", {
-      sensitivity: "base",
+    // Fetch and filter by phase
+    const allInputs = await firstValueFrom(this.consultationService.getConsultationInputs(uuid));
+    const filtered = (allInputs ?? []).filter(ci => ci?.feedbackPhase === feedbackPhase);
+
+    // Sort (org → name) with de-CH rules
+    const collator = new Intl.Collator('de-CH', {
+      sensitivity: 'base',
       ignorePunctuation: true,
       numeric: true,
     });
@@ -1143,115 +1163,273 @@ export class DocxWordService {
       const bOrg = b?.inputBy?.organisationalUnit?.abbreviation ?? '';
       const orgCmp = collator.compare(aOrg, bOrg);
       if (orgCmp !== 0) return orgCmp;
-
       const aName = `${a?.inputBy?.firstName ?? ''} ${a?.inputBy?.lastName ?? ''}`.trim();
       const bName = `${b?.inputBy?.firstName ?? ''} ${b?.inputBy?.lastName ?? ''}`.trim();
       return collator.compare(aName, bName);
     });
 
-    // Optional heading paragraph
-    const headerPara = new Paragraph({
-      spacing: { after: 120 },
-      children: [new TextRun({ text: header, bold: true, size: 24 })],
-    });
-
-    // If no data, return a simple message
     if (!consultationInputs.length) {
-      const none = new Paragraph({
-        children: [new TextRun({ text: "No consultation inputs for this phase.", italics: true })],
-      });
-      return [headerPara, none];
+      return [
+        this.p('Keine Einträge vorhanden.'),
+      ];
     }
 
-    // Table header
-    const th = new TableRow({
+    // Column set definition
+    type ColKey =
+      | 'need_link'
+      | 'organisation'
+      | 'name'
+      | 'feedback_input'
+      | 'feedback_input_text'
+      | 'date_last_change'
+      | 'has_feedback'
+      | 'no_requirement_anymore'
+      | 'activity_okay'
+      | 'consult_input';
+
+    const baseCols: ColKey[] = [
+      'need_link',
+      'organisation',
+      'name',
+      'feedback_input',
+      'feedback_input_text',
+      'date_last_change',
+      'has_feedback',
+      'no_requirement_anymore',
+      'activity_okay',
+      'consult_input',
+    ];
+
+    // Columns that should have vertical header text
+    const verticalHeaderCols: ColKey[] = [
+      'has_feedback',
+      'no_requirement_anymore',
+      'activity_okay',
+    ];
+
+    // Header labels (slightly shortened for "checkmark" columns)
+    const headerLabel = (key: ColKey): string => {
+      switch (key) {
+        case 'need_link': return 'Bedarf';
+        case 'organisation': return 'Werk';
+        case 'name': return 'Vernehmlassende:r';
+        case 'feedback_input': return 'Rückmeldung';
+        case 'feedback_input_text': return 'Kommentar';
+        case 'date_last_change': return 'Letzte Änderung';
+        case 'has_feedback': return 'Rückm. erhalten';
+        case 'no_requirement_anymore':
+          return isPhaseReporting ? 'Weiterhin Bedarf' : 'Bedarf vorhanden';
+        case 'activity_okay':
+          return isPhaseReporting ? 'Vorgehen passt' : 'Vorgehen';
+        case 'consult_input': return 'Bemerkung GM';
+        default: return '';
+      }
+    };
+
+    // Optional trimming of vertical header labels (in case they get too long)
+    const headerText = (key: ColKey): string => {
+      const label = headerLabel(key);
+      if (!verticalHeaderCols.includes(key)) return label;
+      const maxLen = 18;
+      return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
+    };
+
+    // Column widths (sum ≈ 100)
+    // - "Werk" is very narrow (short header + 3-letter values)
+    // - "Kommentar" and "Bemerkung GM" are as wide as reasonably possible
+    const widths: Record<ColKey, number> = {
+      need_link: 12,
+      organisation: 5,
+      name: 16,
+      feedback_input: 10,
+      feedback_input_text: 24, // Kommentar – main text area
+      date_last_change: 8,
+      has_feedback: 3,
+      no_requirement_anymore: 3,
+      activity_okay: 4,
+      consult_input: 15,       // Bemerkung GM – second main text area
+    };
+
+    // Formatters
+    const fmtDate = (d?: string | Date): string => {
+      try {
+        if (!d) return '-';
+        const dt = typeof d === 'string' ? new Date(d) : d;
+        if (isNaN(dt.getTime())) return '-';
+        const dd = String(dt.getDate()).padStart(2, '0');
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const yyyy = dt.getFullYear();
+        return `${dd}.${mm}.${yyyy}`;
+      } catch {
+        return '-';
+      }
+    };
+
+    const feedbackLabel = (v: string | null | undefined): string => {
+      if (!v) return '—';
+      if (v === 'no_requirement_anymore') return isPhaseReporting ? 'Kein Bedarf' : 'Kein Bedarf';
+      if (v === 'activity_okay') return isPhaseReporting ? 'Ja, einverstanden' : 'Bedarf vorhanden';
+      if (v === 'activity_not_okay') return isPhaseReporting ? 'Nein, Kontaktaufnahme' : '—';
+      return String(v);
+    };
+
+    const check = '✓';
+    const cross = '✗';
+    const trunc = (s: string, n = 20) =>
+      !s ? '-' : (s.length > n ? s.slice(0, n) + '…' : s);
+
+    // Header row (taller, with vertical text for selected columns)
+    const headerRow = new TableRow({
       tableHeader: true,
-      children: [
+      height: { value: HEADER_ROW_HEIGHT, rule: HeightRule.ATLEAST },
+      children: baseCols.map((key) =>
         new TableCell({
           verticalAlign: VerticalAlign.CENTER,
-          width: { size: 18, type: WidthType.PERCENTAGE },
-          margins: { top: 100, bottom: 100, left: 200, right: 100 },
-          children: [this.pSmall("Organisation", true)],
-        }),
-        new TableCell({
-          verticalAlign: VerticalAlign.CENTER,
-          width: { size: 22, type: WidthType.PERCENTAGE },
-          margins: { top: 100, bottom: 100, left: 200, right: 100 },
-          children: [this.pSmall("Name", true)],
-        }),
-        new TableCell({
-          verticalAlign: VerticalAlign.CENTER,
-          width: { size: 12, type: WidthType.PERCENTAGE },
-          margins: { top: 100, bottom: 100, left: 200, right: 100 },
-          children: [this.pSmall("Valuation", true)],
-        }),
-        new TableCell({
-          verticalAlign: VerticalAlign.CENTER,
-          width: { size: 12, type: WidthType.PERCENTAGE },
-          margins: { top: 100, bottom: 100, left: 200, right: 100 },
-          children: [this.pSmall("Declined", true)],
-        }),
-        new TableCell({
-          verticalAlign: VerticalAlign.CENTER,
-          width: { size: 36, type: WidthType.PERCENTAGE },
-          margins: { top: 100, bottom: 100, left: 200, right: 100 },
-          children: [this.pSmall("Feedback (short)", true)],
-        }),
-      ],
+          width: { size: widths[key], type: WidthType.PERCENTAGE },
+          margins: CELL_MARG,
+          shading: { fill: 'EEEEEE' },
+          textDirection: verticalHeaderCols.includes(key)
+            ? TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT
+            : undefined,
+          children: [pTiny(headerText(key), true, true)],
+        })
+      ),
     });
 
-    // Body rows
-    const bodyRows = consultationInputs.map((ci) => {
-      const org   = ci?.inputBy?.organisationalUnit?.abbreviation ?? "-";
-      const name  = `${ci?.inputBy?.firstName ?? ""} ${ci?.inputBy?.lastName ?? ""}`.trim() || "-";
-      const val = String(ci?.valuation ?? '') === '' ? '-' : String(ci?.valuation);
-      const decl  = ci?.decline ? "Yes" : "No";
-      const fbRaw = (ci?.ordererFeedback || ci?.managerFeedback || "").toString().replace(/\s+/g, " ").trim();
-      const fb    = fbRaw.length > 160 ? fbRaw.slice(0, 157) + "…" : (fbRaw || "-");
+    // Body rows (slightly increased height for better readability)
+    const rows = consultationInputs.map((ci: any) => {
+      const cells: TableCell[] = [];
 
-      return new TableRow({
+      // Bedarf
+      const need = trunc(ci?.roadworkNeedName ?? '-', 20);
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.need_link, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(need)],
+      }));
+
+      // Werk
+      const org = ci?.inputBy?.organisationalUnit?.abbreviation ?? '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.organisation, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(org, false, true)],
+      }));
+
+      // Vernehmlassende:r
+      const name = `${ci?.inputBy?.firstName ?? ''} ${ci?.inputBy?.lastName ?? ''}`.trim() || '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.name, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(name)],
+      }));
+
+      // Rückmeldung (label)
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.feedback_input, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(feedbackLabel(ci?.ordererFeedback))],
+      }));
+
+      // Kommentar
+      const fbText = (ci?.ordererFeedbackText ?? '').toString().trim();
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.feedback_input_text, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(trunc(fbText, 80))],
+      }));
+
+      // Letzte Änderung
+      const dt = fmtDate(ci?.lastEdit);
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.date_last_change, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(dt === '-' ? '-' : dt, false, true)],
+      }));
+
+      // Rückmeldung erhalten (✓/✗)
+      const hasFb = (ci?.ordererFeedback ?? '') !== '';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.has_feedback, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
         children: [
-          new TableCell({
-            verticalAlign: VerticalAlign.CENTER,
-            margins: { top: 100, bottom: 100, left: 200, right: 100 },
-            children: [this.pSmall(org)],
-          }),
-          new TableCell({
-            verticalAlign: VerticalAlign.CENTER,
-            margins: { top: 100, bottom: 100, left: 200, right: 100 },
-            children: [this.pSmall(name)],
-          }),
-          new TableCell({
-            verticalAlign: VerticalAlign.CENTER,            
-            margins: { top: 100, bottom: 100, left: 200, right: 100 },
-            children: [this.pSmall(val)],
-          }),
-          new TableCell({
-            verticalAlign: VerticalAlign.CENTER,            
-            margins: { top: 100, bottom: 100, left: 200, right: 100 },
-            children: [this.pSmall(decl)],
-          }),
-          new TableCell({
-            verticalAlign: VerticalAlign.CENTER,
-            margins: { top: 100, bottom: 100, left: 200, right: 100 },
-            children: [this.pSmall(fb)],
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { line: LINE_SPACING, before: 0, after: 0 },
+            children: [new TextRun({ text: hasFb ? check : cross, size: FONT_SMALL })],
           }),
         ],
+      }));
+
+      // Weiterhin Bedarf (✓ unless 'no_requirement_anymore')
+      const stillNeeded = hasFb && ci?.ordererFeedback !== 'no_requirement_anymore';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.no_requirement_anymore, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { line: LINE_SPACING, before: 0, after: 0 },
+            children: [new TextRun({ text: stillNeeded ? check : cross, size: FONT_SMALL })],
+          }),
+        ],
+      }));
+
+      // Vorgehen passt (✓/✗/—)
+      const ok = ci?.ordererFeedback === 'activity_okay';
+      const notOk = ci?.ordererFeedback === 'activity_not_okay';
+      const mark = ok ? check : (notOk ? cross : '—');
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.activity_okay, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { line: LINE_SPACING, before: 0, after: 0 },
+            children: [new TextRun({ text: mark, size: FONT_SMALL })],
+          }),
+        ],
+      }));
+
+      // Bemerkung GM
+      const mgr = (ci?.managerFeedback ?? '').toString().trim();
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.consult_input, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(trunc(mgr, 80))],
+      }));
+
+      return new TableRow({
+        height: { value: BODY_ROW_HEIGHT, rule: HeightRule.ATLEAST },
+        children: cells,
       });
     });
 
     const table = new Table({
-      width: { type: WidthType.PERCENTAGE, size: 100 },      
-      rows: [th, ...bodyRows],
+      width: { type: WidthType.PERCENTAGE, size: 100 },
       borders: {
-        top:    { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
-        bottom: { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
-        left:   { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },
-        right:  { style: BorderStyle.SINGLE, size: 2, color: "AAAAAA" },        
+        top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 1, color: 'DDDDDD' },
+        insideVertical: { style: BorderStyle.SINGLE, size: 1, color: 'DDDDDD' },
       },
+      rows: [headerRow, ...rows],
     });
 
-    return [headerPara, table];
+    return [table];
   }
+
 
 }

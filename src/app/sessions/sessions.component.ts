@@ -275,7 +275,7 @@ export class SessionsComponent implements OnInit {
   projectsColDefs: ColDef[] = [
     { headerName: 'Bauvorhaben-Nummer', field: 'roadWorkActivityNo', maxWidth: 200, flex: 1 },
     { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
-    { headerName: 'Uuid', field: 'id', flex: 1, maxWidth: 300 },  
+    { headerName: 'Uuid', field: 'id', flex: 1, maxWidth: 320 },  
   ];
 
   /** Columns for the people grids - present users */
@@ -1082,13 +1082,10 @@ export class SessionsComponent implements OnInit {
           `${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.name ?? ''} / ${activity.project.section ?? ''}`,
           { bgColor: "E0E0E0", sizeHalfPt: 34, pageBreakBefore: false } 
         )
-      );
-
-      const smallGap = this.docxWordService.smallGap();
-      allProjectBlocks.push(smallGap);
+      );      
 
       // map
-      const imageRun = await this.docxWordService.imageFromUrlFitted(activity.mapUrl, 520);
+      const imageRun = await this.docxWordService.imageFromUrlFitted(activity.mapUrl, 680);
       if (imageRun) {
         allProjectBlocks.push(new Paragraph({ alignment: AlignmentType.LEFT, children: [imageRun] }));
       }
@@ -1100,8 +1097,7 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(
         this.docxWordService.smallGap(),
         this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),        
-        this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows, reportType),
-        this.docxWordService.spacer()
+        this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows, reportType),        
       );
 
       allProjectBlocks.push(this.docxWordService.smallGap());
@@ -1116,28 +1112,32 @@ export class SessionsComponent implements OnInit {
       for (const r of rows) {
         const line = this.docxWordService.p(`${r.value} : ${r.label}`);
         allProjectBlocks.push(line);
-      }      
+      }            
 
-      allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung'));            
-
-      const consultationSection1 = await this.docxWordService.makeConsultationInputsSection({
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 1.Iteration')); 
+      const consultationSection1 = await this.docxWordService.makeConsultationInputsSection3({
         uuid: activity.project.id,
-        feedbackPhase: "inconsult1",
-        header: "Bedarfsklärung - 1.Iteration",
+        feedbackPhase: "inconsult1",        
+        isPhaseReporting: true,
       });
       allProjectBlocks.push(...consultationSection1);
 
-      const consultationSection2 = await this.docxWordService.makeConsultationInputsSection({
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 2.Iteration')); 
+      const consultationSection2 = await this.docxWordService.makeConsultationInputsSection3({
         uuid: activity.project.id,
-        feedbackPhase: "inconsult2",
-        header: "Bedarfsklärung - 2.Iteration",
+        feedbackPhase: "inconsult2",        
+        isPhaseReporting: true,
       });
       allProjectBlocks.push(...consultationSection2);
 
-      const consultationSection3 = await this.docxWordService.makeConsultationInputsSection({
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme')); 
+      const consultationSection3 = await this.docxWordService.makeConsultationInputsSection3({
         uuid: activity.project.id,
-        feedbackPhase: "reporting",
-        header: "Stellungnahme",
+        feedbackPhase: "reporting",        
+        isPhaseReporting: true,
       });      
       allProjectBlocks.push(...consultationSection3);
 
@@ -1145,24 +1145,7 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));
       allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));      
 
-      /* 
-            <p><strong>Strasseneigentümer (APK)</strong> </p>
-      <p>Strassenzustand (Index i1: Oberflächenschäden). Wert im vorliegenden Perimeter: 0.5. </p>
-      <p>Es liegen keine Schäden im Bauperimeter vor, APK sieht keinen Handlungsbedarf.</p>
-      <p>Bausperre und Aufbruchsperre: Im vorliegenden Perimeter liegt eine Bausperre vor (letzte Erstellung Deckbelag in
-          Längsrichtung: Dezember 2023). Gem. Art. 17. Der Baukoordinationsverordnung können Ausnahmen gelten gemacht werden.
-      </p>
-      <p>Zu berücksichtigende Bauvorhaben: Seebahnstrasse, Ecke Zweig- bis Rudolfweg, neuer Deckbelag TBA über
-          Kleinmassnahmen, geplanter Realisierungszeitraum: 3. Quartal 2025</p>
-
-      <p><strong>Beteiligter: EC </strong></p>
-      <p><strong>Bedarfsklärung</strong></p>
-          
-
-      <p>Wenn TE baut, bauen wir mit</p>
-                      
-      <p><strong>Übergeordnete Massnahmen</strong></p>
-      */
+      
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));
