@@ -74,12 +74,20 @@
                                                 placeholder="Nummer-Bauvorhaben"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
-                                        <mat-form-field>
+                                         <mat-form-field appearance="fill">
+                                            <mat-label>Strategische Koord. (SKS)</mat-label>
+                                            <input
+                                                matInput
+                                                [value]="getSksNo()"
+                                                readonly
+                                            />
+                                        </mat-form-field>
+                                        <!-- <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
                                             <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.strabakoNo"
-                                                placeholder="SKS-Nr"
+                                                placeholder="Strabako-Nr"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                        </mat-form-field>
+                                        </mat-form-field> -->                                       
                                         <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
                                             <input matInput type="text"
                                                 [(ngModel)]="roadWorkActivityFeature.properties.projectNo"

@@ -1174,6 +1174,14 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  getSksNo(): string {
+    const selectedDate = this.roadWorkActivityFeature?.properties.dateSksPlanned;
+    const idx = this.configurationData.plannedDatesSks
+                  .findIndex(d => d === selectedDate);
+
+    return this.configurationData.sksNos?.[idx] ?? '—';
+  }
+
   /**
    * Full UI refresh convenience:
    * - Re-runs init of child reporting components and this component.

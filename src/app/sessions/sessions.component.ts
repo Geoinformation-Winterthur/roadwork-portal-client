@@ -555,13 +555,13 @@ export class SessionsComponent implements OnInit {
               const childrenProjects: SessionChild[] = acts.map(act => {
                 const { type, section, name } = act.properties;
     
-                const joinedName = [type, section, name]
+                const joinedName = [type, name, section]
                     .filter((v) => v && String(v).trim().length > 0)
-                    .join(' / ');
+                    .join('/ ');
 
                   return {
                     id: String(act.properties.uuid),
-                    name: joinedName, 
+                    name: joinedName,      
                     roadWorkActivityNo: act.properties.roadWorkActivityNo,
                     isRoadworkProject: true,
                     sessionComment1: act.properties.sessionComment1,
@@ -612,9 +612,9 @@ export class SessionsComponent implements OnInit {
               const unknownProjects: SessionChild[] = unmatchedActs.map(act => {
               const { type, section, name } = act.properties;
               
-              const joinedName = [type, section, name]
+              const joinedName = [type, name, section]
                 .filter(v => v && String(v).trim().length > 0)
-                .join(' / ');
+                .join('/ ');
 
               return {
                 id: String(act.properties.uuid),
@@ -1032,8 +1032,8 @@ export class SessionsComponent implements OnInit {
       { key: 'Datum und Zeit', value: String(session.plannedDate) + ' / von 10.30 - 12.00 Uhr' },
       { key: 'Ort', value: 'Stadt Winterthur, Departement Bau und Mobilität, Tiefbauamt, Superblock' },
       { key: '', value: 'Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)' },
-      { key: 'Vorsitz', value: environment.reportChairperson + '.' },
-      { key: 'Protokoll', value: environment.reportWriter  + '.'},
+      { key: 'Vorsitz', value: environment.reportChairperson + '' },
+      { key: 'Protokoll', value: environment.reportWriter  + ''},
       { key: 'SKS-Nr', value: String(session.sksNo) },
     ];
 
@@ -1076,7 +1076,7 @@ export class SessionsComponent implements OnInit {
       );
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
-          `${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.section ?? ''} / ${activity.project.name ?? ''}`,
+          `${activity.project.roadWorkActivityNo ?? ''}/ ${activity.project.name ?? ''} `,
           { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false } 
         )
       );      
@@ -1101,13 +1101,13 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren')); 
       allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"))      
       const rows = [
-        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? '[ x ]' : '[   ]' },      
-        { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? '[ x ]' : '[   ]' },
-        { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? '[ x ]' : '[   ]'},
-        { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? '[ x ]' : '[   ]'},
+        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? '[ x ]' : 'Keine' },      
+        { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? '[ x ]' : 'Keine' },
+        { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? '[ x ]' : 'Keine'},
+        { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? '[ x ]' : 'Keine'},
       ];
       for (const r of rows) {
-        const line = this.docxWordService.p(`${r.value} : ${r.label}`);
+        const line = this.docxWordService.p(`${r.label}: ${r.value}`);
         allProjectBlocks.push(line);
       }            
 

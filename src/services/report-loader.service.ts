@@ -45,123 +45,7 @@ export class ReportLoaderService {
         this.storageService = storageService;
         this.managementAreaService = managementAreaService;        
 
-    }
-
-    async generateReport(templateName: string, reportType: string, children: any[], session: any) {                
-        const html: string = await this.loadReport(templateName, reportType, children, session);
-        return html;
-    }
-
-
-    async loadReport(templateName: string, reportType: string, children: any[], session: any): Promise<string> {
-                
-        
-        if (templateName === undefined || templateName === null) {
-            return `<pre style="color:red;">Error: Template name not provided.</pre>`;
-        }
-      
-       
-        if (!this.roadWorkActivity || !this.primaryNeed || !this.managementArea) {
-            return `<pre style="color:red;">Error: RoadWorkActivity, PrimaryNeed or ManagementArea not set.</pre>`;
-        }
-
-        try {
-            const path = `assets/templates/${templateName}.html`;
-
-            const htmlTemplate = await this.http.get(path, { responseType: 'text' }).toPromise();
-
-            const projectPerimeterMap = await this.loadProjectPerimeterMap();
-
-            const htmlTableAssignedRoadWorkNeeds = this.prepareHtmlTable(
-                this.needsOfActivityService.assignedRoadWorkNeeds.map((item) => ({
-                    'Titel & Abschnitt': item.properties.name + '-' + reportType,
-                    'Auslösegrund': item.properties.description,
-                    'Auslösende:r': `${item.properties.orderer.firstName} ${item.properties.orderer.lastName}`,
-                    'Werk': item.properties.orderer.organisationalUnit.abbreviation,
-                    'Erstellt am': this.formatDate(item.properties.created), 
-                    'Wunschtermin': this.formatDate(item.properties.finishOptimumTo),
-                    'auslösend': item.properties.isPrimary ? 'Ja' : 'Nein'
-                }))
-            );
-            
-            const htmlTablePresentPersons = this.prepareHtmlTable(
-                children
-                .filter(item =>
-                    !item.isRoadworkProject === true
-                    && item.isPresent === true
-                    && item.shouldBePresent === true    
-                )                
-                .map(item => ({
-                    Name: item.name,
-                    Organisation: item.department,
-                    Anwesend: item.isPresent ? 'Ja' : 'Nein'
-                }))
-            );
-
-            const htmlTableExcusedPersons = this.prepareHtmlTable(
-                children
-                .filter(item =>
-                    !item.isRoadworkProject === true     
-                    && item.isPresent === false  
-                    && item.shouldBePresent === true                        
-                )                
-                .map(item => ({
-                    Name: item.name,
-                    Organisation: item.department,
-                    Anwesend: item.isPresent ? 'Ja' : 'Nein'
-                }))
-            );
-
-            const htmlTableDistributionListPersons = this.prepareHtmlTable(
-                children
-                .filter(item =>
-                    !item.isRoadworkProject === true
-                    && item.isDistributionList === true                                           
-                )                
-                .map(item => ({
-                    Name: item.name,
-                    Organisation: item.department,
-                    Verteiler: item.isDistributionList ? 'Ja' : 'Nein'
-                }))
-            );            
-
-            const placeholders: Record<string, string> = {
-                'SESSION_TYPE': reportType,
-                'VORSITZ': this.wrapPlaceholder('Stefan Gahler (TBA APK)'),
-                'DATUM_SKS': this.wrapPlaceholder(this.formatDate(session.plannedDate)),
-                'ANWESENDE': "<div>" + htmlTablePresentPersons + "</div>",                
-                'ENTSCHULDIGT': "<div>" + htmlTableExcusedPersons + "</div>",                
-                'VERTEILER': "<div>" + htmlTableDistributionListPersons + "</div>", 
-                'ACCEPTANCE1': this.wrapPlaceholder(session.acceptance1),  
-                'ATTACHMENTS':  this.wrapPlaceholder(session.attachments),
-                'MISCITEMS': this.wrapPlaceholder(session.miscItems), 
-                'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(session.nextSessionDate)),
-                'DATUM_LETZTE_SKS': this.wrapPlaceholder(this.formatDate(session.prevSessionDate)),
-
-                'DATUM_VERSAND_BEDARFSKLAERUNG_1': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult1)),
-                'DATUM_VERSAND_BEDARFSKLAERUNG_2': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult2)),
-                'DATUM_VERSAND_STELLUNGNAHME': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateReportStart)),                
-                'SKS_Nr': this.wrapPlaceholder(session.sksNo ?? "-"),
-                'GM': this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),
-                'GM2': this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.areaManager?.firstName ?? "-"} ${this.roadWorkActivity?.properties?.areaManager?.lastName ?? "-"}`),                                
-                
-            };
-
-            console.log("placeholders--->", placeholders);
-
-            placeholders['BAUVORHABEN_LISTE'] = await this.prepareRoadWorkActivity(children);
-
-            const filledHtml = this.fillPlaceholders(htmlTemplate!, placeholders);
-
-            return `<div style="width: 1000px; padding: 10px; font-family: Arial;">
-                    ${filledHtml}
-                    </div>
-                    `;
-        } catch (error) {
-            console.error('Error loading report:', error);
-            return `<pre style="color:red;">Error: ${JSON.stringify(error)}</pre>`;
-        }
-    }
+    }   
 
     async loadProjectPerimeterMap(): Promise<string> {
         try {                        
@@ -227,13 +111,6 @@ export class ReportLoaderService {
         }
     }
 
-    wrapPlaceholder(content: any): string {
-        const text = (content ?? '').toString();
-        const html = text.replace(/\r?\n/g, '<br>');
-        return `<span>${html}</span>`;
-    }
-
- 
     getInvolvedOrgsNames(): string {
         let result: string[] = [];
         if (this.roadWorkActivity) {
@@ -243,38 +120,7 @@ export class ReportLoaderService {
             }
         }
         return result.join(', ');
-    }
-
-    fillPlaceholders(template: string, values: Record<string, string>): string {
-        const normalizedValues: Record<string, string> = {};
-        for (const key in values) {
-            normalizedValues[key.toLowerCase()] = values[key];
-        }
-
-        return template.replace(/\[PLACEHOLDER_([A-Z0-9_]+)\]/gi, (_, rawKey) => {
-            const key = rawKey.toLowerCase();
-            return normalizedValues[key] ?? `[PLACEHOLDER_${rawKey}]`;
-        });
-    }
-
-    prepareHtmlTable(data: Record<string, string>[]): string {
-        if (data.length === 0) return '<p>-</p>';
-
-        const headers = Object.keys(data[0]);
-
-        let htmlTable = '<table style="width: 70%; table-layout: fixed;font-size:11px" border="1" cellspacing="0" cellpadding="4"><thead><tr>';
-        htmlTable += headers.map(h => `<th>${h}</th>`).join('');
-        htmlTable += '</tr></thead><tbody>';
-
-        htmlTable += data.map(row =>
-            `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
-        ).join('');
-
-        htmlTable += '</tbody></table>';
-
-        return htmlTable;
-    }
-
+    }        
 
     formatDate = (value: Date | string | undefined | null): string => {
         if (value === undefined || value === null) return "[Datum fehlt]";
@@ -390,102 +236,6 @@ export class ReportLoaderService {
                 console.error("Error loading primary need:", err);
             }
         });
-    }
-
-    async prepareRoadWorkActivity(projects: any[]) {
-        const sectionTpl = `
-            <table style="width: 100%; margin: 0 auto;">
-                <tr>
-                    <td style="background:silver">
-                        <h4>Bauvorhaben:<br>
-                        [PLACEHOLDER_TITEL_ADRESSE_ABSCHNITT]</h4>
-                    </td>
-                </tr>
-            </table>
-            <p>        
-                <img src="[PLACEHOLDER_MAP_PERIMETER]"
-                alt="Mapa"
-                style="display:block;width:510.24pt;height:auto;max-height:728.50pt;page-break-inside:avoid;" />
-            </p>                                    
-            Auslösende:r: [PLACEHOLDER_AUSLOESENDE]<br>
-            Auslösendes Werk: [PLACEHOLDER_AUSLOESENDES_WERK]<br>
-            Gebietsmanagement: [PLACEHOLDER_GM]<br>
-            Mitwirkende: [PLACEHOLDER_AUSLOESENDES_WERK] sowie [PLACEHOLDER_MITWIRKENDE]<br>
-            
-            <br><h4>2. Vorgehensvorschlag / Vorgehen</h4>
-            [PLACEHOLDER_BAUVORHABEN_VORGEHEN]
-                        
-
-            <br><h4>Beschluss</h4>
-            [PLACEHOLDER_BAUVORHABEN_BESCHLUSS]                                                                                    
-
-
-            <br><h4>Zugewiesene (berücksichtigte) Bedarfe</h4>
-            <p>
-                [PLACEHOLDER_ZUGEWIESENE_BEDARFE]
-            </p>
-
-            <br><h4>Aspekte/Faktoren </h4>
-            <p>Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:</p>
-
-            [PLACEHOLDER_Ist_im_Aggloprogramm] &nbsp;&nbsp;&nbsp; Ist im Aggloprogramm vorgesehen/eingegeben<br>
-            [PLACEHOLDER_Haltekanten]  &nbsp;&nbsp;&nbsp; Haltekanten sind betroffen<br>
-            [PLACEHOLDER_Vorstudie_BGK]  &nbsp;&nbsp;&nbsp; Vorstudie/BGK ist vorgesehen<br>
-            [PLACEHOLDER_Uebergeordnete_Massnahme]  &nbsp;&nbsp;&nbsp; Übergeordnete Massnahme<br>
-            [PLACEHOLDER_Begehrensaeusserung_45]  &nbsp;&nbsp;&nbsp; Begehrensäusserung gemäss § 45<br>
-            [PLACEHOLDER_Mitwirkungsverfahren_13]  &nbsp;&nbsp;&nbsp; Mitwirkungsverfahren gemäss § 13<br>
-            [PLACEHOLDER_Planauflage_16]  &nbsp;&nbsp;&nbsp; Planauflage gemäss § 16<br>
-            
-            <div class="page-break"></div>
-        `;
-
-        const fill = (tpl: string, map: Record<string, string>) =>
-            tpl.replace(/\[PLACEHOLDER_([A-Za-z0-9_]+)\]/g, (_m, key) => map[key] ?? "");
-
-        const sections: string[] = [];
-        
-        for (const project of projects) {
-            if (!project?.isRoadworkProject) continue;
-
-            await firstValueFrom(this.loadRoadWorkActivity$(project.id));        
-
-            const mapUrl = await this.loadProjectPerimeterMap();
-
-            const htmlSection = fill(sectionTpl, {
-                TITEL_ADRESSE_ABSCHNITT: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.name ?? "-"} / ${this.roadWorkActivity?.properties?.section ?? "-"}`),                                
-                AUSLOESENDE: this.wrapPlaceholder(`${this.primaryNeed?.properties?.orderer?.firstName ?? "-"} ${this.primaryNeed?.properties?.orderer?.lastName ?? "-"}`),
-                AUSLOESENDES_WERK: this.wrapPlaceholder(this.primaryNeed?.properties?.orderer?.organisationalUnit?.abbreviation ?? "-"),
-                GM: this.wrapPlaceholder(`${this.managementArea?.manager?.firstName ?? "-"} ${this.managementArea?.manager?.lastName ?? "-"}`),                
-                WERK_OE: this.wrapPlaceholder(this.roadWorkActivity?.properties?.projectManager? `${this.roadWorkActivity.properties.projectManager.firstName ?? "-"} ${this.roadWorkActivity.properties.projectManager.lastName ?? "-"}`: "- -"),
-                PL: this.wrapPlaceholder(this.managementArea?.properties?.kind?.name ?? '-'),
-                MITWIRKENDE: this.wrapPlaceholder(this.getInvolvedOrgsNames() ?? "-"),
-                Ist_im_Aggloprogramm: this.wrapPlaceholder(this.roadWorkActivity.properties.isAggloprog ? '[ x ]' : "[&nbsp;&nbsp;&nbsp;]"),                
-                Haltekanten: this.wrapPlaceholder(this.roadWorkActivity.properties.isStudy ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                Vorstudie_BGK: this.wrapPlaceholder(this.roadWorkActivity.properties.isStudy ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                Uebergeordnete_Massnahme: this.wrapPlaceholder(this.roadWorkActivity.properties.overarchingMeasure ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                Begehrensaeusserung_45: this.wrapPlaceholder(this.roadWorkActivity.properties.isDesire ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                Mitwirkungsverfahren_13: this.wrapPlaceholder(this.roadWorkActivity.properties.isParticip ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                Planauflage_16: this.wrapPlaceholder(this.roadWorkActivity.properties.isPlanCirc ? '[ x ]' : '[&nbsp;&nbsp;&nbsp;]'),
-                ZUGEWIESENE_BEDARFE: "<div>" + this.prepareHtmlTable(
-                    this.needsOfActivityService.assignedRoadWorkNeeds.map((item) => ({
-                        'Titel & Abschnitt': item.properties.name + '-' + project.reportType,
-                        'Auslösegrund': item.properties.description,
-                        'Auslösende:r': `${item.properties.orderer.firstName} ${item.properties.orderer.lastName}`,
-                        'Werk': item.properties.orderer.organisationalUnit.abbreviation,
-                        'Erstellt am': this.formatDate(item.properties.created), 
-                        'Wunschtermin': this.formatDate(item.properties.finishOptimumTo),
-                        'auslösend': item.properties.isPrimary ? 'Ja' : 'Nein'
-                    }))
-                ) + "</div>",
-                MAP_PERIMETER: mapUrl ?? "",
-                BAUVORHABEN_VORGEHEN: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.sessionComment1 ?? "-"}`),
-                BAUVORHABEN_BESCHLUSS: this.wrapPlaceholder(`${this.roadWorkActivity?.properties?.sessionComment2 ?? "-"}`),
-            });
-
-            sections.push(htmlSection);
-        }
-
-        return sections.join('<div class="page-break"></div>');
-    }
+    }   
 
 }

@@ -134,16 +134,17 @@ export class DocxWordService {
             // Left-aligned text
             new TextRun({
               text: "SKS-Vor-Protokoll",
-            }),
-            // Tab to jump to the right-aligned tab stop
-            new TextRun({ text: "\t" }),
-            // Right-aligned text before page number
+            }),                        
             new TextRun({
-              text: `Erstelldatum: ${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}, Seite `,
-            }),
+              text: `, Erstelldatum: ${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}`,
+            }),            
+            new TextRun({ text: "\t" }),            
+            new TextRun({
+              text: `Seite `,
+            }),            
+            new TextRun({ text: "\t" }),            
             // Current page number
-            new SimpleField("PAGE"),
-            // Separator
+            new SimpleField("PAGE"),            
             new TextRun({
               text: " / ",
             }),
@@ -158,7 +159,7 @@ export class DocxWordService {
             },
             {
               type: TabStopType.RIGHT,
-              position: 10000, // adjust if needed to match your page width
+              position: 9000, 
             },
           ],
         }),
@@ -454,33 +455,36 @@ export class DocxWordService {
     });
   }
 
-  /**
-   * NEW: Meta paragraphs per project (Auslösende:r, Auslösendes Werk, Gebietsmanagement, Mitwirkende)
+   /**
+   * Meta paragraphs per project (Auslösende:r, Auslösendes Werk, Gebietsmanagement, Mitwirkende)
    * Values are taken from ReportLoaderService after loadRoadWorkActivity$().
    */
+  /*
   makeProjectMetaParagraphs(): Paragraph[] {
     const primary = (this.reportLoaderService as any)?.primaryNeed;
-    const rwa     = (this.reportLoaderService as any)?.roadWorkActivity;
+    const activity     = (this.reportLoaderService as any)?.roadWorkActivity;
     const mgmt    = (this.reportLoaderService as any)?.managementArea;
 
     const ausloesende = `${primary?.properties?.orderer?.firstName ?? '-'} ${primary?.properties?.orderer?.lastName ?? '-'}`;
     const ausloesendesWerk = primary?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-';
     const gm = `${mgmt?.manager?.firstName ?? '-'} ${mgmt?.manager?.lastName ?? '-'}`;
 
-    // Prefer the existing helper from the old service if available:
+    let activityComment = activity?.properties?.comment ?? '-';                      
+        
     let mitwirkende = '-';
     try {
       const f = (this.reportLoaderService as any)?.getInvolvedOrgsNames;
       mitwirkende = typeof f === 'function' ? f.call(this.reportLoaderService) : '-';
-    } catch { /* ignore */ }
+    } catch {  }
 
     return [
       this.p(`Auslösende:r: ${ausloesende}`),
       this.p(`Auslösendes Werk: ${ausloesendesWerk}`),
       this.p(`Gebietsmanagement: ${gm}`),
+      this.p(`Beschrieb Bauvorhaben: ${activityComment}`),
       this.p(`Mitwirkende: ${mitwirkende}`),
     ];
-  }
+  } */
 
   /**
    * Build an ImageRun from a URL/data URL and fit it to given content width (in px),
@@ -579,11 +583,12 @@ export class DocxWordService {
     // Array to collect data for all projects
     const items: Array<{
       project: any;
-      mapUrl: string;
+      mapUrl: string;      
       meta: {
         ausloesende: string;
         ausloesendesWerk: string;
         gm: string;
+        comment: string;
         mitwirkende: string;
       };
       notAssignedNeedsRows: Array<{
@@ -625,6 +630,8 @@ export class DocxWordService {
         const ausloesendesWerk = primary?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-';
         const gm = `${mgmt?.manager?.firstName ?? '-'} ${mgmt?.manager?.lastName ?? '-'}`;
 
+        const comment = (this.reportLoaderService as any)?.roadWorkActivity?.properties?.comment ?? '-';
+
         let mitwirkende = '-';
         try {
           // Optional helper to get names of involved organisations
@@ -664,7 +671,7 @@ export class DocxWordService {
         items.push({
           project,
           mapUrl,
-          meta: { ausloesende, ausloesendesWerk, gm, mitwirkende },
+          meta: { ausloesende, ausloesendesWerk, gm, comment, mitwirkende },
           assignedNeedsRows: assignedRows,
           notAssignedNeedsRows,
         });
@@ -687,12 +694,14 @@ export class DocxWordService {
     ausloesende: string;
     ausloesendesWerk: string;
     gm: string;
+    comment: string;
     mitwirkende: string;
   }): Paragraph[] {
     return [
       this.p(`Auslösende:r: ${meta.ausloesende}`),
       this.p(`Auslösendes Werk: ${meta.ausloesendesWerk}`),
       this.p(`Gebietsmanagement: ${meta.gm}`),
+      this.p(`Beschrieb Bauvorhaben: ${meta.comment}`),
       this.p(`Mitwirkende: ${meta.mitwirkende}`),
     ];
   }
@@ -757,7 +766,11 @@ export class DocxWordService {
     // --- Table header row ---
     const header = new TableRow({
       tableHeader: true,
-      children: [
+        children: [
+          new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Auslösende:r', true)],
+        }),
         new TableCell({
           verticalAlign: 'top',
           children: [this.pSmall('Titel & Abschnitt', true)],
@@ -765,11 +778,7 @@ export class DocxWordService {
         new TableCell({
           verticalAlign: 'top',
           children: [this.pSmall('Auslösegrund', true)],
-        }),
-        new TableCell({
-          verticalAlign: 'top',
-          children: [this.pSmall('Auslösende:r', true)],
-        }),
+        }),      
         new TableCell({
           verticalAlign: 'top',
           children: [this.pSmall('Werk', true)],
@@ -795,6 +804,10 @@ export class DocxWordService {
         children: [
           new TableCell({
             verticalAlign: 'top',
+            children: [this.pSmall(r.ausloesende)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
             children: [
               this.pSmall(reportType ? `${r.titelAbschnitt}-${reportType}` : r.titelAbschnitt),
             ],
@@ -802,11 +815,7 @@ export class DocxWordService {
           new TableCell({
             verticalAlign: 'top',
             children: [this.pSmall(r.ausloesegrund)],
-          }),
-          new TableCell({
-            verticalAlign: 'top',
-            children: [this.pSmall(r.ausloesende)],
-          }),
+          }),        
           new TableCell({
             verticalAlign: 'top',
             children: [this.pSmall(r.werk)],
@@ -986,16 +995,20 @@ export class DocxWordService {
       approach.push(this.pBold(`2. Koordination künftige Bauvorhaben`));
       approach.push(this.p(`Gerne haben wir die erfassten Bedarfe geprüft und koordiniert.`));
 
-      let approachText = "Die nachfolgenden Vorgehensvorschläge/Vorgehen wurden " +                     
-                    "mit Bedarfsklärung 1. Iteration sowie nach allfälligen Anpassungen " +                    
-                    "mit Bedarfsklärung 2. Iterationen zur Prüfung zur Verfügung gestellt. " +
-                    "Mit Auslösen der Stellungnahme konnten sich alle Beteiligten zur vorgesehenen Umsetzung abschliessend äussern." +
-                    "Nachfolgend eine Gesamtübersicht aller Bauvorhaben, welche für diese SKS traktandiert wurden.";      
-      
-      approach.push(this.p(approachText, { lineSpacing: 400 }));
+      approach.push(this.smallGap());
+      let approachText1 = 
+              "Die nachfolgenden " + (isPreProtocol ? "Vorgehensvorschläge" : "Vorgehen") + " wurden " +
+              "mit Bedarfsklärung 1. Iteration sowie nach allfälligen Anpassungen " +
+              "mit Bedarfsklärung 2. Iterationen zur Prüfung zur Verfügung gestellt. ";              
+      let approachText2 = 
+              "Mit Auslösen der Stellungnahme konnten sich alle Beteiligten zur vorgesehenen Umsetzung abschliessend äussern. ";
+              
+      let approachText3 =  
+              "Nachfolgend eine Gesamtübersicht aller Bauvorhaben, welche für diese SKS traktandiert wurden.";
 
-
-
+      approach.push(this.p(approachText1, { lineSpacing: 400 }));
+      approach.push(this.p(approachText2, { lineSpacing: 400 }));
+      approach.push(this.p(approachText3, { lineSpacing: 400 }));
 
     } else {
       approach.push(this.smallGap());
