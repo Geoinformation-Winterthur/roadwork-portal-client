@@ -47,10 +47,11 @@ import { environment } from 'src/environments/environment';
 interface Session {
   id: string;
   reportType: string;
-  sessionName: string;
-  sessionDateApproval: string;
+  sessionName: string;  
   sessionCreator: string;
+  prevSessionDate: string;
   sessionDate: string;
+  nextSessionDate: string;
   attachments: string;
   acceptance1: string;
   miscItems: string;
@@ -190,14 +191,14 @@ export class SessionsComponent implements OnInit {
 
   // UI → DB
   readonly SESSION_TYPE_TO_DB: Record<string, 'PRE_PROTOCOL' | 'PROTOCOL'> = {
-    'Vor-Protokoll SKS': 'PRE_PROTOCOL',
-    'Protokoll SKS':     'PROTOCOL',
+    'Vor-Protokoll': 'PRE_PROTOCOL',
+    'Protokoll':     'PROTOCOL',
   };
 
   // DB → UI
   readonly SESSION_TYPE_TO_UI: Record<string, string> = {
-    'PRE_PROTOCOL': 'Vor-Protokoll SKS',
-    'PROTOCOL':     'Protokoll SKS',
+    'PRE_PROTOCOL': 'Vor-Protokoll',
+    'PROTOCOL':     'Protokoll',
   };
 
   readonly SESSION_TYPE_OPTIONS = Object.keys(this.SESSION_TYPE_TO_DB);
@@ -413,11 +414,10 @@ export class SessionsComponent implements OnInit {
         } else {
           btn.addEventListener('click', () => {
             const sel = this.selectedNode?.data as Session | undefined;
-            const prevDate = this.getPreviousSessionDateByPlannedDateAsc(sel ?? null) ?? this.getPreviousSessionDateBySksNo(sel ?? null);
-            const nextDate = this.getNextSessionDateByPlannedDateAsc(sel ?? null);
+            const prevSessionDate = this.getPreviousSessionDateByPlannedDateAsc(sel ?? null) ?? this.getPreviousSessionDateBySksNo(sel ?? null);
+            const nextSessionDate = this.getNextSessionDateByPlannedDateAsc(sel ?? null);
             this.generateSessionPDF(
-              params.data.reportType,
-              params.data.sessionDateApproval,
+              params.data.reportType,              
               params.data.children,
               {
                 'sksNo': String(this.selectedNode?.data.sksNo),
@@ -426,8 +426,8 @@ export class SessionsComponent implements OnInit {
                 'miscItems': this.selectedNode?.data.miscItems,
                 'plannedDate': this.formatDate(this.selectedNode?.data.plannedDate),
                 'isPreProtocol': this.SESSION_TYPE_TO_DB[this.selectedNode?.data.reportType] === 'PRE_PROTOCOL',
-                'previousSessionDate': prevDate,
-                'nextSessionDate': nextDate
+                'prevSessionDate': prevSessionDate,
+                'nextSessionDate': nextSessionDate
               }
             );
           });
@@ -458,8 +458,7 @@ export class SessionsComponent implements OnInit {
 
         return [
           d.reportType,
-          d.sessionName,
-          d.sessionDateApproval,
+          d.sessionName,          
           d.sessionCreator,
           d.sessionDate,
           projectNames,
@@ -487,8 +486,7 @@ export class SessionsComponent implements OnInit {
         this.sessionsData = rows.map((row, idx) => ({
           id: String(idx + 1),
           reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
-          sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() + 1) + '-' + row.plannedDate?.getFullYear(),
-          sessionDateApproval: toIsoDate(row.plannedDate),
+          sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() + 1) + '-' + row.plannedDate?.getFullYear(),          
           sessionDate: row.plannedDate?.toString() ?? '',
           plannedDate: row.plannedDate,
           sksNo: row.sksNo,
@@ -638,9 +636,10 @@ export class SessionsComponent implements OnInit {
               const unknownSession: Session = {
                 id: null as any,
                 reportType: '-',
-                sessionName: 'Sitzung Unbekannt',
-                sessionDateApproval: '',
+                sessionName: 'Sitzung Unbekannt',                
+                prevSessionDate: '',
                 sessionDate: '',
+                nextSessionDate: '',
                 plannedDate: null as any,
                 sksNo: undefined as any,
                 sessionCreator: '',
@@ -771,8 +770,7 @@ export class SessionsComponent implements OnInit {
    * Report generation (DOCX).
    */
   async generateSessionPDF(
-    reportType: string,
-    sessionDateApproval: string,
+    reportType: string,    
     children: any[],
     session: any
   ): Promise<void> {
@@ -906,8 +904,7 @@ export class SessionsComponent implements OnInit {
           const sessionRow = {
             id: this.sessionsData.length + 1,
             reportType: this.SESSION_TYPE_TO_UI[created.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
-            sessionName: 'Sitzung ' + (new Date(created.plannedDate).getMonth() + 1) + '-' + new Date(created.plannedDate).getFullYear(),
-            sessionDateApproval: String(created.plannedDate).slice(0, 10),
+            sessionName: 'Sitzung ' + (new Date(created.plannedDate).getMonth() + 1) + '-' + new Date(created.plannedDate).getFullYear(),            
             sessionDate: String(created.plannedDate),
             plannedDate: new Date(created.plannedDate),
             sksNo: created.sksNo,
@@ -986,7 +983,7 @@ export class SessionsComponent implements OnInit {
     );
 
     if (idx <= 0) return null;
-    return this.toIsoDateOnly(withDate[idx - 1].plannedDate);
+    return this.formatDate(withDate[idx - 1].plannedDate);
   }
 
   private getNextSessionDateByPlannedDateAsc(current: Session | null): string | null {
@@ -1009,7 +1006,7 @@ export class SessionsComponent implements OnInit {
 
     if (idx < 0 || idx >= withDate.length - 1) return null;
 
-    return this.toIsoDateOnly(withDate[idx + 1].plannedDate);
+    return this.formatDate(withDate[idx + 1].plannedDate);
   }
 
 
@@ -1040,10 +1037,10 @@ export class SessionsComponent implements OnInit {
       { key: 'SKS-Nr', value: String(session.sksNo) },
     ];
 
-    const tableInfo        = this.docxWordService.makeInfoTable(projectInfo);
-    const tableExcused     = this.docxWordService.makeExcusedPersonsTable(children);
-    const tablePresent     = this.docxWordService.makePresentPersonsTable(children);
-    const tableDistribution= this.docxWordService.makeDistributionPersonsTable(children);
+    const tableInfo         = this.docxWordService.makeInfoTable(projectInfo);
+    const listExcused       = this.docxWordService.makeExcusedPersonsList(children);
+    const listPresent       = this.docxWordService.makePresentPersonsList(children);
+    const listDistribution  = this.docxWordService.makeDistributionPersonsList(children);
 
     const t1 = this.docxWordService.pBold('Anwesende');    
     const t2 = this.docxWordService.pBold('Entschuldigt');    
@@ -1053,12 +1050,12 @@ export class SessionsComponent implements OnInit {
     const smallGap = this.docxWordService.smallGap();
 
     const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection( { 
-                                                                                  protocolDate: String(session.plannedDate), 
+                                                                                  prevSessionDate: session.prevSessionDate, 
                                                                                   attachments: session.attachments,
                                                                                   isPreProtocol: session.isPreProtocol } );
 
     const protocolSection = this.docxWordService.makeProtocolSections({
-      lastSksDate: session.previousSessionDate,
+      lastSksDate: session.prevSessionDate,
       sksDate: session.plannedDate,
       nextSksDate: session.nextSessionDate,
       acceptanceText: session.acceptance1 || '',
@@ -1079,7 +1076,7 @@ export class SessionsComponent implements OnInit {
       );
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
-          `${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.name ?? ''} / ${activity.project.section ?? ''}`,
+          `${activity.project.roadWorkActivityNo ?? ''} / ${activity.project.section ?? ''} / ${activity.project.name ?? ''}`,
           { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false } 
         )
       );      
@@ -1191,9 +1188,9 @@ export class SessionsComponent implements OnInit {
         separator,
         gap,
         tableInfo, gap,
-        t1, tablePresent, gap,
-        t2, tableExcused, gap,
-        t3, tableDistribution, gap,
+        t1, ...listPresent, gap,
+        t2, ...listExcused, gap,
+        t3, ...listDistribution, gap,
         ...agendaSection,
         gap,
         ...protocolSection,

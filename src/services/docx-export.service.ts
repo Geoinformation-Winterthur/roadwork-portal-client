@@ -18,7 +18,8 @@ import {
   BorderStyle,  
   VerticalAlign,
   TextDirection,
-  HeightRule
+  HeightRule,
+  TabStopType
 } from 'docx';
 import { firstValueFrom } from 'rxjs';
 import { RoadWorkNeedService } from './roadwork-need.service';
@@ -120,20 +121,50 @@ export class DocxWordService {
 
     const header = new Header({ children: headerParas });
 
-    // ---------- Footer (date + username + page X / Y) ----------
+    // ---------- Footer ----------
+    const footerTextSize = 18;
+    const footerColor = "666666";    
+
     const footer = new Footer({
       children: [
         new Paragraph({
-          alignment: AlignmentType.RIGHT,
+          // Apply unified footer style to the whole line
+          style: "FooterStyle",
           children: [
-            new TextRun({ text: `${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}, ${this.sanitizeText(username)}, Seite `, size: 18, color: '666666' }),
-            new SimpleField('PAGE'),
-            new TextRun({ text: ' / ', size: 18, color: '666666' }),
-            new SimpleField('NUMPAGES'),
+            // Left-aligned text
+            new TextRun({
+              text: "SKS-Vor-Protokoll",
+            }),
+            // Tab to jump to the right-aligned tab stop
+            new TextRun({ text: "\t" }),
+            // Right-aligned text before page number
+            new TextRun({
+              text: `Erstelldatum: ${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}, Seite `,
+            }),
+            // Current page number
+            new SimpleField("PAGE"),
+            // Separator
+            new TextRun({
+              text: " / ",
+            }),
+            // Total pages
+            new SimpleField("NUMPAGES"),
+          ],
+          // Tab stops: left at start, right near the page margin
+          tabStops: [
+            {
+              type: TabStopType.LEFT,
+              position: 0,
+            },
+            {
+              type: TabStopType.RIGHT,
+              position: 10000, // adjust if needed to match your page width
+            },
           ],
         }),
       ],
     });
+
 
     // ---------- Normalize children (no raw strings/numbers/null/undefined) ----------
     const normalizedChildren: Array<Paragraph | Table> = (children ?? [])
@@ -146,7 +177,19 @@ export class DocxWordService {
 
     // ---------- Document ----------
     const doc = new Document({
-       styles: {
+        styles: {
+          paragraphStyles: [
+          {
+            id: "FooterStyle",
+            name: "Footer Style",
+            basedOn: "Normal",
+            run: {
+              size: 18,         
+              color: "666666",  
+              font: "Arial",    
+            },
+          },
+        ],
         default: {
           document: {
             run: {
@@ -270,127 +313,98 @@ export class DocxWordService {
   }
 
   /** Present persons (present & should be present) */
-  makePresentPersonsTable(children: any[]): Table {    
+  makePresentPersonsList(children: any[]) {
+    // Filter all valid and present persons
     const rowsData = (children || [])
-      .filter((item) => item && item.isRoadworkProject !== true && item.isPresent === true && item.shouldBePresent === true)
+      .filter(
+        (item) =>
+          item &&
+          item.isRoadworkProject !== true &&
+          item.isPresent === true &&
+          item.shouldBePresent === true
+      )
       .map((item) => ({
         Name: item.name,
         Organisation: item.department,
         Workarea: item.workArea,
-        Anwesend: item.isPresent ? 'Ja' : 'Nein',
       }));
 
-    const header = new TableRow({
-      tableHeader: true,
-      children: [
-        new TableCell({ verticalAlign: 'top', width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pSmall('Name', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pSmall('Organisation', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pSmallNoBreak('Tätigkeitsgebiet', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pSmall('Anwesend', true)] }),        
-      ],
-    });
+    // If there are no present persons, return a single placeholder paragraph
+    if (rowsData.length === 0) {
+      return [this.p("—")]; // Placeholder if no data
+    }
 
-    const body = rowsData.map(
-      (r) =>
-        new TableRow({          
-          children: [
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Name)] }),
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Organisation)] }),
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Workarea)] }),
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Anwesend)] }),
-          ],
-        })
+    // Create manually numbered paragraphs (1., 2., 3., ...)
+    return rowsData.map((r, index) =>      
+      this.p(
+        `${index + 1}. ${r.Name}, ${r.Organisation}, ${r.Workarea}`
+      )
     );
-
-    const safeBody = this.ensureNonEmpty(body, 4);
-    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, 
-      margins: { top: 40, bottom: 40, left: 40, right: 40 }, 
-      rows: [header, ...safeBody] 
-    });
-
   }
 
-  /** Verteiler (distribution list) */
-  makeDistributionPersonsTable(children: any[]): Table {
-    const rowsData = (children || [])
-      .filter((item) => item && item.isRoadworkProject !== true && item.isDistributionList === true)
-      .map((item) => ({
-        Name: item.name,
-        Organisation: item.department,
-        Workarea: item.workArea,        
-      }));
-
-    const header = new TableRow({
-      tableHeader: true,
-      children: [
-        new TableCell({ verticalAlign: 'top', width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pSmall('Name', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pSmall('Organisation', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 57, type: WidthType.PERCENTAGE }, children: [this.pSmallNoBreak('Tätigkeitsgebiet', true)] }),        
-      ],
-    });
-
-    const body = rowsData.map(
-      (r) =>
-        new TableRow({
-          children: [
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Name)] }),
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Organisation)] }),
-            new TableCell({ verticalAlign: 'top', children: [this.pSmall(r.Workarea)] }),
-          ],
-        })
-    );
-
-    const safeBody = this.ensureNonEmpty(body, 4);
-    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, 
-        margins: { top: 40, bottom: 40, left: 40, right: 40 }, 
-        rows: [header, ...safeBody] 
-    });
-  }
 
   /** Entschuldigte Personen (not present but should be present) */
-  makeExcusedPersonsTable(children: any[]): Table {
+  makeExcusedPersonsList(children: any[]) {
+    // Filter all valid and excused (not present but should be present) persons
     const rowsData = (children || [])
-      .filter((item) => item && item.isRoadworkProject !== true && item.isPresent === false && item.shouldBePresent === true)
+      .filter(
+        (item) =>
+          item &&
+          item.isRoadworkProject !== true &&
+          item.isPresent === false &&
+          item.shouldBePresent === true
+      )
       .map((item) => ({
         Name: item.name,
         Organisation: item.department,
         Workarea: item.workArea,
-        Anwesend: item.isPresent ? 'Ja' : 'Nein',
       }));
 
-    const header = new TableRow({
-      tableHeader: true,
-      children: [
-        new TableCell({ verticalAlign: 'top', width: { size: 25, type: WidthType.PERCENTAGE }, children: [this.pSmall('Name', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 18, type: WidthType.PERCENTAGE }, children: [this.pSmall('Organisation', true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 45, type: WidthType.PERCENTAGE }, children: [this.pSmallNoBreak("Tätigkeitsgebiet", true)] }),
-        new TableCell({ verticalAlign: 'top', width: { size: 12, type: WidthType.PERCENTAGE }, children: [this.pSmall('Anwesend', true)] }),
-      ],
-    });
+    // If there are no excused persons, return a single placeholder paragraph
+    if (rowsData.length === 0) {
+      return [this.p("—")]; // Placeholder if list is empty
+    }
 
-    const body = rowsData.map(
-      (r) =>
-        new TableRow({
-          children: [
-            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Name)] }),
-            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Organisation)] }),
-            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Workarea)] }),            
-            new TableCell({ verticalAlign: 'center', children: [this.pSmall(r.Anwesend)] }),
-          ],
-        })
+    // Create manually numbered paragraphs (1., 2., 3., ...)
+    return rowsData.map((r, index) =>      
+      this.p(
+        `${index + 1}. ${r.Name}, ${r.Organisation}, ${r.Workarea}`
+      )
     );
-
-    const safeBody = this.ensureNonEmpty(body, 4);
-    return new Table({ width: { type: WidthType.PERCENTAGE, size: 100 }, 
-      margins: { top: 40, bottom: 40, left: 40, right: 40 }, 
-      rows: [header, ...safeBody] 
-    });
   }
 
-  /**
-   * NEW: Assigned needs table built from ReportLoaderService.needsOfActivityService.assignedRoadWorkNeeds
-   * Mirrors the HTML version from the previous service.
-   */
+
+  /** Verteiler (distribution list) */
+  makeDistributionPersonsList(children: any[]) {
+    // Filter all persons that belong to the distribution list
+    const rowsData = (children || [])
+      .filter(
+        (item) =>
+          item &&
+          item.isRoadworkProject !== true &&
+          item.isDistributionList === true
+      )
+      .map((item) => ({
+        Name: item.name,
+        Organisation: item.department,
+        Workarea: item.workArea,
+      }));
+
+    // If list is empty, return a placeholder line
+    if (rowsData.length === 0) {
+      return [this.p("—")]; // Placeholder for empty list
+    }
+
+    // Create manually numbered entries (1., 2., 3., ...)
+    return rowsData.map((r, index) =>
+      this.p(
+        `${index + 1}. ${r.Name}, ${r.Organisation}, ${r.Workarea}`
+      )
+    );
+  }
+  
+
+  /** Asigned needs table */
   makeAssignedNeedsTable(reportType: string): Table {
     const assigned = this.reportLoaderService?.needsOfActivityService?.assignedRoadWorkNeeds ?? [];
 
@@ -917,16 +931,16 @@ export class DocxWordService {
 
   /** Builds “Traktanden” + “Beilagen” section. */
   makeAgendaAndAttachmentsSection(opts: {
-    protocolDate: string;      // e.g. "08.12.2025"
-    attachments: string;       // single string, comma- or newline-separated
+    prevSessionDate: string;      
+    attachments: string;   
     isPreProtocol?: boolean;
   }): Paragraph[] {
-    const { protocolDate, attachments, isPreProtocol } = opts;
+    const { prevSessionDate, attachments, isPreProtocol } = opts;
 
     // Traktanden (agenda)
     const blocks: Paragraph[] = [
       this.pBold('Traktanden'),
-      this.p(`1. Abnahme SKS-Protokoll vom ${this.sanitizeText(protocolDate)}`),
+      this.p(`1. Abnahme SKS-Protokoll vom ${this.sanitizeText(prevSessionDate)}`),
       isPreProtocol? this.p('2. Koordination künftige Bauvorhaben') :  this.p('2. Koordination Bauvorhaben'),
       this.p('3. Verschiedenes'),
       this.p('4. Nächste Sitzungen'),
@@ -972,12 +986,16 @@ export class DocxWordService {
       approach.push(this.pBold(`2. Koordination künftige Bauvorhaben`));
       approach.push(this.p(`Gerne haben wir die erfassten Bedarfe geprüft und koordiniert.`));
 
-      let approachText = "Die nachfolgenden Vorgehensvorschläge wurden mit Versand der Bedarfsklärung vom " + 
-                    this.formatDate(lastSksDate) +
-                    " erstmalig zur Prüfung versendet. Mit Stellungnahme vom " +
-                    this.formatDate(sksDate) +
-                    " erfolgt der aktualisierte Versand zur endgültigen Prüfung.";                        
+      let approachText = "Die nachfolgenden Vorgehensvorschläge/Vorgehen wurden " +                     
+                    "mit Bedarfsklärung 1. Iteration sowie nach allfälligen Anpassungen " +                    
+                    "mit Bedarfsklärung 2. Iterationen zur Prüfung zur Verfügung gestellt. " +
+                    "Mit Auslösen der Stellungnahme konnten sich alle Beteiligten zur vorgesehenen Umsetzung abschliessend äussern." +
+                    "Nachfolgend eine Gesamtübersicht aller Bauvorhaben, welche für diese SKS traktandiert wurden.";      
+      
       approach.push(this.p(approachText, { lineSpacing: 400 }));
+
+
+
 
     } else {
       approach.push(this.smallGap());

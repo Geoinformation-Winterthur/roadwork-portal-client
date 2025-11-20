@@ -136,7 +136,7 @@ export class ReportLoaderService {
                 'ATTACHMENTS':  this.wrapPlaceholder(session.attachments),
                 'MISCITEMS': this.wrapPlaceholder(session.miscItems), 
                 'DATUM_NAECHSTE_SKS': this.wrapPlaceholder(this.formatDate(session.nextSessionDate)),
-                'DATUM_LETZTE_SKS': this.wrapPlaceholder(this.formatDate(session.previousSessionDate)),
+                'DATUM_LETZTE_SKS': this.wrapPlaceholder(this.formatDate(session.prevSessionDate)),
 
                 'DATUM_VERSAND_BEDARFSKLAERUNG_1': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult1)),
                 'DATUM_VERSAND_BEDARFSKLAERUNG_2': this.wrapPlaceholder(this.formatDate(this.roadWorkActivity.properties.dateStartInconsult2)),
