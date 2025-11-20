@@ -109,6 +109,8 @@ export class SessionsComponent implements OnInit {
   sessionsData: any[] = [];
   /** Actually selected session */
   selectedSession: Session | null = null;
+  nextSessionDateOKS: string | null = null;
+  nextSessionDateKAP: string | null = null;
 
   /** Derived child lists for the selected session. */
   projectRows: SessionChild[] = [];
@@ -480,30 +482,48 @@ export class SessionsComponent implements OnInit {
     };
 
     this.sessionService.getAll().pipe(
-      // Step 1: Build base sessions into this.sessionsData
-      map((rows) => {
-        const toIsoDate = (d?: Date) => (d instanceof Date ? d.toISOString().slice(0, 10) : '');
-        this.sessionsData = rows.map((row, idx) => ({
-          id: String(idx + 1),
-          reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
-          sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() + 1) + '-' + row.plannedDate?.getFullYear(),          
-          sessionDate: row.plannedDate?.toString() ?? '',
-          plannedDate: row.plannedDate,
-          sksNo: row.sksNo,
-          sessionCreator: row.sessionCreator ?? '',
-          acceptance1: row.acceptance1 || '-',
-          attachments: row.attachments || '-',
-          miscItems: row.miscItems || '-',
-          errorMessage: row.errorMessage || '',
-          presentUserIds: row.presentUserIds || '',
-          distributionUserIds: row.distributionUserIds || '',
-          // Will be filled below
-          childrenPresent: [],
-          childrenDistribution: [],
-          childrenProjects: [],
-          children: []
-        }));
-        return this.sessionsData;
+        map((rows) => {
+
+          const now = new Date();
+
+          // --- OKS: find the next date
+          const futureOKS = rows
+            .filter(r => r.dateType?.toUpperCase() === 'OKS' && r.plannedDate && r.plannedDate >= now)
+            .sort((a, b) => a.plannedDate.getTime() - b.plannedDate.getTime());
+
+          this.nextSessionDateOKS = this.formatDate(futureOKS[0]?.plannedDate ?? null);
+
+          // --- KAP: find the next date
+          const futureKAP = rows
+            .filter(r => r.dateType?.toUpperCase() === 'KAP' && r.plannedDate && r.plannedDate >= now)
+            .sort((a, b) => a.plannedDate.getTime() - b.plannedDate.getTime());
+
+          this.nextSessionDateKAP = this.formatDate(futureKAP[0]?.plannedDate ?? null);
+
+          // --- SKS
+          this.sessionsData = rows
+            .filter(row => row.dateType?.toUpperCase() === 'SKS')
+            .map((row, idx) => ({
+              id: String(idx + 1),
+              reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
+              sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() + 1) + '-' + row.plannedDate?.getFullYear(),
+              sessionDate: row.plannedDate?.toString() ?? '',
+              plannedDate: row.plannedDate,
+              sksNo: row.sksNo,
+              sessionCreator: row.sessionCreator ?? '',
+              acceptance1: row.acceptance1 || '-',
+              attachments: row.attachments || '-',
+              miscItems: row.miscItems || '-',
+              errorMessage: row.errorMessage || '',
+              presentUserIds: row.presentUserIds || '',
+              distributionUserIds: row.distributionUserIds || '',
+              // Will be filled below
+              childrenPresent: [],
+              childrenDistribution: [],
+              childrenProjects: [],
+              children: []
+            }));
+          return this.sessionsData;
       }),
 
       // Step 2: Fetch activities and users, then enrich sessions
@@ -1164,9 +1184,8 @@ export class SessionsComponent implements OnInit {
     // 4. Nächste Sitzungen
     const nextSessionSection = this.docxWordService.makeNextSessionSection({
       nextSKSDate: session.nextSessionDate,
-      nextOKSDate: session.nextOKSDate || '-',
-      nextKAPDate:  session.nextKAPDate || '-',
-      currentDate:  this.formatDate(new Date()),
+      nextOKSDate: this.nextSessionDateOKS || '-',
+      nextKAPDate:  this.nextSessionDateKAP || '-',
       reportWriter: environment.reportWriter || '-',
     });
 

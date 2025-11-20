@@ -6,6 +6,7 @@
 export class SessionData {     
     plannedDate:  Date = new Date();
     reportType: string = "";
+    dateType: string = "";
     sksNo: number = 0;
     acceptance1: string = "-";    
     attachments: string = "-";   

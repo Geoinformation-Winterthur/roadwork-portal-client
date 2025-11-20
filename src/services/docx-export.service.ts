@@ -1112,14 +1112,12 @@ export class DocxWordService {
     nextSKSDate?: string;
     nextOKSDate?: string;
     nextKAPDate?: string;
-    currentDate?: string;
     reportWriter: string;
   }): Paragraph[] {
     const {
       nextSKSDate = '«Datum nächste SKS»',
       nextOKSDate = '«Datum nächste OKS»',
       nextKAPDate = '«Datum nächste KAP»',
-      currentDate = '«Aktuelles Datum der Protokollerstellung»',
       reportWriter = '«Name Protokollführer:in»'
     } = opts;
 
@@ -1142,8 +1140,8 @@ export class DocxWordService {
       this.smallGap(),
       this.p('Für das Protokoll'),
       this.smallGap(),
-      this.p(`Winterthur, ${currentDate}`),      
-      this.p('Abteilung Planung und Koordination (APK)'),      
+      this.p(`Winterthur, ${this.formatDate(new Date())}`),
+      this.p('Abteilung Planung und Koordination (APK)'),
       this.pItalic(`${reportWriter}`),
     ];
 
