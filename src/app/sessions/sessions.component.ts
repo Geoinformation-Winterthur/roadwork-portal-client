@@ -1033,6 +1033,7 @@ export class SessionsComponent implements OnInit {
   // ----------------------------- DOCX download -------------------------------
 
   async downloadWord(children: SessionChild[], reportType: string, session: any) {
+
     // Build intro elements as normal body children (not a header)
     const intro = await this.docxWordService.makeIntroBlock.call(this.docxWordService, {
       logoUrl: "assets/win_logo.png",
@@ -1066,7 +1067,9 @@ export class SessionsComponent implements OnInit {
     const t2 = this.docxWordService.pBold('Entschuldigt');    
     const t3 = this.docxWordService.pBold('Verteiler');    
 
-    const gap = this.docxWordService.spacer();
+    const pageBreak = this.docxWordService.pageBreak();
+
+    const gap = this.docxWordService.spacer();        
     const smallGap = this.docxWordService.smallGap();
 
     const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection( { 
@@ -1114,26 +1117,38 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(
         this.docxWordService.smallGap(),
         this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),        
-        this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows, reportType),        
+        this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows),        
       );
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren')); 
       allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"))      
       const rows = [
-        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? '[ x ]' : 'Keine' },      
-        { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? '[ x ]' : 'Keine' },
-        { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? '[ x ]' : 'Keine'},
-        { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? '[ x ]' : 'Keine'},
+        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? 'X' : 'Keine' },      
+        { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? 'X' : 'Keine' },
+        { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? 'X' : 'Keine'},
+        { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? 'X' : 'Keine'},
       ];
-      for (const r of rows) {
-        const line = this.docxWordService.p(`${r.label}: ${r.value}`);
-        allProjectBlocks.push(line);
-      }            
+
+      const selected = rows.filter(r => r.value.toUpperCase() === "X");
+
+      if (selected.length === 0) {        
+        allProjectBlocks.push(
+          this.docxWordService.p("Keine")
+        );
+      } else {        
+        for (const r of selected) {
+          allProjectBlocks.push(
+            this.docxWordService.p(`${r.label}: [ ${r.value} ]`)
+          );
+        }
+      }         
+
+      allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung')); 
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 1.Iteration')); 
-      const consultationSection1 = await this.docxWordService.makeConsultationInputsSection3({
+      const consultationSection1 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
         feedbackPhase: "inconsult1",        
         isPhaseReporting: true,
@@ -1142,7 +1157,7 @@ export class SessionsComponent implements OnInit {
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 2.Iteration')); 
-      const consultationSection2 = await this.docxWordService.makeConsultationInputsSection3({
+      const consultationSection2 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
         feedbackPhase: "inconsult2",        
         isPhaseReporting: true,
@@ -1151,7 +1166,7 @@ export class SessionsComponent implements OnInit {
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme')); 
-      const consultationSection3 = await this.docxWordService.makeConsultationInputsSection3({
+      const consultationSection3 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
         feedbackPhase: "reporting",        
         isPhaseReporting: true,
@@ -1167,7 +1182,7 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));
       if (activity.notAssignedNeedsRows.length > 0) {
-        allProjectBlocks.push(this.docxWordService.makeNeedsTableFromRows(activity.notAssignedNeedsRows, reportType));
+        allProjectBlocks.push(this.docxWordService.makeNeedsTableFromRows(activity.notAssignedNeedsRows));
       } else {
         allProjectBlocks.push(this.docxWordService.p('Keine.'));
       }
@@ -1209,6 +1224,7 @@ export class SessionsComponent implements OnInit {
         tableInfo, gap,
         t1, ...listPresent, gap,
         t2, ...listExcused, gap,
+        pageBreak,
         t3, ...listDistribution, gap,
         ...agendaSection,
         gap,

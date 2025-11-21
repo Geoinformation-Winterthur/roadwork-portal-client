@@ -19,7 +19,8 @@ import {
   VerticalAlign,
   TextDirection,
   HeightRule,
-  TabStopType
+  TabStopType,
+  PageBreak
 } from 'docx';
 import { firstValueFrom } from 'rxjs';
 import { RoadWorkNeedService } from './roadwork-need.service';
@@ -405,86 +406,8 @@ export class DocxWordService {
   }
   
 
-  /** Asigned needs table */
-  makeAssignedNeedsTable(reportType: string): Table {
-    const assigned = this.reportLoaderService?.needsOfActivityService?.assignedRoadWorkNeeds ?? [];
-
-    const rowsData = assigned.map((item: any) => ({
-      titelAbschnitt: `${item?.properties?.name ?? '-'}` + '-' + reportType,
-      ausloesegrund: item?.properties?.description ?? '-',
-      ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
-      werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
-      erstelltAm: this.formatDate(item?.properties?.created),
-      wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
-      ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
-    }));
-
-    // Header
-    const header = new TableRow({
-      tableHeader: true,
-      children: [
-        new TableCell({ children: [this.pBold('Titel & Abschnitt')] }),
-        new TableCell({ children: [this.pBold('Auslösegrund')] }),
-        new TableCell({ children: [this.pBold('Auslösende:r')] }),
-        new TableCell({ children: [this.pBold('Werk')] }),
-        new TableCell({ children: [this.pBold('Erstellt am')] }),
-        new TableCell({ children: [this.pBold('Wunschtermin')] }),
-        new TableCell({ children: [this.pBold('auslösend')] }),
-      ],
-    });
-
-    // Body
-    const body = rowsData.map((r) =>
-      new TableRow({
-        children: [
-          new TableCell({ children: [this.p(r.titelAbschnitt)] }),
-          new TableCell({ children: [this.p(r.ausloesegrund)] }),
-          new TableCell({ children: [this.p(r.ausloesende)] }),
-          new TableCell({ children: [this.p(r.werk)] }),
-          new TableCell({ children: [this.p(r.erstelltAm)] }),
-          new TableCell({ children: [this.p(r.wunschtermin)] }),
-          new TableCell({ children: [this.p(r.ausloesend)] }),
-        ],
-      })
-    );
-
-    const safeBody = this.ensureNonEmpty(body, 7);
-    return new Table({
-      width: { type: WidthType.PERCENTAGE, size: 100 },
-      rows: [header, ...safeBody],
-    });
-  }
-
-   /**
-   * Meta paragraphs per project (Auslösende:r, Auslösendes Werk, Gebietsmanagement, Mitwirkende)
-   * Values are taken from ReportLoaderService after loadRoadWorkActivity$().
-   */
-  /*
-  makeProjectMetaParagraphs(): Paragraph[] {
-    const primary = (this.reportLoaderService as any)?.primaryNeed;
-    const activity     = (this.reportLoaderService as any)?.roadWorkActivity;
-    const mgmt    = (this.reportLoaderService as any)?.managementArea;
-
-    const ausloesende = `${primary?.properties?.orderer?.firstName ?? '-'} ${primary?.properties?.orderer?.lastName ?? '-'}`;
-    const ausloesendesWerk = primary?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-';
-    const gm = `${mgmt?.manager?.firstName ?? '-'} ${mgmt?.manager?.lastName ?? '-'}`;
-
-    let activityComment = activity?.properties?.comment ?? '-';                      
-        
-    let mitwirkende = '-';
-    try {
-      const f = (this.reportLoaderService as any)?.getInvolvedOrgsNames;
-      mitwirkende = typeof f === 'function' ? f.call(this.reportLoaderService) : '-';
-    } catch {  }
-
-    return [
-      this.p(`Auslösende:r: ${ausloesende}`),
-      this.p(`Auslösendes Werk: ${ausloesendesWerk}`),
-      this.p(`Gebietsmanagement: ${gm}`),
-      this.p(`Beschrieb Bauvorhaben: ${activityComment}`),
-      this.p(`Mitwirkende: ${mitwirkende}`),
-    ];
-  } */
+  
+   
 
   /**
    * Build an ImageRun from a URL/data URL and fit it to given content width (in px),
@@ -655,9 +578,22 @@ export class DocxWordService {
         const roadWorkNeeds: any[] = await firstValueFrom(
           this.roadWorkNeedService.getIntersectingRoadWorkNeeds(project.id)
         );
+        // Build list of assigned UUIDs for filtering
+        const assignedUuids = new Set(
+          assigned
+            .map((item: any) => item?.properties?.uuid)
+            .filter((uuid: string | undefined) => !!uuid)
+        );
 
         // 6) Map them into rows for the "Not Assigned" table
-        const notAssignedNeedsRows = roadWorkNeeds.map((item: any) => ({
+        const notAssignedNeedsRows = roadWorkNeeds
+        .filter((item: any) => {
+          // filter out these which are already assigned
+          const uuid = item?.properties?.uuid;          
+          if (!uuid) return true;
+          return !assignedUuids.has(uuid);
+        })
+        .map((item: any) => ({
           titelAbschnitt: `${item?.properties?.name ?? '-'}`,
           ausloesegrund: item?.properties?.description ?? '-',
           ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
@@ -665,7 +601,7 @@ export class DocxWordService {
           erstelltAm: this.formatDate(item?.properties?.created),
           wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
           ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
-        })).slice(0, 3); // remove this limit after using it in PROD
+        }))
 
         // 7) Add the fully prepared project entry to the output array
         items.push({
@@ -673,7 +609,7 @@ export class DocxWordService {
           mapUrl,
           meta: { ausloesende, ausloesendesWerk, gm, comment, mitwirkende },
           assignedNeedsRows: assignedRows,
-          notAssignedNeedsRows,
+          notAssignedNeedsRows: notAssignedNeedsRows,
         });
       } catch (err) {
         // Any error while processing a project will be logged, but other projects continue
@@ -702,7 +638,7 @@ export class DocxWordService {
       this.p(`Auslösendes Werk: ${meta.ausloesendesWerk}`),
       this.p(`Gebietsmanagement: ${meta.gm}`),
       this.p(`Beschrieb Bauvorhaben: ${meta.comment}`),
-      this.p(`Mitwirkende: ${meta.mitwirkende}`),
+      this.p(`Mitwirkende: ${meta.mitwirkende ? meta.mitwirkende : "Keine"}`),
     ];
   }
 
@@ -725,31 +661,18 @@ export class DocxWordService {
       .join('');
   }
 
-  /** Helper: small text paragraph (~9pt), optionally bold */
-  private pSmall(text: string, bold = false) {
-    return this.p(this.hyphenateLongTokens(text), { sizeHalfPt: 18, bold });
-  }
-
-  private pSmallNoBreak(text: string, pBold = false) {
-    
-    let safeText = (text ?? "").replace(/\u00AD/g, "");
-
-    const noBreakText = [...safeText].join("\u2060");
-
+  pageBreak(): Paragraph {
     return new Paragraph({
-      children: [
-        new TextRun({
-          size: 18,
-          text: noBreakText,
-          bold: pBold,
-        }),
-      ],
+      children: [new PageBreak()],
     });
   }
-
+  
+  private pSmall(text: string, bold = false) {
+    return this.p(text, { sizeHalfPt: 18, bold });
+  }
+  
   /**
-   * Builds a compact “Assigned Needs” table with smaller font size and automatic line wrapping.
-   * Long text values will wrap inside cells instead of overflowing.
+   * Builds a compact Needs table
    */
   makeNeedsTableFromRows(
     rows: Array<{
@@ -760,8 +683,7 @@ export class DocxWordService {
       erstelltAm: string;
       wunschtermin: string;
       ausloesend: string;
-    }>,
-    reportType?: string
+    }>    
   ): Table {
     // --- Table header row ---
     const header = new TableRow({
@@ -809,7 +731,7 @@ export class DocxWordService {
           new TableCell({
             verticalAlign: 'top',
             children: [
-              this.pSmall(reportType ? `${r.titelAbschnitt}-${reportType}` : r.titelAbschnitt),
+              this.pSmall(r.titelAbschnitt),
             ],
           }),
           new TableCell({
@@ -1149,7 +1071,7 @@ export class DocxWordService {
   }
 
   
-  async makeConsultationInputsSection3(opts: {
+  async makeConsultationInputsSection(opts: {
     uuid: string;
     feedbackPhase: string;
     isPhaseReporting: boolean;
