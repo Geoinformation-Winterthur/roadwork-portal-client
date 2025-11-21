@@ -9,7 +9,6 @@
  * Responsibilities:
  * - Shows a list of consultation inputs filtered by the current `feedbackPhase`.
  * - Allows authorized users to add/remove participants (assign users) and to submit feedback.
- * - Generates a simple PDF (via `html2pdf.js`) using HTML built by `ReportLoaderService`.
  * - Navigates to the "create need" screen with parameters derived from an assigned primary need.
  *
  */
@@ -25,8 +24,6 @@ import { User } from 'src/model/user';
 import { ConsultationService } from 'src/services/consultation.service';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { UserService } from 'src/services/user.service';
-import html2pdf from 'html2pdf.js';
-import { ReportLoaderService } from 'src/services/report-loader.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { Router } from '@angular/router';
@@ -88,8 +85,6 @@ export class ReportingItemsComponent implements OnInit {
   private consultationService: ConsultationService;
   private snckBar: MatSnackBar;
   private router: Router;
-
-  private reportLoaderService: ReportLoaderService;
 
   /** Column configuration for the (assignable) users grid. */
   columnDefs: ColDef[] = [
@@ -164,16 +159,14 @@ export class ReportingItemsComponent implements OnInit {
   constructor(consultationService: ConsultationService,
     needsOfActivityService: NeedsOfActivityService,
     userService: UserService, 
-    snckBar: MatSnackBar,    
-    reportLoaderService: ReportLoaderService,
+    snckBar: MatSnackBar,        
     router: Router) {
     this.consultationService = consultationService;
     this.needsOfActivityService = needsOfActivityService;
     this.userService = userService;
     this.user = userService.getLocalUser();
     this.snckBar = snckBar;
-    this.statusHelper = new StatusHelper();
-    this.reportLoaderService = reportLoaderService; 
+    this.statusHelper = new StatusHelper();    
     this.router = router;
   }
 

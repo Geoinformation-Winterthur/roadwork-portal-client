@@ -255,6 +255,10 @@ export class DocxWordService {
     });
   }
 
+  pChildren(children: TextRun[] | Paragraph[]): Paragraph {
+    return new Paragraph({ children });
+  }
+
   /** Convenience: bold paragraph (e.g., a section title). */
   pBold(text: string, align?: AlignmentTypeValue) {
     return this.p(text, { bold: true, align });
@@ -632,13 +636,32 @@ export class DocxWordService {
     gm: string;
     comment: string;
     mitwirkende: string;
-  }): Paragraph[] {
+  }): Paragraph[] {        
     return [
-      this.p(`Auslösende:r: ${meta.ausloesende}`),
-      this.p(`Auslösendes Werk: ${meta.ausloesendesWerk}`),
-      this.p(`Gebietsmanagement: ${meta.gm}`),
-      this.p(`Beschrieb Bauvorhaben: ${meta.comment}`),
-      this.p(`Mitwirkende: ${meta.mitwirkende ? meta.mitwirkende : "Keine"}`),
+      this.pChildren([
+        new TextRun({ text: "Auslösende:r: ", bold: true }),
+        new TextRun(meta.ausloesende || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Auslösendes Werk: ", bold: true }),
+        new TextRun(meta.ausloesendesWerk || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Gebietsmanagement: ", bold: true }),
+        new TextRun(meta.gm || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Beschrieb Bauvorhaben: ", bold: true }),
+        new TextRun(meta.comment || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Mitwirkende: ", bold: true }),
+        new TextRun(meta.mitwirkende ? meta.mitwirkende : "Keine")
+      ])
     ];
   }
 

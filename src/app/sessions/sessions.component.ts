@@ -1141,8 +1141,10 @@ export class SessionsComponent implements OnInit {
           allProjectBlocks.push(
             this.docxWordService.p(`${r.label}: [ ${r.value} ]`)
           );
-        }
-      }         
+        }            
+      }  
+      
+      allProjectBlocks.push(this.docxWordService.smallGap());
 
       allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung')); 
 
