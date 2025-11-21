@@ -1113,11 +1113,16 @@ export class SessionsComponent implements OnInit {
       // META: Auslösende:r, Werk, GM, Mitwirkende 
       allProjectBlocks.push(...this.docxWordService.makeProjectMetaBlock(activity.meta));
 
+     const assignedNeedsRowsSorted =
+      activity.assignedNeedsRows.sort((a, b) =>
+        a.ausloesend.localeCompare(b.ausloesend)
+      );
+
       // Assigned Needs (per projekt)
       allProjectBlocks.push(
         this.docxWordService.smallGap(),
         this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),        
-        this.docxWordService.makeNeedsTableFromRows(activity.assignedNeedsRows),        
+        this.docxWordService.makeNeedsTableFromRows(assignedNeedsRowsSorted)       
       );
 
       allProjectBlocks.push(this.docxWordService.smallGap());
@@ -1139,7 +1144,7 @@ export class SessionsComponent implements OnInit {
       } else {        
         for (const r of selected) {
           allProjectBlocks.push(
-            this.docxWordService.p(`${r.label}: [ ${r.value} ]`)
+            this.docxWordService.p(`[ ${r.value} ] : ${r.label}`)
           );
         }            
       }  
@@ -1153,7 +1158,7 @@ export class SessionsComponent implements OnInit {
       const consultationSection1 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
         feedbackPhase: "inconsult1",        
-        isPhaseReporting: true,
+        isPhaseReporting: false
       });
       allProjectBlocks.push(...consultationSection1);
 
@@ -1162,7 +1167,7 @@ export class SessionsComponent implements OnInit {
       const consultationSection2 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
         feedbackPhase: "inconsult2",        
-        isPhaseReporting: true,
+        isPhaseReporting: false,
       });
       allProjectBlocks.push(...consultationSection2);
 
@@ -1176,7 +1181,7 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(...consultationSection3);
 
       allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehenvorschlag' : 'Vorgehen'));
+      allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehensvorschlag' : 'Vorgehen'));
       allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));      
 
       

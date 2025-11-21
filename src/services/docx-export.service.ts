@@ -1103,10 +1103,10 @@ export class DocxWordService {
 
     // --- Visual tuning constants (very compact)
     const FONT_SMALL = 14;            // ~7 pt
-    const LINE_SPACING = 180;         // ~ single / slightly tight
+    const LINE_SPACING = 220;         // ~ single / slightly tight
     const CELL_MARG = { top: 10, bottom: 10, left: 10, right: 10 }; // tiny margins (twips)
     const HEADER_ROW_HEIGHT = 1300;   // taller header row for vertical text (twips, ~55pt)
-    const BODY_ROW_HEIGHT = 360;      // slightly taller body rows for some vertical padding (twips)
+    const BODY_ROW_HEIGHT = 500;      // slightly taller body rows for some vertical padding (twips)
 
     // Helper: compact paragraph (optionally bold, optional no-break)
     const pTiny = (text: string, bold = false, noBreak = false) =>
@@ -1123,7 +1123,9 @@ export class DocxWordService {
 
     // Fetch and filter by phase
     const allInputs = await firstValueFrom(this.consultationService.getConsultationInputs(uuid));
-    const filtered = (allInputs ?? []).filter(ci => ci?.feedbackPhase === feedbackPhase);
+    const filtered = (allInputs ?? [])
+                      .filter(ci => ci?.feedbackGiven === true)
+                      .filter(ci => ci?.feedbackPhase === feedbackPhase);
 
     // Sort (org → name) with de-CH rules
     const collator = new Intl.Collator('de-CH', {
@@ -1275,7 +1277,7 @@ export class DocxWordService {
       const cells: TableCell[] = [];
 
       // Bedarf
-      const need = trunc(ci?.roadworkNeedName ?? '-', 20);
+      const need = ci?.roadworkNeedName ?? '-';
       cells.push(new TableCell({
         verticalAlign: VerticalAlign.CENTER,
         width: { size: widths.need_link, type: WidthType.PERCENTAGE },
@@ -1283,14 +1285,14 @@ export class DocxWordService {
         children: [pTiny(need)],
       }));
 
-      // Werk
+     // Werk
       const org = ci?.inputBy?.organisationalUnit?.abbreviation ?? '-';
       cells.push(new TableCell({
         verticalAlign: VerticalAlign.CENTER,
         width: { size: widths.organisation, type: WidthType.PERCENTAGE },
         margins: CELL_MARG,
         children: [pTiny(org, false, true)],
-      }));
+      })); 
 
       // Vernehmlassende:r
       const name = `${ci?.inputBy?.firstName ?? ''} ${ci?.inputBy?.lastName ?? ''}`.trim() || '-';
@@ -1315,7 +1317,7 @@ export class DocxWordService {
         verticalAlign: VerticalAlign.CENTER,
         width: { size: widths.feedback_input_text, type: WidthType.PERCENTAGE },
         margins: CELL_MARG,
-        children: [pTiny(trunc(fbText, 80))],
+        children: [pTiny(fbText)],
       }));
 
       // Letzte Änderung
@@ -1380,7 +1382,7 @@ export class DocxWordService {
         verticalAlign: VerticalAlign.CENTER,
         width: { size: widths.consult_input, type: WidthType.PERCENTAGE },
         margins: CELL_MARG,
-        children: [pTiny(trunc(mgr, 80))],
+        children: [pTiny(mgr)],
       }));
 
       return new TableRow({
