@@ -39,10 +39,12 @@ export class ManagementAreasComponent implements OnInit {
   managerOfArea1EnumControl: FormControl = new FormControl();
   managerOfArea2EnumControl: FormControl = new FormControl();
   managerOfArea3EnumControl: FormControl = new FormControl();
+  managerOfArea4EnumControl: FormControl = new FormControl();
 
   substituteManagerOfArea1EnumControl: FormControl = new FormControl();
   substituteManagerOfArea2EnumControl: FormControl = new FormControl();
   substituteManagerOfArea3EnumControl: FormControl = new FormControl();
+  substituteManagerOfArea4EnumControl: FormControl = new FormControl();
 
   availableAreaManagerEnums: User[] = [];
 
@@ -98,7 +100,10 @@ export class ManagementAreasComponent implements OnInit {
             break;
           case  '4dbc20b8-4a91-40da-9ef4-07de90b89f34':
             fillColor = 'rgba(176, 184, 224, 0.5)';
-            break;       
+            break;
+          case  '330e0d79-d844-41bd-b175-c345dad0c619':
+            fillColor = 'rgba(200, 210, 10, 0.5)';
+            break;                   
           default:
             fillColor = feature.get('color_fill');
             break;
@@ -195,6 +200,12 @@ export class ManagementAreasComponent implements OnInit {
                 this.managementAreasUuids[2] = managementArea.get("uuid");
                 this.managerOfArea3EnumControl.setValue(managementArea.get("manager_uuid"));
                 this.substituteManagerOfArea3EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
+              }
+
+              if (managementArea.get("uuid") == "330e0d79-d844-41bd-b175-c345dad0c619") {
+                this.managementAreasUuids[3] = managementArea.get("uuid");
+                this.managerOfArea4EnumControl.setValue(managementArea.get("manager_uuid"));
+                this.substituteManagerOfArea4EnumControl.setValue(managementArea.get("substitutemanager_uuid"));
               }
 
             }

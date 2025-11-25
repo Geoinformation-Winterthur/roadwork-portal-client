@@ -125,6 +125,46 @@
                     </mat-card-content>
                 </mat-card>
             </div>
+        <div fxLayout="row wrap padding">
+                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                    <mat-card-header style="margin: 0.5em;">
+                        <mat-card-title>Gebietname 4</mat-card-title>
+                        <mat-card-subtitle>Gebiet 4</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content style="width:max-content;">
+                        <div style="display:flex;flex-direction:column;">
+                            <form class="choose_manager_of_area_4">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Hauptmanager</mat-label>
+                                    <mat-select [formControl]="managerOfArea4EnumControl"
+                                            (focusout)="updateManagerOfArea(managerOfArea4EnumControl, 3)" required>
+                                        <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
+                                            [value]="areaManagerEnum.uuid">
+                                            {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </form>
+                            <form class="choose_substitute_manager_of_area_4">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Ferienvertretung</mat-label>
+                                    <mat-select [formControl]="substituteManagerOfArea4EnumControl"
+                                            (focusout)="updateManagerOfArea(substituteManagerOfArea4EnumControl, 3)" required>
+                                        <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
+                                            [value]="areaManagerEnum.uuid">
+                                            {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </form>
+                            <mat-checkbox>
+                                Ferienabwesenheit
+                            </mat-checkbox>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
         </mat-tab>
     </mat-tab-group>
 </div>

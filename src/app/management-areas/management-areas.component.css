@@ -1,3 +1,12 @@
 .management-areas-map {
     width: 100%
 }
+
+mat-card-header {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+mat-card-title, mat-card-subtitle {
+    white-space: nowrap !important;
+}
