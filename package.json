@@ -1,6 +1,6 @@
 {
   "name": "roadwork-portal-client",
-  "version": "2025.30",
+  "version": "2025.31",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
