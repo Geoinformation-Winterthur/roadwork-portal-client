@@ -89,7 +89,8 @@ export class ChooseNeedComponent implements OnInit {
   columnDefs: ColDef[] = [    
     {
       headerName: 'Phase/Status',
-      minWidth: 130,
+      minWidth: 140,
+      width:140,    
       field: 'statusLabel', 
       sortable: true,
       filter: 'agTextColumnFilter',
@@ -148,6 +149,7 @@ export class ChooseNeedComponent implements OnInit {
     {
       headerName: 'GM',
       field: 'dummy',
+      width: 150,
       sortable: true,
       filter: true,
       valueGetter: ({ data }) => {
@@ -163,21 +165,30 @@ export class ChooseNeedComponent implements OnInit {
     },    
     {
       headerName: 'Bezeichnung',
-      minWidth: 400, 
+      minWidth: 600,
       sortable: true,
       filter: true,
+
       valueGetter: (params: any) => {
-        // Safe access to need name for sorting/filtering.
-        const name = params.data?.properties?.name;
-        return name || '';
+        const name = params.data?.properties?.name ?? '';
+        const section = params.data?.properties?.section ?? '';        
+        return `${name} / ${section}`.trim();
       },
+
       cellRenderer: (params: any) => {
-        // Link to need details; includes section in title tooltip.
-        const name = params.data?.properties?.name;
-        const section = params.data?.properties?.section;
+        const name = params.data?.properties?.name ?? '';
+        const section = params.data?.properties?.section ?? '';
         const uuid = params.data?.properties?.uuid;
-        const tooltip = `${name} ${section || ''}`;
-        return `<a href="/civil-engineering/roadworks-portal//needs/${uuid}" title="${tooltip}">${name}</a>`;
+
+        const label = section ? `${name} / ${section}` : name; 
+        const tooltip = `${name} ${section}`.trim();
+
+        const link = document.createElement('a');
+        link.href = `/civil-engineering/roadworks-portal/needs/${uuid}`;
+        link.title = tooltip;
+        link.textContent = label;
+
+        return link;
       }
     },
     {
@@ -275,7 +286,7 @@ export class ChooseNeedComponent implements OnInit {
       headerName: 'Stadtplan-Link',
       sortable: false,
       filter: false,
-      maxWidth: 150,
+      maxWidth: 130,
       cellRenderer: ({ data } : any) => {
         // External link to Stadtplan at need coordinates.
         const x = data.geometry.coordinates[0].x;
@@ -288,7 +299,7 @@ export class ChooseNeedComponent implements OnInit {
       headerName: 'WinWebGIS-Link',
       sortable: false,
       filter: false,
-      maxWidth: 160,
+      maxWidth: 140,
       cellRenderer: ({ data }: any) => {
         // External link to WinWebGIS at need coordinates.
         const x = data.geometry.coordinates[0].x;
