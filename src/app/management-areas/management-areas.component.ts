@@ -102,7 +102,7 @@ export class ManagementAreasComponent implements OnInit {
             fillColor = 'rgba(176, 184, 224, 0.5)';
             break;
           case  '330e0d79-d844-41bd-b175-c345dad0c619':
-            fillColor = 'rgba(200, 210, 10, 0.5)';
+            fillColor = 'rgba(189, 215, 156, 0.5)';
             break;                   
           default:
             fillColor = feature.get('color_fill');
