@@ -41,7 +41,7 @@ export class WelcomeComponent implements OnInit {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private roadWorkActivityService: RoadWorkActivityService;
-  appVersion: string = "2025.31";
+  appVersion: string = "2025.32";
 
   involvedOrgs: Map<string, OrganisationalUnit>;
 
@@ -326,7 +326,7 @@ export class WelcomeComponent implements OnInit {
       filter: true
     },
     {
-      headerName: 'Bauvorhaben-Nummer',
+      headerName: 'Bauvorhaben-Nr',
       valueGetter: ({ data }) => data?.properties?.roadWorkActivityNo || '',        
       cellRenderer: ({ value }: any) => value || '–',
       sortable: true,

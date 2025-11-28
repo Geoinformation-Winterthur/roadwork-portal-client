@@ -276,7 +276,7 @@ export class SessionsComponent implements OnInit {
 
   /** Columns for the projects grid. */
   projectsColDefs: ColDef[] = [
-    { headerName: 'Bauvorhaben-Nummer', field: 'roadWorkActivityNo', maxWidth: 200, flex: 1 },
+    { headerName: 'Bauvorhaben-Nr', field: 'roadWorkActivityNo', maxWidth: 200, flex: 1 },
     { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
     { headerName: 'Uuid', field: 'id', flex: 1, maxWidth: 320 },  
   ];

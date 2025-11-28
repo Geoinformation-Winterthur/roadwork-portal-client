@@ -172,7 +172,7 @@ export class ChooseActivityComponent implements OnInit {
       filter: true
     },
     {
-      headerName: 'Bauvorhaben-Nummer',
+      headerName: 'Bauvorhaben-Nr',
       valueGetter: ({ data }) => data?.properties?.roadWorkActivityNo || '',        
       cellRenderer: ({ value }: any) => value || '–',
       sortable: true,
