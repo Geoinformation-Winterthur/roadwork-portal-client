@@ -135,10 +135,7 @@ export class DocxWordService {
             // Left-aligned text
             new TextRun({
               text: "SKS-Vor-Protokoll",
-            }),                        
-            new TextRun({
-              text: `, Erstelldatum: ${(new Date()).toLocaleDateString()} ${(new Date()).toLocaleTimeString()}`,
-            }),            
+            }),                                    
             new TextRun({ text: "\t" }),            
             new TextRun({
               text: `Seite `,
@@ -343,7 +340,7 @@ export class DocxWordService {
     // Create manually numbered paragraphs (1., 2., 3., ...)
     return rowsData.map((r, index) =>      
       this.p(
-        `${index + 1}. ${r.Name}, ${r.Organisation}, ${r.Workarea}`
+        `${r.Name}, ${r.Organisation}, ${r.Workarea}`
       )
     );
   }
@@ -374,7 +371,7 @@ export class DocxWordService {
     // Create manually numbered paragraphs (1., 2., 3., ...)
     return rowsData.map((r, index) =>      
       this.p(
-        `${index + 1}. ${r.Name}, ${r.Organisation}, ${r.Workarea}`
+        `${r.Name}, ${r.Organisation}, ${r.Workarea}`
       )
     );
   }
@@ -404,7 +401,7 @@ export class DocxWordService {
     // Create manually numbered entries (1., 2., 3., ...)
     return rowsData.map((r, index) =>
       this.p(
-        `${index + 1}. ${r.Name}, ${r.Organisation}, ${r.Workarea}`
+        `${r.Name}, ${r.Organisation}, ${r.Workarea}`
       )
     );
   }

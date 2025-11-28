@@ -18,7 +18,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Hauptmanager</mat-label>
                                     <mat-select [formControl]="managerOfArea1EnumControl"
-                                            (focusout)="updateManagerOfArea(managerOfArea1EnumControl, 0)" required>
+                                            (selectionChange)="updateManagerOfArea(managerOfArea1EnumControl, 0, 'MAIN')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -30,7 +30,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Ferienvertretung</mat-label>
                                     <mat-select [formControl]="substituteManagerOfArea1EnumControl"
-                                            (focusout)="updateManagerOfArea(substituteManagerOfArea1EnumControl, 0)" required>
+                                            (selectionChange)="updateManagerOfArea(substituteManagerOfArea1EnumControl, 0, 'SUBST')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -58,7 +58,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Hauptmanager</mat-label>
                                     <mat-select [formControl]="managerOfArea2EnumControl"
-                                            (focusout)="updateManagerOfArea(managerOfArea2EnumControl, 1)" required>
+                                            (selectionChange)="updateManagerOfArea(managerOfArea2EnumControl, 1, 'MAIN')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -70,7 +70,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Ferienvertretung</mat-label>
                                     <mat-select [formControl]="substituteManagerOfArea2EnumControl"
-                                            (focusout)="updateManagerOfArea(substituteManagerOfArea2EnumControl, 1)" required>
+                                            (selectionChange)="updateManagerOfArea(substituteManagerOfArea2EnumControl, 1, 'SUBST')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -98,7 +98,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Hauptmanager</mat-label>
                                     <mat-select [formControl]="managerOfArea3EnumControl"
-                                            (focusout)="updateManagerOfArea(managerOfArea3EnumControl, 2)" required>
+                                            (selectionChange)="updateManagerOfArea(managerOfArea3EnumControl, 2, 'MAIN')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -110,7 +110,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Ferienvertretung</mat-label>
                                     <mat-select [formControl]="substituteManagerOfArea3EnumControl"
-                                            (focusout)="updateManagerOfArea(substituteManagerOfArea3EnumControl, 2)" required>
+                                            (selectionChange)="updateManagerOfArea(substituteManagerOfArea3EnumControl, 2, 'SUBST') " required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -138,7 +138,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Hauptmanager</mat-label>
                                     <mat-select [formControl]="managerOfArea4EnumControl"
-                                            (focusout)="updateManagerOfArea(managerOfArea4EnumControl, 3)" required>
+                                            (selectionChange)="updateManagerOfArea(managerOfArea4EnumControl, 3, 'MAIN')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}
@@ -150,7 +150,7 @@
                                 <mat-form-field appearance="fill">
                                     <mat-label>Ferienvertretung</mat-label>
                                     <mat-select [formControl]="substituteManagerOfArea4EnumControl"
-                                            (focusout)="updateManagerOfArea(substituteManagerOfArea4EnumControl, 3)" required>
+                                            (selectionChange)="updateManagerOfArea(substituteManagerOfArea4EnumControl, 3, 'SUBST')" required>
                                         <mat-option *ngFor="let areaManagerEnum of availableAreaManagerEnums"
                                             [value]="areaManagerEnum.uuid">
                                             {{areaManagerEnum.firstName}} {{areaManagerEnum.lastName}}

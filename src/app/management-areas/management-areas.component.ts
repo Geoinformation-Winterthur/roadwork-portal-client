@@ -221,36 +221,66 @@ export class ManagementAreasComponent implements OnInit {
 
   }
 
-  updateManagerOfArea(managerOfAreaEnumControl: FormControl, areaNo: number){
+  updateManagerOfArea(managerOfAreaEnumControl: FormControl, areaNo: number, managerType: string) {
     let managementArea: ManagementArea = new ManagementArea();
     managementArea.uuid = this.managementAreasUuids[areaNo];
-    managementArea.manager.uuid = managerOfAreaEnumControl.value;
+
+
+    // Decide whether we are updating the main manager or the substitute manager
+    if (managerType == 'MAIN') {
+      // update main manager
+      managementArea.manager.uuid = managerOfAreaEnumControl.value;
+    } else if (managerType === 'SUBST') {
+      // update substitute manager
+      managementArea.substituteManager.uuid = managerOfAreaEnumControl.value;
+    }
+
     this.managementAreaService.updateManagementArea(managementArea)
-    .subscribe({
-      next: (managementArea) => {
-        ErrorMessageEvaluation._evaluateErrorMessage(managementArea);
-        if (managementArea.errorMessage.trim().length !== 0) {
-          this.snackBar.open(managementArea.errorMessage, "", {
-            duration: 4000
-          });
-        } else {
-          this.snackBar.open("Gebietsmanagement erfolgreich aktualisiert", "", {
-            duration: 4000
-          });
-          for(let feat of this.loadSource.getFeatures()){
-            if(feat.get("uuid") === managementArea.uuid){
-              feat.set("manager_uuid", managementArea.manager.uuid);
-              feat.set("managername",
-                  managementArea.manager.firstName + " " +
-                        managementArea.manager.lastName);
+      .subscribe({
+        next: (managementArea) => {
+          ErrorMessageEvaluation._evaluateErrorMessage(managementArea);
+          if (managementArea.errorMessage.trim().length !== 0) {
+            this.snackBar.open(managementArea.errorMessage, "", {
+              duration: 4000
+            });
+          } else {
+            this.snackBar.open("Gebietsmanagement erfolgreich aktualisiert", "", {
+              duration: 4000
+            });
+
+            // Update both manager and substitute manager on the feature if present
+            for (let feat of this.loadSource.getFeatures()) {
+              if (feat.get("uuid") === managementArea.uuid) {
+
+                // main manager
+                if (managementArea.manager) {
+                  feat.set("manager_uuid", managementArea.manager.uuid);
+                  feat.set(
+                    "managername",
+                    (managementArea.manager.firstName || "") + " " +
+                    (managementArea.manager.lastName || "")
+                  );
+                }
+
+                // substitute manager
+                if (managementArea.substituteManager) {
+                  feat.set("substitute_manager_uuid", managementArea.substituteManager.uuid);
+                  feat.set(
+                    "substitute_managername",
+                    (managementArea.substituteManager.firstName || "") + " " +
+                    (managementArea.substituteManager.lastName || "")
+                  );
+                }
+              }
             }
           }
+        },
+        error: (error) => {
         }
-      },
-      error: (error) => {
-      }
-    });
+      });
   }
+
+
 
   private resizeMap(event: any) {
     let mapElement: HTMLElement | undefined;
