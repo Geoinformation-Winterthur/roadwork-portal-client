@@ -1120,7 +1120,7 @@ export class DocxWordService {
 
     // Fetch and filter by phase
     const allInputs = await firstValueFrom(this.consultationService.getConsultationInputs(uuid));
-    const filtered = (allInputs ?? [])
+    const filteredWithFeedback = (allInputs ?? [])
                       .filter(ci => ci?.feedbackGiven === true)
                       .filter(ci => ci?.feedbackPhase === feedbackPhase);
 
@@ -1131,7 +1131,7 @@ export class DocxWordService {
       numeric: true,
     });
 
-    const consultationInputs = filtered.slice().sort((a, b) => {
+    const consultationInputs = filteredWithFeedback.slice().sort((a, b) => {
       const aOrg = a?.inputBy?.organisationalUnit?.abbreviation ?? '';
       const bOrg = b?.inputBy?.organisationalUnit?.abbreviation ?? '';
       const orgCmp = collator.compare(aOrg, bOrg);
