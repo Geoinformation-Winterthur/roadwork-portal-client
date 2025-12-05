@@ -1182,7 +1182,7 @@ export class SessionsComponent implements OnInit {
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehensvorschlag' : 'Vorgehen'));
-      allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment1));      
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment1));      
 
       
 
@@ -1197,7 +1197,7 @@ export class SessionsComponent implements OnInit {
    
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold(`Beschluss:`));
-      allProjectBlocks.push(this.docxWordService.p(activity.project.sessionComment2));   
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment2));   
     }    
 
     // 3. Verschiedenes    
@@ -1224,6 +1224,7 @@ export class SessionsComponent implements OnInit {
       username: mailAddress,
       orientation: 'portrait',
       marginsCm: { top: 2, right: 1, bottom: 2, left: 2 },
+      isPreProtocol: session.isPreProtocol,
       children: [        
         ...intro,
         separator,

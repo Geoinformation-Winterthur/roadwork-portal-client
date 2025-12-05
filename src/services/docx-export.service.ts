@@ -34,6 +34,7 @@ export interface DocxBuildOptions {
   orientation?: 'portrait' | 'landscape';              // default: portrait
   marginsCm?: { top: number; right: number; bottom: number; left: number }; // default: 2/1/2/2
   fileName?: string;
+  isPreProtocol: boolean,
   children: Array<Paragraph | Table | string | number | null | undefined>;
 }
 
@@ -100,6 +101,7 @@ export class DocxWordService {
       headerSubtitle = '',
       orientation = 'portrait',
       marginsCm = { top: 2, right: 1, bottom: 2, left: 2 },
+      isPreProtocol,
       children,
     } = options;
 
@@ -134,7 +136,7 @@ export class DocxWordService {
           children: [
             // Left-aligned text
             new TextRun({
-              text: "SKS-Vor-Protokoll",
+              text: isPreProtocol ? "SKS-Vor-Protokoll" : "Protokoll",
             }),                                    
             new TextRun({ text: "\t" }),            
             new TextRun({
@@ -249,6 +251,37 @@ export class DocxWordService {
           size: sizeHalfPt,          
         }),
       ],
+    });
+  }
+
+  pPreserveLines(
+    text: string,
+    opts?: { bold?: boolean; italic?: boolean; align?: AlignmentTypeValue; colorHex?: string; sizeHalfPt?: number, lineSpacing?: number }
+  ) {
+    const { bold, italic, align, colorHex, sizeHalfPt, lineSpacing } = opts || {};
+    const safe = this.sanitizeText(text ?? '');
+
+    // Two lines from textarea ( \n \r\n)
+    const parts = safe.split(/\r?\n/);
+
+    const runs = parts.map((part, index) =>
+      new TextRun({
+        text: part,
+        // from the second line we put "break" = a new line in Word
+        break: index === 0 ? undefined : 1,
+        bold: bold || undefined,
+        italics: italic || undefined,
+        color: colorHex,
+        size: sizeHalfPt,
+      })
+    );
+
+    return new Paragraph({
+      alignment: align,
+      spacing: {
+        line: lineSpacing ?? 250,
+      },
+      children: runs,
     });
   }
 
