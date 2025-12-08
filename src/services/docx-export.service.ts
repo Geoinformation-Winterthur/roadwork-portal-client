@@ -938,7 +938,7 @@ export class DocxWordService {
       blocks.push(this.p('–'));
     } else {
       // split by comma or newline
-      const items = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      const items = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
       for (const it of items) {
         // simple hyphen list; avoids numbering definitions
         blocks.push(this.p(`${this.sanitizeText(it)}`));
@@ -1058,11 +1058,11 @@ export class DocxWordService {
 
   /** “Verschiedenes” */
   makeMiscItemsSection(opts: {    
-    miscItems: string;       // single string, comma- or newline-separated
+    miscItems: string;
   }): Paragraph[] {
     const { miscItems } = opts;
 
-    const blocks: Paragraph[] = [      
+    const blocks: Paragraph[] = [
       this.smallGap(),
       this.pBold('3. Verschiedenes'),
     ];
@@ -1072,8 +1072,8 @@ export class DocxWordService {
     if (raw.length === 0) {
       blocks.push(this.p('–'));
     } else {
-      // split by comma or newline
-      const items = raw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+      // split ONLY by newline (ENTER in textarea)
+      const items = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
       for (const it of items) {
         // simple hyphen list; avoids numbering definitions
         blocks.push(this.p(`${this.sanitizeText(it)}`));
@@ -1082,6 +1082,7 @@ export class DocxWordService {
 
     return blocks;
   }
+
 
   makeNextSessionSection(opts: {
     nextSKSDate?: string;
