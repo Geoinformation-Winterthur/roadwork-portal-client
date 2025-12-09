@@ -204,13 +204,16 @@
       <ag-grid-angular
         #projectGrid
         class="ag-theme-alpine"
+        rowSelection="single"
         [rowHeight]="28"
         [headerHeight]="28"
         [rowData]="projectRows"
         [columnDefs]="projectsColDefs"
         [defaultColDef]="childDefaultColDef"        
         [localeText]="localeText"
-        style="width: 100%; height:17vh;"        
+        style="width: 100%; height:17vh;"                 
+        (selectionChanged)="onProjectSelectionChanged()"
+        (firstDataRendered)="onProjectFirstDataRendered($event)"
       >
       </ag-grid-angular>
     </div>

@@ -89,6 +89,8 @@ interface SessionChild {
 
   roadWorkActivityNo?: string | number;
 }
+const LS_KEY_SELECTED_SESSION = 'sks.selectedSession';
+const LS_KEY_SELECTED_PROJECT = 'sks.selectedProject';
 
 @Component({
   selector: 'app-sessions',
@@ -276,9 +278,33 @@ export class SessionsComponent implements OnInit {
 
   /** Columns for the projects grid. */
   projectsColDefs: ColDef[] = [
-    { headerName: 'Bauvorhaben-Nr', field: 'roadWorkActivityNo', maxWidth: 200, flex: 1 },
+    {
+      headerName: 'Bauvorhaben-Nr',
+      field: 'roadWorkActivityNo',
+      maxWidth: 200,
+      flex: 1,
+      sort: 'desc',
+      sortingOrder: ['desc', 'asc', null]   // opcjonalnie
+    },
     { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
-    { headerName: 'Uuid', field: 'id', flex: 1, maxWidth: 320 },  
+    {
+      headerName: 'Link',
+      field: 'id',
+      flex: 1,
+      maxWidth: 320,
+      cellRenderer: ({ data }: any) => {
+        const projectId = data?.id ?? '';
+        const url = `/civil-engineering/roadworks-portal/activities/${projectId}`;
+
+        return `
+          <a href="${url}"
+            title="${projectId}"
+            style="color:#0066cc; text-decoration:underline; cursor:pointer;">
+            Bauvorhaben anzeigen
+          </a>
+        `;
+      },      
+    }
   ];
 
   /** Columns for the people grids - present users */
@@ -697,17 +723,42 @@ export class SessionsComponent implements OnInit {
         // Store enriched sessions directly in sessionsData
         this.sessionsData = enrichedSessions ?? [];
 
-        // Auto-select the first row in the sessions grid
         setTimeout(() => {
-          if (this.sessionsApi && this.sessionsData.length > 0) {
-            this.sessionsApi.ensureIndexVisible(0);
-            const first = this.sessionsApi.getDisplayedRowAtIndex(0);
-            first?.setSelected(true);
-          } else if (this.sessionsGrid?.api && this.sessionsData.length > 0) {
-            const first = this.sessionsGrid.api.getDisplayedRowAtIndex(0);
+          if (!this.sessionsGrid?.api || this.sessionsData.length === 0) {
+            this.isDataLoading = false;
+            return;
+          }
+
+          const api = this.sessionsGrid.api;
+
+          // Restore selection from localStorage
+          let restored = false;
+          try {
+            const raw = localStorage.getItem(LS_KEY_SELECTED_SESSION);
+            if (raw) {
+              const stored = JSON.parse(raw) as { sksNo?: number };
+              if (stored?.sksNo != null) {
+                const idx = this.sessionsData.findIndex(s => s.sksNo === stored.sksNo);
+                if (idx >= 0) {
+                  api.ensureIndexVisible(idx);
+                  api.getDisplayedRowAtIndex(idx)?.setSelected(true);
+                  restored = true;
+                }
+              }
+            }
+          } catch {
+            // ignore parse errors
+          }
+
+          // Nothing to restore - select first row like before
+          if (!restored) {
+            const first = api.getDisplayedRowAtIndex(0);
             first?.setSelected(true);
           }
+
+          this.isDataLoading = false;
         }, 0);
+
 
         this.isDataLoading = false;
       },
@@ -746,6 +797,14 @@ export class SessionsComponent implements OnInit {
     }
 
     const session: Session = this.selectedNode.data;
+
+    // Persist selected session in localStorage (by SKS number)
+    if (session?.sksNo != null) {
+      localStorage.setItem(
+        LS_KEY_SELECTED_SESSION,
+        JSON.stringify({ sksNo: session.sksNo })
+      );
+    }
 
     // Enable and patch the details form with values from the selected session
     this.detailsForm.enable({ emitEvent: false });
@@ -1253,6 +1312,63 @@ export class SessionsComponent implements OnInit {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const year = d.getFullYear();
     return `${day}.${month}.${year}`;
+  }
+
+  onProjectSelectionChanged(): void {
+    const nodes = this.projectGrid?.api?.getSelectedNodes?.() ?? [];
+    const node = nodes[0] ?? null;
+    const project: SessionChild | undefined = node?.data;
+
+    const currentSession: Session | null = this.selectedNode?.data ?? null;
+    if (!project || !currentSession?.sksNo) return;
+
+    // Store selected project
+    localStorage.setItem(
+      LS_KEY_SELECTED_PROJECT,
+      JSON.stringify({
+        sksNo: currentSession.sksNo,
+        projectId: project.id,
+      })
+    );
+  }  
+
+  onProjectFirstDataRendered(event: FirstDataRenderedEvent): void {
+    // If the grid API is not ready or there are no project rows yet, do nothing
+    if (!this.projectGrid?.api || !this.projectRows || this.projectRows.length === 0) {
+      return;
+    }
+
+    // We need the currently selected session to restore the correct project's selection
+    const currentSession: Session | null = this.selectedNode?.data ?? null;
+    if (!currentSession?.sksNo) {
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(LS_KEY_SELECTED_PROJECT);
+      if (!raw) return;
+
+      const stored = JSON.parse(raw) as { sksNo?: number; projectId?: string };
+
+      // Only restore selection if the saved entry belongs to the currently selected session
+      if (stored.sksNo !== currentSession.sksNo || !stored.projectId) {
+        return;
+      }
+
+      const api = this.projectGrid.api;
+
+      // Iterate through all nodes and select the matching project row
+      api.forEachNode(node => {
+        if (node.data?.id === stored.projectId) {
+          node.setSelected(true);
+
+          // Optionally scroll to the selected row:
+          // api.ensureIndexVisible(node.rowIndex!);
+        }
+      });
+    } catch {
+      // Ignore JSON parsing or localStorage errors
+    }
   }
 
 }
