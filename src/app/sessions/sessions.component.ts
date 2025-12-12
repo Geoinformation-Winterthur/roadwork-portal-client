@@ -92,6 +92,8 @@ interface SessionChild {
 const LS_KEY_SELECTED_SESSION = 'sks.selectedSession';
 const LS_KEY_SELECTED_PROJECT = 'sks.selectedProject';
 
+const TITLE_PROTOCOL_NAME = "Strategische Koordinationssitzung (SKS)";
+
 @Component({
   selector: 'app-sessions',
   templateUrl: './sessions.component.html',
@@ -380,12 +382,29 @@ export class SessionsComponent implements OnInit {
     {
       headerName: 'SKS No',
       field: 'sksNo',
-      width: 110,
+      width: 130,
       suppressSizeToFit: true,
       filter: 'agNumberColumnFilter',
+      sort: 'desc'
     },
     /* { headerName: 'Sitzung', field: 'sessionName', minWidth: 220, flex: 1 }, */
-    { headerName: 'Datum', field: 'plannedDate', minWidth: 160, flex: 1 },
+    {
+      headerName: 'Datum',
+      field: 'plannedDate',
+      minWidth: 160,
+      flex: 1,
+      valueFormatter: params => {
+        if (!params.value) return '';
+        const d = new Date(params.value);
+        if (isNaN(d.getTime())) return '';
+
+        const day   = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year  = d.getFullYear();
+
+        return `${day}.${month}.${year}`;
+      }
+    },
     {
       headerName: 'Berichtsstatus',
       field: 'reportType',
@@ -483,6 +502,11 @@ export class SessionsComponent implements OnInit {
           .map((c: any) => c?.name ?? '')
           .filter(Boolean)
           .join(' ');
+        
+        const roadworkActivitiesNos = projects
+          .map((c: any) => String(c?.roadWorkActivityNo) ?? '')
+          .filter(Boolean)
+          .join(' ');
 
         return [
           d.reportType,
@@ -490,6 +514,7 @@ export class SessionsComponent implements OnInit {
           d.sessionCreator,
           d.sessionDate,
           projectNames,
+          roadworkActivitiesNos
         ]
           .filter(Boolean)
           .join(' ');
@@ -562,11 +587,11 @@ export class SessionsComponent implements OnInit {
         }).pipe(
           map(({ activities, users }) => {
             // Group activities by dateSksPlanned (YYYY-MM-DD)
-            const actsByDate = new Map<string, RoadWorkActivityFeature[]>();
+            const actsBySKsNo = new Map<string, RoadWorkActivityFeature[]>();
             for (const a of activities ?? []) {
-              const key = toIsoDateOnly(a?.properties?.dateSksPlanned);
-              if (!actsByDate.has(key)) actsByDate.set(key, []);
-              actsByDate.get(key)!.push(a);
+              const key = String(a?.properties?.sksNo);
+              if (!actsBySKsNo.has(key)) actsBySKsNo.set(key, []);
+              actsBySKsNo.get(key)!.push(a);
             }
 
             // Build base people once; id/mailAddress = email; flags will be set from CSV
@@ -588,8 +613,8 @@ export class SessionsComponent implements OnInit {
 
             // Enrich each real session with projects and users+flags from CSV
             const enriched = sessions.map(s => {
-              const key = toIsoDateOnly(s.plannedDate);
-              const acts = actsByDate.get(key) ?? [];
+              const key = String(s?.sksNo);
+              const acts = actsBySKsNo.get(key) ?? [];
 
               // Mark matched activities
               for (const act of acts) {
@@ -883,11 +908,12 @@ export class SessionsComponent implements OnInit {
     const uiLabel = this.detailsForm.value.reportType || '';
 
     const patch = {
+      plannedDateForBackend: this.formatDate(this.detailsForm.value.plannedDate),
       plannedDate: this.detailsForm.value.plannedDate,
       reportType:  this.SESSION_TYPE_TO_DB[uiLabel] ?? null,
       attachments: this.detailsForm.value.attachments ?? '',
       acceptance1: this.detailsForm.value.acceptance1 ?? '',
-      miscItems:   this.detailsForm.value.miscItems ?? ''
+      miscItems:   this.detailsForm.value.miscItems ?? ''      
     };
 
     Object.assign(session, { ...patch, reportType: uiLabel });
@@ -962,72 +988,76 @@ export class SessionsComponent implements OnInit {
 
   // Open dialog and create session
   openNewSessionDialog(): void {
-    const ref = this.dialog.open(NewSessionDialogComponent, { width: '640px' });
+
+    // pass current sessions to dialog
+    const ref = this.dialog.open(NewSessionDialogComponent, { 
+      width: '640px',
+      data: { sessions: this.sessionsData }   
+    });
+
     ref.afterClosed().subscribe(payload => {
-      if (!payload) return;
+      if (!payload) return;  // user clicked "Cancel"
+
+      const newSksNo = payload.sksNo;
 
       this.isDataLoading = true;
+
+      // Now create session with only SKS number
       this.sessionService.createSession({
-        plannedDate: payload.plannedDate,
-        reportType:  this.SESSION_TYPE_TO_DB[payload.reportType] ?? this.SESSION_TYPE_TO_DB["PRE_PROTOCOL"],
-        acceptance1: payload.acceptance1,
-        attachments: payload.attachments,
-        miscItems: payload.miscItems,
-        presentUserIds: '',
-        distributionUserIds: '',
-      }).pipe(
-        finalize(() => this.isDataLoading = false)
-      ).subscribe({
+        sksNo: newSksNo
+      })
+      .pipe(finalize(() => this.isDataLoading = false))
+      .subscribe({
         next: (created) => {
-          // Insert into grid model and re-enrich minimally
+
+          // Build new row for the grid. Backend returns at least sksNo.
           const sessionRow = {
             id: this.sessionsData.length + 1,
-            reportType: this.SESSION_TYPE_TO_UI[created.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
-            sessionName: 'Sitzung ' + (new Date(created.plannedDate).getMonth() + 1) + '-' + new Date(created.plannedDate).getFullYear(),            
-            sessionDate: String(created.plannedDate),
-            plannedDate: new Date(created.plannedDate),
-            sksNo: created.sksNo,
+            sks_no: created.sksNo,
+            reportType: '-',                        // default, backend may override
+            sessionName: 'Sitzung ' + newSksNo,     // simple label
+            sessionDate: '',
+            plannedDateForBackend: '',            
+            sksNo: newSksNo,
             sessionCreator: '',
-            acceptance1: created.acceptance1 ?? '-',
-            attachments: created.attachments ?? '-',
-            miscItems: created.miscItems ?? '-',
+            acceptance1: '-',
+            attachments: '-',
+            miscItems: '-',
             errorMessage: '',
-            presentUserIds: created.presentUserIds ?? '',
-            distributionUserIds: created.distributionUserIds ?? '',
+            presentUserIds: '',
+            distributionUserIds: '',
             childrenProjects: [],
             childrenPresent: [],
             childrenDistribution: [],
             children: []
           };
 
-          this.sessionsData = [sessionRow, ...this.sessionsData]
-            .sort((a, b) => {
-              const da = a?.plannedDate ? new Date(a.plannedDate).getTime() : -Infinity;
-              const db = b?.plannedDate ? new Date(b.plannedDate).getTime() : -Infinity;
-              return db - da; // desc
-            });
+          // Insert into grid
+          this.sessionsData = [sessionRow, ...this.sessionsData];
 
-          // Refresh and select the newly created row
+          // Refresh + select new row
           setTimeout(() => {
             this.sessionsGrid?.api?.setRowData(this.sessionsData);
-            const idx = this.sessionsData.findIndex(r => r.sksNo === created.sksNo);
+            const idx = this.sessionsData.findIndex(r => r.sksNo === newSksNo);
             if (idx >= 0) {
               this.sessionsGrid.api.ensureIndexVisible(idx);
               this.sessionsGrid.api.getDisplayedRowAtIndex(idx)?.setSelected(true);
             }
+
             this.snckBar.open('Neue Sitzung wurde erstellt.', '', { duration: 2500 });
           }, 0);
         },
         error: () => {
           this.snckBar.open(
             'Beim Erstellen der Sitzung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
-            '', { duration: 4000 }
+            '',
+            { duration: 4000 }
           );
-        },
-        complete: () => this.isDataLoading = false
+        }
       });
     });
   }
+
 
   /** Normalize to YYYY-MM-DD (null → null) */
   private toIsoDateOnly(d: any): string | null {
@@ -1103,7 +1133,7 @@ export class SessionsComponent implements OnInit {
         '8403 Winterthur',
         ''        
       ],
-      title: 'Strategische Koordinationssitzung (SKS)' + ' - ' + reportType,      
+      title: TITLE_PROTOCOL_NAME + ' - ' + reportType,      
       logoWidthPx: 140,
     });
 
@@ -1129,7 +1159,7 @@ export class SessionsComponent implements OnInit {
     const pageBreak = this.docxWordService.pageBreak();
 
     const gap = this.docxWordService.spacer();        
-    const smallGap = this.docxWordService.smallGap();
+    const smallGap = this.docxWordService.smallGap();    
 
     const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection( { 
                                                                                   prevSessionDate: session.prevSessionDate, 
@@ -1148,7 +1178,13 @@ export class SessionsComponent implements OnInit {
     // 2) Attach project images (100% content width), each with title/department
     const activities = await this.docxWordService.prepareRoadWorkActivity(this.projectRows);
     const allProjectBlocks: Array<Paragraph | Table> = [];    
-    
+
+    // sort activities ASCENDING by roadworkactivity_no as string
+    activities.sort((a, b) =>
+      a.project.roadWorkActivityNo.localeCompare(b.project.roadWorkActivityNo)
+    );
+
+
     for (const activity of activities) {    
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
@@ -1302,7 +1338,7 @@ export class SessionsComponent implements OnInit {
       ],
     });
 
-    saveAs(blob, 'Strategische Koordinationssitzung (SKS) - ' + reportType + '.docx');
+    saveAs(blob, TITLE_PROTOCOL_NAME + ' - ' + reportType + '.docx');
   }
 
   

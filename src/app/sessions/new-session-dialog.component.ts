@@ -1,81 +1,141 @@
-import { formatDate } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 
 @Component({
   selector: 'app-new-session-dialog',
   template: `
-  <h2 mat-dialog-title>Neue Sitzung erstellen</h2>
-  <mat-dialog-content [formGroup]="form" style="display:grid; gap:12px; padding-top:8px;">
-    <mat-form-field appearance="outline">
-      <mat-label>Geplantes Datum</mat-label>      
-      <input
-        matInput
-        [matDatepicker]="picker"
-        formControlName="plannedDate"
-        placeholder="YYYY-MM-DD"
-        autocomplete="off"
-        inputmode="none"
-        readonly
-        appPreventTyping
-       
-      />
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="form.controls['plannedDate']?.hasError('required')">
-        Pflichtfeld
-      </mat-error>
-    </mat-form-field>
+    <h2 mat-dialog-title>Neue Sitzung erstellen</h2>
 
-    <br/>
-    <label>Die folgenden Felder können auch später ergänzt werden.</label>    
+    <mat-dialog-content
+      [formGroup]="form"
+      style="padding-top: 8px; display: grid; gap: 12px;"
+    >
+      <p>
+        Die neue Sitzung wird automatisch mit der nächsten verfügbaren SKS-Nummer vorgeschlagen.
+        Sie können die Nummer bei Bedarf anpassen.
+      </p>
 
-    <mat-form-field appearance="outline">
-      <mat-label>1. Abnahme SKS-Protokoll</mat-label>
-      <textarea matInput formControlName="acceptance1" maxlength="1000" placeholder="Bis zu 1000 Zeichen…"></textarea>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>SKS-Nr</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="sksNo"
+          autocomplete="off"
+          min="1"
+        />
 
-    <mat-form-field appearance="outline">
-      <mat-label>Beilagen</mat-label>
-      <textarea matInput formControlName="attachments" maxlength="1000" placeholder="Bis zu 1000 Zeichen…"></textarea>
-    </mat-form-field>
+        <mat-error *ngIf="form.controls['sksNo']?.hasError('required')">
+          Pflichtfeld.
+        </mat-error>
+        <mat-error *ngIf="form.controls['sksNo']?.hasError('min')">
+          Die SKS-Nr muss ≥ 1 sein.
+        </mat-error>
+        <mat-error *ngIf="form.controls['sksNo']?.hasError('pattern')">
+          Nur ganze Zahlen sind erlaubt.
+        </mat-error>
+        <mat-error *ngIf="form.controls['sksNo']?.hasError('sksNoTaken')">
+          Diese SKS-Nr ist bereits vergeben.
+        </mat-error>
+      </mat-form-field>
+    </mat-dialog-content>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Verschiedenes</mat-label>
-      <textarea matInput formControlName="miscItems" maxlength="1000" placeholder="Bis zu 1000 Zeichen…"></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="dialogRef.close()">Abbrechen</button>
-    <button mat-raised-button color="primary" (click)="submit()" [disabled]="form.invalid">Erstellen</button>
-  </mat-dialog-actions>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="dialogRef.close()">Abbrechen</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="submit()"
+        [disabled]="form.invalid"
+      >
+        Erstellen
+      </button>
+    </mat-dialog-actions>
   `
 })
 export class NewSessionDialogComponent {
-  // Keep payload minimal; DB has defaults.
-  form = this.fb.group({
-    plannedDate: [new Date(), Validators.required],
-    acceptance1: ['-'],
-    attachments: ['Keine'],
-    miscItems: ['Keine'],
-  });
+  /** Reactive form holding the (editable) SKS number */
+  form: FormGroup;
+
+  /** Existing SKS numbers used for duplicate-check */
+  private existingSksNumbers: Set<number>;
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<NewSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: { sessions: any[] }
+  ) {
+    // Build set of existing SKS numbers
+    this.existingSksNumbers = new Set(
+      (data?.sessions ?? [])
+        .map(s => Number(s.sksNo))
+        .filter(n => !isNaN(n) && n > 0)
+    );
+
+    const nextSksNo = this.computeNextSksNo(data?.sessions ?? []);
+
+    this.form = this.fb.group({
+      sksNo: [
+        nextSksNo,
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.pattern(/^[0-9]+$/),
+          this.sksNoNotTakenValidator()
+        ]
+      ]
+    });
+  }
+
+  /** Computes max(sksNo) + 1 from the existing sessions list */
+  private computeNextSksNo(sessions: any[]): number {
+    if (!sessions || sessions.length === 0) {
+      return 1;
+    }
+
+    const numbers = sessions
+      .map(s => Number(s.sksNo))
+      .filter(n => !isNaN(n) && n > 0);
+
+    if (!numbers.length) {
+      return 1;
+    }
+
+    return Math.max(...numbers) + 1;
+  }
+
+  /** Custom validator: checks if SKS number is already used */
+  private sksNoNotTakenValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const raw = control.value;
+      const value = Number(raw);
+      if (!value || isNaN(value)) {
+        // Let other validators (required / pattern / min) handle this
+        return null;
+      }
+
+      if (this.existingSksNumbers.has(value)) {
+        return { sksNoTaken: true };
+      }
+
+      return null;
+    };
+  }
 
   submit() {
     if (this.form.invalid) return;
-    const v = this.form.value;
 
-    const plannedDate = v.plannedDate instanceof Date
-      ? formatDate(v.plannedDate, 'yyyy-MM-dd', 'en-CH')
-      : v.plannedDate;
+    const raw = this.form.value.sksNo;
+    const sksNo = Number(raw);
 
-    this.dialogRef.close({ ...v, plannedDate });
+    this.dialogRef.close({ sksNo });
   }
-  
 }

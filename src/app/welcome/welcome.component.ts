@@ -330,7 +330,8 @@ export class WelcomeComponent implements OnInit {
       valueGetter: ({ data }) => data?.properties?.roadWorkActivityNo || '',        
       cellRenderer: ({ value }: any) => value || '–',
       sortable: true,
-      filter: true
+      filter: true,
+      sort: 'desc'
     },
     {
       headerName: 'Bezeichnung',

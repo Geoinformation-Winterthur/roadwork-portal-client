@@ -107,6 +107,7 @@ export class ChooseActivityComponent implements OnInit {
       headerName: 'Status',
       field: 'statusLabel',
       sortable: true,
+      minWidth: 230,
       filter: 'agTextColumnFilter',  
       valueGetter: ({ data }) => {
         const status = data?.properties?.status;
@@ -176,7 +177,8 @@ export class ChooseActivityComponent implements OnInit {
       valueGetter: ({ data }) => data?.properties?.roadWorkActivityNo || '',        
       cellRenderer: ({ value }: any) => value || '–',
       sortable: true,
-      filter: true
+      filter: true,
+      sort: 'desc'
     },
     // --- Title/Name column: renders a link to the activity details; tooltip includes section.    
     {
@@ -201,9 +203,10 @@ export class ChooseActivityComponent implements OnInit {
           </a>`;
       },
       sortable: true,
-      filter: true
+      filter: true,
+      flex: 1
     },
-    // --- Involved organizations: flattens involvedUsers to a comma-separated org abbreviation list.
+    /* // --- Involved organizations: flattens involvedUsers to a comma-separated org abbreviation list.
     {
       headerName: 'Mitwirkende',
       field: 'properties', 
@@ -229,7 +232,7 @@ export class ChooseActivityComponent implements OnInit {
       },
       sortable: true,
       filter: true
-    },
+    }, */
     // --- Lead of realization: shows the activity kind (domain-specific label).
     /* {
       headerName: 'Lead Realisierung',

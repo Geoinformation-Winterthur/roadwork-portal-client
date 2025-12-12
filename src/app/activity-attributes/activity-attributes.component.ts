@@ -911,7 +911,7 @@ export class ActivityAttributesComponent implements OnInit {
   getInvolvedOrgsNames(): string[] {
     const result: string[] = [];
     if (this.roadWorkActivityFeature) {
-      for (const involvedUser of this.roadWorkActivityFeature.properties.involvedUsers ?? []) {
+      for (const involvedUser of this.involvedUsers ?? []) {
         const abbr = involvedUser?.organisationalUnit?.abbreviation;
         if (abbr && !result.includes(abbr)) result.push(abbr);
       }
@@ -1174,12 +1174,12 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
-  getSksNo(): string {
+  getSksNo(): number {
     const selectedDate = this.roadWorkActivityFeature?.properties.dateSksPlanned;
     const idx = this.configurationData.plannedDatesSks
                   .findIndex(d => d === selectedDate);
 
-    return this.configurationData.sksNos?.[idx] ?? '—';
+    return this.configurationData.sksNos?.[idx] ?? -1;
   }
 
   /**
@@ -1196,6 +1196,18 @@ export class ActivityAttributesComponent implements OnInit {
     this._updateDueDate();
     this.editActivityMap?.refresh();
     this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
+  }
+
+  onSksPlannedChanged(selectedDate: Date) {
+    const index = this.configurationData.plannedDatesSks.findIndex(
+      d => new Date(d).getTime() === new Date(selectedDate).getTime()
+    );
+
+    if (index >= 0 && this.roadWorkActivityFeature?.properties) {
+      this.roadWorkActivityFeature.properties.sksNo = this.configurationData.sksNos[index];
+    } else if (this.roadWorkActivityFeature?.properties) {
+      this.roadWorkActivityFeature.properties.sksNo = -1;
+    }
   }
 
 }

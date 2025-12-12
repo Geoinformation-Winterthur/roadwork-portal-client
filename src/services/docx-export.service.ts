@@ -66,6 +66,8 @@ type AlignmentTypeValue = (typeof AlignmentType)[keyof typeof AlignmentType];
 const clamp = (n: number, min = 1, max = 10000) =>
   Math.max(min, Math.min(max, Math.round(n)));
 
+const TITLE_PROTOCOL_NAME = "Strategische Koordinationssitzung (SKS)";
+
 @Injectable({ providedIn: 'root' })
 export class DocxWordService {
   constructor(private reportLoaderService: ReportLoaderService,
@@ -136,7 +138,7 @@ export class DocxWordService {
           children: [
             // Left-aligned text
             new TextRun({
-              text: isPreProtocol ? "SKS-Vor-Protokoll" : "Protokoll",
+              text: TITLE_PROTOCOL_NAME + " - " + (isPreProtocol ? "Vor-Protokoll" : "Protokoll"),
             }),                                    
             new TextRun({ text: "\t" }),            
             new TextRun({
@@ -589,12 +591,7 @@ export class DocxWordService {
 
         const comment = (this.reportLoaderService as any)?.roadWorkActivity?.properties?.comment ?? '-';
 
-        let mitwirkende = '-';
-        try {
-          // Optional helper to get names of involved organisations
-          const f = (this.reportLoaderService as any)?.getInvolvedOrgsNames;
-          mitwirkende = typeof f === 'function' ? f.call(this.reportLoaderService) : '-';
-        } catch { /* ignore errors safely */ }
+        const mitwirkende = await this.buildMitwirkendeFromNeeds();
 
         // 4) Prepare table rows for assigned road work needs
         const assigned = this.reportLoaderService?.needsOfActivityService?.assignedRoadWorkNeeds ?? [];
@@ -1438,5 +1435,33 @@ export class DocxWordService {
     return [table];
   }
 
+  private async buildMitwirkendeFromNeeds(): Promise<string> {
+    const rwa = (this.reportLoaderService as any)?.roadWorkActivity;
+    const needUuids: string[] = rwa?.properties?.roadWorkNeedsUuids ?? [];
+
+    if (!needUuids.length) return '-';
+
+    const roadWorkNeeds = await firstValueFrom(
+      this.roadWorkNeedService.getRoadWorkNeeds(needUuids)
+    );
+
+    const orgs = new Set<string>();
+
+    for (const need of roadWorkNeeds ?? []) {
+      const org =
+        need?.properties?.orderer?.organisationalUnit?.abbreviation ||
+        need?.properties?.orderer?.organisationalUnit?.name;
+
+      if (org) {
+        orgs.add(org);
+      }
+    }
+
+    if (orgs.size === 0) {
+      return '-';
+    }
+    
+    return Array.from(orgs).sort().join(', ');
+  }
 
 }

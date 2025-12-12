@@ -49,6 +49,7 @@ export class RoadWorkActivityProperties {
     dateSks?: Date;
     dateSksReal?: Date;
     dateSksPlanned?: Date;
+    sksNo?: number | null;
     dateKap?: Date;
     dateKapReal?: Date;
     dateOks?: Date;

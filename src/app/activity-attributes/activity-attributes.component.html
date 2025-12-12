@@ -78,8 +78,10 @@
                                             <mat-label>Strategische Koord. (SKS)</mat-label>
                                             <input
                                                 matInput
-                                                [value]="getSksNo()"
-                                                readonly
+                                                type="text"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.sksNo"
+                                                placeholder="Sks-Nr"
+                                                [disabled]="true"
                                             />
                                         </mat-form-field>
                                         <!-- <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
@@ -1329,8 +1331,9 @@
                                                         <mat-label>Strategische Koord. (SKS)</mat-label>
                                                         <mat-select
                                                             [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
+                                                            (selectionChange)="onSksPlannedChanged($event.value)"
                                                             [formControl]="dateSksPlannedControl"
-                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">                                                            
                                                             <mat-option
                                                                 *ngFor="let plannedDateSks of configurationData.plannedDatesSks; let i = index"
                                                                 [value]="plannedDateSks">

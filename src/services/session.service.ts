@@ -9,8 +9,9 @@ import { environment } from 'src/environments/environment';
 const BASE_URL = `${environment.apiUrl}/Session`;
 
 export interface CreateSessionDto {
-  plannedDate: string;               // 'YYYY-MM-DD'
-  reportType: string;
+  sksNo: number;
+  plannedDateForBackend?: string;               // 'DD.MM.YYYY'
+  reportType?: string;
   acceptance1?: string;
   attachments?: string;
   miscItems?: string;
@@ -59,6 +60,7 @@ export class SessionService {
       acceptance1?: string;
       miscItems?: string;
       plannedDate?: string | null;
+      palnnedDateForBackend?: string | null;
       reportType?: string | null; 
     }
   ) {
