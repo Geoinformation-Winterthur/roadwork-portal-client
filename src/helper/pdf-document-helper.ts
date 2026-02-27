@@ -74,7 +74,7 @@ export class PdfDocumentHelper {
 
     doc.setFontSize(TITLE_FONT_SIZE);
     doc.setFont("helvetica", "bold");
-    doc.text("Strategische Koordinationssitzung (SKS) - Vor-Protokoll", MARGIN_X, 35);
+    doc.text("SKS (Strategische Koordinationssitzung) - Vor-Protokoll", MARGIN_X, 35);
     doc.setFont("helvetica", "normal");
 
     doc.line(MARGIN_X, HEADER_Y + 28, pageWidth - MARGIN_X, HEADER_Y + 28);

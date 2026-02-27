@@ -92,7 +92,7 @@ interface SessionChild {
 const LS_KEY_SELECTED_SESSION = 'sks.selectedSession';
 const LS_KEY_SELECTED_PROJECT = 'sks.selectedProject';
 
-const TITLE_PROTOCOL_NAME = "Strategische Koordinationssitzung (SKS)";
+const TITLE_PROTOCOL_NAME = "SKS (Strategische Koordinationssitzung)";
 
 @Component({
   selector: 'app-sessions',

@@ -66,7 +66,7 @@ type AlignmentTypeValue = (typeof AlignmentType)[keyof typeof AlignmentType];
 const clamp = (n: number, min = 1, max = 10000) =>
   Math.max(min, Math.min(max, Math.round(n)));
 
-const TITLE_PROTOCOL_NAME = "Strategische Koordinationssitzung (SKS)";
+const TITLE_PROTOCOL_NAME = "SKS (Strategische Koordinationssitzung)";
 
 @Injectable({ providedIn: 'root' })
 export class DocxWordService {
