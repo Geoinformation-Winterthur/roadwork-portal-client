@@ -1,0 +1,55 @@
+<div style="margin: 0; margin-left: 2em; margin-right: 1em;">
+
+  <div style="margin-bottom: 1em;">
+    <h2 style="margin-bottom: .2rem;">
+      Bauvorhaben - Analysen ({{ filteredProjectCount }} / {{ roadWorkActivities.length }})
+    </h2>
+    <span *ngIf="missingTimelineDatesCount > 0">
+      <b>{{ filteredProjectCount - missingTimelineDatesCount }}</b> Projekte
+      werden auf der Zeitlinie angezeigt, weil sie Baubeginn und Bauende haben.
+    </span>
+  </div>
+
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+
+  <div style="display: grid; grid-template-rows: 25vh 50vh; gap: 2.5rem;">
+    <div #gridContainer>
+      <ag-grid-angular
+        class="ag-theme-alpine"
+        rowSelection="single"
+        [rowData]="roadWorkActivities"
+        [columnDefs]="roadworkActivitiesColDefs"
+        [defaultColDef]="defaultColDef"
+        [animateRows]="true"
+        [rowHeight]="28"
+        [headerHeight]="28"
+        style="width: 100%; height: 100%;"
+        (gridReady)="onGridReady($event)"
+        (selectionChanged)="onSelectionChanged($event)"
+        (filterChanged)="onFilterChanged($event)"
+        (sortChanged)="onSortChanged($event)">
+      </ag-grid-angular>
+    </div>
+
+    <div>
+      <h3 style="margin: 0 0 .35rem 0;">
+        Projekte auf der Zeitlinie
+        <span *ngIf="selectedProject?.properties?.name">
+          — {{ selectedProject?.properties?.name }}
+        </span>
+      </h3>
+
+      <div style="font-size: 13px; color: #666; margin-bottom: .4rem;">
+        <span *ngIf="missingTimelineDatesCount === 0">
+          Alle gefilterten Projekte werden auf der Zeitlinie angezeigt.
+        </span>
+      </div>
+
+      <div
+        #timelineChart
+        style="width: 100%; height: calc(100% - 2.6rem); min-height: 380px; border: 1px solid #ddd; background: #fff;">
+      </div>
+    </div>
+
+  </div>
+</div>

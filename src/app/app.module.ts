@@ -74,6 +74,7 @@ import { EventsAtActivityComponent } from './events-at-activity/events-at-activi
 import { OrganisationsComponent } from './organisations/organisations.component';
 import { StatusChipComponent } from './status-chip/status-chip.component';
 import { DataexportComponent } from './dataexport/dataexport.component';
+import { AnalyzesComponent } from './analyzes/analyzes.component';
 import { SessionsComponent } from './sessions/sessions.component';
 import { DeleteNeedDialogComponent } from './delete-need-dialog/delete-need-dialog.component';
 import { DeleteActivityDialogComponent } from './delete-activity-dialog/delete-activity-dialog.component';
@@ -90,6 +91,7 @@ import { NewSessionDialogComponent } from './sessions/new-session-dialog.compone
 import { PreventTypingDirective } from './directives/prevent-typing.directive';
 
 import { DocxWordService } from 'src/services/docx-export.service';
+
 
  
 export function getToken(){
@@ -143,6 +145,7 @@ export const CH_DATE_FORMATS = {
      OrganisationsComponent,
      StatusChipComponent,
      DataexportComponent,
+     AnalyzesComponent,
      SessionsComponent,
      DeleteNeedDialogComponent,
      DeleteActivityDialogComponent,

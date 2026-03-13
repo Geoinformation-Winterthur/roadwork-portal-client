@@ -229,6 +229,10 @@ export class UserService {
     } else if (functionDesc === "sessions") {
       if (role === "administrator" ||
         role === "territorymanager")
+        return true;    
+    } else if (functionDesc === "analyzes") {
+      if (role === "administrator" ||
+        role === "territorymanager")
         return true;
     }
     

@@ -262,9 +262,9 @@ export class SessionsComponent implements OnInit {
   detailsForm = this.fb.group({
     plannedDate: [null, [Validators.required]],
     reportType: ['', [Validators.required]],
-    acceptance1: ['', [Validators.maxLength(1000)]],
-    attachments: ['', [Validators.maxLength(1000)]],
-    miscItems: ['', [Validators.maxLength(1000)]],
+    acceptance1: ['', [Validators.maxLength(10000)]],
+    attachments: ['', [Validators.maxLength(10000)]],
+    miscItems: ['', [Validators.maxLength(10000)]],
   });
 
   selectedNode: IRowNode | null = null;
