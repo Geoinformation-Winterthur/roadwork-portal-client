@@ -1099,16 +1099,13 @@ export class DocxWordService {
       this.pBold('4. Nächste Sitzungen'),
 
       this.pBold('SKS'),
-      this.p(`Die nächste SKS findet voraussichtlich am ${nextSKSDate} statt.`),
-      this.pItalic('Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)'),
+      this.p(`Die nächste SKS findet am ${nextSKSDate} statt.`),      
 
       this.pBold('OKS'),
-      this.p(`Die nächste OKS findet voraussichtlich am ${nextOKSDate} statt.`),
-      this.pItalic('Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)'),
+      this.p(`Die nächste OKS findet am ${nextOKSDate} statt.`),      
 
       this.pBold('KAP'),
-      this.p(`Die nächste KAP findet voraussichtlich am ${nextKAPDate} statt.`),
-      this.pItalic('Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B012 PION5)'),
+      this.p(`Die nächste KAP findet am ${nextKAPDate} statt.`),      
 
       this.smallGap(),
       this.p('Für das Protokoll'),
