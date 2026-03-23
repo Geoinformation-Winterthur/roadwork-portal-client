@@ -1303,19 +1303,7 @@
                                                             Sitzung konnte nicht ermittelt werden
                                                         </span>
                                                     </b>
-                                                </div>
-                                                <form>
-                                                    <mat-form-field style="margin:10px;">
-                                                        <mat-label>GL TBA</mat-label>
-                                                        <input matInput name="dateGlTba"
-                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateGlTba"
-                                                            [matDatepicker]="dateGlTba"
-                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-datepicker #dateGlTba></mat-datepicker>
-                                                        <mat-datepicker-toggle matSuffix
-                                                            [for]="dateGlTba"></mat-datepicker-toggle>
-                                                    </mat-form-field>
-                                                </form>
+                                                </div>                                               
                                             </div>
                                         </mat-card-content>
                                     </mat-card>
