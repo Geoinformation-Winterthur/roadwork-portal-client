@@ -433,7 +433,7 @@ export class SessionsComponent implements OnInit {
       cellClass: 'ag-right-aligned-cell',
     },
     {
-      headerName: 'E-Mail-Verteiler',
+      headerName: 'Verteiler',
       field: 'distributionUserIds',
       minWidth: 140,
       valueGetter: p => {
