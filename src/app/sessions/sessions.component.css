@@ -146,3 +146,16 @@ small {
   opacity: 0.7;
   margin-top: 0.25rem;
 }
+
+.session-attrs .mat-form-field {
+  font-size: 13px;
+}
+
+.session-attrs .mat-form-field-label {
+  font-size: 13px !important;
+}
+
+.session-attrs input.mat-input-element,
+.session-attrs textarea.mat-input-element {
+  font-size: 13px;
+}

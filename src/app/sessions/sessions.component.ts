@@ -40,14 +40,14 @@ import { NewSessionDialogComponent } from './new-session-dialog.component';
 import { DocxWordService } from '../../services/docx-export.service';
 
 // Only those docx symbols actually used here
-import { Paragraph, AlignmentType, BorderStyle, TextRun, Table } from 'docx';
+import { Paragraph, AlignmentType, BorderStyle, Table } from 'docx';
 import { environment } from 'src/environments/environment';
 
 /** Top-level row model representing one session. */
 interface Session {
   id: string;
   reportType: string;
-  sessionName: string;  
+  sessionName: string;
   sessionCreator: string;
   prevSessionDate: string;
   sessionDate: string;
@@ -58,6 +58,11 @@ interface Session {
   plannedDate?: Date;
   sksNo?: number;
   errorMessage?: string;
+
+  location?: string;
+  timeWindow?: string;
+  chairperson?: string;
+  minuteTaker?: string;
 
   /** Legacy combined list (projects + people) – still used for report generation. */
   children: SessionChild[];
@@ -89,6 +94,7 @@ interface SessionChild {
 
   roadWorkActivityNo?: string | number;
 }
+
 const LS_KEY_SELECTED_SESSION = 'sks.selectedSession';
 const LS_KEY_SELECTED_PROJECT = 'sks.selectedProject';
 
@@ -169,20 +175,36 @@ export class SessionsComponent implements OnInit {
       )
       .subscribe(values => {
         if (!this.selectedNode) return;
-        // Update row data
+
         Object.assign(this.selectedNode.data, {
           acceptance1: values.acceptance1 ?? '',
           attachments: values.attachments ?? '',
           miscItems: values.miscItems ?? '',
           plannedDate: values.plannedDate ?? '',
           reportType: values.reportType ?? '',
+          location: values.location ?? '',
+          timeWindow: values.timeWindow ?? '',
+          chairperson: values.chairperson ?? '',
+          minuteTaker: values.minuteTaker ?? '',
           presentUserIds: values.presentUserIds ?? '',
           distributionUserIds: values.distributionUserIds ?? '',
         });
 
         this.sessionsGrid.api.refreshCells({
           rowNodes: [this.selectedNode],
-          columns: ['acceptance1', 'attachments', 'miscItems', 'plannedDate', 'reportType', 'presentUserIds', 'distributionUserIds'],
+          columns: [
+            'acceptance1',
+            'attachments',
+            'miscItems',
+            'plannedDate',
+            'reportType',
+            'location',
+            'timeWindow',
+            'chairperson',
+            'minuteTaker',
+            'presentUserIds',
+            'distributionUserIds'
+          ],
           force: true,
         });
       });
@@ -247,12 +269,12 @@ export class SessionsComponent implements OnInit {
       const idm = this.normalizeEmail(p.mailAddress ?? p.id);
 
       const isPresent = presentProvided
-        ? presentSet.has(idm)                              // from CSV
-        : (p.isPresent === true || p.shouldBePresent === true); // fallback to defaults
+        ? presentSet.has(idm)
+        : (p.isPresent === true || p.shouldBePresent === true);
 
       const isDistributionList = distributionProvided
-        ? distributionSet.has(idm)                         // from CSV
-        : (p.isDistributionList === true);                 // fallback to defaults
+        ? distributionSet.has(idm)
+        : (p.isDistributionList === true);
 
       return { ...p, isPresent, isDistributionList } as SessionChild;
     });
@@ -262,6 +284,10 @@ export class SessionsComponent implements OnInit {
   detailsForm = this.fb.group({
     plannedDate: [null, [Validators.required]],
     reportType: ['', [Validators.required]],
+    location: ['', [Validators.maxLength(500)]],
+    timeWindow: ['', [Validators.maxLength(100)]],
+    chairperson: ['', [Validators.maxLength(300)]],
+    minuteTaker: ['', [Validators.maxLength(300)]],
     acceptance1: ['', [Validators.maxLength(10000)]],
     attachments: ['', [Validators.maxLength(10000)]],
     miscItems: ['', [Validators.maxLength(10000)]],
@@ -286,7 +312,7 @@ export class SessionsComponent implements OnInit {
       maxWidth: 200,
       flex: 1,
       sort: 'desc',
-      sortingOrder: ['desc', 'asc', null]   // opcjonalnie
+      sortingOrder: ['desc', 'asc', null]
     },
     { headerName: 'Bauvorhaben', field: 'name', flex: 1 },
     {
@@ -305,7 +331,7 @@ export class SessionsComponent implements OnInit {
             Bauvorhaben anzeigen
           </a>
         `;
-      },      
+      },
     }
   ];
 
@@ -320,7 +346,6 @@ export class SessionsComponent implements OnInit {
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
       valueSetter: params => {
-        // Mark grid dirty when user toggles checkbox
         const v = params.newValue === true || params.newValue === 'true';
         params.data.isPresent = v;
         this.peopleDirty = true;
@@ -344,7 +369,6 @@ export class SessionsComponent implements OnInit {
       cellRenderer: 'agCheckboxCellRenderer',
       cellEditor: 'agCheckboxCellEditor',
       valueSetter: params => {
-        // Mark grid dirty when user toggles checkbox
         const v = params.newValue === true || params.newValue === 'true';
         params.data.isDistributionList = v;
         this.peopleDirty = true;
@@ -387,7 +411,6 @@ export class SessionsComponent implements OnInit {
       filter: 'agNumberColumnFilter',
       sort: 'desc'
     },
-    /* { headerName: 'Sitzung', field: 'sessionName', minWidth: 220, flex: 1 }, */
     {
       headerName: 'Datum',
       field: 'plannedDate',
@@ -453,7 +476,6 @@ export class SessionsComponent implements OnInit {
         const btn = document.createElement('button');
         btn.textContent = 'Bericht anzeigen';
 
-        // Disable button if the row has no valid id
         if (!params.data?.id) {
           btn.disabled = true;
           btn.style.opacity = '0.5';
@@ -464,7 +486,7 @@ export class SessionsComponent implements OnInit {
             const prevSessionDate = this.getPreviousSessionDateByPlannedDateAsc(sel ?? null) ?? this.getPreviousSessionDateBySksNo(sel ?? null);
             const nextSessionDate = this.getNextSessionDateByPlannedDateAsc(sel ?? null);
             this.generateSessionPDF(
-              params.data.reportType,              
+              params.data.reportType,
               params.data.children,
               {
                 'sksNo': String(this.selectedNode?.data.sksNo),
@@ -472,6 +494,11 @@ export class SessionsComponent implements OnInit {
                 'attachments': this.selectedNode?.data.attachments,
                 'miscItems': this.selectedNode?.data.miscItems,
                 'plannedDate': this.formatDate(this.selectedNode?.data.plannedDate),
+                'reportType': this.selectedNode?.data.reportType,
+                'location': this.selectedNode?.data.location,
+                'timeWindow': this.selectedNode?.data.timeWindow,
+                'chairperson': this.selectedNode?.data.chairperson,
+                'minuteTaker': this.selectedNode?.data.minuteTaker,
                 'isPreProtocol': this.SESSION_TYPE_TO_DB[this.selectedNode?.data.reportType] === 'PRE_PROTOCOL',
                 'prevSessionDate': prevSessionDate,
                 'nextSessionDate': nextSessionDate
@@ -486,7 +513,6 @@ export class SessionsComponent implements OnInit {
       sortable: false,
     },
     {
-      // Hidden helper column feeding the quick filter with project names too.
       headerName: 'Search helper',
       colId: 'q',
       hide: true,
@@ -502,7 +528,7 @@ export class SessionsComponent implements OnInit {
           .map((c: any) => c?.name ?? '')
           .filter(Boolean)
           .join(' ');
-        
+
         const roadworkActivitiesNos = projects
           .map((c: any) => String(c?.roadWorkActivityNo) ?? '')
           .filter(Boolean)
@@ -510,9 +536,13 @@ export class SessionsComponent implements OnInit {
 
         return [
           d.reportType,
-          d.sessionName,          
+          d.sessionName,
           d.sessionCreator,
           d.sessionDate,
+          d.location,
+          d.timeWindow,
+          d.chairperson,
+          d.minuteTaker,
           projectNames,
           roadworkActivitiesNos
         ]
@@ -525,59 +555,51 @@ export class SessionsComponent implements OnInit {
   ngOnInit(): void {
     this.isDataLoading = true;
 
-    // Helper: normalize any Date/string to YYYY-MM-DD for joining
-    const toIsoDateOnly = (d?: Date | string | null): string => {
-      if (!d) return '';
-      if (d instanceof Date) return d.toISOString().slice(0, 10);
-      return new Date(d).toISOString().slice(0, 10);
-    };
-
     this.sessionService.getAll().pipe(
-        map((rows) => {
+      map((rows) => {
 
-          const now = new Date();
+        const now = new Date();
 
-          // --- OKS: find the next date
-          const futureOKS = rows
-            .filter(r => r.dateType?.toUpperCase() === 'OKS' && r.plannedDate && r.plannedDate >= now)
-            .sort((a, b) => a.plannedDate.getTime() - b.plannedDate.getTime());
+        const futureOKS = rows
+          .filter(r => r.dateType?.toUpperCase() === 'OKS' && r.plannedDate && r.plannedDate >= now)
+          .sort((a, b) => a.plannedDate.getTime() - b.plannedDate.getTime());
 
-          this.nextSessionDateOKS = this.formatDate(futureOKS[0]?.plannedDate ?? null);
+        this.nextSessionDateOKS = this.formatDate(futureOKS[0]?.plannedDate ?? null);
 
-          // --- KAP: find the next date
-          const futureKAP = rows
-            .filter(r => r.dateType?.toUpperCase() === 'KAP' && r.plannedDate && r.plannedDate >= now)
-            .sort((a, b) => a.plannedDate.getTime() - b.plannedDate.getTime());
+        const futureKAP = rows
+          .filter(r => r.dateType?.toUpperCase() === 'KAP' && r.plannedDate && r.plannedDate >= now)
+          .sort((a, b) => a.plannedDate.getTime() - b.plannedDate.getTime());
 
-          this.nextSessionDateKAP = this.formatDate(futureKAP[0]?.plannedDate ?? null);
+        this.nextSessionDateKAP = this.formatDate(futureKAP[0]?.plannedDate ?? null);
 
-          // --- SKS
-          this.sessionsData = rows
-            .filter(row => row.dateType?.toUpperCase() === 'SKS')
-            .map((row, idx) => ({
-              id: String(idx + 1),
-              reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
-              sessionName: 'Sitzung ' + (row.plannedDate?.getMonth() + 1) + '-' + row.plannedDate?.getFullYear(),
-              sessionDate: row.plannedDate?.toString() ?? '',
-              plannedDate: row.plannedDate,
-              sksNo: row.sksNo,
-              sessionCreator: row.sessionCreator ?? '',
-              acceptance1: row.acceptance1 || '-',
-              attachments: row.attachments || '-',
-              miscItems: row.miscItems || '-',
-              errorMessage: row.errorMessage || '',
-              presentUserIds: row.presentUserIds || '',
-              distributionUserIds: row.distributionUserIds || '',
-              // Will be filled below
-              childrenPresent: [],
-              childrenDistribution: [],
-              childrenProjects: [],
-              children: []
-            }));
-          return this.sessionsData;
+        this.sessionsData = rows
+          .filter(row => row.dateType?.toUpperCase() === 'SKS')
+          .map((row, idx) => ({
+            id: String(idx + 1),
+            reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
+            sessionName: 'Sitzung ' + row.sksNo,
+            sessionDate: row.plannedDate?.toString() ?? '',
+            plannedDate: row.plannedDate,
+            sksNo: row.sksNo,
+            sessionCreator: row.sessionCreator ?? '',
+            acceptance1: row.acceptance1 || '-',
+            attachments: row.attachments || '-',
+            miscItems: row.miscItems || '-',
+            errorMessage: row.errorMessage || '',
+            location: row.location || '',
+            timeWindow: row.timeWindow || '',
+            chairperson: row.chairperson || '',
+            minuteTaker: row.minuteTaker || '',
+            presentUserIds: row.presentUserIds || '',
+            distributionUserIds: row.distributionUserIds || '',
+            childrenPresent: [],
+            childrenDistribution: [],
+            childrenProjects: [],
+            children: []
+          }));
+        return this.sessionsData;
       }),
 
-      // Step 2: Fetch activities and users, then enrich sessions
       switchMap((sessions) => {
         if (!sessions || sessions.length === 0) return of([]);
 
@@ -586,7 +608,6 @@ export class SessionsComponent implements OnInit {
           users: this.userService.getAllUsers()
         }).pipe(
           map(({ activities, users }) => {
-            // Group activities by dateSksPlanned (YYYY-MM-DD)
             const actsBySKsNo = new Map<string, RoadWorkActivityFeature[]>();
             for (const a of activities ?? []) {
               const key = String(a?.properties?.sksNo);
@@ -594,59 +615,51 @@ export class SessionsComponent implements OnInit {
               actsBySKsNo.get(key)!.push(a);
             }
 
-            // Build base people once; id/mailAddress = email; flags will be set from CSV
             const basePeople: SessionChild[] = (users ?? []).map((user) => ({
-              id: user.mailAddress,                                  // key = email
+              id: user.mailAddress,
               name: `${user.firstName} ${user.lastName}`,
               isRoadworkProject: false,
               department: user.organisationalUnit?.abbreviation ?? '',
               workArea: user.workArea ?? '',
               mailAddress: user.mailAddress ?? '',
-              // keep default flags exactly as before (used when CSV is empty)
               isPresent: user.isParticipantList === true,
               shouldBePresent: user.isParticipantList === true,
               isDistributionList: user.isDistributionList === true
             }));
 
-            // Track matched activity UUIDs to later build the "Unbekannt" session
             const matchedActivityIds = new Set<string>();
 
-            // Enrich each real session with projects and users+flags from CSV
             const enriched = sessions.map(s => {
               const key = String(s?.sksNo);
               const acts = actsBySKsNo.get(key) ?? [];
 
-              // Mark matched activities
               for (const act of acts) {
                 const uuid = act?.properties?.uuid;
                 if (uuid) matchedActivityIds.add(uuid);
               }
 
-              // Projects linked by date
               const childrenProjects: SessionChild[] = acts.map(act => {
                 const { type, section, name } = act.properties;
-    
+
                 const joinedName = [type, name, section]
-                    .filter((v) => v && String(v).trim().length > 0)
-                    .join('/ ');
+                  .filter((v) => v && String(v).trim().length > 0)
+                  .join('/ ');
 
-                  return {
-                    id: String(act.properties.uuid),
-                    name: joinedName,      
-                    roadWorkActivityNo: act.properties.roadWorkActivityNo,
-                    isRoadworkProject: true,
-                    sessionComment1: act.properties.sessionComment1,
-                    sessionComment2: act.properties.sessionComment2,
-                    notAssignedNeeds: [],                    
-                    isAggloprog: act.properties.isAggloprog || false,
-                    isParticip: act.properties.isParticip || false,
-                    isPlanCirc: act.properties.isPlanCirc || false,
-                    isTrafficRegulationRequired: act.properties.isTrafficRegulationRequired || false
-                  };
-                }
-              );
+                return {
+                  id: String(act.properties.uuid),
+                  name: joinedName,
+                  roadWorkActivityNo: act.properties.roadWorkActivityNo,
+                  isRoadworkProject: true,
+                  sessionComment1: act.properties.sessionComment1,
+                  sessionComment2: act.properties.sessionComment2,
+                  notAssignedNeeds: [],
+                  isAggloprog: act.properties.isAggloprog || false,
+                  isParticip: act.properties.isParticip || false,
+                  isPlanCirc: act.properties.isPlanCirc || false,
+                  isTrafficRegulationRequired: act.properties.isTrafficRegulationRequired || false
+                } as any;
+              });
 
-              // Unique people by email (base list)
               const uniq = new Map<string, SessionChild>();
               for (const p of basePeople) {
                 const k = this.normalizeEmail(p.mailAddress ?? p.id);
@@ -654,48 +667,43 @@ export class SessionsComponent implements OnInit {
               }
               const allPeopleBase = Array.from(uniq.values());
 
-              // Apply CSV flags from this session row
               const allPeopleWithFlags = this.applyCsvFlags(
                 allPeopleBase,
                 s.presentUserIds,
                 s.distributionUserIds
               );
 
-              // For the legacy combined "children" keep projects + all people
               const children = [...childrenProjects, ...allPeopleWithFlags];
 
-              // Also keep per-grid source arrays (we show all people in both grids)
               return {
                 ...s,
                 childrenProjects,
-                childrenPresent: allPeopleWithFlags,       // grid uses isPresent flag
-                childrenDistribution: allPeopleWithFlags,  // grid uses isDistributionList flag
+                childrenPresent: allPeopleWithFlags,
+                childrenDistribution: allPeopleWithFlags,
                 children,
               };
             });
 
-            // Build dummy "Unbekannt" session for activities not matched by date
             const unmatchedActs = (activities ?? []).filter(
               a => a?.properties?.uuid && !matchedActivityIds.has(a.properties.uuid)
             );
 
             if (unmatchedActs.length > 0) {
               const unknownProjects: SessionChild[] = unmatchedActs.map(act => {
-              const { type, section, name } = act.properties;
-              
-              const joinedName = [type, name, section]
-                .filter(v => v && String(v).trim().length > 0)
-                .join('/ ');
+                const { type, section, name } = act.properties;
 
-              return {
-                id: String(act.properties.uuid),
-                name: joinedName,
-                isRoadworkProject: true,
-                roadWorkActivityNo: act.properties.roadWorkActivityNo,
-              };
-            });
+                const joinedName = [type, name, section]
+                  .filter(v => v && String(v).trim().length > 0)
+                  .join('/ ');
 
-              // Reuse base people; unknown session has empty CSV (no pre-selections)
+                return {
+                  id: String(act.properties.uuid),
+                  name: joinedName,
+                  isRoadworkProject: true,
+                  roadWorkActivityNo: act.properties.roadWorkActivityNo,
+                };
+              });
+
               const uniq = new Map<string, SessionChild>();
               for (const p of basePeople) {
                 const k = this.normalizeEmail(p.mailAddress ?? p.id);
@@ -707,7 +715,7 @@ export class SessionsComponent implements OnInit {
               const unknownSession: Session = {
                 id: null as any,
                 reportType: '-',
-                sessionName: 'Sitzung Unbekannt',                
+                sessionName: 'Sitzung Unbekannt',
                 prevSessionDate: '',
                 sessionDate: '',
                 nextSessionDate: '',
@@ -718,6 +726,10 @@ export class SessionsComponent implements OnInit {
                 attachments: '-',
                 miscItems: '-',
                 errorMessage: '',
+                location: '',
+                timeWindow: '',
+                chairperson: '',
+                minuteTaker: '',
                 childrenProjects: unknownProjects,
                 childrenPresent: allPeopleUnknown,
                 childrenDistribution: allPeopleUnknown,
@@ -729,7 +741,6 @@ export class SessionsComponent implements OnInit {
               enriched.push(unknownSession);
             }
 
-            // Keep "Unbekannt" at the end; otherwise sort by date desc
             const sorted = enriched.sort((a, b) => {
               if (a.id === 'unbekannt') return 1;
               if (b.id === 'unbekannt') return -1;
@@ -745,7 +756,6 @@ export class SessionsComponent implements OnInit {
       })
     ).subscribe({
       next: (enrichedSessions) => {
-        // Store enriched sessions directly in sessionsData
         this.sessionsData = enrichedSessions ?? [];
 
         setTimeout(() => {
@@ -756,7 +766,6 @@ export class SessionsComponent implements OnInit {
 
           const api = this.sessionsGrid.api;
 
-          // Restore selection from localStorage
           let restored = false;
           try {
             const raw = localStorage.getItem(LS_KEY_SELECTED_SESSION);
@@ -772,10 +781,8 @@ export class SessionsComponent implements OnInit {
               }
             }
           } catch {
-            // ignore parse errors
           }
 
-          // Nothing to restore - select first row like before
           if (!restored) {
             const first = api.getDisplayedRowAtIndex(0);
             first?.setSelected(true);
@@ -783,7 +790,6 @@ export class SessionsComponent implements OnInit {
 
           this.isDataLoading = false;
         }, 0);
-
 
         this.isDataLoading = false;
       },
@@ -810,20 +816,30 @@ export class SessionsComponent implements OnInit {
     this.peopleDirty = false;
     const nodes = this.sessionsGrid?.api?.getSelectedNodes?.() ?? [];
     this.selectedNode = nodes[0] ?? null;
+    this.selectedSession = this.selectedNode?.data ?? null;
 
     if (!this.selectedNode) {
       this.projectRows = [];
       this.presentUserRows = [];
       this.distributionUserRows = [];
 
-      this.detailsForm.reset({ acceptance1: '', attachments: '', miscItems: '' });
+      this.detailsForm.reset({
+        plannedDate: null,
+        reportType: '',
+        location: '',
+        timeWindow: '',
+        chairperson: '',
+        minuteTaker: '',
+        acceptance1: '',
+        attachments: '',
+        miscItems: ''
+      });
       this.detailsForm.disable({ emitEvent: false });
       return;
     }
 
     const session: Session = this.selectedNode.data;
 
-    // Persist selected session in localStorage (by SKS number)
     if (session?.sksNo != null) {
       localStorage.setItem(
         LS_KEY_SELECTED_SESSION,
@@ -831,12 +847,15 @@ export class SessionsComponent implements OnInit {
       );
     }
 
-    // Enable and patch the details form with values from the selected session
     this.detailsForm.enable({ emitEvent: false });
     this.detailsForm.patchValue(
       {
         plannedDate: session?.plannedDate ?? null,
         reportType: session?.reportType ?? '',
+        location: session?.location ?? '',
+        timeWindow: session?.timeWindow ?? '',
+        chairperson: session?.chairperson ?? '',
+        minuteTaker: session?.minuteTaker ?? '',
         acceptance1: session?.acceptance1 ?? '',
         attachments: session?.attachments ?? '',
         miscItems: session?.miscItems ?? '',
@@ -844,8 +863,6 @@ export class SessionsComponent implements OnInit {
       { emitEvent: false }
     );
 
-    // Push prebuilt lists into the child grids
-    // We show full people list in both grids; each grid edits its own flag.
     this.projectRows = session?.childrenProjects ?? [];
     this.presentUserRows = session?.childrenPresent ?? [];
     this.distributionUserRows = session?.childrenDistribution ?? [];
@@ -874,14 +891,14 @@ export class SessionsComponent implements OnInit {
    * Report generation (DOCX).
    */
   async generateSessionPDF(
-    reportType: string,    
+    reportType: string,
     children: any[],
     session: any
   ): Promise<void> {
     this.isDataLoading = true;
 
     try {
-      await this.downloadWord(children, reportType, session);      
+      await this.downloadWord(children, reportType, session);
     } catch (error) {
       this.snckBar.open('Fehler beim Generieren des Berichts.', '', { duration: 4000 });
       console.log(error);
@@ -890,17 +907,14 @@ export class SessionsComponent implements OnInit {
     }
   }
 
-  // Counts only rows with isPresent === true
   getPresentListCount(rows: SessionChild[] = []): number {
     return rows.reduce((n, r) => n + (r.isPresent === true ? 1 : 0), 0);
   }
 
-  // Counts only rows with isDistributionList === true
   getDistributionListCount(rows: SessionChild[] = []): number {
     return rows.reduce((n, r) => n + (r.isDistributionList === true ? 1 : 0), 0);
   }
 
-  // Call this after user clicks "Speichern"
   saveDetails(): void {
     const session = this.selectedNode?.data;
     if (!session || !session.id || this.detailsForm.invalid) return;
@@ -910,17 +924,33 @@ export class SessionsComponent implements OnInit {
     const patch = {
       plannedDateForBackend: this.formatDate(this.detailsForm.value.plannedDate),
       plannedDate: this.detailsForm.value.plannedDate,
-      reportType:  this.SESSION_TYPE_TO_DB[uiLabel] ?? null,
+      reportType: this.SESSION_TYPE_TO_DB[uiLabel] ?? null,
+      location: this.detailsForm.value.location ?? '',
+      timeWindow: this.detailsForm.value.timeWindow ?? '',
+      chairperson: this.detailsForm.value.chairperson ?? '',
+      minuteTaker: this.detailsForm.value.minuteTaker ?? '',
       attachments: this.detailsForm.value.attachments ?? '',
       acceptance1: this.detailsForm.value.acceptance1 ?? '',
-      miscItems:   this.detailsForm.value.miscItems ?? ''      
+      miscItems: this.detailsForm.value.miscItems ?? ''
     };
 
     Object.assign(session, { ...patch, reportType: uiLabel });
 
     this.sessionsGrid?.api?.refreshCells?.({
       rowNodes: [this.selectedNode!],
-      columns: ['acceptance1', 'attachments', 'miscItems', 'plannedDate', 'reportType', 'presentUserIds', 'distributionUserIds'],
+      columns: [
+        'acceptance1',
+        'attachments',
+        'miscItems',
+        'plannedDate',
+        'reportType',
+        'location',
+        'timeWindow',
+        'chairperson',
+        'minuteTaker',
+        'presentUserIds',
+        'distributionUserIds'
+      ],
       force: true
     });
 
@@ -943,20 +973,16 @@ export class SessionsComponent implements OnInit {
     });
   }
 
-  // Save CSV that contains mailAddress (user id) based on current checkboxes
   savePeopleAsCsv(): void {
     const session = this.selectedNode?.data;
     if (!session?.sksNo) return;
 
-    // Read current arrays shown in grids (full people list in each grid)
     const presentRows = this.presentUserRows ?? [];
     const distributionRows = this.distributionUserRows ?? [];
 
-    // Build CSV payloads from mailAddress (id)
     const presentCsv = this.usersToCsvIdm(presentRows, 'isPresent');
     const distributionCsv = this.usersToCsvIdm(distributionRows, 'isDistributionList');
 
-    // Optimistic UI: update the master row cells immediately
     session.presentUserIds = presentCsv;
     session.distributionUserIds = distributionCsv;
     this.sessionsGrid?.api?.refreshCells?.({
@@ -965,7 +991,6 @@ export class SessionsComponent implements OnInit {
       force: true
     });
 
-    // Persist
     this.isDataLoading = true;
     this.sessionService.updateSessionUsers(session.sksNo, presentCsv, distributionCsv).pipe(
       finalize(() => this.isDataLoading = false)
@@ -986,23 +1011,19 @@ export class SessionsComponent implements OnInit {
       });
   }
 
-  // Open dialog and create session
   openNewSessionDialog(): void {
-
-    // pass current sessions to dialog
-    const ref = this.dialog.open(NewSessionDialogComponent, { 
+    const ref = this.dialog.open(NewSessionDialogComponent, {
       width: '640px',
-      data: { sessions: this.sessionsData }   
+      data: { sessions: this.sessionsData }
     });
 
     ref.afterClosed().subscribe(payload => {
-      if (!payload) return;  // user clicked "Cancel"
+      if (!payload) return;
 
       const newSksNo = payload.sksNo;
 
       this.isDataLoading = true;
 
-      // Now create session with only SKS number
       this.sessionService.createSession({
         sksNo: newSksNo
       })
@@ -1010,16 +1031,19 @@ export class SessionsComponent implements OnInit {
       .subscribe({
         next: (created) => {
 
-          // Build new row for the grid. Backend returns at least sksNo.
           const sessionRow = {
             id: this.sessionsData.length + 1,
             sks_no: created.sksNo,
-            reportType: '-',                        // default, backend may override
-            sessionName: 'Sitzung ' + newSksNo,     // simple label
+            reportType: '-',
+            sessionName: 'Sitzung ' + newSksNo,
             sessionDate: '',
-            plannedDateForBackend: '',            
+            plannedDateForBackend: '',
             sksNo: newSksNo,
             sessionCreator: '',
+            location: '',
+            timeWindow: '',
+            chairperson: '',
+            minuteTaker: '',
             acceptance1: '-',
             attachments: '-',
             miscItems: '-',
@@ -1032,10 +1056,8 @@ export class SessionsComponent implements OnInit {
             children: []
           };
 
-          // Insert into grid
           this.sessionsData = [sessionRow, ...this.sessionsData];
 
-          // Refresh + select new row
           setTimeout(() => {
             this.sessionsGrid?.api?.setRowData(this.sessionsData);
             const idx = this.sessionsData.findIndex(r => r.sksNo === newSksNo);
@@ -1058,7 +1080,6 @@ export class SessionsComponent implements OnInit {
     });
   }
 
-
   /** Normalize to YYYY-MM-DD (null → null) */
   private toIsoDateOnly(d: any): string | null {
     if (!d) return null;
@@ -1079,7 +1100,6 @@ export class SessionsComponent implements OnInit {
       .filter(s => !!this.toIsoDateOnly(s.plannedDate))
       .slice();
 
-    // sort ASC
     withDate.sort((a, b) => {
       const ad = new Date(a.plannedDate as any).getTime();
       const bd = new Date(b.plannedDate as any).getTime();
@@ -1118,12 +1138,10 @@ export class SessionsComponent implements OnInit {
     return this.formatDate(withDate[idx + 1].plannedDate);
   }
 
-
   // ----------------------------- DOCX download -------------------------------
 
   async downloadWord(children: SessionChild[], reportType: string, session: any) {
 
-    // Build intro elements as normal body children (not a header)
     const intro = await this.docxWordService.makeIntroBlock.call(this.docxWordService, {
       logoUrl: "assets/win_logo.png",
       addressLines: [
@@ -1131,20 +1149,33 @@ export class SessionsComponent implements OnInit {
         '*Tiefbauamt*',
         'Pionierstrasse 7',
         '8403 Winterthur',
-        ''        
+        ''
       ],
-      title: TITLE_PROTOCOL_NAME + ' - ' + reportType,      
+      title: TITLE_PROTOCOL_NAME + ' - ' + reportType,
       logoWidthPx: 140,
     });
 
-    // 1) Info + three canonical tables
     const projectInfo = [
-      { key: 'Datum und Zeit', value: String(session.plannedDate) + ' / von 10.30 - 12.00 Uhr' },
-      { key: 'Ort', value: 'Stadt Winterthur, Departement Bau und Mobilität, Tiefbauamt, Superblock' },
-      { key: '', value: 'Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)' },
-      { key: 'Vorsitz', value: environment.reportChairperson + '' },
-      { key: 'Protokoll', value: environment.reportWriter  + ''},
-      { key: 'SKS-Nr', value: String(session.sksNo) },
+      {
+        key: 'Datum und Zeit',
+        value: `${String(session.plannedDate)} / ${session.timeWindow || ''}`
+      },
+      {
+        key: 'Ort',
+        value: session.location || ''
+      },
+      {
+        key: 'Vorsitz',
+        value: session.chairperson || ''
+      },
+      {
+        key: 'Protokoll',
+        value: session.minuteTaker || ''
+      },
+      {
+        key: 'SKS-Nr',
+        value: String(session.sksNo)
+      },
     ];
 
     const tableInfo         = this.docxWordService.makeInfoTable(projectInfo);
@@ -1152,19 +1183,20 @@ export class SessionsComponent implements OnInit {
     const listPresent       = this.docxWordService.makePresentPersonsList(children);
     const listDistribution  = this.docxWordService.makeDistributionPersonsList(children);
 
-    const t1 = this.docxWordService.pBold('Anwesende');    
-    const t2 = this.docxWordService.pBold('Entschuldigt');    
-    const t3 = this.docxWordService.pBold('Verteiler');    
+    const t1 = this.docxWordService.pBold('Anwesende');
+    const t2 = this.docxWordService.pBold('Entschuldigt');
+    const t3 = this.docxWordService.pBold('Verteiler');
 
     const pageBreak = this.docxWordService.pageBreak();
 
-    const gap = this.docxWordService.spacer();        
-    const smallGap = this.docxWordService.smallGap();    
+    const gap = this.docxWordService.spacer();
+    const smallGap = this.docxWordService.smallGap();
 
-    const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection( { 
-                                                                                  prevSessionDate: session.prevSessionDate, 
-                                                                                  attachments: session.attachments,
-                                                                                  isPreProtocol: session.isPreProtocol } );
+    const agendaSection = this.docxWordService.makeAgendaAndAttachmentsSection({
+      prevSessionDate: session.prevSessionDate,
+      attachments: session.attachments,
+      isPreProtocol: session.isPreProtocol
+    });
 
     const protocolSection = this.docxWordService.makeProtocolSections({
       lastSksDate: session.prevSessionDate,
@@ -1175,56 +1207,50 @@ export class SessionsComponent implements OnInit {
       isPreProtocol: session.isPreProtocol,
     });
 
-    // 2) Attach project images (100% content width), each with title/department
     const activities = await this.docxWordService.prepareRoadWorkActivity(this.projectRows);
-    const allProjectBlocks: Array<Paragraph | Table> = [];    
+    const allProjectBlocks: Array<Paragraph | Table> = [];
 
-    // sort activities ASCENDING by roadworkactivity_no as string
     activities.sort((a, b) =>
       a.project.roadWorkActivityNo.localeCompare(b.project.roadWorkActivityNo)
     );
 
-
-    for (const activity of activities) {    
+    for (const activity of activities) {
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
           `Bauvorhaben:`,
-          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore:true } 
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore:true }
         )
       );
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
           `${activity.project.roadWorkActivityNo ?? ''}/ ${activity.project.name ?? ''} `,
-          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false } 
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
         )
-      );      
+      );
 
-      // map
       const imageRun = await this.docxWordService.imageFromUrlFitted(activity.mapUrl, 680);
       if (imageRun) {
         allProjectBlocks.push(new Paragraph({ alignment: AlignmentType.LEFT, children: [imageRun] }));
       }
 
-      // META: Auslösende:r, Werk, GM, Mitwirkende 
       allProjectBlocks.push(...this.docxWordService.makeProjectMetaBlock(activity.meta));
 
-     const assignedNeedsRowsSorted =
-      activity.assignedNeedsRows.sort((a, b) =>
-        a.ausloesend.localeCompare(b.ausloesend)
-      );
+      const assignedNeedsRowsSorted =
+        activity.assignedNeedsRows.sort((a, b) =>
+          a.ausloesend.localeCompare(b.ausloesend)
+        );
 
-      // Assigned Needs (per projekt)
       allProjectBlocks.push(
         this.docxWordService.smallGap(),
-        this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),        
-        this.docxWordService.makeNeedsTableFromRows(assignedNeedsRowsSorted)       
+        this.docxWordService.pBold('Zugewiesene (berücksichtigte) Bedarfe'),
+        this.docxWordService.makeNeedsTableFromRows(assignedNeedsRowsSorted)
       );
 
       allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren')); 
-      allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"))      
+      allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren'));
+      allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"));
       const rows = [
-        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? 'X' : 'Keine' },      
+        { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? 'X' : 'Keine' },
         { label: "Mitwirkungsverfahren gemäss § 13", value: activity.project.isParticip ? 'X' : 'Keine' },
         { label: "Planauflage gemäss § 16", value: activity.project.isPlanCirc ? 'X' : 'Keine'},
         { label: "Verkehrsanordnung ist notwendig", value: activity.project.isTrafficRegulationRequired ? 'X' : 'Keine'},
@@ -1232,54 +1258,52 @@ export class SessionsComponent implements OnInit {
 
       const selected = rows.filter(r => r.value.toUpperCase() === "X");
 
-      if (selected.length === 0) {        
+      if (selected.length === 0) {
         allProjectBlocks.push(
           this.docxWordService.p("Keine")
         );
-      } else {        
+      } else {
         for (const r of selected) {
           allProjectBlocks.push(
             this.docxWordService.p(`[ ${r.value} ] : ${r.label}`)
           );
-        }            
-      }  
-      
-      allProjectBlocks.push(this.docxWordService.smallGap());
-
-      allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung')); 
+        }
+      }
 
       allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 1.Iteration')); 
+
+      allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung'));
+
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 1.Iteration'));
       const consultationSection1 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
-        feedbackPhase: "inconsult1",        
+        feedbackPhase: "inconsult1",
         isPhaseReporting: false
       });
       allProjectBlocks.push(...consultationSection1);
 
       allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 2.Iteration')); 
+      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 2.Iteration'));
       const consultationSection2 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
-        feedbackPhase: "inconsult2",        
+        feedbackPhase: "inconsult2",
         isPhaseReporting: false,
       });
       allProjectBlocks.push(...consultationSection2);
 
       allProjectBlocks.push(this.docxWordService.smallGap());
-      allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme')); 
+      allProjectBlocks.push(this.docxWordService.pBold('Stellungnahme'));
       const consultationSection3 = await this.docxWordService.makeConsultationInputsSection({
         uuid: activity.project.id,
-        feedbackPhase: "reporting",        
+        feedbackPhase: "reporting",
         isPhaseReporting: true,
-      });      
+      });
       allProjectBlocks.push(...consultationSection3);
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehensvorschlag' : 'Vorgehen'));
-      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment1));      
-
-      
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment1));
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Nicht zugewiesene Bedarfe in Vorhabenfläche'));
@@ -1289,38 +1313,33 @@ export class SessionsComponent implements OnInit {
         allProjectBlocks.push(this.docxWordService.p('Keine.'));
       }
       allProjectBlocks.push(this.docxWordService.spacer());
-   
+
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold(`Beschluss:`));
-      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment2));   
-    }    
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment2));
+    }
 
-    // 3. Verschiedenes    
-    const miscItemsSection = this.docxWordService.makeMiscItemsSection({miscItems: session.miscItems});    
+    const miscItemsSection = this.docxWordService.makeMiscItemsSection({miscItems: session.miscItems});
 
-    // 4. Nächste Sitzungen
     const nextSessionSection = this.docxWordService.makeNextSessionSection({
       nextSKSDate: session.nextSessionDate,
       nextOKSDate: this.nextSessionDateOKS || '-',
       nextKAPDate:  this.nextSessionDateKAP || '-',
-      reportWriter: environment.reportWriter || '-',
+      reportWriter: session.minuteTaker || '-',
     });
 
-
- 
     const separator = new Paragraph({
       border: { bottom: { style: BorderStyle.SINGLE, color: 'CCCCCC', size: 6 } },
       spacing: { before: 60, after: 120 },
     });
 
     let mailAddress = this.userService.getLocalUser().mailAddress;
-    // 3) Build the document
     const blob = await this.docxWordService.build({
       username: mailAddress,
       orientation: 'portrait',
       marginsCm: { top: 2, right: 1, bottom: 2, left: 2 },
       isPreProtocol: session.isPreProtocol,
-      children: [        
+      children: [
         ...intro,
         separator,
         gap,
@@ -1341,7 +1360,6 @@ export class SessionsComponent implements OnInit {
     saveAs(blob, TITLE_PROTOCOL_NAME + ' - ' + reportType + '.docx');
   }
 
-  
   formatDate(dateInput: string | Date): string {
     const d = new Date(dateInput);
     const day = String(d.getDate()).padStart(2, '0');
@@ -1358,7 +1376,6 @@ export class SessionsComponent implements OnInit {
     const currentSession: Session | null = this.selectedNode?.data ?? null;
     if (!project || !currentSession?.sksNo) return;
 
-    // Store selected project
     localStorage.setItem(
       LS_KEY_SELECTED_PROJECT,
       JSON.stringify({
@@ -1366,15 +1383,13 @@ export class SessionsComponent implements OnInit {
         projectId: project.id,
       })
     );
-  }  
+  }
 
   onProjectFirstDataRendered(event: FirstDataRenderedEvent): void {
-    // If the grid API is not ready or there are no project rows yet, do nothing
     if (!this.projectGrid?.api || !this.projectRows || this.projectRows.length === 0) {
       return;
     }
 
-    // We need the currently selected session to restore the correct project's selection
     const currentSession: Session | null = this.selectedNode?.data ?? null;
     if (!currentSession?.sksNo) {
       return;
@@ -1386,25 +1401,18 @@ export class SessionsComponent implements OnInit {
 
       const stored = JSON.parse(raw) as { sksNo?: number; projectId?: string };
 
-      // Only restore selection if the saved entry belongs to the currently selected session
       if (stored.sksNo !== currentSession.sksNo || !stored.projectId) {
         return;
       }
 
       const api = this.projectGrid.api;
 
-      // Iterate through all nodes and select the matching project row
       api.forEachNode(node => {
         if (node.data?.id === stored.projectId) {
           node.setSelected(true);
-
-          // Optionally scroll to the selected row:
-          // api.ensureIndexVisible(node.rowIndex!);
         }
       });
     } catch {
-      // Ignore JSON parsing or localStorage errors
     }
   }
-
 }

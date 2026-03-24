@@ -13,12 +13,11 @@
 <!-- Hidden container used for report generation (HTML → DOCX/PDF). -->
 <div #reportContainer style="position: fixed; left: -9999px; top: 0; visibility: hidden;"></div>
 
-
-<div style="margin:0;margin-left: 2em;margin-right: 2em;" >
+<div style="margin:0;margin-left: 2em;margin-right: 2em;">
   <div style="margin-bottom: 1em;">
     <h2>
-      SKS Sitzungen ({{ sessionsData.length }})      
-      <label class="quick-filter" style="display:inline-flex; gap:.5em; align-items:center; margin-left:20px;margin-right:20px">        
+      SKS Sitzungen ({{ sessionsData.length }})
+      <label class="quick-filter" style="display:inline-flex; gap:.5em; align-items:center; margin-left:20px;margin-right:20px">
         <input
           type="text"
           id="input-quick-filter"
@@ -28,7 +27,7 @@
         />
       </label>
 
-      <button mat-button 
+      <button mat-button
             *ngIf="isRoleAdministrator"
             (click)="openNewSessionDialog()"
             [disabled]="isDataLoading"
@@ -41,51 +40,52 @@
               style="margin: 1em;background-color: rgb(236,236,234);">
               <mat-icon aria-label="Icon zeigt Diskette">save</mat-icon>&nbsp;SPEICHERN
       </button>
-          
-    </h2> 
-      
+
+    </h2>
   </div>
- 
+
   <!-- Loading indicator overlay -->
   <mat-progress-bar *ngIf="isDataLoading" mode="indeterminate" color="primary"></mat-progress-bar>
-  
+
   <div class="grid-overlay" *ngIf="isDataLoading"></div>
 
-  <!-- Master grid: list of sessions -->  
+  <!-- Master grid: list of sessions -->
   <ag-grid-angular
     #sessionsGrid
     class="ag-theme-alpine"
     rowSelection="single"
     [rowData]="sessionsData"
     [columnDefs]="sessionsColDefs"
-    [defaultColDef]="defaultColDef"    
+    [defaultColDef]="defaultColDef"
     [rowHeight]="28"
     [headerHeight]="28"
-    [includeHiddenColumnsInQuickFilter]="true" 
+    [includeHiddenColumnsInQuickFilter]="true"
     [attr.inert]="isDataLoading ? '' : null"
     [localeText]="localeText"
     (gridReady)="onSessionsGridReady($event)"
-    (selectionChanged)="onSessionSelectionChanged()"        
-    style="width: 100%; height: 20vh;"    
+    (selectionChanged)="onSessionSelectionChanged()"
+    style="width: 100%; height: 17vh;"
   >
   </ag-grid-angular>
 
-  
   <!-- Child grids container -->
   <div style="display: grid; grid-template-columns: 50fr 50fr; gap: 3rem;">
-    <h3 style="grid-column: span 2; margin-bottom: .5rem;">      
+    <h3 style="grid-column: span 2; margin-top: .25rem; margin-bottom: .25rem;">
       <ng-container *ngIf="selectedSession as s">{{ s.sessionName }}</ng-container>
-    </h3>        
-      
+    </h3>
+
     <form [formGroup]="detailsForm" class="details-form">
 
-      <!-- Planned Date + Session Type -->
-      <!-- Row 1: 50/50 (6 cols + 6 cols) -->
-      <div style="margin-top: 10px;grid-column: 1 / -1; display:grid; grid-template-columns: repeat(12, 1fr); gap:16px;">
+      <!-- Session attributes: 2 rows x 3 columns -->
+      <div class="session-attrs" style="margin-top: 4px; grid-column: 1 / -1; display:grid; grid-template-columns: repeat(12, 1fr); gap:16px;">
+
+        <!-- Row 1 -->
 
         <!-- Planned Date -->
-        <mat-form-field appearance="outline" style="grid-column: span 6; width: 100%;">
-          <mat-label><label style="font-size:18px; font-weight:bold;color:black" for="plannedDateInput">Geplantes Datum</label></mat-label>                                        
+        <mat-form-field appearance="outline" style="grid-column: span 4; width: 100%;">
+          <mat-label>
+            <label style="font-size:15px; font-weight:bold;color:black" for="plannedDateInput">Geplantes Datum</label>
+          </mat-label>
           <input
             matInput
             #plannedDateInput
@@ -104,72 +104,135 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Session Type -->
-        <mat-form-field appearance="outline" style="grid-column: span 6; width: 100%;">
+        <!-- Report Type -->
+        <mat-form-field appearance="outline" style="grid-column: span 4; width: 100%;">
           <mat-label>
-          <label style="font-size:18px;font-weight: bold; color:black" for="reportTypeInput">
-            Berichtsstatus
-          </label>
-        </mat-label>
+            <label style="font-size:15px;font-weight: bold; color:black" for="reportTypeInput">
+              Berichtsstatus
+            </label>
+          </mat-label>
 
-        <mat-select #reportTypeInput formControlName="reportType">
-          <mat-option *ngFor="let option of SESSION_TYPE_OPTIONS" [value]="option">
-            {{ option }}
-          </mat-option>
-        </mat-select>
+          <mat-select #reportTypeInput formControlName="reportType">
+            <mat-option *ngFor="let option of SESSION_TYPE_OPTIONS" [value]="option">
+              {{ option }}
+            </mat-option>
+          </mat-select>
 
-        <mat-error *ngIf="detailsForm.get('reportType')?.hasError('required')">
-          Pflichtfeld
-        </mat-error>
+          <mat-error *ngIf="detailsForm.get('reportType')?.hasError('required')">
+            Pflichtfeld
+          </mat-error>
         </mat-form-field>
+
+        <!-- Zeitfenster -->
+        <mat-form-field appearance="outline" style="grid-column: span 4; width: 100%;">
+          <mat-label>
+            <label style="font-size:15px; font-weight:bold; color:black">Zeitfenster</label>
+          </mat-label>
+          <input
+            matInput
+            formControlName="timeWindow"
+            placeholder='z.B. "10:30-12:00"'
+          />
+          <mat-error *ngIf="detailsForm.get('timeWindow')?.hasError('maxlength')">
+            Maximal 100 Zeichen
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Row 2 -->
+
+        <!-- Ort -->
+        <mat-form-field appearance="outline" style="grid-column: span 4; width: 100%;">
+          <mat-label>
+            <label style="font-size:15px; font-weight:bold; color:black">Ort</label>
+          </mat-label>
+          <input
+            matInput
+            formControlName="location"
+            placeholder="Ort eingeben..."
+          />
+          <mat-error *ngIf="detailsForm.get('location')?.hasError('maxlength')">
+            Maximal 500 Zeichen
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Vorsitz -->
+        <mat-form-field appearance="outline" style="grid-column: span 4; width: 100%;">
+          <mat-label>
+            <label style="font-size:15px; font-weight:bold; color:black">Vorsitz</label>
+          </mat-label>
+          <input
+            matInput
+            formControlName="chairperson"
+            placeholder="Vorsitz eingeben..."
+          />
+          <mat-error *ngIf="detailsForm.get('chairperson')?.hasError('maxlength')">
+            Maximal 300 Zeichen
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Protokollführung -->
+        <mat-form-field appearance="outline" style="grid-column: span 4; width: 100%;">
+          <mat-label>
+            <label style="font-size:15px; font-weight:bold; color:black">Protokollführung</label>
+          </mat-label>
+          <input
+            matInput
+            formControlName="minuteTaker"
+            placeholder="Protokollführung eingeben..."
+          />
+          <mat-error *ngIf="detailsForm.get('minuteTaker')?.hasError('maxlength')">
+            Maximal 300 Zeichen
+          </mat-error>
+        </mat-form-field>
+
       </div>
 
-        <!-- Acceptance -->
-        <div class="field"
-             [ngStyle]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL' ? {'pointer-events':'none','opacity':'0.6'} : null">
-          <h5  style="margin: .25rem;">1. Abnahme SKS-Protokoll</h5>
-          <textarea
-            id="acceptance1"
-            formControlName="acceptance1"
-            [readonly]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL'"
-            [disabled]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL'"
-            maxlength="10000"
-            rows="9"
-            placeholder="Bitte Text hiereingeben..."
-          ></textarea>
-          <small>{{ detailsForm.get('acceptance1')?.value?.length || 0 }} / 10000</small>
-        </div>
+      <!-- Acceptance -->
+      <div class="field"
+           [ngStyle]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL' ? {'pointer-events':'none','opacity':'0.6'} : null">
+        <h5 style="margin: .25rem;">1. Abnahme SKS-Protokoll</h5>
+        <textarea
+          id="acceptance1"
+          formControlName="acceptance1"
+          [readonly]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL'"
+          [disabled]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL'"
+          maxlength="10000"
+          rows="7"
+          placeholder="Bitte Text hiereingeben..."
+        ></textarea>
+        <small>{{ detailsForm.get('acceptance1')?.value?.length || 0 }} / 10000</small>
+      </div>
 
-        <!-- Attachments -->
-        <div class="field">
-          <h5 style="margin: .25rem;">Beilage</h5>
-          <textarea
-            id="attachments"
-            formControlName="attachments"
-            maxlength="10000"
-            rows="9"
-            placeholder="Bitte Text hiereingeben..."            
-          ></textarea>
-          <small>{{ detailsForm.get('attachments')?.value?.length || 0 }} / 10000</small>
-        </div>
+      <!-- Attachments -->
+      <div class="field">
+        <h5 style="margin: .25rem;">Beilage</h5>
+        <textarea
+          id="attachments"
+          formControlName="attachments"
+          maxlength="10000"
+          rows="7"
+          placeholder="Bitte Text hiereingeben..."
+        ></textarea>
+        <small>{{ detailsForm.get('attachments')?.value?.length || 0 }} / 10000</small>
+      </div>
 
-        <!-- Misc Items -->
-        <div class="field">
-          <h5  style="margin: .25rem;">Verschiedenes</h5>
-          <textarea
-            id="miscItems"
-            formControlName="miscItems"
-            maxlength="10000"
-            rows="9"
-            placeholder="Bitte Text hiereingeben..."
-          ></textarea>
-          <small>{{ detailsForm.get('miscItems')?.value?.length || 0 }} / 10000</small>
-        </div>
+      <!-- Misc Items -->
+      <div class="field">
+        <h5 style="margin: .25rem;">Verschiedenes</h5>
+        <textarea
+          id="miscItems"
+          formControlName="miscItems"
+          maxlength="10000"
+          rows="7"
+          placeholder="Bitte Text hiereingeben..."
+        ></textarea>
+        <small>{{ detailsForm.get('miscItems')?.value?.length || 0 }} / 10000</small>
+      </div>
 
     </form>
 
     <!-- Projects, Present and distribution users -->
-    <div>            
+    <div>
       <h5 style="margin: .25rem;">Teilnehmerliste ({{ getPresentListCount(presentUserRows) }})</h5>
       <ag-grid-angular
         #presentGrid
@@ -180,14 +243,14 @@
         [columnDefs]="peopleColDefs"
         [defaultColDef]="childDefaultColDef"
         [localeText]="localeText"
-        style="width: 100%; height: 15vh;"        
+        style="width: 100%; height: 15vh;"
         (cellValueChanged)="peopleDirty=true"
       >
       </ag-grid-angular>
 
       <h5 style="margin: .25rem;margin-top: 1rem">Verteiler ({{ getDistributionListCount(distributionUserRows) }})</h5>
       <ag-grid-angular
-        #distributionGrid        
+        #distributionGrid
         class="ag-theme-alpine"
         [rowHeight]="28"
         [headerHeight]="28"
@@ -195,7 +258,7 @@
         [columnDefs]="distributionColDefs"
         [defaultColDef]="childDefaultColDef"
         [localeText]="localeText"
-        style="width: 100%; height: 15vh;"     
+        style="width: 100%; height: 15vh;"
         (cellValueChanged)="peopleDirty=true"
       >
       </ag-grid-angular>
@@ -209,15 +272,14 @@
         [headerHeight]="28"
         [rowData]="projectRows"
         [columnDefs]="projectsColDefs"
-        [defaultColDef]="childDefaultColDef"        
+        [defaultColDef]="childDefaultColDef"
         [localeText]="localeText"
-        style="width: 100%; height:17vh;"                 
+        style="width: 100%; height:17vh;"
         (selectionChanged)="onProjectSelectionChanged()"
         (firstDataRendered)="onProjectFirstDataRendered($event)"
       >
       </ag-grid-angular>
     </div>
-        
 
   </div>
 </div>
