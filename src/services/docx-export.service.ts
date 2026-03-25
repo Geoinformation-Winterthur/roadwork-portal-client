@@ -358,8 +358,7 @@ export class DocxWordService {
         (item) =>
           item &&
           item.isRoadworkProject !== true &&
-          item.isPresent === true &&
-          item.shouldBePresent === true
+          item.isPresent === true          
       )
       .map((item) => ({
         Name: item.name,
