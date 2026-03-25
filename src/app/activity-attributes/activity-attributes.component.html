@@ -1401,6 +1401,7 @@
                                                         <input matInput name="dateGlTbaReal"
                                                             [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
                                                             [matDatepicker]="dateGlTbaReal"
+                                                            (dateChange)="normalizeDateGlTbaReal()"
                                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-datepicker #dateGlTbaReal></mat-datepicker>
                                                         <mat-datepicker-toggle matSuffix

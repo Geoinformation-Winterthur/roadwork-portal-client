@@ -1210,4 +1210,17 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
+  normalizeDateGlTbaReal(): void {
+    const props = this.roadWorkActivityFeature?.properties;
+    if (!props?.dateGlTbaReal) return;
+
+    const d = new Date(props.dateGlTbaReal);
+    props.dateGlTbaReal = new Date(
+      d.getFullYear(),
+      d.getMonth(),
+      d.getDate(),
+      12, 0, 0, 0
+    );
+  }
+
 }
