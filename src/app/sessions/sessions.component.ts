@@ -1021,11 +1021,14 @@ export class SessionsComponent implements OnInit {
       if (!payload) return;
 
       const newSksNo = payload.sksNo;
+      const defaultPlannedDate = this.getDefaultPlannedDate();
+      const defaultPlannedDateForBackend = this.getDefaultPlannedDateForBackend();
 
       this.isDataLoading = true;
 
       this.sessionService.createSession({
-        sksNo: newSksNo
+        sksNo: newSksNo,
+        plannedDateForBackend: defaultPlannedDateForBackend
       })
       .pipe(finalize(() => this.isDataLoading = false))
       .subscribe({
@@ -1033,20 +1036,19 @@ export class SessionsComponent implements OnInit {
 
           const sessionRow = {
             id: this.sessionsData.length + 1,
-            sks_no: created.sksNo,
-            reportType: '-',
-            sessionName: 'Sitzung ' + newSksNo,
-            sessionDate: '',
-            plannedDateForBackend: '',
             sksNo: newSksNo,
+            reportType: 'PRE_PROTOCOL',
+            sessionName: 'Sitzung ' + newSksNo,
+            sessionDate: created.plannedDate?.toString() ?? defaultPlannedDate.toString(),
+            plannedDate: created.plannedDate ?? defaultPlannedDate,
             sessionCreator: '',
-            location: '',
-            timeWindow: '',
-            chairperson: '',
-            minuteTaker: '',
-            acceptance1: '-',
-            attachments: '-',
-            miscItems: '-',
+            location: 'Stadt Winterthur, Departement Bau und Mobilität, Tiefbauamt, Superblock, Pionierstrasse 7 (Sitzungszimmer SZ Public B001 PION5)',
+            timeWindow: '10:30-12:00',
+            chairperson: 'Stefan Gahler, TBA APK (Leitung Planung & Koordination)',
+            minuteTaker: 'Tobias Juaon / Abteilung Planung und Koordination (APK)',
+            acceptance1: 'Das Protokoll wird ohne Anmerkungen verdankt.',
+            attachments: 'Keine',
+            miscItems: 'Keine',
             errorMessage: '',
             presentUserIds: '',
             distributionUserIds: '',
@@ -1069,7 +1071,18 @@ export class SessionsComponent implements OnInit {
             this.snckBar.open('Neue Sitzung wurde erstellt.', '', { duration: 2500 });
           }, 0);
         },
-        error: () => {
+        error: (err) => {
+          console.error('Create session failed', err);
+
+          if (err?.status === 409) {
+            this.snckBar.open(
+              `SKS-Nr ${newSksNo} ist bereits vergeben.`,
+              '',
+              { duration: 4000 }
+            );
+            return;
+          }
+
           this.snckBar.open(
             'Beim Erstellen der Sitzung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             '',
@@ -1079,7 +1092,6 @@ export class SessionsComponent implements OnInit {
       });
     });
   }
-
   /** Normalize to YYYY-MM-DD (null → null) */
   private toIsoDateOnly(d: any): string | null {
     if (!d) return null;
@@ -1414,5 +1426,16 @@ export class SessionsComponent implements OnInit {
       });
     } catch {
     }
+  }
+
+  private getDefaultPlannedDate(daysToAdd = 30): Date {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + daysToAdd);
+    return d;
+  }
+
+  private getDefaultPlannedDateForBackend(daysToAdd = 30): string {
+    return this.formatDate(this.getDefaultPlannedDate(daysToAdd));
   }
 }
