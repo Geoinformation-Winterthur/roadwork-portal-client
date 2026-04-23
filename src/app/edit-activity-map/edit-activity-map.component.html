@@ -22,6 +22,28 @@
         <mat-icon aria-label="Icon zeigt zwei überlappende Flächen">content_copy</mat-icon>
         &nbsp;GEOMETRIE ÜBERNEHMEN
     </button>
+    Kartenhintergrund:                
+    <button mat-button type="button" (click)="setBaseLayer('standard')"
+            [class.active]="selectedBaseLayer === 'standard'">
+            Standard
+    </button>
+    <button mat-button type="button"
+            (click)="setBaseLayer('upwms')"
+            [class.active]="selectedBaseLayer === 'upwms'">
+            Amtliche Vermessung
+    </button>
+    <button mat-button type="button"
+            (click)="setBaseLayer('swissimage')"
+            [class.active]="selectedBaseLayer === 'swissimage'">
+            Swissimage
+    </button>
+    <button mat-button type="button"
+            (click)="setBaseLayer('osm_de')"
+            [class.active]="selectedBaseLayer === 'osm_de'">
+            OpenStreetMap
+    </button>
+    <!-- <button mat-button type="button" (click)="setBaseLayer('stadtplan')">Stadtplan</button>     -->
+     
     <mat-form-field *ngIf="!isInDrawNewMode && !isInModifyExistingMode" style="margin-left: 1em;margin-top: 0.5em;">
         <input matInput maxlength="4" placeholder="Bedarf Real. von (Jahr)..." type="number" [(ngModel)]="chosenYear"
             (change)="onChangeYear()" />

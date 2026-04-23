@@ -3,7 +3,7 @@
  * @copyright Copyright (c) Geoinformation Winterthur. All rights reserved.
  *
  * Component for drawing and editing a roadwork activity perimeter on an OpenLayers map.
- * - Shows base WMS layers, existing needs (requirements) and the current activity.
+ * - Shows base layers, existing needs (requirements) and the current activity.
  * - Lets users draw a new polygon, modify an existing one, or copy from an existing need.
  * - Persists geometry back to the backend and maintains related "needs of activity".
  *
@@ -20,6 +20,7 @@ import View from 'ol/View';
 import Select from 'ol/interaction/Select';
 import { SelectEvent } from 'ol/interaction/Select';
 import TileWMS from 'ol/source/TileWMS';
+import XYZ from 'ol/source/XYZ';
 import VectorSource from 'ol/source/Vector';
 import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
@@ -75,6 +76,16 @@ export class EditActivityMapComponent implements OnInit {
 
   /** OpenLayers map instance (created in initializeMap). */
   map: Map = new Map();
+
+  /** Base map layers (only one visible at a time). */
+  baseLayerUpwms?: BaseLayer;
+  baseLayerStandard?: BaseLayer;
+  baseLayerStadtplan?: BaseLayer;
+  baseLayerSwissimage?: BaseLayer;
+  baseLayerOsmDe?: BaseLayer;
+
+  /** Currently selected base layer key. */
+  selectedBaseLayer = 'standard';
 
   /** Address search results and input string for geocoding/zoom. */
   addresses: Address[] = [];
@@ -281,26 +292,94 @@ export class EditActivityMapComponent implements OnInit {
     /** Use Swiss LV95 projection; "getProjection" resolves by code. */
     const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
 
-    /** Build the map with two WMS tile layers, then vector layers on top. */
+    /**
+     * Base layers:
+     * - Winterthur-Stadtplan
+     * - Kanton ZH UPWMS
+     * - Kanton ZH OGD CMS
+     * - Swissimage (XYZ)
+     * - OpenStreetMap DE
+     */
+    this.baseLayerStadtplan = new Tile({
+      visible: true,
+      source: new TileWMS({
+        url: 'https://stadtplantest.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan',
+        params: {
+          'LAYERS': [
+            'Landeskarte200',
+            'Landeskarte100',
+            'Landeskarte50',
+            'Landeskarte25',
+            'Wald',
+            'Gewaesser',
+            'AVSituationsplanZH_mask',
+            'ZH_AvSituationsplan_winterthur'
+          ].join(','),
+          'VERSION': '1.1.1',
+          'FORMAT': 'image/png',
+          'TRANSPARENT': true,
+          'STYLES': '',
+          'SRS': 'EPSG:2056',
+          'DPI': 96,
+          'TILED': true
+        },
+        serverType: 'mapserver',
+        crossOrigin: 'anonymous'
+      })
+    });
+
+    this.baseLayerUpwms = new Tile({
+      visible: false,
+      source: new TileWMS({
+        url: 'https://wms.zh.ch/upwms',
+        params: {
+          'LAYERS': 'upwms',
+          'TILED': true
+        },
+        serverType: 'mapserver',
+        crossOrigin: 'anonymous'
+      })
+    });
+
+    this.baseLayerStandard = new Tile({
+      visible: false,
+      source: new TileWMS({
+        url: 'https://wms.zh.ch/OGDCMS3ZH',
+        params: {
+          'LAYERS': 'OGDCMS3ZH',
+          'TILED': true
+        },
+        serverType: 'mapserver',
+        crossOrigin: 'anonymous'
+      })
+    });
+
+    this.baseLayerSwissimage = new Tile({
+      visible: false,
+      source: new XYZ({
+        url: 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',
+        crossOrigin: 'anonymous',
+        maxZoom: 20
+      })
+    });
+
+    this.baseLayerOsmDe = new Tile({
+      visible: false,
+      source: new XYZ({
+        url: 'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
+        crossOrigin: 'anonymous',
+        maxZoom: 22
+      })
+    });
+
     this.map = new Map({
       target: 'edit_activity_map',
       layers: [
-        new Tile({
-          source: new TileWMS({
-            url: 'http://wms.zh.ch/upwms',
-            params: { 'LAYERS': 'upwms', 'TILED': true },
-            serverType: 'mapserver',
-             crossOrigin: 'anonymous'
-          })
-        }),
-        new Tile({
-          source: new TileWMS({
-            url: 'http://wms.zh.ch/OGDCMS3ZH',
-            params: { 'LAYERS': 'OGDCMS3ZH', 'TILED': true },
-            serverType: 'mapserver',
-            crossOrigin: 'anonymous'
-          })
-        }),
+        this.baseLayerStadtplan,
+        this.baseLayerUpwms,
+        this.baseLayerStandard,
+        this.baseLayerSwissimage,
+        this.baseLayerOsmDe,
         this.roadWorkNeedLayer,
         roadWorkActivityLayer,
         userDrawLayer,
@@ -341,6 +420,39 @@ export class EditActivityMapComponent implements OnInit {
 
     /** Initial load of needs and activity geometry onto the map. */
     this._reloadRoadworkNeeds(true);
+  }
+
+  /**
+   * Switch between base layers.
+   */
+  setBaseLayer(layerName: 'upwms' | 'standard' | 'stadtplan' | 'swissimage' | 'osm_de') {
+    this.selectedBaseLayer = layerName;
+
+    this.baseLayerStadtplan?.setVisible(false);
+    this.baseLayerUpwms?.setVisible(false);
+    this.baseLayerStandard?.setVisible(false);
+    this.baseLayerSwissimage?.setVisible(false);
+    this.baseLayerOsmDe?.setVisible(false);
+
+    switch (layerName) {
+      case 'stadtplan':
+        this.baseLayerStadtplan?.setVisible(true);
+        break;
+      case 'upwms':
+        this.baseLayerUpwms?.setVisible(true);
+        break;
+      case 'standard':
+        this.baseLayerStandard?.setVisible(true);
+        break;
+      case 'swissimage':
+        this.baseLayerSwissimage?.setVisible(true);
+        break;
+      case 'osm_de':
+        this.baseLayerOsmDe?.setVisible(true);
+        break;
+    }
+
+    this.map.render();
   }
 
   /** Year filter changed (if used) → reload needs; keep current extent. */
