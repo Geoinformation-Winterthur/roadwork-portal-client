@@ -412,14 +412,39 @@ export class DocxWordService {
 
 
   /** Verteiler (distribution list) */
+  /** Verteiler (distribution list) */
   makeDistributionPersonsList(children: any[]) {
-    // Filter all persons that belong to the distribution list
-    const rowsData = (children || [])
+    const items = children || [];
+
+    const defaultText = "Alle Anwesenden / Entschuldigten gem. Auflistung";
+
+    const isRelevantPerson = (item: any) =>
+      item && item.isRoadworkProject !== true;
+
+    const personKey = (item: any) =>
+      `${item.name || ""}`.trim().toLowerCase();
+
+    // Personen, die bereits unter Anwesende oder Entschuldigt aufgeführt sind
+    const alreadyListedKeys = new Set(
+      items
+        .filter(
+          (item) =>
+            isRelevantPerson(item) &&
+            (
+              item.isPresent === true ||
+              (item.isPresent === false && item.shouldBePresent === true)
+            )
+        )
+        .map(personKey)
+    );
+
+    // Nur Verteiler-Personen, die noch nicht aufgeführt wurden
+    const additionalDistributionPersons = items
       .filter(
         (item) =>
-          item &&
-          item.isRoadworkProject !== true &&
-          item.isDistributionList === true
+          isRelevantPerson(item) &&
+          item.isDistributionList === true &&
+          !alreadyListedKeys.has(personKey(item))
       )
       .map((item) => ({
         Name: item.name,
@@ -427,17 +452,20 @@ export class DocxWordService {
         Workarea: item.workArea,
       }));
 
-    // If list is empty, return a placeholder line
-    if (rowsData.length === 0) {
-      return [this.p("—")]; // Placeholder for empty list
+    // Nur Default-Satz, wenn keine zusätzlichen Personen vorhanden sind
+    if (additionalDistributionPersons.length === 0) {
+      return [
+        this.p(defaultText)
+      ];
     }
 
-    // Create manually numbered entries (1., 2., 3., ...)
-    return rowsData.map((r, index) =>
-      this.p(
-        `${r.Name}, ${r.Organisation}, ${r.Workarea}`
+    // Default-Satz + "sowie:" + zusätzliche Personen
+    return [
+      this.p(`${defaultText} sowie:`),
+      ...additionalDistributionPersons.map((r) =>
+        this.p(`${r.Name}, ${r.Organisation}, ${r.Workarea}`)
       )
-    );
+    ];
   }
   
 
