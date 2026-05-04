@@ -8,12 +8,14 @@ import { ManagementArea } from "./management-area";
 import { Priority } from "./priority";
 import { Status } from "./status";
 import { User } from "./user";
+import { RoadWorkApprovals } from "./road-work-approvals";
 
 export class RoadWorkNeedProperties {
     uuid: string = "";
     name: string = "";
     orderer: User  = new User();
     created: Date = new Date(1, 0, 1);
+    approvals: RoadWorkApprovals = new RoadWorkApprovals();
     lastModified?: Date;
     finishEarlyTo: Date = new Date(1, 0, 1);
     finishOptimumTo: Date = new Date(1, 0, 1);
@@ -44,4 +46,6 @@ export class RoadWorkNeedProperties {
     decline?: boolean = false;
     stillRelevant?: boolean = false;
     feedbackGiven?: boolean = false;
+    constructionDuration?: number;
+    acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE
 }

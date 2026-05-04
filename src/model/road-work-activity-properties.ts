@@ -5,6 +5,7 @@
 import { ActivityHistoryItem } from "./activity-history-item";
 import { DocumentAttributes } from "./document-attributes";
 import { User } from "./user";
+import { RoadWorkApprovals } from "./road-work-approvals";
 
 export class RoadWorkActivityProperties {
     uuid: string = "";
@@ -12,6 +13,7 @@ export class RoadWorkActivityProperties {
     projectManager: User = new User();
     trafficAgent: User = new User();
     areaManager: User = new User();
+    approvals: RoadWorkApprovals = new RoadWorkApprovals();
     description: string = "";
     comment: string = "";
     sessionComment1: string = "Keine Informationnen";
@@ -103,4 +105,63 @@ export class RoadWorkActivityProperties {
     isSksRelevant?: boolean = true;
     costLastModified?: Date
     costLastModifiedBy?: User
+
+    // Aggloprogramm
+    partOfAggloprogram: boolean = false;
+    aggloprogramGeneration?: number;
+    aggloprogramAreCode: string = "";
+    aggloprogramAreDescription: string = "";
+    aggloprogramDueDate?: Date
+    aggloprogramCostTotal?: number;
+    aggloprogramCostCanton?: number;
+
+    // Vorstudie
+    //preliminaryStudyRequired: boolean = false;
+    //preliminaryStudyDuration: string = "";
+    //preliminaryStudyDetail: string = "";
+    //preliminaryStudyVkErConfirmed: Date
+    //preliminaryStudyVkErNumber: number;
+
+    // Betroffene Themen
+    busStopsSheltersAffected: boolean = false;
+    structuresAffected: boolean = false;
+    roadDrainageAffected: boolean = false;
+    houseConnectionsAffected: boolean = false;
+    wasteFacilitiesAffected: boolean = false;
+    technicalInstallationsAffected: boolean = false;
+    treesAffected: boolean = false;
+    streetFurnitureAffected: boolean = false;
+    urbanClimateAffected: boolean = false;
+    subjectToDepaving: boolean = false;
+    pedestriansCyclingAffected: boolean = false;
+    disabilityEqualityAffected: boolean = false;
+    trafficRegulationAffected: boolean = false;
+
+    // Private betroffen
+    privateEntityAffected: boolean = false;
+    privateEntityExtent: string = "";
+    privateEntityRequirements: string = "";
+    privateEntityAcquisition: string = "";
+    privateEntityIsInitiator: string = "";
+
+    // Provis (Abacus)
+    erpNumber?: number;
+
+    // Ressourcen
+    staffResourcesAprConfirmed?: Date
+    costEstimateAprConfirmed?: Date
+
+    // Projektierungsauftrag
+    coreDrillingContracted: boolean = false;
+    quotesRequested: boolean = false;
+    quotesReviewed: boolean = false;
+    aprChecked: boolean = false;
+    afmChecked: boolean = false;
+
+    // Ausgabengenehmigung und Ablage
+    cfDone: boolean = false;
+    rdDone: boolean = false;
+    approved: boolean = false;
+    fabasoftDone: boolean = false;
+    gisUpdated: boolean = false;
 }

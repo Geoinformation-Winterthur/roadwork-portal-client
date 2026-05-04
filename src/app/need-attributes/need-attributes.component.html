@@ -97,35 +97,151 @@
                             <p *ngIf="!roadWorkNeedFeature.properties.uuid">UUID: <b>keine (nicht eröffnet)</b></p>
                             <div style="display:flex;flex-direction:column;">
                                 <mat-form-field>
+                                    <mat-label>Titel/Strasse</mat-label>
                                     <input matInput type="text" maxlength="80"
                                         [(ngModel)]="roadWorkNeedFeature.properties.name" placeholder="Titel/Strasse"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
+
                                 <div *ngIf="!roadWorkNeedFeature.properties.name"
                                     style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
                                     Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen des Bedarfs
                                     ein Titel automatisch aus der geographischen Lage ermittelt.
                                 </div>
+
                                 <mat-form-field>
+                                    <mat-label>Abschnitt</mat-label>
                                     <input matInput type="text" maxlength="80"
                                         [(ngModel)]="roadWorkNeedFeature.properties.section" placeholder="Abschnitt"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                 </mat-form-field>
+
                                 <mat-form-field>
-                                    <mat-label>Auslösegrund</mat-label>
+                                    <mat-label>Tätigkeiten/Arbeiten</mat-label>
                                     <textarea matInput maxlength="255"
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMaxRows="15"
                                         [(ngModel)]="roadWorkNeedFeature.properties.description"
-                                        placeholder="Auslösegrund..." required
+                                        placeholder="Welche Tätigkeiten/Arbeiten sind vorgesehen?" required
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
+
                                 <mat-form-field>
-                                    <mat-label>Bemerkung</mat-label>
+                                    <mat-label>Dauer der Bautätigkeit (Monate)</mat-label>
+                                    <input matInput
+                                        type="number"
+                                        min="0"
+                                        max="999"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.constructionDuration"
+                                        placeholder="Zahl 0 - 999" required
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Randbedingungen/Abhängigkeiten</mat-label>
                                     <textarea matInput maxlength="255"
-                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" placeholder="Bemerkung..."
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMaxRows="15"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.comment" placeholder="Gibt es relevante Randbedingungen/Abhängigkeiten? Welche?"
                                         [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
                                         </textarea>
                                 </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Rechts-/Landerwerb vorgesehen?</mat-label>
+                                    <mat-select 
+                                        [(ngModel)]="roadWorkNeedFeature.properties.acquisitionPlanned"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        <mat-option [value]="'YES'">Ja</mat-option>
+                                        <mat-option [value]="'NO'">Nein</mat-option>
+                                        <mat-option [value]="'MAYBE'">Eventuell</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Rechtliche/technische Bewilligungen notwendig?</mat-label>
+                                    <mat-select 
+                                        [(ngModel)]="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        <mat-option [value]="true">Ja</mat-option>
+                                        <mat-option [value]="false">Nein</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.strgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    StrG - Planauflageverfahren nach Strassengesetz §13/§16
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.bafuApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    BAFU - Bundesamt für Umwelt, Störfallverordnung
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.lsvApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    LSV - Lärmschutzverordnung
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.ssvApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    SSV - Signalisationsverordnung
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.wwgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    WWG - Wasserwirtschaftsgesetz
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.eriApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    ERI - Eidg. Rohrleitungsinspektorat
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.pbgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    PBG - Baubewilligung nach Planungs- und Baugesetz
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.ebgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    EBG - Eisenbahngesetz
+                                </mat-checkbox>
+                                <mat-checkbox class="align-top"
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.awelApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    AWEL – Amt für Abfall, Wasser, Energie und Luft, zuständig für Wald, Fruchtfolgeflächen, Grundwasser, Hochwasser, Gewässerbestand, Altlasten, usw.
+                                </mat-checkbox>
+                                <mat-checkbox class="align-top"
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.estiApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    ESTI – Eidg. Starkstrominspektorat, zuständig für Mittel-/Starkstromanlagen
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.otherApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    Weitere
+                                </mat-checkbox>
+                                <mat-form-field *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired && 
+                                    roadWorkNeedFeature.properties.approvals.otherApprovalRequired">
+                                    <input matInput
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.otherApprovalDetails"
+                                    placeholder="Bitte spezifizieren" required>
+                                </mat-form-field>
+
                             </div>
                         </mat-card-content>
                     </mat-card>
@@ -156,16 +272,16 @@
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
                             <div style="display:flex;flex-direction:column;">
-                                <p>Auslösende:r: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
-                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
-                                </p>
-                                <p>Auslösendes Werk:
-                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
-                                </p>
                                 <p>Gebietsmanagement:
                                     <b>{{roadWorkNeedFeature.properties.managementArea?.manager?.firstName}}
                                         {{roadWorkNeedFeature.properties.managementArea?.manager?.lastName}}
                                     </b>
+                                </p>
+                                <p>Auslösendes Werk:
+                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
+                                </p>
+                                <p>Auslösende:r: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
+                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
                                 </p>
                                 <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
                                 <p>
