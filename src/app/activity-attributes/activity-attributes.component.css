@@ -34,5 +34,39 @@ mat-selection-list {
 }
 
 .full-width {
-  width: 100%;            
+  width: 100%;             
+}
+
+.row {
+    display: grid;
+    grid-template-columns: minmax(220px, 2fr) 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.cell {
+    padding: 0rem 1rem;
+    gap: 0.25rem;
+    min-width: 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.cell p {
+    margin: 0;
+}
+
+.mat-checkbox-layout { 
+    white-space: normal !important; /* allow word wrap */
+}
+
+.single-column {
+    grid-template-columns: 1fr;
+}
+
+.full-line {
+  grid-column: 1 / -1;
+  border-top: 1px solid #666666;
+  margin: 0.25rem 0;
 }

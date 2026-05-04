@@ -240,6 +240,15 @@
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
+                                        <p>Gebietsmanagement:
+                                            <b *ngIf="managementArea && managementArea.manager">
+                                                {{managementArea.manager.firstName}}
+                                                {{managementArea.manager.lastName}}
+                                            </b>
+                                            <b *ngIf="!(managementArea && managementArea.manager)">
+                                                Noch nicht ermittelt
+                                            </b>
+                                        </p>
                                         <p>Auslösendes Werk:
                                             <b
                                                 *ngIf="primaryNeed.properties.orderer.organisationalUnit.abbreviation != ''">
@@ -256,15 +265,6 @@
                                                 {{primaryNeed.properties.orderer.lastName}}
                                             </b>
                                             <b *ngIf="primaryNeed.properties.orderer.uuid == ''">
-                                                Noch nicht ermittelt
-                                            </b>
-                                        </p>
-                                        <p>Gebietsmanagement:
-                                            <b *ngIf="managementArea && managementArea.manager">
-                                                {{managementArea.manager.firstName}}
-                                                {{managementArea.manager.lastName}}
-                                            </b>
-                                            <b *ngIf="!(managementArea && managementArea.manager)">
                                                 Noch nicht ermittelt
                                             </b>
                                         </p>
@@ -349,7 +349,651 @@
                     </mat-tab>
                     <mat-tab label="Journal" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
+                            <mat-card-header>
+                                    <mat-card-title>Journal-Einträge</mat-card-title>
+                            </mat-card-header>
+                                Dieser Bereich ist in Plaunung.
+                            <mat-card-content>
+                            </mat-card-content>
+                            <mat-card-header>
+                                <mat-card-title>Eigenschaftsübernahme Bedarfe</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="row">
+                                    <div class="cell main"><p>GM</p></div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <p class="mat-header-look">Titel & Abschnitt</p>
+                                        <p><a routerLink="/needs/{{assignedRoadWorkNeed.properties.uuid}}">
+                                            {{assignedRoadWorkNeed.properties.name}}
+                                        </a></p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="cell main"></div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <p class="mat-header-look">Werk</p>
+                                        <p>{{assignedRoadWorkNeed.properties.orderer.organisationalUnit.abbreviation}}</p>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+
+                                <div class="row">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                            <mat-label>Tätigkeiten/Arbeiten</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.description"
+                                                placeholder="Welche Tätigkeiten/Arbeiten sind vorgesehen?" required
+                                                [disabled]=true>
+                                            </textarea>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <textarea matInput maxlength="255"
+                                            cdkTextareaAutosize
+                                            cdkAutosizeMaxRows="15"
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.description"
+                                            [disabled]=true>
+                                        </textarea>
+                                    </div>
+                                </div>
+
+                                <!--<div class="row">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                        <mat-label>Dauer der Bautätigkeit (Monate)</mat-label>
+                                        <input matInput
+                                            type="number"
+                                            min="0"
+                                            max="999"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.constructionDuration"
+                                            placeholder="Zahl 0 - 999" required
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <input matInput
+                                            type="number"
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.constructionDuration"
+                                            [disabled]=true>
+                                    </div>
+                                </div>-->
+
+                                <div class="row">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                            <mat-label>Randbedingungen/Abhängigkeiten</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.comment" placeholder="Gibt es relevante Randbedingungen/Abhängigkeiten? Welche?"
+                                                [disabled]=true>
+                                            </textarea>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <textarea matInput maxlength="255"
+                                            cdkTextareaAutosize
+                                            cdkAutosizeMaxRows="15"
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.comment"
+                                            [disabled]=true>
+                                        </textarea>
+                                    </div>
+                                </div>
+
+                                <!--<div class="row">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                            <mat-label>Rechts-/Landerwerb vorgesehen?</mat-label>
+                                            <mat-select 
+                                                [(ngModel)]="roadWorkActivityFeature.properties.acquisitionPlanned"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                <mat-option [value]="'YES'">Ja</mat-option>
+                                                <mat-option [value]="'NO'">Nein</mat-option>
+                                                <mat-option [value]="'MAYBE'">Eventuell</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-form-field>
+                                            <mat-select 
+                                                [(ngModel)]="assignedRoadWorkNeed.properties.acquisitionPlanned"
+                                                [disabled]=true>
+                                                <mat-option [value]="'YES'">Ja</mat-option>
+                                                <mat-option [value]="'NO'">Nein</mat-option>
+                                                <mat-option [value]="'MAYBE'">Eventuell</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>-->
+                                
+                                <div class="row">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                            <mat-label>Rechtliche/technische Bewilligungen notwendig?</mat-label>
+                                            <mat-select 
+                                                [(ngModel)]="roadWorkActivityFeature.properties.approvals.approvalRequired"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                <mat-option [value]="true">Ja</mat-option>
+                                                <mat-option [value]="false">Nein</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-form-field>
+                                            <mat-select 
+                                                [(ngModel)]="assignedRoadWorkNeed.properties.approvals.approvalRequired"
+                                                [disabled]=true>
+                                                <mat-option [value]="true">Ja</mat-option>
+                                                <mat-option [value]="false">Nein</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.strgApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            StrG - Planauflageverfahren nach Strassengesetz §13/§16
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.strgApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.bafuApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            BAFU - Bundesamt für Umwelt, Störfallverordnung
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.bafuApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.lsvApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            LSV - Lärmschutzverordnung
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.lsvApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.ssvApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            SSV - Signalisationsverordnung
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.ssvApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.wwgApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            WWG - Wasserwirtschaftsgesetz
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.wwgApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.eriApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            ERI - Eidg. Rohrleitungsinspektorat
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.eriApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.pbgApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            PBG - Baubewilligung nach Planungs- und Baugesetz
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.pbgApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.ebgApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            EBG - Eisenbahngesetz
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.ebgApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.awelApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            AWEL – Amt für Abfall, Wasser, Energie und Luft, zuständig für Wald, Fruchtfolgeflächen, Grundwasser, Hochwasser, Gewässerbestand, Altlasten, usw.
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.awelApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.estiApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            ESTI – Eidg. Starkstrominspektorat, zuständig für Mittel-/Starkstromanlagen
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.estiApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.otherApprovalRequired"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            PBG - Baubewilligung nach Planungs- und Baugesetz
+                                        </mat-checkbox>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-checkbox
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.otherApprovalRequired"
+                                            [disabled]=true>
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired &&
+                                    roadWorkActivityFeature.properties.approvals.otherApprovalRequired">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                            <input matInput
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.otherApprovalDetails"
+                                            placeholder="Bitte spezifizieren" required>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="cell sub" *ngFor="let assignedRoadWorkNeed of needsOfActivityService.assignedRoadWorkNeeds">
+                                        <mat-form-field>
+                                            <input matInput
+                                            [(ngModel)]="assignedRoadWorkNeed.properties.approvals.otherApprovalDetails"
+                                            [disabled]=true>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+                            </mat-card-content>
+                            <mat-card-header>
+                                    <mat-card-title>Zusätzliche Anforderungen</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.partOfAggloprogram"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Ist das Vorhaben im Aggloprogramm vorgesehen?
+                                        </mat-checkbox>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>Generation</mat-label>
+                                            <input matInput
+                                                type="number"
+                                                min="0"
+                                                max="999"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramGeneration"
+                                                placeholder="Zahl 0 - 999" required
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>ARE-Code</mat-label>
+                                            <textarea matInput maxlength="40"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreCode"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                </textarea>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>ARE-Bezeichnung</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreDescription"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                </textarea>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>Umzusetzen bis</mat-label>
+                                            <input matInput
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
+                                                [matDatepicker]="aggloprogramDueDate"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-datepicker #aggloprogramDueDate></mat-datepicker>
+                                            <mat-datepicker-toggle matSuffix
+                                                [for]="aggloprogramDueDate"></mat-datepicker-toggle>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>Eingestellte Summe (Gesamtkosten in CHF)</mat-label>
+                                            <input matInput
+                                                type="number"
+                                                min="0"
+                                                max="999999999"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostTotal"
+                                                placeholder="Betrag in CHF" required
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>Übernahme durch Kanton (in CHF)</mat-label>
+                                            <input matInput
+                                                type="number"
+                                                min="0"
+                                                max="999999999"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostCanton"
+                                                placeholder="Betrag in CHF" required
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.busStopsSheltersAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Haltestation/Wartehallen
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.structuresAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Kunstbauten (Brücken, Stege, Unterführungen, Durchlässe, Treppen oder ähnliches)
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.roadDrainageAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Strassenentwässerung
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.houseConnectionsAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Privater Hausanschluss (GAL)
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.wasteFacilitiesAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Entsorgungseinrichtungen (UFC/Sammelstellen)
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.technicalInstallationsAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Technische Einrichtungen wie LSA, usw.
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.treesAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Neue Bäume / Umsetzen von Bäumen
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.streetFurnitureAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Bänke/ Stadtmobiliar
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.urbanClimateAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Stadtklima
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.subjectToDepaving"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Entsiegelung
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.pedestriansCyclingAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Fuss-/Veloverkehr
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.disabilityEqualityAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Behindertengleichstellungsgesetz (BehiG)
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.trafficRegulationAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Verkehrsanordnung
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAffected"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Sind Private betroffen?
+                                        </mat-checkbox>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                                            <mat-label>In welchem Umfang/mit welchem Auftrag?</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityExtent"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                </textarea>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                                            <mat-label>Haben diese eigene Projektbaubedürfnisse?</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityRequirements"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                </textarea>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                                            <mat-label>Sind diese durch Rechts-/Landerwerb betroffen?</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAcquisition"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                </textarea>
+                                        </mat-form-field>
+
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                                            <mat-label>Ist Privater = Auslöser?</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                cdkTextareaAutosize
+                                                cdkAutosizeMaxRows="15"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityIsInitiator"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                </textarea>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-form-field>
+                                            <mat-label>Das Vorhaben wurde in Provis (Abacus) eröffnet</mat-label>
+                                            <input matInput
+                                                type="number"
+                                                min="0"
+                                                max="999999999"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.erpNumber"
+                                                placeholder="Nr. Hauptprojekt Provis" required
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.coreDrillingContracted"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Bohrkern beauftragt
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.quotesRequested"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Bestellungen eingeholt
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.quotesReviewed"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Bestellungen geprüft
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.aprChecked"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                Check APR
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.afmChecked"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Check AFM
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+                                <div class="cell full-line"></div>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.cfDone"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            C&F
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.rdDone"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            RD
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.approved"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            «verfügt»
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.fabasoftDone"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Ablage in Fabasoft
+                                        </mat-checkbox>
+                                        
+                                        <mat-checkbox
+                                            [(ngModel)]="roadWorkActivityFeature.properties.gisUpdated"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            Nachführung in GIS
+                                        </mat-checkbox>
+                                    </div>
+                                </div><div class="cell full-line"></div>
+                                <div class="row single-column">
+                                    <div class="cell main">
+                                        <mat-form-field *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                                            <mat-label>Umzusetzen bis</mat-label>
+                                            <input matInput
+                                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
+                                                [matDatepicker]="aggloprogramDueDate"
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                            <mat-datepicker #aggloprogramDueDate></mat-datepicker>
+                                            <mat-datepicker-toggle matSuffix
+                                                [for]="aggloprogramDueDate"></mat-datepicker-toggle>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </mat-card-content>
                         </div>
                     </mat-tab>
                     <mat-tab label="Eigenschaften" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
