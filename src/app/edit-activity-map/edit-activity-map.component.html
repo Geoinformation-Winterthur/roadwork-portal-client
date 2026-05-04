@@ -22,28 +22,31 @@
         <mat-icon aria-label="Icon zeigt zwei überlappende Flächen">content_copy</mat-icon>
         &nbsp;GEOMETRIE ÜBERNEHMEN
     </button>
-    Kartenhintergrund:                
-    <button mat-button type="button" (click)="setBaseLayer('standard')"
-            [class.active]="selectedBaseLayer === 'standard'">
+    Kartenhintergrund:                         
+    <mat-button-toggle-group
+        [(ngModel)]="selectedBaseLayer"
+        (change)="setBaseLayer($event.value)"        
+        style="margin: 1em;"
+        >        
+        <mat-button-toggle value="standard">
             Standard
-    </button>
-    <button mat-button type="button"
-            (click)="setBaseLayer('upwms')"
-            [class.active]="selectedBaseLayer === 'upwms'">
+        </mat-button-toggle>
+        <mat-button-toggle value="upwms">
             Amtliche Vermessung
-    </button>
-    <button mat-button type="button"
-            (click)="setBaseLayer('swissimage')"
-            [class.active]="selectedBaseLayer === 'swissimage'">
+        </mat-button-toggle>
+
+        <mat-button-toggle value="swissimage">
             Swissimage
-    </button>
-    <button mat-button type="button"
-            (click)="setBaseLayer('osm_de')"
-            [class.active]="selectedBaseLayer === 'osm_de'">
+        </mat-button-toggle>
+
+        <mat-button-toggle value="osm_de">
             OpenStreetMap
-    </button>
-    <!-- <button mat-button type="button" (click)="setBaseLayer('stadtplan')">Stadtplan</button>     -->
-     
+        </mat-button-toggle>
+        <!-- <mat-button-toggle value="stadtplan">
+            Stadtplan
+        </mat-button-toggle> -->
+    </mat-button-toggle-group>
+
     <mat-form-field *ngIf="!isInDrawNewMode && !isInModifyExistingMode" style="margin-left: 1em;margin-top: 0.5em;">
         <input matInput maxlength="4" placeholder="Bedarf Real. von (Jahr)..." type="number" [(ngModel)]="chosenYear"
             (change)="onChangeYear()" />

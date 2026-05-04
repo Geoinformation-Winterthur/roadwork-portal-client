@@ -28,6 +28,8 @@ import { ManagementArea } from 'src/model/management-area';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { AddressService } from 'src/services/address.service';
 import { Address } from 'src/model/address';
+import BaseLayer from 'ol/layer/Base';
+import { BaseLayerName, BaseLayers, MapBaseLayerService } from 'src/services/map-base-layer.service';
 
 @Component({
   selector: 'app-edit-need-map',
@@ -46,6 +48,12 @@ export class EditNeedMapComponent implements OnInit {
 
   map: Map = new Map();
 
+  /** Base map layers (only one visible at a time). */
+  baseLayers!: BaseLayers;
+
+  /** Currently selected base layer key. */
+  selectedBaseLayer: BaseLayerName = 'standard';  
+
   userDrawSource: VectorSource = new VectorSource();
   loadSource: VectorSource = new VectorSource();
   polygonDraw?: Draw;
@@ -61,7 +69,8 @@ export class EditNeedMapComponent implements OnInit {
   public constructor(snackBar: MatSnackBar,
     roadWorkNeedService: RoadWorkNeedService,
     managementAreaService: ManagementAreaService,
-    addressService: AddressService) {
+    addressService: AddressService,
+    private mapBaseLayerService: MapBaseLayerService) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.managementAreaService = managementAreaService;
     this.snackBar = snackBar;
@@ -119,23 +128,12 @@ export class EditNeedMapComponent implements OnInit {
 
     const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
 
+    this.baseLayers = this.mapBaseLayerService.createBaseLayers();
+
     this.map = new Map({
       target: 'edit_need_map',
       layers: [
-        new Tile({
-          source: new TileWMS({
-            url: 'http://wms.zh.ch/upwms',
-            params: { 'LAYERS': 'upwms', 'TILED': true },
-            serverType: 'mapserver',
-          })
-        }),
-        new Tile({
-          source: new TileWMS({
-            url: 'http://wms.zh.ch/OGDCMS3ZH',
-            params: { 'LAYERS': 'OGDCMS3ZH', 'TILED': true },
-            serverType: 'mapserver',
-          })
-        }),
+        ...this.mapBaseLayerService.asArray(this.baseLayers),
         loadLayer,
         userDrawLayer
       ],
@@ -313,5 +311,15 @@ export class EditNeedMapComponent implements OnInit {
   refresh() {
     this.map.getLayers().changed();
   }
+
+  /**
+    * Switch between base layers.
+  */
+  setBaseLayer(layerName: BaseLayerName): void {
+    this.selectedBaseLayer = layerName;
+    this.mapBaseLayerService.setVisibleBaseLayer(this.baseLayers, layerName);
+    this.map.render();
+  }
+  
 
 }
