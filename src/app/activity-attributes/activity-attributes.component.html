@@ -156,21 +156,7 @@
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
                                         <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
-                                        </app-status-chip>
-                                        <h4>Nächstmögliche Sitzungstermine</h4>
-                                        <div
-                                            style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
-                                            SKS (Strategische Koord.):<br>
-                                            <b>
-                                                <span *ngIf="roadWorkActivityFeature.properties.dateSks">
-                                                    {{roadWorkActivityFeature.properties.dateSks |
-                                                    date:'dd.MM.yyyy'}}
-                                                </span>
-                                                <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
-                                                    Sitzung konnte nicht ermittelt werden
-                                                </span>
-                                            </b>
-                                        </div>
+                                        </app-status-chip>                                        
                                         <div
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                             KAP (Koordinationsausschuss Proj.):<br>
@@ -1921,24 +1907,7 @@
                                             <mat-card-title>Sitzungen, berechnet</mat-card-title>
                                         </mat-card-header>
                                         <mat-card-content>
-                                            <div style="display:flex;flex-direction:column; gap:10px;">
-
-                                                <div
-                                                    style="padding:8px 12px 6px 12px; background-color:rgb(240, 240, 240); border-radius:4px;">
-                                                    
-                                                    <div style="font-size:12px; color:rgba(0,0,0,0.6); margin-bottom:4px; line-height:1.2;">
-                                                        SKS (Strategische Koord.)
-                                                    </div>
-
-                                                    <div style="font-size:14px; font-weight:500; line-height:1.3;">
-                                                        <span *ngIf="roadWorkActivityFeature.properties.dateSks">
-                                                            {{roadWorkActivityFeature.properties.dateSks | date:'dd.MM.yyyy'}}
-                                                        </span>
-                                                        <span *ngIf="!roadWorkActivityFeature.properties.dateSks">
-                                                            Sitzung konnte nicht ermittelt werden
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                            <div style="display:flex;flex-direction:column; gap:10px;">                                                
 
                                                 <div
                                                     style="padding:8px 12px 6px 12px; background-color:rgb(240, 240, 240); border-radius:4px;">
