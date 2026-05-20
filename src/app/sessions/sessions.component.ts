@@ -649,6 +649,7 @@ export class SessionsComponent implements OnInit {
                   id: String(act.properties.uuid),
                   name: joinedName,
                   description: act.properties.description,
+                  workingTitle: act.properties.workingTitle,
                   roadWorkActivityNo: act.properties.roadWorkActivityNo,
                   isRoadworkProject: true,
                   sessionComment1: act.properties.sessionComment1,
@@ -1242,7 +1243,7 @@ export class SessionsComponent implements OnInit {
       );
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
-          `${activity.project.description ?? ''} `,
+          `${activity.project.workingTitle ?? ''} `,
           { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
         )
       );

@@ -114,6 +114,14 @@
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         </mat-form-field>
 
+                                        <mat-form-field>
+                                            <mat-label>Arbeitsbezeichnung</mat-label>
+                                            <textarea matInput maxlength="255"
+                                                [(ngModel)]="roadWorkActivityFeature.properties.workingTitle"
+                                                placeholder="Arbeitsbezeichnung eingeben.."
+                                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                                        </mat-form-field>
+
                                         <mat-form-field appearance="fill">
                                             <mat-label>Projekt-Art</mat-label>
                                             <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectKind"
