@@ -91,6 +91,7 @@ import { NewSessionDialogComponent } from './sessions/new-session-dialog.compone
 import { PreventTypingDirective } from './directives/prevent-typing.directive';
 
 import { DocxWordService } from 'src/services/docx-export.service';
+import { ActivityJournalComponent } from './activity-journal/activity-journal.component';
 
 
  
@@ -154,7 +155,8 @@ export const CH_DATE_FORMATS = {
      ReportingItemsComponent,
      DeleteActivityDialogComponent,
      NewSessionDialogComponent,
-     PreventTypingDirective
+     PreventTypingDirective,
+     ActivityJournalComponent
    ],
    imports: [
      BrowserModule,

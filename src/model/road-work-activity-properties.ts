@@ -106,23 +106,26 @@ export class RoadWorkActivityProperties {
     costLastModified?: Date
     costLastModifiedBy?: User
 
-    // Aggloprogramm
+    // Aggloprogramm (#617, 2026.4)
     partOfAggloprogram: boolean = false;
     aggloprogramGeneration?: number;
+    aggloprogramLink: string = "";
     aggloprogramAreCode: string = "";
     aggloprogramAreDescription: string = "";
     aggloprogramDueDate?: Date
     aggloprogramCostTotal?: number;
     aggloprogramCostCanton?: number;
 
-    // Vorstudie
-    //preliminaryStudyRequired: boolean = false;
-    //preliminaryStudyDuration: string = "";
-    //preliminaryStudyDetail: string = "";
-    //preliminaryStudyVkErConfirmed: Date
-    //preliminaryStudyVkErNumber: number;
+    // Prestudy (#621, 2026.4)
+    prestudyRequired: boolean = false;
+    //prestudyRequiredChangedAfterSks: boolean = false;
+    prestudyDuration: string = "";
+    prestudyContractor: string = "";
+    prestudyDetail: string = "";
+    prestudyVkErConfirmed?: Date
+    prestudyVkErNumber?: number;
 
-    // Betroffene Themen
+    // Affected entities (#622, 2026.4)
     busStopsSheltersAffected: boolean = false;
     structuresAffected: boolean = false;
     roadDrainageAffected: boolean = false;
@@ -137,31 +140,36 @@ export class RoadWorkActivityProperties {
     disabilityEqualityAffected: boolean = false;
     trafficRegulationAffected: boolean = false;
 
-    // Private betroffen
+    // Private entities (#623, 2026.4)
     privateEntityAffected: boolean = false;
     privateEntityExtent: string = "";
     privateEntityRequirements: string = "";
-    privateEntityAcquisition: string = "";
-    privateEntityIsInitiator: string = "";
+    privateEntityAcquisition: boolean = false;
+    privateEntityIsInitiator: boolean = false;
 
-    // Provis (Abacus)
+    // Provis (Abacus) (#624, 2026.4)
     erpNumber?: number;
 
-    // Ressourcen
+    // Ressources (#625, 2026.4)
     staffResourcesAprConfirmed?: Date
     costEstimateAprConfirmed?: Date
 
-    // Projektierungsauftrag
+    // Engineering contract (#626, 2026.4)
     coreDrillingContracted: boolean = false;
     quotesRequested: boolean = false;
     quotesReviewed: boolean = false;
     aprChecked: boolean = false;
     afmChecked: boolean = false;
 
-    // Ausgabengenehmigung und Ablage
+    // Approval and filing (#626, 2026.4)
     cfDone: boolean = false;
     rdDone: boolean = false;
     approved: boolean = false;
     fabasoftDone: boolean = false;
     gisUpdated: boolean = false;
+
+    // Additional attributes for journal (#616, 2026.4)
+    plannedTasks: string = "";
+    constraintsDependencies: string = "";
+    acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE
 }

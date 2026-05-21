@@ -23,7 +23,7 @@ export class RoadWorkNeedProperties {
     priority: Priority = new Priority();
     status: string = "";
     activityRelationType: string = "";
-    description: string = "";
+    description: string = ""; // used for plannedTasks (#607, 2026.4)
     roadWorkActivityUuid: string = "";
     isEditingAllowed: boolean = false;
     noteOfAreaManager: string = "";
@@ -31,7 +31,7 @@ export class RoadWorkNeedProperties {
     areaManagerOfNote: User  = new User();
     isPrivate: boolean = false;
     section: string = "";
-    comment: string = "";
+    comment: string = ""; // used for constraints (#601, 2026.4)
     url: string = "";
     overarchingMeasure: boolean = false;
     desiredYearFrom?: number;
@@ -46,6 +46,6 @@ export class RoadWorkNeedProperties {
     decline?: boolean = false;
     stillRelevant?: boolean = false;
     feedbackGiven?: boolean = false;
-    constructionDuration?: number;
-    acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE
+    constructionDuration?: number; // Added in 2026.4 (#608)
+    acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE (#609, 2026.4)
 }

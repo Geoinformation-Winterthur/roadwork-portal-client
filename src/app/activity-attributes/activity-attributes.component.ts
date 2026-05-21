@@ -42,6 +42,7 @@ import { ConsultationService } from 'src/services/consultation.service';
 import { TimeFactorHelper } from 'src/helper/time-factor-helper';
 import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
+import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -59,6 +60,7 @@ export class ActivityAttributesComponent implements OnInit {
   @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
   /** Access to template-driven control for project kind validation. */
   @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
+  @ViewChild(ActivityJournalComponent) activityJournal!: ActivityJournalComponent;
 
   /** Currently edited activity entity and its intersecting management area. */
   roadWorkActivityFeature?: RoadWorkActivityFeature;
@@ -430,9 +432,14 @@ export class ActivityAttributesComponent implements OnInit {
     }
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
+      {
         this.update();
+        this.activityJournal?.save();
+      }
       else
+      {
         this.add();
+      }
     }
   }
 
@@ -1195,6 +1202,7 @@ export class ActivityAttributesComponent implements OnInit {
     this._updateAllInvolvedUsers();
     this._updateDueDate();
     this.editActivityMap?.refresh();
+    this.activityJournal?.refresh();
     this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
   }
 
