@@ -20,6 +20,7 @@ export class RoadWorkActivityProperties {
     sessionComment2: string = "Keine Informationnen";    
     section: string = "";
     type: string = "";
+    workingTitle: string = "";
     projectType: string = "";
     projectKind: string = "";
     overarchingMeasure: boolean = false;

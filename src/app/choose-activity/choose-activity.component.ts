@@ -188,8 +188,9 @@ export class ChooseActivityComponent implements OnInit {
       cellRenderer: ({ data }: any) => {
         const name = data?.properties?.name ?? '';
         const section = data?.properties?.section ?? '';
+        const workingTitle = data?.properties?.workingTitle ?? '';
         const uuid = data?.properties?.uuid ?? '';
-        const tooltip = `${name} ${section}`;
+        const tooltip = `${name} / ${section} / ${workingTitle}`;
         return `
           <a href="/civil-engineering/roadworks-portal/activities/${uuid}" title="${tooltip}" style="
             display: inline-block;
@@ -199,13 +200,13 @@ export class ChooseActivityComponent implements OnInit {
             width: 100%;
             max-width: 100%;
           ">
-            ${name}
+            ${name} / ${section} / ${workingTitle}
           </a>`;
       },
       sortable: true,
       filter: true,
       flex: 1
-    },
+    },    
     /* // --- Involved organizations: flattens involvedUsers to a comma-separated org abbreviation list.
     {
       headerName: 'Mitwirkende',
@@ -247,6 +248,7 @@ export class ChooseActivityComponent implements OnInit {
         const m = data?.properties?.projectManager;
         return m ? `${m.firstName} ${m.lastName}` : '';
       },
+      width: 100,
       sortable: true,
       filter: true
     },

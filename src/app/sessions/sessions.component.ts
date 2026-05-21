@@ -648,6 +648,8 @@ export class SessionsComponent implements OnInit {
                 return {
                   id: String(act.properties.uuid),
                   name: joinedName,
+                  description: act.properties.description,
+                  workingTitle: act.properties.workingTitle,
                   roadWorkActivityNo: act.properties.roadWorkActivityNo,
                   isRoadworkProject: true,
                   sessionComment1: act.properties.sessionComment1,
@@ -1229,13 +1231,19 @@ export class SessionsComponent implements OnInit {
     for (const activity of activities) {
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
-          `Bauvorhaben:`,
+          `Bauvorhaben ${activity.project.roadWorkActivityNo ?? ''}`,
           { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore:true }
         )
       );
       allProjectBlocks.push(
         this.docxWordService.makeFullWidthTitle(
-          `${activity.project.roadWorkActivityNo ?? ''}/ ${activity.project.name ?? ''} `,
+          `${activity.project.name ?? ''} `,
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
+        )
+      );
+      allProjectBlocks.push(
+        this.docxWordService.makeFullWidthTitle(
+          `${activity.project.workingTitle ?? ''} `,
           { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
         )
       );
