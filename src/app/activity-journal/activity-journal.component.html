@@ -120,7 +120,6 @@
             <div class="cell middle">
                 <mat-form-field>
                     <mat-label>Rechts-/Landerwerb vorgesehen?</mat-label>
-
                     <mat-select 
                         [(ngModel)]="roadWorkActivityFeature.properties.acquisitionPlanned"
                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
@@ -681,7 +680,6 @@
             
             <div class="cell">
                 <h4>Provis (Abacus)</h4>
-
                 <mat-form-field>
                     <mat-label>Das Vorhaben wurde in Provis (Abacus) eröffnet</mat-label>
                     <input matInput
@@ -689,7 +687,7 @@
                         min="0"
                         max="999999999"
                         [(ngModel)]="roadWorkActivityFeature.properties.erpNumber"
-                        placeholder="Nr. Hauptprojekt Provis" required
+                        placeholder="Nr. Hauptprojekt Provis"
                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                 </mat-form-field>
 
