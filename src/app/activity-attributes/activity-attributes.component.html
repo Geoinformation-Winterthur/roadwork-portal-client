@@ -1032,7 +1032,17 @@
                                 </mat-card-content>
                             </mat-card>
                         </div>
-                        <h3>Zeitangaben: Bedarfsklärung</h3>
+                        <h3>Zeitangaben: Bedarfsklärung
+                            <button mat-button
+                                    style="background-color: rgb(236,236,234);margin: 0.5em;height: 3.5em"
+                                    (click)="toggleTimelineChart()">
+                                    <mat-icon>account_tree</mat-icon>        
+                                    {{ showTimelineChart
+                                        ? 'Terminansicht ausblenden'
+                                        : 'Terminansicht anzeigen' }}                                                                
+                            </button>
+                        </h3>
+                        
                         <div *ngIf="currentUser.prefTableView" style="margin-bottom: 2em;">
                             <table mat-table [dataSource]="needsOfActivityService.assignedRoadWorkNeeds"
                                 class="mat-elevation-z2" style="width: 100%">
@@ -1177,6 +1187,8 @@
                                 </mat-card>
                             </ng-container>
                         </div>
+                        
+                        <div *ngIf="showTimelineChart" #timelineChart class="zeitfaktor-chart"></div>        
 
                     </mat-tab>
                     <mat-tab label="Dokumente" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
