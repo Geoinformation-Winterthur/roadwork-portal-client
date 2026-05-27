@@ -245,6 +245,8 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
+                    
+                    <!-- Chips and Payments are within same mat-card for desired display (#613). Element structure might be improven when deprecated flex-layout functions are replaced -->
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
@@ -267,7 +269,60 @@
                                 </div>
                             </div>
                         </mat-card-content>
+                    
+                        <div *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
+                            <mat-card-header>
+                                <mat-card-title><mat-icon
+                                        aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostenschätzung</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <button (click)="addCostsEstimation()" mat-button
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
+                                    style="background-color: lightgrey;margin-bottom: 1em;">
+                                    +Hinzufügen
+                                </button><br>
+                                <div *ngFor="let costObj of roadWorkNeedFeature.properties.costs"
+                                    style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
+                                    <button (click)="deleteCostsEstimation(costObj.uuid)" mat-button
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
+                                        style="background-color: lightgrey;margin-bottom: 1em;">
+                                        Entfernen
+                                    </button><br>
+                                    <div>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Kredit-/Kostenart *</mat-label>
+                                            <mat-select [(ngModel)]="costObj.projectType" name="project_type"
+                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                                <mat-option value="streets">Strassen (501000/501011/501012)</mat-option>
+                                                <mat-option value="waters">Wasserbau (502000/502011/502012)</mat-option>
+                                                <mat-option value="channel">Kanalisation (503031/503032)</mat-option>
+                                                <mat-option value="others">Übrige</mat-option>
+                                                <mat-option value="third_parties">Im Auftrag Dritter</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>                                    
+                                        <div>
+                                            <mat-form-field>
+                                                <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
+                                                    placeholder="Kostenschätzung (CHF) *" step="1000"
+                                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            </mat-form-field>
+                                        </div>
+                                        <div style="color:grey;margin-bottom: 2em;">({{
+                                            costObj.costs
+                                            | number }} CHF)</div>
+                                        <mat-form-field style="width: 100%;">
+                                            <mat-label>Bemerkung/Kommentar</mat-label>
+                                            <textarea matInput maxlength="255" [(ngModel)]="costObj.costsComment"
+                                                placeholder="Bemerkung/Kommentar..."
+                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </div>
                     </mat-card>
+
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-content>
@@ -291,58 +346,10 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
-                    <mat-card *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering"
-                        style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                        <mat-card-header>
-                            <mat-card-title><mat-icon
-                                    aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostenschätzung</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                            <button (click)="addCostsEstimation()" mat-button
-                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
-                                style="background-color: lightgrey;margin-bottom: 1em;">
-                                +Hinzufügen
-                            </button><br>
-                            <div *ngFor="let costObj of roadWorkNeedFeature.properties.costs"
-                                style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
-                                <button (click)="deleteCostsEstimation(costObj.uuid)" mat-button
-                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
-                                    style="background-color: lightgrey;margin-bottom: 1em;">
-                                    Entfernen
-                                </button><br>
-                                <div>
-                                    <mat-form-field appearance="fill">
-                                        <mat-label>Kredit-/Kostenart *</mat-label>
-                                        <mat-select [(ngModel)]="costObj.projectType" name="project_type"
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                            <mat-option value="streets">Strassen (501000/501011/501012)</mat-option>
-                                            <mat-option value="waters">Wasserbau (502000/502011/502012)</mat-option>
-                                            <mat-option value="channel">Kanalisation (503031/503032)</mat-option>
-                                            <mat-option value="others">Übrige</mat-option>
-                                            <mat-option value="third_parties">Im Auftrag Dritter</mat-option>
-                                        </mat-select>
-                                    </mat-form-field>                                    
-                                    <div>
-                                        <mat-form-field>
-                                            <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
-                                                placeholder="Kostenschätzung (CHF) *" step="1000"
-                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                        </mat-form-field>
-                                    </div>
-                                    <div style="color:grey;margin-bottom: 2em;">({{
-                                        costObj.costs
-                                        | number }} CHF)</div>
-                                    <mat-form-field style="width: 100%;">
-                                        <mat-label>Bemerkung/Kommentar</mat-label>
-                                        <textarea matInput maxlength="255" [(ngModel)]="costObj.costsComment"
-                                            placeholder="Bemerkung/Kommentar..."
-                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                </textarea>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                        </mat-card-content>
+                        <!-- Empty mat-card to keep "Dokumente" in the middle -->
+                        &nbsp;
                     </mat-card>
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
