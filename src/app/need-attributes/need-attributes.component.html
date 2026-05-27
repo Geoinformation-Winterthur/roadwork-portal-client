@@ -293,11 +293,12 @@
                                             <mat-label>Kredit-/Kostenart *</mat-label>
                                             <mat-select [(ngModel)]="costObj.projectType" name="project_type"
                                                 [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
-                                                <mat-option value="streets">Strassen (501000/501011/501012)</mat-option>
-                                                <mat-option value="waters">Wasserbau (502000/502011/502012)</mat-option>
-                                                <mat-option value="channel">Kanalisation (503031/503032)</mat-option>
+                                                <mat-option value="streets">Strassenprojekt</mat-option>
+                                                <mat-option value="channel">Kanalbau / Kanalinnensanierung</mat-option>
+                                                <mat-option value="waters">Gewässerprojekt</mat-option>
                                                 <mat-option value="others">Übrige</mat-option>
-                                                <mat-option value="third_parties">Im Auftrag Dritter</mat-option>
+                                                <mat-option value="third_parties" *ngIf="userService.getLocalUser().chosenRole == 'administrator' || 
+                                                    userService.getLocalUser().chosenRole == 'territorymanager'">Im Auftrag Dritter</mat-option>
                                             </mat-select>
                                         </mat-form-field>                                    
                                         <div>
@@ -346,11 +347,11 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
-                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
-                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                    <!--<mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">-->
                         <!-- Empty mat-card to keep "Dokumente" in the middle -->
-                        &nbsp;
-                    </mat-card>
+                       <!-- &nbsp;
+                    </mat-card>-->
                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
                         fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                         <mat-card-header>
