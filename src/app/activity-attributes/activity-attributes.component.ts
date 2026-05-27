@@ -11,7 +11,7 @@
  * - Coordinates with child components (map + reporting items) and several services.
  * - Implements role-based editing permissions and field enabling/disabling.
  */
-import { Component, OnInit, ViewChild, ViewEncapsulation, Optional, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, Optional, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -43,6 +43,8 @@ import { TimeFactorHelper } from 'src/helper/time-factor-helper';
 import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
 import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
+import * as echarts from 'echarts';
+import { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -50,7 +52,7 @@ import { ActivityJournalComponent } from '../activity-journal/activity-journal.c
   styleUrls: ['./activity-attributes.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ActivityAttributesComponent implements OnInit {
+export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Child map component reference (OpenLayers wrapper). */
   @ViewChild("edit_activity_map") editActivityMap: any;
@@ -61,6 +63,7 @@ export class ActivityAttributesComponent implements OnInit {
   /** Access to template-driven control for project kind validation. */
   @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
   @ViewChild(ActivityJournalComponent) activityJournal!: ActivityJournalComponent;
+  @ViewChild('timelineChart') timelineChartRef!: ElementRef<HTMLDivElement>;
 
   /** Currently edited activity entity and its intersecting management area. */
   roadWorkActivityFeature?: RoadWorkActivityFeature;
@@ -100,7 +103,9 @@ export class ActivityAttributesComponent implements OnInit {
   /** Shared service cache for needs displayed in this activity. */
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
-
+  chartOptions: EChartsOption = {};
+  private chartInstance?: echarts.ECharts;
+  
   /** System-wide configuration values (e.g., planned dates). */
   configurationData: ConfigurationData = new ConfigurationData();
 
@@ -158,6 +163,7 @@ export class ActivityAttributesComponent implements OnInit {
 
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
+  showTimelineChart = false;
 
   /**
    * Constructor: injects all required services and computes initial role permissions.
@@ -406,6 +412,18 @@ export class ActivityAttributesComponent implements OnInit {
       });
 
   }
+
+  
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      try {                        
+        window.addEventListener('resize', this.resizeHandler);          
+      } catch (error) {
+        console.error("Fehler beim Initialisieren des Resize-Listeners", error);        
+      }
+    });
+  }
+
 
   /** Publish wrapper: toggles privacy to public and saves/creates accordingly. */
   publish() {
@@ -912,6 +930,12 @@ export class ActivityAttributesComponent implements OnInit {
     if (this.activatedRouteSubscription) {
       this.activatedRouteSubscription.unsubscribe();
     }
+
+    window.removeEventListener('resize', this.resizeHandler);
+    if (this.chartInstance) {
+      this.chartInstance.dispose();
+      this.chartInstance = undefined;
+    }
   }
 
   /** Collect unique organisation abbreviations of involved users for display. */
@@ -1229,6 +1253,306 @@ export class ActivityAttributesComponent implements OnInit {
       d.getDate(),
       12, 0, 0, 0
     );
+  }
+  
+  private resizeHandler = () => {
+    this.chartInstance?.resize();
+  };  
+
+  private renderConstructionBar = (params: any, api: any) => {
+    const categoryIndex = api.value(0);
+    const start = api.coord([api.value(1), categoryIndex]);
+    const end = api.coord([api.value(2), categoryIndex]);
+
+    const height = 14;
+
+    return {
+      type: 'rect',
+      shape: {
+        x: start[0],
+        y: start[1] - height / 2,
+        width: end[0] - start[0],
+        height
+      },
+      style: {
+        fill: '#74a9cf'
+      }
+    };
+  };
+
+  private toDate(value: any): Date | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (date.getFullYear() <= 1 || isNaN(date.getTime())) {
+      return undefined;
+    }
+
+    return date;
+  }
+
+  private formatChartDate(value?: Date): string {
+    if (!value) {
+      return '-';
+    }
+
+    return value.toLocaleDateString('de-CH');
+  }
+
+  private buildTimelineChartData() {
+    const needs = this.needsOfActivityService.assignedRoadWorkNeeds ?? [];
+
+    const sortedNeeds = [...needs].sort((a, b) => {
+      if (a.properties.isPrimary) {
+        return -1;
+      }
+
+      if (b.properties.isPrimary) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    const labels = sortedNeeds.map(need =>
+      need.properties.orderer?.organisationalUnit?.abbreviation ?? need.properties.name
+    );
+
+    const allDates: Date[] = [];
+
+    const earlyPoints: any[] = [];
+    const wishPoints: any[] = [];
+    const latePoints: any[] = [];
+    const constructionBars: any[] = [];
+
+    sortedNeeds.forEach((need, index) => {
+      const p = need.properties;
+      const label = labels[index];
+
+      const early = this.toDate(p.finishEarlyTo);
+      const wish = this.toDate(p.finishOptimumTo);
+      const late = this.toDate(p.finishLateTo);
+
+      const constructionDuration = Number(p.constructionDuration ?? 0);
+
+      let constructionStart: Date | undefined;
+      const constructionEnd = late;
+
+      if (late && constructionDuration > 0) {
+        constructionStart = new Date(late);
+        constructionStart.setMonth(
+          constructionStart.getMonth() - constructionDuration
+        );
+      }
+
+      const raw = {
+        label,
+        early,
+        wish,
+        late,
+        constructionStart,
+        constructionEnd,
+        constructionDuration,
+        isPrimary: p.isPrimary
+      };
+
+      if (early) {
+        allDates.push(early);
+        earlyPoints.push({
+          value: [early, index],
+          raw
+        });
+      }
+
+      if (wish) {
+        allDates.push(wish);
+        wishPoints.push({
+          value: [wish, index],
+          raw
+        });
+      }
+
+      if (late) {
+        allDates.push(late);
+        latePoints.push({
+          value: [late, index],
+          raw
+        });
+      }
+
+      if (constructionStart && constructionEnd) {
+        allDates.push(constructionStart, constructionEnd);
+
+        constructionBars.push({
+          value: [index, constructionStart, constructionEnd],
+          raw
+        });
+      }
+    });
+
+    const years = allDates.map(d => d.getFullYear());
+
+    const minYear = years.length ? Math.min(...years) : new Date().getFullYear();
+    const maxYear = years.length ? Math.max(...years) : new Date().getFullYear();
+
+    return {
+      labels,
+      earlyPoints,
+      wishPoints,
+      latePoints,
+      constructionBars,
+      minDate: `${minYear}-01-01`,
+      maxDate: `${maxYear}-12-31`
+    };
+  }
+
+  initChart(): void {
+    if (!this.timelineChartRef?.nativeElement) {
+      return;
+    }
+
+    if (this.chartInstance) {
+      this.chartInstance.dispose();
+    }
+
+    const chartData = this.buildTimelineChartData();
+
+    this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
+
+    this.chartInstance.setOption({
+      title: {
+        text: 'Terminansicht Bedarfe',
+        left: 10,
+        top: 5,
+        textStyle: {
+          fontSize: 14,
+          fontWeight: 'normal'
+        }
+      },
+
+      legend: {
+        top: 30,
+        data: [
+          'Voraussichtliche Bauzeit',
+          'Frühester Baubeginn',
+          'Wunsch Baubeginn',
+          'Späteste Inbetriebnahme'
+        ]
+      },
+
+      tooltip: {
+        trigger: 'item',
+        formatter: (params: any) => {
+          const d = params.data?.raw;
+          if (!d) {
+            return '';
+          }
+
+          return `
+            <b>${d.label}${d.isPrimary ? ' / Auslösend' : ''}</b><br/>
+            Frühester Baubeginn: ${this.formatChartDate(d.early)}<br/>
+            Wunsch Baubeginn: ${this.formatChartDate(d.wish)}<br/>
+            Späteste Inbetriebnahme: ${this.formatChartDate(d.late)}<br/>
+            Dauer der Bautätigkeit: ${d.constructionDuration ?? '-'} Monate<br/>
+            Spätest möglicher Baubeginn: ${this.formatChartDate(d.constructionStart)}
+          `;
+        }
+      },
+
+      grid: {
+        left: 120,
+        right: 40,
+        top: 80,
+        bottom: 60
+      },
+
+      xAxis: {
+        type: 'time',
+        min: chartData.minDate,
+        max: chartData.maxDate,
+        axisLabel: {
+          formatter: (value: number) => {
+            const d = new Date(value);
+            const quarter = Math.floor(d.getMonth() / 3) + 1;
+            return `${quarter}.Q\n${d.getFullYear()}`;
+          }
+        },
+        splitLine: {
+          show: true
+        }
+      },
+
+      yAxis: {
+        type: 'category',
+        inverse: true,
+        data: chartData.labels,
+        axisTick: {
+          show: false
+        }
+      },
+
+      series: [
+        {
+          name: 'Voraussichtliche Bauzeit',
+          type: 'custom',
+          renderItem: this.renderConstructionBar,
+          encode: {
+            x: [1, 2],
+            y: 0
+          },
+          data: chartData.constructionBars
+        },
+
+        {
+          name: 'Frühester Baubeginn',
+          type: 'scatter',
+          symbolSize: 10,
+          itemStyle: {
+            color: '#9ecae1'
+          },
+          data: chartData.earlyPoints
+        },
+
+        {
+          name: 'Wunsch Baubeginn',
+          type: 'scatter',
+          symbolSize: 15,
+          itemStyle: {
+            color: '#08519c'
+          },
+          data: chartData.wishPoints
+        },
+
+        {
+          name: 'Späteste Inbetriebnahme',
+          type: 'scatter',
+          symbolSize: 10,
+          itemStyle: {
+            color: '#c6dbef',
+            borderColor: '#3182bd',
+            borderWidth: 1
+          },
+          data: chartData.latePoints
+        }
+      ]
+    });
+
+    this.chartInstance.resize();
+  }
+
+  toggleTimelineChart(): void {
+
+    this.showTimelineChart = !this.showTimelineChart;
+
+    if (this.showTimelineChart) {
+
+      setTimeout(() => {
+        this.initChart();
+      });
+    }
   }
 
 }

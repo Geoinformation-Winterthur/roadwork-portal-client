@@ -36,3 +36,10 @@ mat-selection-list {
 .full-width {
   width: 100%;             
 }
+
+.zeitfaktor-chart {
+  width: 99%;
+  height: 350px;
+  min-height: 300px; 
+  border: 1px solid #ddd;   
+}
