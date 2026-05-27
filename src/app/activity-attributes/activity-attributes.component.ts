@@ -104,7 +104,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
   chartOptions: EChartsOption = {};
-  private chartInstance?: echarts.ECharts;
+  private chartInstance?: echarts.ECharts;  
   
   /** System-wide configuration values (e.g., planned dates). */
   configurationData: ConfigurationData = new ConfigurationData();
@@ -1275,7 +1275,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         height
       },
       style: {
-        fill: '#74a9cf'
+        fill: '#005CA9'
       }
     };
   };
@@ -1300,6 +1300,223 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     }
 
     return value.toLocaleDateString('de-CH');
+  }  
+
+  toggleTimelineChart(): void {
+
+    this.showTimelineChart = !this.showTimelineChart;
+
+    if (this.showTimelineChart) {
+
+      setTimeout(() => {
+        this.initChart();
+      });
+    }
+  }
+
+  initChart(): void {
+    if (!this.timelineChartRef?.nativeElement) {
+      return;
+    }
+
+    if (this.chartInstance) {
+      this.chartInstance.dispose();
+    }
+
+    const chartData = this.buildTimelineChartData();
+
+    this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
+
+    this.chartInstance.setOption({
+      title: {
+        text: 'Terminansicht Bedarfe',
+        left: 10,
+        top: 5,
+        textStyle: {
+          fontSize: 14,
+          fontWeight: 'normal'
+        }
+      },
+
+      legend: {
+        top: 30,
+        data: [
+          'Voraussichtliche Bauzeit',
+          'Frühester Baubeginn',
+          'Wunsch Baubeginn',
+          'Späteste Inbetriebnahme'
+        ]
+      },
+
+      tooltip: {
+        trigger: 'item',
+        formatter: (params: any) => {
+          const d = params.data?.raw;
+
+          if (!d) {
+            return '';
+          }
+
+          return `
+            <b>${d.label}${d.isPrimary ? ' / Auslösend' : ''}</b><br/>
+            Frühester Baubeginn: ${this.formatChartDate(d.early)}<br/>
+            Wunsch Baubeginn: ${this.formatChartDate(d.wish)}<br/>
+            Späteste Inbetriebnahme: ${this.formatChartDate(d.late)}<br/>
+            Dauer der Bautätigkeit: ${d.constructionDuration ?? '-'} Monate<br/>
+            Spätest möglicher Baubeginn: ${this.formatChartDate(d.constructionStart)}
+          `;
+        }
+      },
+
+      grid: {
+        left: 120,
+        right: 40,
+        top: 90,
+        bottom: 55
+      },
+
+      xAxis: [
+        {
+          // dolna linia: tylko Q1, Q2, Q3, Q4
+          type: 'time',
+          min: chartData.minDate,
+          max: chartData.maxDate,
+
+          splitNumber: chartData.quarterCount,
+
+          minInterval: 1000 * 60 * 60 * 24 * 80,
+          maxInterval: 1000 * 60 * 60 * 24 * 95,
+
+          axisLabel: {
+            hideOverlap: false,
+            formatter: (value: number) => {
+              const d = new Date(value);
+              const quarter = Math.floor(d.getMonth() / 3) + 1;
+
+              return `Q${quarter}`;
+            }
+          },
+
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#d9d9d9',
+              width: 1
+            }
+          }
+        },
+        {
+          // górna linia: lata wycentrowane nad kwartałami
+          type: 'category',
+          position: 'top',
+          data: chartData.years,
+
+          axisLabel: {
+            hideOverlap: false,
+            margin: 8,
+            fontWeight: 'bold'
+          },
+
+          axisTick: {
+            show: false
+          },
+
+          axisLine: {
+            show: false
+          },
+
+          splitLine: {
+            show: false
+          }
+        }
+      ],
+
+      yAxis: {
+        type: 'category',
+        inverse: true,
+        data: chartData.labels,
+        axisTick: {
+          show: false
+        }
+      },
+
+      series: [
+        {
+          name: 'Voraussichtliche Bauzeit',
+          type: 'custom',
+          xAxisIndex: 0,
+          renderItem: this.renderConstructionBar,
+          encode: {
+            x: [1, 2],
+            y: 0
+          },
+          data: chartData.constructionBars
+        },
+
+        {
+          name: 'Frühester Baubeginn',
+          type: 'scatter',
+          xAxisIndex: 0,
+          symbolSize: 10,
+          itemStyle: {
+            color: '#9ecae1'
+          },
+          data: chartData.earlyPoints,
+
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            label: {
+              show: false
+            },
+            lineStyle: {
+              color: '#8c8c8c',
+              width: 2,
+              type: 'solid'
+            },
+            data: this.buildYearLines(chartData.minDate, chartData.maxDate)
+          }
+        },
+
+        {
+          name: 'Wunsch Baubeginn',
+          type: 'scatter',
+          xAxisIndex: 0,
+          symbolSize: 15,
+          itemStyle: {
+            color: '#005CA9'
+          },
+          data: chartData.wishPoints
+        },
+
+        {
+          name: 'Späteste Inbetriebnahme',
+          type: 'scatter',
+          xAxisIndex: 0,
+          symbolSize: 11,
+          itemStyle: {
+            color: (params: any) => {
+              const d = params.data?.raw;
+
+              const constructionEnd = this.toDate(
+                this.roadWorkActivityFeature?.properties?.endOfConstruction
+              );
+
+              if (d?.late && constructionEnd && d.late < constructionEnd) {
+                return '#d9534f';
+              }
+
+              return '#b3cf3a';
+            },
+            borderColor: '#5f7f00',
+            borderWidth: 1
+          },
+          data: chartData.latePoints
+        }
+      ]
+    });
+
+    this.chartInstance.resize();
   }
 
   private buildTimelineChartData() {
@@ -1314,7 +1531,24 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         return 1;
       }
 
-      return 0;
+      const aEarly = this.toDate(a.properties.finishEarlyTo)?.getTime() ?? 0;
+      const bEarly = this.toDate(b.properties.finishEarlyTo)?.getTime() ?? 0;
+
+      if (aEarly !== bEarly) {
+        return aEarly - bEarly;
+      }
+
+      const aWish = this.toDate(a.properties.finishOptimumTo)?.getTime() ?? 0;
+      const bWish = this.toDate(b.properties.finishOptimumTo)?.getTime() ?? 0;
+
+      if (aWish !== bWish) {
+        return aWish - bWish;
+      }
+
+      const aLate = this.toDate(a.properties.finishLateTo)?.getTime() ?? 0;
+      const bLate = this.toDate(b.properties.finishLateTo)?.getTime() ?? 0;
+
+      return aLate - bLate;
     });
 
     const labels = sortedNeeds.map(need =>
@@ -1393,10 +1627,17 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       }
     });
 
-    const years = allDates.map(d => d.getFullYear());
+    const yearsFromDates = allDates.map(d => d.getFullYear());
+    const currentYear = new Date().getFullYear();
 
-    const minYear = years.length ? Math.min(...years) : new Date().getFullYear();
-    const maxYear = years.length ? Math.max(...years) : new Date().getFullYear();
+    const minYear = yearsFromDates.length ? Math.min(...yearsFromDates) : currentYear;
+    const maxYear = yearsFromDates.length ? Math.max(...yearsFromDates) : currentYear;
+
+    const years: string[] = [];
+
+    for (let year = minYear; year <= maxYear; year++) {
+      years.push(`${year}`);
+    }
 
     return {
       labels,
@@ -1404,155 +1645,31 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       wishPoints,
       latePoints,
       constructionBars,
+
       minDate: `${minYear}-01-01`,
-      maxDate: `${maxYear}-12-31`
+      maxDate: `${maxYear}-12-31`,
+
+      quarterCount: years.length * 4,
+      years
     };
   }
 
-  initChart(): void {
-    if (!this.timelineChartRef?.nativeElement) {
-      return;
-    }
+  private buildYearLines(minDate: string, maxDate: string) {
+    const minYear = new Date(minDate).getFullYear();
+    const maxYear = new Date(maxDate).getFullYear();
 
-    if (this.chartInstance) {
-      this.chartInstance.dispose();
-    }
+    const lines: any[] = [];
 
-    const chartData = this.buildTimelineChartData();
-
-    this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
-
-    this.chartInstance.setOption({
-      title: {
-        text: 'Terminansicht Bedarfe',
-        left: 10,
-        top: 5,
-        textStyle: {
-          fontSize: 14,
-          fontWeight: 'normal'
-        }
-      },
-
-      legend: {
-        top: 30,
-        data: [
-          'Voraussichtliche Bauzeit',
-          'Frühester Baubeginn',
-          'Wunsch Baubeginn',
-          'Späteste Inbetriebnahme'
-        ]
-      },
-
-      tooltip: {
-        trigger: 'item',
-        formatter: (params: any) => {
-          const d = params.data?.raw;
-          if (!d) {
-            return '';
-          }
-
-          return `
-            <b>${d.label}${d.isPrimary ? ' / Auslösend' : ''}</b><br/>
-            Frühester Baubeginn: ${this.formatChartDate(d.early)}<br/>
-            Wunsch Baubeginn: ${this.formatChartDate(d.wish)}<br/>
-            Späteste Inbetriebnahme: ${this.formatChartDate(d.late)}<br/>
-            Dauer der Bautätigkeit: ${d.constructionDuration ?? '-'} Monate<br/>
-            Spätest möglicher Baubeginn: ${this.formatChartDate(d.constructionStart)}
-          `;
-        }
-      },
-
-      grid: {
-        left: 120,
-        right: 40,
-        top: 80,
-        bottom: 60
-      },
-
-      xAxis: {
-        type: 'time',
-        min: chartData.minDate,
-        max: chartData.maxDate,
-        axisLabel: {
-          formatter: (value: number) => {
-            const d = new Date(value);
-            const quarter = Math.floor(d.getMonth() / 3) + 1;
-            return `${quarter}.Q\n${d.getFullYear()}`;
-          }
-        },
-        splitLine: {
-          show: true
-        }
-      },
-
-      yAxis: {
-        type: 'category',
-        inverse: true,
-        data: chartData.labels,
-        axisTick: {
-          show: false
-        }
-      },
-
-      series: [
-        {
-          name: 'Voraussichtliche Bauzeit',
-          type: 'custom',
-          renderItem: this.renderConstructionBar,
-          encode: {
-            x: [1, 2],
-            y: 0
-          },
-          data: chartData.constructionBars
-        },
-
-        {
-          name: 'Frühester Baubeginn',
-          type: 'scatter',
-          symbolSize: 10,
-          itemStyle: {
-            color: '#9ecae1'
-          },
-          data: chartData.earlyPoints
-        },
-
-        {
-          name: 'Wunsch Baubeginn',
-          type: 'scatter',
-          symbolSize: 15,
-          itemStyle: {
-            color: '#08519c'
-          },
-          data: chartData.wishPoints
-        },
-
-        {
-          name: 'Späteste Inbetriebnahme',
-          type: 'scatter',
-          symbolSize: 10,
-          itemStyle: {
-            color: '#c6dbef',
-            borderColor: '#3182bd',
-            borderWidth: 1
-          },
-          data: chartData.latePoints
-        }
-      ]
-    });
-
-    this.chartInstance.resize();
-  }
-
-  toggleTimelineChart(): void {
-
-    this.showTimelineChart = !this.showTimelineChart;
-
-    if (this.showTimelineChart) {
-
-      setTimeout(() => {
-        this.initChart();
+    for (let year = minYear; year <= maxYear; year++) {
+      lines.push({
+        xAxis: `${year}-01-01`
       });
     }
+
+    return lines;
   }
+  
+
+
 
 }
