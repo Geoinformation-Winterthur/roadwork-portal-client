@@ -9,6 +9,36 @@
     background-color: rgb(61, 195, 244);
 }
 
+.chip-phase-3 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(255, 151, 151);
+}
+
+.chip-phase-4 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(169, 209, 142);
+}
+
+.chip-phase-5 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(112, 173, 71);
+}
+
+.chip-phase-6 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(237, 125, 47);
+}
+
+.chip-archived {
+    color: rgb(218, 218, 218);
+    background-color: rgb(86, 86, 86);
+}
+
+.chip-deferred {
+    color: rgb(218, 218, 218);
+    background-color: rgb(86, 86, 86);
+}
+
 .chip-suspended {
     color: rgb(218, 218, 218);
     background-color: rgb(86, 86, 86);

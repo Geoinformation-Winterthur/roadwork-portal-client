@@ -135,16 +135,28 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
 
   /** Hard-coded project kind options (distinct from backend-provided project types). */
-  readonly projectKindOptions = [
-    { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' },
-    { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' },
-    { value: 'ROAD_MAINTENANCE_REGIONAL', label: 'Strasse Überkommunal (Unterhalt)' },
-    { value: 'ROAD_MAINTENANCE_COMMUNAL', label: 'Strasse Kommunal (Unterhalt)' },
-    { value: 'TRENCH_WITH_RESURFACING', label: 'Aufgrabung mit Belagsersatz' },
+  readonly projectKindOptions = [  
+    { value: 'ROAD_PROJECT', label: 'Strassenprojekt' },
+    { value: 'STRUCTURES', label: 'Kunstbauten' },
+    { value: 'SEWER_CONSTRUCTION', label: 'Kanalbau' },
+    { value: 'SEWER_MAINTENANCE', label: 'Kanalsanierung' },
+    { value: 'WATERBODY', label: 'Gewässerprojekt' },
+    { value: 'UTILITY_CONSTRUCTION', label: 'Werkleitungsbau mit Instandstellung' },
+    { value: 'THIRD_PARTY', label: 'Im Auftrag Dritter' },
+    { value: 'OTHER', label: 'Übrige' }
+  ];
+  
+  // OLD Values (before #643)
+  /*readonly projectKindOptions = [
+    { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' }, // >> NEW: ROAD_PROJECT
+    { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' }, // >> NEW: ROAD_PROJECT
+    { value: 'ROAD_MAINTENANCE_REGIONAL', label: 'Strasse Überkommunal (Unterhalt)' }, // >> NEW: ROAD_PROJECT
+    { value: 'ROAD_MAINTENANCE_COMMUNAL', label: 'Strasse Kommunal (Unterhalt)' }, // >> NEW: ROAD_PROJECT
+    { value: 'TRENCH_WITH_RESURFACING', label: 'Aufgrabung mit Belagsersatz' }, // >> NEW: UTILITY_CONSTRUCTION
     { value: 'WATERBODY', label: 'Gewässer' },
     { value: 'SEWER_MAINTENANCE', label: 'Kanalbau (Unterhalt)' },
     { value: 'OTHER', label: 'Übrige' }
-  ];
+  ];*/
 
   /** Utility exposed for formatting in templates. */
   PdfDocumentHelper = PdfDocumentHelper;

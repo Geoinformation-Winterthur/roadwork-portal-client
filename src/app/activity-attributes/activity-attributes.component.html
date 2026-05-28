@@ -350,10 +350,14 @@
                             [assignedRoadWorkNeeds] = "needsOfActivityService.assignedRoadWorkNeeds">
                         </app-activity-journal>
                     </mat-tab>
-                    <mat-tab label="Eigenschaften" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
-                        <div style="margin: 1em;">
-                            Dieser Bereich ist in Plaunung.
-                        </div>
+                    <mat-tab label="Eigenschaften" *ngIf="roadWorkActivityFeature.properties.uuid!=='' && 
+                            (userService.getLocalUser().chosenRole == 'administrator' || 
+                            userService.getLocalUser().chosenRole == 'territorymanager')">
+                        <!-- Include module activity properties -->
+                        <app-activity-properties #activityProperties
+                            [roadWorkActivityFeature] = "roadWorkActivityFeature"
+                            [projectKindOptions] = "projectKindOptions">
+                        </app-activity-properties>
                     </mat-tab>
                     <mat-tab label="Termine" *ngIf="roadWorkActivityFeature.properties.uuid!==''">
                         <div style="margin: 1em;margin-bottom: 4em;">

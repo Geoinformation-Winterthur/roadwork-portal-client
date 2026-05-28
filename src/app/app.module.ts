@@ -92,6 +92,7 @@ import { PreventTypingDirective } from './directives/prevent-typing.directive';
 
 import { DocxWordService } from 'src/services/docx-export.service';
 import { ActivityJournalComponent } from './activity-journal/activity-journal.component';
+import { ActivityPropertiesComponent } from './activity-properties/activity-properties.component';
 
 
  
@@ -156,7 +157,8 @@ export const CH_DATE_FORMATS = {
      DeleteActivityDialogComponent,
      NewSessionDialogComponent,
      PreventTypingDirective,
-     ActivityJournalComponent
+     ActivityJournalComponent,
+     ActivityPropertiesComponent
    ],
    imports: [
      BrowserModule,

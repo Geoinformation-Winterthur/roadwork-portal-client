@@ -1,5 +1,7 @@
 <div style="margin: 0.3em;margin-bottom: 1em;">
   <mat-chip-list>
+      <!-- There is a copy of the status names in activity-properties.component.html. Any changes needs to be updated there as well! -->
+      <!-- Phase 1 -->
       <mat-chip *ngIf="statusCode === 'requirement'" class="chip-phase-1">
         <span *ngIf="short">11/Bedarf</span>
         <span *ngIf="!short">Bedarf (Phase 11)</span>        
@@ -34,10 +36,76 @@
         <span *ngIf="short">12/koordiniert</span>
         <span *ngIf="!short">koordiniert (Phase 12)</span>
       </mat-chip>
+      <mat-chip *ngIf="statusCode === 'initiation_p13'"
+        class="chip-phase-1">
+        <span *ngIf="short">13/Initialisieren</span>
+        <span *ngIf="!short">Initialisieren (Phase: 13)</span>
+      </mat-chip>
+
+      <!-- Phase 2 -->
       <mat-chip *ngIf="statusCode === 'prestudy'"
         class="chip-phase-2">
         <span *ngIf="short">21/Vorstudie</span>
         <span *ngIf="!short">Vorstudie (Phase 21)</span>
+      </mat-chip>
+        
+      <!-- Phase 3 -->
+      <mat-chip *ngIf="statusCode === 'predesign_p31'"
+        class="chip-phase-3">
+        <span *ngIf="short">32/Vorprojekt</span>
+        <span *ngIf="!short">Vorprojekt (Phase 31)</span>
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'design_p32'"
+        class="chip-phase-3">
+        <span *ngIf="short">32/Bauprojekt</span>
+        <span *ngIf="!short">Bauprojekt (Phase 32)</span>
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'approval_p33'"
+        class="chip-phase-3">
+        <span *ngIf="short">33/Bewilligungsverfahren</span>
+        <span *ngIf="!short">Bewilligungsverfahren (Phase 33)</span>
+      </mat-chip>
+
+      <!-- Phase 4 -->
+      <mat-chip *ngIf="statusCode === 'tendering_p41'"
+        class="chip-phase-4">
+        <span *ngIf="short">41/Ausschreibung</span>
+        <span *ngIf="!short">Ausschreibung (Phase 41)</span>
+      </mat-chip>
+
+      <!-- Phase 5 -->
+      <mat-chip *ngIf="statusCode === 'executiondesign_p51'"
+        class="chip-phase-5">
+        <span *ngIf="short">51/Ausführungsprojekt</span>
+        <span *ngIf="!short">Ausführungsprojekt (Phase 51)</span>
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'execution_p52'"
+        class="chip-phase-5">
+        <span *ngIf="short">52/Ausführung</span>
+        <span *ngIf="!short">Ausführung (Phase 52)</span>
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'commissioning_p53'"
+        class="chip-phase-5">
+        <span *ngIf="short">53/Inbetriebnahme</span>
+        <span *ngIf="!short">Inbetriebnahme (Phase 53)
+          </span>
+      </mat-chip>
+
+      <!-- Phase 6 -->
+      <mat-chip *ngIf="statusCode === 'closed_p61'"
+        class="chip-phase-6">
+        <span *ngIf="short">61/Abgerechnet</span>
+        <span *ngIf="!short">Abgerechnet (Abgeschlossen, Phase 61)</span>
+      </mat-chip>
+
+      <!-- Other -->
+      <mat-chip *ngIf="statusCode === 'archived'"
+        class="chip-archived">
+        Archiviert
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'deferred'"
+        class="chip-deferred">
+        zurückgestellt
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'suspended'"
         class="chip-suspended">

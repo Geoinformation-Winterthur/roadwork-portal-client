@@ -430,6 +430,7 @@ export class ChooseActivityComponent implements OnInit {
    * Placeholder for client-side filtering logic.
    * The original detailed filter implementation is commented out below and retained
    * for reference. Currently returns `true` to keep API compatibility.
+   * Later added status ar not covered here (#648)!
    */
   filterActivities() {
 
