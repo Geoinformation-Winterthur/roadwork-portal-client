@@ -41,10 +41,12 @@ import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-
 import { ConsultationService } from 'src/services/consultation.service';
 import { TimeFactorHelper } from 'src/helper/time-factor-helper';
 import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
+import { DocxWordService } from 'src/services/docx-export.service';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
 import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
+import saveAs from 'file-saver';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -172,6 +174,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   private documentService: DocumentService;
   private appConfigService: AppConfigService;
   private consultationService: ConsultationService;
+  private docxWordService: DocxWordService;
 
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
@@ -186,7 +189,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService,
     consultationService: ConsultationService, router: Router, private cdr: ChangeDetectorRef,
-    snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog) {
+    snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog, docxWordService: DocxWordService) {
     this.activatedRoute = activatedRoute!;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
@@ -200,6 +203,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     this.statusHelper = new StatusHelper();
     this.documentService = documentService;
     this.consultationService = consultationService;
+    this.docxWordService = docxWordService;
     this.dialog = dialog;
     // Editing permissions: locked down unless user is admin or territory manager.
     this.isEditingForRoleNotAllowed = this.userService.getLocalUser().chosenRole != 'administrator' && this.userService.getLocalUser().chosenRole != 'territorymanager';
@@ -1679,6 +1683,43 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     }
 
     return lines;
+  }
+
+  /**
+   * Event handler for "Vorgehensvorschlag" button.
+   * Generates a Word document (.docx) with project information (similar to SKS-Protokoll).
+   */
+  async onProjectProposalClick() {
+    if (!this.roadWorkActivityFeature) {
+      this.snckBar.open('Bauvorhaben nicht geladen', '', { duration: 3000 });
+      return;
+    }
+
+    try {
+      this.snckBar.open('Vorgehensvorschlag wird generiert...', '', { duration: 2000 });
+
+      // Get logo from environment if available
+      const logoUrl = "assets/win_logo.png";
+      const headerSubtitle = 'Vorgehensvorschlag';
+
+      // Generate the report
+      const blob = await this.docxWordService.generateProjectProposalReport(
+        this.roadWorkActivityFeature.properties,
+        logoUrl,
+        headerSubtitle
+      );
+
+      
+      // Save the file with a meaningful name
+      const projectNo = this.roadWorkActivityFeature.properties.roadWorkActivityNo || 'Bauvorhaben';
+      const fileName = `Vorgehensvorschlag_${projectNo}.docx`;
+      saveAs(blob, fileName);
+
+      this.snckBar.open('Vorgehensvorschlag erfolgreich generiert', '', { duration: 3000 });
+    } catch (err) {
+      console.error('onProjectProposalClick: error', err);
+      this.snckBar.open('Fehler beim Generieren des Vorgehensvorschlags', '', { duration: 4000 });
+    }
   }
   
 
