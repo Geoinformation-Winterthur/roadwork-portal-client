@@ -24,24 +24,14 @@
                             [disabled]="true"
                         />
                     </mat-form-field>
-                    <!-- <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
-                        <input matInput type="text"
-                            [(ngModel)]="roadWorkActivityFeature.properties.strabakoNo"
-                            placeholder="Strabako-Nr"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                    </mat-form-field> -->                                       
-                    <!--<mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
-                        <input matInput type="text"
-                            [(ngModel)]="roadWorkActivityFeature.properties.projectNo"
-                            placeholder="Transfernummer"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                    </mat-form-field>-->
+
                     <mat-form-field>
                         <input matInput type="text"
                             [(ngModel)]="roadWorkActivityFeature.properties.name"
                             placeholder="Titel/Strasse"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                     </mat-form-field>
+
                     <div *ngIf="!roadWorkActivityFeature.properties.name"
                         style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
                         Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen des
@@ -117,7 +107,7 @@
                             <mat-option [value]="'inconsult2'">in Bedarfsklärung - 2.Iteration (Phase 12)</mat-option>
                             <mat-option [value]="'reporting'">Stellungnahme (Phase 12)</mat-option>
                             <mat-option [value]="'coordinated'">koordiniert (Phase 12)</mat-option>
-                            <mat-option [value]="'initiation_p13'">Initialisieren (Phase: 13)</mat-option>
+                            <mat-option [value]="'initiation_p13'">Initialisieren (Phase 13)</mat-option>
                             <mat-option [value]="'prestudy'">Vorstudie (Phase 21)</mat-option>
                             <mat-option [value]="'predesign_p31'">Vorprojekt (Phase 31)</mat-option>
                             <mat-option [value]="'design_p32'">Bauprojekt (Phase 32)</mat-option>

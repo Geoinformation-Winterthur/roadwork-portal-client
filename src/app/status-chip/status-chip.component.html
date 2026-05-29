@@ -39,7 +39,7 @@
       <mat-chip *ngIf="statusCode === 'initiation_p13'"
         class="chip-phase-1">
         <span *ngIf="short">13/Initialisieren</span>
-        <span *ngIf="!short">Initialisieren (Phase: 13)</span>
+        <span *ngIf="!short">Initialisieren (Phase 13)</span>
       </mat-chip>
 
       <!-- Phase 2 -->
@@ -102,6 +102,10 @@
       <mat-chip *ngIf="statusCode === 'archived'"
         class="chip-archived">
         Archiviert
+      </mat-chip>
+      <mat-chip *ngIf="statusCode === 'need_archived'"
+        class="chip-archived">
+        Bedarf archiviert
       </mat-chip>
       <mat-chip *ngIf="statusCode === 'deferred'"
         class="chip-deferred">

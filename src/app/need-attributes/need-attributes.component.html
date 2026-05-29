@@ -267,6 +267,35 @@
                                             Priorität</mat-chip>
                                     </mat-chip-list>
                                 </div>
+                                <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
+                                    <mat-label>Status/Phase</mat-label>
+                                    <!-- Option bodies are a copy of the names from status-chip.component.html -->
+                                    <mat-select 
+                                        [(ngModel)]="roadWorkNeedFeature.properties.status">
+                                        <mat-option [value]="'requirement'">Bedarf (Phase 11)</mat-option>
+                                        <mat-option [value]="'review'">in Prüfung (Phase 12)</mat-option>
+                                        <mat-option [value]="'verified1'">verifiziert-1 (Phase 12)</mat-option>
+                                        <mat-option [value]="'verified2'">verifiziert-2 (Phase 12)</mat-option>
+                                        <mat-option [value]="'inconsult1'">in Bedarfsklärung - 1.Iteration (Phase 12)</mat-option>
+                                        <mat-option [value]="'inconsult2'">in Bedarfsklärung - 2.Iteration (Phase 12)</mat-option>
+                                        <mat-option [value]="'reporting'">Stellungnahme (Phase 12)</mat-option>
+                                        <mat-option [value]="'coordinated'">koordiniert (Phase 12)</mat-option>
+                                        <mat-option [value]="'initiation_p13'">Initialisieren (Phase 13)</mat-option>
+                                        <mat-option [value]="'prestudy'">Vorstudie (Phase 21)</mat-option>
+                                        <mat-option [value]="'predesign_p31'">Vorprojekt (Phase 31)</mat-option>
+                                        <mat-option [value]="'design_p32'">Bauprojekt (Phase 32)</mat-option>
+                                        <mat-option [value]="'approval_p33'">Bewilligungsverfahren (Phase 33)</mat-option>
+                                        <mat-option [value]="'tendering_p41'">Ausschreibung (Phase 41)</mat-option>
+                                        <mat-option [value]="'executiondesign_p51'">Ausführungsprojekt (Phase 51)</mat-option>
+                                        <mat-option [value]="'execution_p52'">Ausführung (Phase 52)</mat-option>
+                                        <mat-option [value]="'commissioning_p53'">Inbetriebnahme (Phase 53)</mat-option>
+                                        <mat-option [value]="'closed_p61'">Abgerechnet (Abgeschlossen, Phase 61)</mat-option>
+                                        <mat-option [value]="'archived'">Archiviert</mat-option>
+                                        <mat-option [value]="'need_archived'">Bedarf archiviert</mat-option>
+                                        <mat-option [value]="'deferred'">zurückgestellt</mat-option>
+                                        <mat-option [value]="'suspended'">sistiert</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                             </div>
                         </mat-card-content>
                     

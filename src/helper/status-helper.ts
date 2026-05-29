@@ -16,7 +16,7 @@ export class StatusHelper {
         // There is some mix up of status and phases and might need later refactoring. Currently presence of required status/phases has priority
         
         // Phase 1, 2
-        "initiation_p13",       // Initialisieren (Phase: 13)
+        "initiation_p13",       // Initialisieren (Phase 13)
         
         // Phase 3
         "predesign_p31",        // Vorprojekt (Phase 31)
@@ -38,6 +38,7 @@ export class StatusHelper {
         // Causes that actual phase gets lost. Might make seens to move out of phases later
         "suspended",            // sistiert, existing before #648
         "archived",             // Archiviert
+        "need_archived",        // Bedarf archiviert
         "deferred",             // zurückgestellt
     ];
 
