@@ -3,7 +3,6 @@ import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature'
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { JournalEntryService } from '../../services/journal-entry.service';
 import { JournalEntryFeature } from '../../model/journal-entry-feature';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-activity-journal',
@@ -17,14 +16,11 @@ export class ActivityJournalComponent implements OnInit {
   /** The road work needs features assigned to the activity features from the parent. */
   @Input() assignedRoadWorkNeeds!: RoadWorkNeedFeature[];
 
-  journalEntryFeatures: JournalEntryFeature[] = [];
-
   private journalEntryService: JournalEntryService;
-  private snckBar: MatSnackBar;
+  public journalEntryFeatures: JournalEntryFeature[] = [];
 
-  constructor(journalEntryService: JournalEntryService, snckBar: MatSnackBar) {
+  constructor(journalEntryService: JournalEntryService) {
     this.journalEntryService = journalEntryService;
-    this.snckBar = snckBar;
   }
 
   ngOnInit() {
@@ -33,7 +29,7 @@ export class ActivityJournalComponent implements OnInit {
 
   async refresh() {
     this.journalEntryFeatures = await this.journalEntryService.getJournalEntries(this.roadWorkActivityFeature.properties.uuid);
-
+    // Add an empty one (new)
     const newJournalEntry = new JournalEntryFeature();
     newJournalEntry.properties.isEditingAllowed = true;
     newJournalEntry.properties.uuidRoadworkActivity = this.roadWorkActivityFeature.properties.uuid;

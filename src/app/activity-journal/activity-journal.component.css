@@ -55,12 +55,6 @@ a.disabled {
   grid-template-columns: 1fr 1fr;
 }
 
-.full-line {
-  grid-column: 1 / -1;
-  border-top: 1px solid #666666;
-  margin: 0.25rem 0;
-}
-
 .form-fields-split-one-two {
     display: grid;
     grid-template-columns: 1fr 2fr;

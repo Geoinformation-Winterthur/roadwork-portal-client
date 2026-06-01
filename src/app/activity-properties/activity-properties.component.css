@@ -18,3 +18,19 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+
+.form-fields-split-equal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-fields-split-responsibility {
+    display: grid;
+    grid-template-columns: 2fr 5fr 3fr;
+    gap: 1rem;
+}
+
+mat-form-field {
+  min-width: 20px;
+}

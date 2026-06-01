@@ -1,98 +1,99 @@
 <div style="margin: 1em;" *ngIf="roadWorkActivityFeature">
-        <mat-card-header>
-            <mat-card-title>Bauvorhaben - Eigenschaften</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <div class="row two-columns">
-                <div class="cell">
-                    <p>UUID (Universelle ID):
-                        <b >{{roadWorkActivityFeature.properties.uuid}}</b>
-                    </p>
-                    <mat-form-field>
-                        <input matInput type="text"
-                            [(ngModel)]="roadWorkActivityFeature.properties.roadWorkActivityNo"
-                            placeholder="Nummer-Bauvorhaben"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                    </mat-form-field>
-                        <mat-form-field appearance="fill">
-                        <mat-label>SKS (Strategische Koord.)</mat-label>
-                        <input
-                            matInput
-                            type="text"
-                            [(ngModel)]="roadWorkActivityFeature.properties.sksNo"
-                            placeholder="Sks-Nr"
-                            [disabled]="true"
-                        />
-                    </mat-form-field>
-
-                    <mat-form-field>
-                        <input matInput type="text"
-                            [(ngModel)]="roadWorkActivityFeature.properties.name"
-                            placeholder="Titel/Strasse"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                    </mat-form-field>
-
-                    <div *ngIf="!roadWorkActivityFeature.properties.name"
-                        style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
-                        Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen des
-                        Bauvorhabens eine Bezeichnung automatisch aus der geographischen Lage
-                        ermittelt.
-                    </div>
-                    <mat-form-field>
-                        <input [(ngModel)]="roadWorkActivityFeature.properties.section" matInput
-                            type="text" maxlength="80" placeholder="Abschnitt"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                    </mat-form-field>
-
-                    <mat-form-field>
-                        <mat-label>Arbeitsbezeichnung</mat-label>
-                        <textarea matInput maxlength="255"
-                            cdkTextareaAutosize
-                            cdkAutosizeMaxRows="15"
-                            [(ngModel)]="roadWorkActivityFeature.properties.workingTitle"
-                            placeholder="Arbeitsbezeichnung eingeben.."
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
-                    </mat-form-field>
-
+    <mat-card-header>
+        <mat-card-title>Bauvorhaben - Eigenschaften</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="row two-columns">
+            <div class="cell">
+                <p>UUID (Universelle ID):
+                    <b >{{roadWorkActivityFeature.properties.uuid}}</b>
+                </p>
+                <mat-form-field>
+                    <input matInput type="text"
+                        [(ngModel)]="roadWorkActivityFeature.properties.roadWorkActivityNo"
+                        placeholder="Nummer-Bauvorhaben"
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                </mat-form-field>
                     <mat-form-field appearance="fill">
-                        <mat-label>Projekt-Art</mat-label>
-                        <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectKind"
-                            name="projectKind" #projectKindCtrl="ngModel"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                            required>
-                            <mat-option [value]="null" disabled selected>– Bitte wählen
-                                –</mat-option>
-                            <mat-option *ngFor="let option of projectKindOptions"
-                                [value]="option.value">
-                                {{ option.label }}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="projectKindCtrl.invalid && projectKindCtrl.touched">
-                            Bitte wählen Sie eine Projekt-Art aus.
-                        </mat-error>
-                    </mat-form-field>
+                    <mat-label>SKS (Strategische Koord.)</mat-label>
+                    <input
+                        matInput
+                        type="text"
+                        [(ngModel)]="roadWorkActivityFeature.properties.sksNo"
+                        placeholder="Sks-Nr"
+                        [disabled]="true"
+                    />
+                </mat-form-field>
 
-                    <mat-form-field>
-                        <mat-label>Bemerkung</mat-label>
-                        <textarea matInput maxlength="255"
-                            cdkTextareaAutosize
-                            cdkAutosizeMaxRows="15"
-                            [(ngModel)]="roadWorkActivityFeature.properties.description"
-                            placeholder="Bemerkung eingeben.."
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
-                    </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="text"
+                        [(ngModel)]="roadWorkActivityFeature.properties.name"
+                        placeholder="Titel/Strasse"
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                </mat-form-field>
 
-                    <mat-form-field>
-                        <mat-label>Beschrieb Bauvorhaben</mat-label>
-                        <textarea matInput maxlength="255"
-                            cdkTextareaAutosize
-                            cdkAutosizeMaxRows="15"
-                            [(ngModel)]="roadWorkActivityFeature.properties.comment"
-                            placeholder="Beschreibung des Bauvorhabens eingeben.."
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
-                    </mat-form-field>
+                <div *ngIf="!roadWorkActivityFeature.properties.name"
+                    style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
+                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen des
+                    Bauvorhabens eine Bezeichnung automatisch aus der geographischen Lage
+                    ermittelt.
                 </div>
-                <div class="cell">
+                <mat-form-field>
+                    <input [(ngModel)]="roadWorkActivityFeature.properties.section" matInput
+                        type="text" maxlength="80" placeholder="Abschnitt"
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Arbeitsbezeichnung</mat-label>
+                    <textarea matInput maxlength="255"
+                        cdkTextareaAutosize
+                        cdkAutosizeMaxRows="15"
+                        [(ngModel)]="roadWorkActivityFeature.properties.workingTitle"
+                        placeholder="Arbeitsbezeichnung eingeben.."
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Projekt-Art</mat-label>
+                    <mat-select [(ngModel)]="roadWorkActivityFeature.properties.projectKind"
+                        name="projectKind" #projectKindCtrl="ngModel"
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                        required>
+                        <mat-option [value]="null" disabled selected>– Bitte wählen
+                            –</mat-option>
+                        <mat-option *ngFor="let option of projectKindOptions"
+                            [value]="option.value">
+                            {{ option.label }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="projectKindCtrl.invalid && projectKindCtrl.touched">
+                        Bitte wählen Sie eine Projekt-Art aus.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Bemerkung</mat-label>
+                    <textarea matInput maxlength="255"
+                        cdkTextareaAutosize
+                        cdkAutosizeMaxRows="15"
+                        [(ngModel)]="roadWorkActivityFeature.properties.description"
+                        placeholder="Bemerkung eingeben.."
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Beschrieb Bauvorhaben</mat-label>
+                    <textarea matInput maxlength="255"
+                        cdkTextareaAutosize
+                        cdkAutosizeMaxRows="15"
+                        [(ngModel)]="roadWorkActivityFeature.properties.comment"
+                        placeholder="Beschreibung des Bauvorhabens eingeben.."
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="cell">
+                <div class="form-fields-split-equal">
                     <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status"></app-status-chip>  
                     <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
                         <mat-label>Status/Phase</mat-label>
@@ -123,6 +124,89 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
+
+                <div class="row">
+                    <mat-checkbox
+                        [(ngModel)]="roadWorkActivityFeature.properties.implementationByThird"
+                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                        matTooltip="Umsetzung durch Werk/Dritte (ausserhalb TBA)">
+                        Umsetzung durch Werk/Dritte
+                    </mat-checkbox>
+                </div>
+                
+                <div class="form-fields-split-responsibility">
+                    <mat-form-field>
+                        <mat-label>Werk/OE</mat-label>
+                        <mat-select
+                            [(ngModel)]="projectResponsibilityFeature.properties.uuidOrganisationalUnit"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            <mat-option *ngFor="let organisationalUnit of organisationalUnits"
+                            [value]="organisationalUnit.uuid">
+                            {{ organisationalUnit.abbreviation }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>PL</mat-label>
+                        <mat-select
+                            [(ngModel)]="projectResponsibilityFeature.properties.uuidUser"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            <mat-option *ngFor="let userByOrganisationalUnit of usersByOrganisationalUnit[projectResponsibilityFeature.properties.uuidOrganisationalUnit ?? ''] || []"
+                            [value]="userByOrganisationalUnit.uuid">
+                            {{ userByOrganisationalUnit.firstName }} {{ userByOrganisationalUnit.lastName }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <p>Lead Realisierung</p>
+                </div>
+
+                <div class="form-fields-split-responsibility" *ngFor="let phaseResponsibilityFeature of phaseResponsibilityFeatures">
+                    <mat-form-field>
+                        <mat-label>OE</mat-label>
+                        <mat-select
+                            [(ngModel)]="phaseResponsibilityFeature.properties.uuidOrganisationalUnit"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            <mat-option *ngFor="let organisationalUnit of organisationalUnits"
+                            [value]="organisationalUnit.uuid">
+                            {{ organisationalUnit.abbreviation }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>PL</mat-label>
+                        <mat-select
+                            [(ngModel)]="phaseResponsibilityFeature.properties.uuidUser"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            <mat-option *ngFor="let userByOrganisationalUnit of usersByOrganisationalUnit[phaseResponsibilityFeature.properties.uuidOrganisationalUnit ?? ''] || []"
+                            [value]="userByOrganisationalUnit.uuid">
+                            {{ userByOrganisationalUnit.firstName }} {{ userByOrganisationalUnit.lastName }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Phasenverantwortung</mat-label>
+                        <mat-select 
+                            [(ngModel)]="phaseResponsibilityFeature.properties.phaseWithOrder"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                            [compareWith]="comparePhase">
+                            <mat-option [value]="{ phase: 'prestudy_p2', sortOrder: 20}">Phase 2</mat-option>
+                            <mat-option [value]="{ phase: 'design_p3', sortOrder: 30}">Phase 3</mat-option>
+                            <mat-option [value]="{ phase: 'predesign_p31', sortOrder: 31}">Phase 31</mat-option>
+                            <mat-option [value]="{ phase: 'design_p32', sortOrder: 32}">Phase 32</mat-option>
+                            <mat-option [value]="{ phase: 'approval_p33', sortOrder: 33}">Phase 33</mat-option>
+                            <mat-option [value]="{ phase: 'tendering_p4', sortOrder: 40}">Phase 4</mat-option>
+                            <mat-option [value]="{ phase: 'construction_p5', sortOrder: 50}">Phase 5</mat-option>
+                            <mat-option [value]="{ phase: 'executiondesign_p51', sortOrder: 51}">Phase 51</mat-option>
+                            <mat-option [value]="{ phase: 'execution_p52', sortOrder: 52}">Phase 52</mat-option>
+                            <mat-option [value]="{ phase: 'commissioning_p53', sortOrder: 53}">Phase 53</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
             </div>
-        </mat-card-content>
+        </div>
+    </mat-card-content>
 </div>

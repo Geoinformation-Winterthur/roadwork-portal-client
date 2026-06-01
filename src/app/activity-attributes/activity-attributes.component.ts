@@ -44,6 +44,7 @@ import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
 import { DocxWordService } from 'src/services/docx-export.service';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
 import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
+import { ActivityPropertiesComponent } from '../activity-properties/activity-properties.component';
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import saveAs from 'file-saver';
@@ -65,6 +66,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   /** Access to template-driven control for project kind validation. */
   @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
   @ViewChild(ActivityJournalComponent) activityJournal!: ActivityJournalComponent;
+  @ViewChild(ActivityPropertiesComponent) activityProperties!: ActivityPropertiesComponent;
   @ViewChild('timelineChart') timelineChartRef!: ElementRef<HTMLDivElement>;
 
   /** Currently edited activity entity and its intersecting management area. */
@@ -452,7 +454,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   /** Save wrapper: validates key fields, then updates or creates. */
-  save() {
+  async save() {
     if (this.projectKindCtrl) {
       this.projectKindCtrl.control.markAsTouched();
       this.projectKindCtrl.control.updateValueAndValidity();
@@ -467,8 +469,29 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
       {
+        let delay = 0;
+
         this.update();
-        this.activityJournal?.save();
+
+        try {
+          await this.activityJournal?.save();
+        } catch (error: any) {
+          // Show message delayed to avoid eating the previous snckBar
+          delay += 4000;
+          setTimeout(() => {
+            this.snckBar.open("Fehler beim Speichern des Journals", "", { duration: 4000 });
+          }, delay);
+        }
+        
+        try {
+          await this.activityProperties?.save();
+        } catch (error: any) {
+          // Show message delayed to avoid eating the previous snckBar
+          delay += 4000;
+          setTimeout(() => {
+            this.snckBar.open("Fehler beim Speichern der Projekt/Phasenverantwortung", "", { duration: 4000 });
+          }, delay);
+        }
       }
       else
       {
@@ -1243,6 +1266,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     this._updateDueDate();
     this.editActivityMap?.refresh();
     this.activityJournal?.refresh();
+    this.activityProperties?.refresh();
     this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
   }
 

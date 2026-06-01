@@ -21,6 +21,7 @@ export class RoadWorkActivityProperties {
     section: string = "";
     type: string = "";
     workingTitle: string = "";
+    implementationByThird: boolean = false;
     projectType: string = "";
     projectKind: string = "";
     overarchingMeasure: boolean = false;
