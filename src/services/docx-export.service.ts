@@ -32,10 +32,11 @@ export interface DocxBuildOptions {
   logoUrl?: string;                                    // header logo (URL/data:)
   headerSubtitle?: string;                             // small subtitle under logo
   orientation?: 'portrait' | 'landscape';              // default: portrait
+  footerTitle?: string;  
   marginsCm?: { top: number; right: number; bottom: number; left: number }; // default: 2/1/2/2
   fileName?: string;
   isPreProtocol: boolean,
-  children: Array<Paragraph | Table | string | number | null | undefined>;
+  children: Array<Paragraph | Table | string | number | null | undefined>;  
 }
 
 /** Domain item used to build tables directly from data. */
@@ -100,7 +101,8 @@ export class DocxWordService {
     const {
       username = 'wikis_manager',
       logoUrl,
-      headerSubtitle = '',
+      headerSubtitle =  '', 
+      footerTitle = 'TITLE_PROTOCOL_NAME',
       orientation = 'portrait',
       marginsCm = { top: 2, right: 1, bottom: 2, left: 2 },
       isPreProtocol,
@@ -138,7 +140,7 @@ export class DocxWordService {
           children: [
             // Left-aligned text
             new TextRun({
-              text: TITLE_PROTOCOL_NAME + " - " + (isPreProtocol ? "Vor-Protokoll" : "Protokoll"),
+              text:  footerTitle ||  (TITLE_PROTOCOL_NAME + " - " + (isPreProtocol ? "Vor-Protokoll" : "Protokoll")),
             }),                                    
             new TextRun({ text: "\t" }),            
             new TextRun({
@@ -1671,7 +1673,8 @@ export class DocxWordService {
       const blob = await this.build({
         username: 'wikis_manager',
         logoUrl: '',
-        headerSubtitle: headerSubtitle || '',        
+        headerSubtitle: headerSubtitle || '',    
+        footerTitle: 'Vorgehensvorschlag',    
         isPreProtocol: false,
         children: allProjectBlocks,
         fileName: `Vorgehensvorschlag_${project.roadWorkActivityNo || 'Bauvorhaben'}.docx`,
