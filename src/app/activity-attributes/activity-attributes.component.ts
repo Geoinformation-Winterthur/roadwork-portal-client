@@ -1490,7 +1490,39 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
             x: [1, 2],
             y: 0
           },
-          data: chartData.constructionBars
+          data: chartData.constructionBars,
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            label: {
+              show: true,
+              formatter: (params: any) => params.name,
+              position: 'insideEndTop'
+            },
+            data: [
+              {
+                name: 'Spätest möglicher Projektbeginn',
+                xAxis: chartData.latestProjectStart
+              },
+              {
+                name: 'Heute',
+                xAxis: chartData.today,
+                lineStyle: {
+                  color: '#d9534f',
+                  width: 2,
+                  type: 'dashed'
+                },
+                label: {
+                  color: '#d9534f'
+                }
+              }
+            ],
+            lineStyle: {
+              color: '#000000',
+              width: 2,
+              type: 'solid'
+            }
+          }
         },
 
         {
@@ -1560,7 +1592,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   private buildTimelineChartData() {
-    const needs = this.needsOfActivityService.assignedRoadWorkNeeds ?? [];
+    const needs = this.needsOfActivityService.assignedRoadWorkNeeds ?? [];    
 
     const sortedNeeds = [...needs].sort((a, b) => {
       if (a.properties.isPrimary) {
@@ -1596,11 +1628,15 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     );
 
     const allDates: Date[] = [];
+    const today = new Date();
+    allDates.push(today);
 
     const earlyPoints: any[] = [];
     const wishPoints: any[] = [];
     const latePoints: any[] = [];
     const constructionBars: any[] = [];
+
+    const latestPossibleStarts: Date[] = [];
 
     sortedNeeds.forEach((need, index) => {
       const p = need.properties;
@@ -1620,6 +1656,10 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         constructionStart.setMonth(
           constructionStart.getMonth() - constructionDuration
         );
+      }
+
+      if (constructionStart) {
+        latestPossibleStarts.push(constructionStart);
       }
 
       const raw = {
@@ -1679,6 +1719,10 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       years.push(`${year}`);
     }
 
+    const latestProjectStart = latestPossibleStarts.length
+      ? new Date(Math.min(...latestPossibleStarts.map(d => d.getTime())))
+      : undefined;
+
     return {
       labels,
       earlyPoints,
@@ -1690,7 +1734,10 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       maxDate: `${maxYear}-12-31`,
 
       quarterCount: years.length * 4,
-      years
+      years,
+
+      latestProjectStart,
+      today
     };
   }
 
