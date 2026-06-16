@@ -1354,6 +1354,14 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
+  getTimelineChartImage(): string | null {
+    return this.chartInstance?.getDataURL({
+      type: 'png',
+      pixelRatio: 2,
+      backgroundColor: '#fff'
+    }) ?? null;
+  }
+
   initChart(): void {
     if (!this.timelineChartRef?.nativeElement) {
       return;
@@ -1772,12 +1780,14 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       // Get logo from environment if available
       const logoUrl = "assets/win_logo.png";
       const headerSubtitle = 'Vorgehensvorschlag';
+      const timelineChartImage = this.getTimelineChartImage() ?? undefined;
 
       // Generate the report
       const blob = await this.docxWordService.generateProjectProposalReport(
         this.roadWorkActivityFeature.properties,
         logoUrl,
-        headerSubtitle
+        headerSubtitle,
+        timelineChartImage
       );
 
       

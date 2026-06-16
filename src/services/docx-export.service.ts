@@ -1498,7 +1498,8 @@ export class DocxWordService {
   async generateProjectProposalReport(
     project: any,
     logoUrl?: string,
-    headerSubtitle?: string
+    headerSubtitle?: string,
+    chartImageDataUrl?: string
   ): Promise<Blob> {
     try {
       console.log('before:');
@@ -1607,6 +1608,21 @@ export class DocxWordService {
       if (imageRun) {
         allProjectBlocks.push(new Paragraph({ alignment: AlignmentType.LEFT, children: [imageRun] }));
       }
+
+      // Optional chart image
+      if (chartImageDataUrl) {
+        const chartRun = await this.imageFromUrlFitted(chartImageDataUrl, 680);
+
+        if (chartRun) {
+          allProjectBlocks.push(this.smallGap());          
+          allProjectBlocks.push(
+            new Paragraph({
+              alignment: AlignmentType.LEFT,
+              children: [chartRun],
+            })
+          );
+        }
+      }      
 
       // Meta information
       allProjectBlocks.push(...this.makeProjectMetaBlock({ ausloesende, ausloesendesWerk, gm, comment, mitwirkende }));
