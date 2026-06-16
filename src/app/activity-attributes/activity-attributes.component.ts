@@ -132,7 +132,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
-  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor", "consult_input"];
+  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "constructionDuration", "time_factor", "consult_input"];
 
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
 
