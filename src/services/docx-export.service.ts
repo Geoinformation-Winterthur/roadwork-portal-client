@@ -102,7 +102,7 @@ export class DocxWordService {
       username = 'wikis_manager',
       logoUrl,
       headerSubtitle =  '', 
-      footerTitle = 'TITLE_PROTOCOL_NAME',
+      footerTitle =  '',
       orientation = 'portrait',
       marginsCm = { top: 2, right: 1, bottom: 2, left: 2 },
       isPreProtocol,
