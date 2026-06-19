@@ -14,9 +14,14 @@
     background-color: rgb(255, 151, 151);
 }
 
+.chip-phase-33 {
+    color: rgb(83, 83, 83);
+    background-color: rgb(192, 0, 0);
+}
+
 .chip-phase-4 {
     color: rgb(83, 83, 83);
-    background-color: rgb(169, 209, 142);
+    background-color: rgb(169, 208, 142);
 }
 
 .chip-phase-5 {
@@ -26,7 +31,7 @@
 
 .chip-phase-6 {
     color: rgb(83, 83, 83);
-    background-color: rgb(237, 125, 47);
+    background-color: rgb(237, 125, 49);
 }
 
 .chip-archived {

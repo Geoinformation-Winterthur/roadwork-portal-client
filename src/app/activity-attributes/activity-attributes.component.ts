@@ -63,8 +63,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild("reportingItemsInconsult1") reportingItemsInconsult1 !: ReportingItemsComponent;
   @ViewChild("reportingItemsInconsult2") reportingItemsInconsult2 !: ReportingItemsComponent;
   @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
-  /** Access to template-driven control for project kind validation. */
-  @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
   @ViewChild(ActivityJournalComponent) activityJournal!: ActivityJournalComponent;
   @ViewChild(ActivityPropertiesComponent) activityProperties!: ActivityPropertiesComponent;
   @ViewChild('timelineChart') timelineChartRef!: ElementRef<HTMLDivElement>;
@@ -455,22 +453,19 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
 
   /** Save wrapper: validates key fields, then updates or creates. */
   async save() {
-    if (this.projectKindCtrl) {
-      this.projectKindCtrl.control.markAsTouched();
-      this.projectKindCtrl.control.updateValueAndValidity();
-    }
-
-    if (this.projectKindCtrl.invalid) {
+    if (!this.activityProperties?.validateProjectKind()) {
       this.snckBar.open("Bitte wählen Sie eine Projekt-Art aus.", "", {
         duration: 4000
       });
       return;
     }
+
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
       {
         let delay = 0;
 
+        // Save existing activity
         this.update();
 
         try {
@@ -495,6 +490,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       }
       else
       {
+        // Add new activity
         this.add();
       }
     }
@@ -1267,7 +1263,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     this.editActivityMap?.refresh();
     this.activityJournal?.refresh();
     this.activityProperties?.refresh();
-    this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
+    //this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature); // missing, todo: cleanup
   }
 
   onSksPlannedChanged(selectedDate: Date) {

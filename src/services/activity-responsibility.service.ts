@@ -24,9 +24,11 @@ export class ActivityResponsibilityService {
     async getProjectActivityResponsibility(roadWorkActivityUuid: string = ""): Promise<ActivityResponsibilityFeature> {
         let queryString = "/activityresponsibilities/project-lead";
 
-        if (roadWorkActivityUuid !== null && roadWorkActivityUuid !== "") {
-            queryString += "?roadworkactivityuuid=" + roadWorkActivityUuid;
+        if (roadWorkActivityUuid === null || roadWorkActivityUuid === "") {
+            return new ActivityResponsibilityFeature();
         }
+
+        queryString += "?roadworkactivityuuid=" + roadWorkActivityUuid;
 
         return await firstValueFrom(this.http.get<ActivityResponsibilityFeature>(environment.apiUrl + queryString).pipe(
             map(ActivityResponsibilityFeature.fromJson)));
@@ -35,9 +37,11 @@ export class ActivityResponsibilityService {
     async getPhaseActivityResponsibilities(roadWorkActivityUuid: string = ""): Promise<ActivityResponsibilityFeature[]> {
         let queryString = "/activityresponsibilities/phase-leads";
 
-        if (roadWorkActivityUuid !== null && roadWorkActivityUuid !== "") {
-            queryString += "?roadworkactivityuuid=" + roadWorkActivityUuid;
+        if (roadWorkActivityUuid === null || roadWorkActivityUuid === "") {
+            return [];
         }
+
+        queryString += "?roadworkactivityuuid=" + roadWorkActivityUuid;
 
         return await firstValueFrom(this.http.get<ActivityResponsibilityFeature[]>(environment.apiUrl + queryString).pipe(
             map((elem: ActivityResponsibilityFeature[]) => elem.map(ActivityResponsibilityFeature.fromJson))));

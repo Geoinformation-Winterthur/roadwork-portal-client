@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { NgModel } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { OrganisationService } from '../../services/organisation.service';
 import { ActivityResponsibilityService } from '../../services/activity-responsibility.service';
@@ -14,6 +15,8 @@ import { User } from '../../model/user';
   styleUrls: ['./activity-properties.component.css']
 })
 export class ActivityPropertiesComponent implements OnInit {
+  
+  @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
 
   /** The road work activity features from the parent. */
   @Input() roadWorkActivityFeature!: RoadWorkActivityFeature;
@@ -39,6 +42,19 @@ export class ActivityPropertiesComponent implements OnInit {
 
   ngOnInit() {
     this.refresh();
+  }
+
+  validateProjectKind(): boolean {
+    if (this.projectKindCtrl) {
+      this.projectKindCtrl.control.markAsTouched();
+      this.projectKindCtrl.control.updateValueAndValidity();
+    }
+
+    if (this.projectKindCtrl.invalid) {
+      return false;
+    }
+
+    return true;
   }
 
   async refresh() {
