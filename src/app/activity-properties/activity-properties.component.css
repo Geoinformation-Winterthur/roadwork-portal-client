@@ -10,7 +10,7 @@
 
 .row {
     display: grid;
-    grid-template-columns: repeat(2, minmax(250px, 1fr));
+    /*grid-template-columns: repeat(2, minmax(250px, 1fr));*/
     gap: 0.5rem;
 }
 
@@ -27,10 +27,30 @@
 
 .form-fields-split-responsibility {
     display: grid;
-    grid-template-columns: 2fr 5fr 3fr;
+    grid-template-columns: 4fr 10fr 5fr 1fr;
     gap: 1rem;
 }
 
 mat-form-field {
   min-width: 20px;
+}
+
+button.icon-only {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-width: 24px;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.align-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+mat-card-header.left-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

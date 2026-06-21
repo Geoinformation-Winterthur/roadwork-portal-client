@@ -1112,7 +1112,7 @@
                                 </ng-container>
 
                                 <ng-container matColumnDef="constructionDuration">
-                                    <th mat-header-cell *matHeaderCellDef>Dauer der Bautätigkeit (Monate)</th>
+                                    <th mat-header-cell *matHeaderCellDef matTooltip="Dauer der Bautätigkeit in Monaten">Dauer</th>
                                     <td mat-cell *matCellDef="let need" class="mat-column-constructionDuration">                                        
                                         {{ need?.properties?.constructionDuration | number:'1.0-0' }}                                                                                                                      
                                     </td>

@@ -54,4 +54,9 @@ export class ActivityResponsibilityService {
     async updateActivityResponsibility(activityResponsibility: ActivityResponsibilityFeature): Promise<any> {
         return await firstValueFrom(this.http.put<ActivityResponsibilityFeature>(environment.apiUrl + "/activityresponsibilities/", activityResponsibility));
     }
+
+    async deleteActivityResponsibility(activityResponsibilityUuid: string): Promise<any> {
+        const url = environment.apiUrl + "/activityresponsibilities?uuid=" + activityResponsibilityUuid;
+        return await firstValueFrom(this.http.delete<string>(url));
+    }
 }
