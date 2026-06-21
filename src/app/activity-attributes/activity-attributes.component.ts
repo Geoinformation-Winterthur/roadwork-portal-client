@@ -1012,7 +1012,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
    * Shows a warning if needs could not be loaded.
    */
   private _updateAllInvolvedUsers() {
-    if (this.roadWorkActivityFeature) {
+    if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids?.length) {
       this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
         .subscribe({
           next: (roadWorkNeeds) => {
