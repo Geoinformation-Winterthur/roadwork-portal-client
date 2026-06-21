@@ -32,6 +32,7 @@ import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
+import { ConsultationInput } from 'src/model/consultation-input';
 import { environment } from 'src/environments/environment';
 import { StatusHelper } from 'src/helper/status-helper';
 import { EnumType } from 'src/model/enum-type';
@@ -1090,6 +1091,37 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   /**
+   * Temporary method (quick fix) to get the consult users for the notification email in 'Vernehmlassung' -> 'Übersicht'.
+   * The 'Übersicht' tab (the one with the email) seems to be the only part of 'Vernehmlassung' not refactored yet.
+   * Better move 'Vernehmlassung' -> 'Übersicht' to a separete component as well.
+   */
+  private async getConsultationUserEmails(feedbackPhase: string): Promise<string[]> {
+    if (!this.roadWorkActivityFeature) {
+      return [];
+    }
+    
+    // load all inputs for the activity and keep only those for the active phase.
+    const allConsultationInputs = await firstValueFrom(
+      this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
+    )
+    
+    // exclude the consultations from other phases and get the user email from the consultations.
+    let consultationUserEmails = []
+    for (let consultationInput of allConsultationInputs) {
+      if (consultationInput.feedbackPhase === feedbackPhase) {
+        if (consultationInput.inputBy?.mailAddress) {
+          consultationUserEmails.push(consultationInput.inputBy.mailAddress);
+        }
+      }
+    }
+
+    // remove dublicates
+    consultationUserEmails = [...new Set(consultationUserEmails)]
+
+    return consultationUserEmails;
+  }
+
+  /**
    * Compose and open a "mailto:" link to invite/notify involved users depending on the new status.
    * - Adds the logged-in user as CC.
    * - Includes deep links to open the appropriate tab in the UI.
@@ -1108,19 +1140,24 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         await this.getAreaManager(geometry);
       }
 
-      if (this.involvedUsers.length > 0) {
+      // some old stuff, required? (2026.7)
+      /*if (this.involvedUsers.length > 0) {
         mailText += this.involvedUsers[0].mailAddress + ";"
-      }
+      }*/
 
-      for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
-        mailText += involvedUser.mailAddress + ";";
-      }
+      const consultationsUserEmail = await this.getConsultationUserEmails(newStatus);
+      mailText += consultationsUserEmail.join(',');
 
       let separator = "?";
 
+      // get the users for cc. current user and gm (might be the same therefore [...new Set(... ).
       let loggedInUser = this.userService.getLocalUser();
-      if (loggedInUser && loggedInUser.mailAddress) {
-        mailText += separator + "cc=" + loggedInUser.mailAddress;
+      let areaManager = this.roadWorkActivityFeature.properties.areaManager;
+      let copyUsersEmail = [...new Set([loggedInUser?.mailAddress, areaManager?.mailAddress])]
+      // remove the users already in mailto
+      copyUsersEmail = copyUsersEmail.filter((e): e is string => !!e && !consultationsUserEmail.includes(e));
+      if (copyUsersEmail.length) {
+        mailText += separator + "cc=" + copyUsersEmail.join(',');
         separator = "&";
       }
 
