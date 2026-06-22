@@ -27,7 +27,6 @@ export class RoadWorkActivityProperties {
     overarchingMeasure: boolean = false;
     desiredYearFrom: number = -1;
     desiredYearTo: number = -1;
-    prestudy: boolean = false;
     created: Date = new Date(1,0,1);
     lastModified: Date = new Date(1, 0, 1);
     finishEarlyTo?: Date;
@@ -104,7 +103,7 @@ export class RoadWorkActivityProperties {
     dateStartReporting?: Date;
     dateStartSuspended?: Date;
     dateStartCoordinated?: Date;
-    isSksRelevant?: boolean = true;
+    isOksActive?: boolean = true;
     costLastModified?: Date
     costLastModifiedBy?: User
 
@@ -118,9 +117,9 @@ export class RoadWorkActivityProperties {
     aggloprogramCostTotal?: number;
     aggloprogramCostCanton?: number;
 
-    // Prestudy (#621, 2026.4)
-    prestudyRequired: boolean = false;
-    //prestudyRequiredChangedAfterSks: boolean = false;
+    // Prestudy
+    prestudy: boolean = false;
+    // Prestudy additional (#621, 2026.4)
     prestudyDuration: string = "";
     prestudyContractor: string = "";
     prestudyDetail: string = "";
@@ -140,7 +139,7 @@ export class RoadWorkActivityProperties {
     subjectToDepaving: boolean = false;
     pedestriansCyclingAffected: boolean = false;
     disabilityEqualityAffected: boolean = false;
-    trafficRegulationAffected: boolean = false;
+    trafficRegulation: boolean = false;
 
     // Private entities (#623, 2026.4)
     privateEntityAffected: boolean = false;

@@ -267,8 +267,8 @@
                                                 keine
                                             </b>
                                             <b *ngIf="getInvolvedOrgsNames() && getInvolvedOrgsNames().length != 0">
-                                                <span *ngFor="let involvedOrgAbbr of getInvolvedOrgsNames()">
-                                                    {{involvedOrgAbbr}},
+                                                <span *ngFor="let involvedOrgAbbr of getInvolvedOrgsNames(); let last = last">
+                                                    {{involvedOrgAbbr}}{{ last ? '' : ', ' }}
                                                 </span>
                                             </b>
                                         </p>
@@ -313,17 +313,6 @@
                                             Ersatz)<br>
                                             <b>Typ C</b>: Koordiniertes Einzelvorhaben (Werk) ohne Beteiligung TBA
                                         </div>-->
-                                        <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isSksRelevant"
-                                            (change)="onChangeIsStudy()" style="margin:10px;" [disabled]="roadWorkActivityFeature.properties.isAggloprog ||
-                                                    !roadWorkActivityFeature.properties.isEditingAllowed">
-                                            <span *ngIf="roadWorkActivityFeature.properties.isAggloprog"
-                                                matTooltip="Mind. eine Massnahme aus dem Bauvorhaben wird im Aggloprogramm geführt. Diese müssen der SKS vorgelegt werden.">
-                                                SKS relevant?
-                                            </span>
-                                            <span *ngIf="!roadWorkActivityFeature.properties.isAggloprog">
-                                                SKS relevant?
-                                            </span>
-                                        </mat-checkbox>
                                         <p>Erstellt:
                                             <span style="padding: 0.3em;background-color: rgb(240, 240, 240);">
                                                 <b>{{roadWorkActivityFeature.properties.created |
@@ -1460,12 +1449,13 @@
                                                 </div>
                                                 
                                                 <mat-checkbox
-                                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudyRequired"
-                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    Ist die Durchführung einer Vorstudie vorgesehen?
+                                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
+                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                                    matTooltip="Ist eine Vorstudie vorgesehen?">
+                                                    VS vorgesehen?
                                                 </mat-checkbox>
 
-                                                <mat-form-field *ngIf="roadWorkActivityFeature.properties.prestudyRequired">
+                                                <mat-form-field *ngIf="roadWorkActivityFeature.properties.prestudy">
                                                     <mat-label>Datum SKS</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
@@ -1473,6 +1463,13 @@
                                                         [disabled]="true">
                                                     <mat-datepicker #prestudyDateSks></mat-datepicker>
                                                 </mat-form-field>
+
+                                                <mat-checkbox
+                                                    [(ngModel)]="roadWorkActivityFeature.properties.trafficRegulation"
+                                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                                    matTooltip="Ist eine Verkehrsanordnung vorgesehen?">
+                                                    Verkehrsanordnung vorgesehen?
+                                                </mat-checkbox>
                                             </div>
                                         </mat-card-content>
                                     </mat-card>

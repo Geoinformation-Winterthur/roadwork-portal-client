@@ -123,7 +123,7 @@
             <div class="cell">
                 <mat-card style="margin-top: 10px;">
                     <mat-card-header>
-                        <mat-card-title>Verantwortlichkeiten</mat-card-title>
+                        <mat-card-title>Verantwortlichkeiten & OKS</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
                         <div class="row">
@@ -234,6 +234,16 @@
                                 </button>
                             </div>
                         </ng-container>
+
+                        <div class="row">
+                            <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isOksActive"
+                                (change)="onChangeIsOksActive()"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                matTooltip="Mind. eine Massnahme aus dem Bauvorhaben wird im Aggloprogramm geführt. Diese müssen der SKS vorgelegt werden."
+                                [matTooltipDisabled]="roadWorkActivityFeature.properties.isAggloprog">
+                                OKS aktiv
+                            </mat-checkbox>
+                        </div>
                     </mat-card-content>
                 </mat-card>
             </div>

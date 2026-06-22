@@ -54,3 +54,8 @@ mat-card-header.left-right {
     justify-content: space-between;
     align-items: center;
 }
+
+/* avoid misplaced tooltip from too wide checkbox controlls */
+mat-checkbox {
+  width: fit-content;
+}

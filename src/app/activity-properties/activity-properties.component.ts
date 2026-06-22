@@ -135,6 +135,16 @@ export class ActivityPropertiesComponent implements OnInit {
     }
   }
 
+  /** Reset study dates when "isStudy" is toggled off. */
+  onChangeIsOksActive() {
+    if (this.roadWorkActivityFeature) {
+      if (!this.roadWorkActivityFeature.properties.isStudy) {
+        this.roadWorkActivityFeature.properties.dateStudyStart = undefined;
+        this.roadWorkActivityFeature.properties.dateStudyEnd = undefined;
+      }
+    }
+  }
+
   async save() {
     // add/update project responsibility feature
     if (this.projectResponsibilityFeature.properties.isChanged()) {

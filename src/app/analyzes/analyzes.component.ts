@@ -522,7 +522,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.translateProjectKind(props.projectKind),
             props.section ?? '',
             props.sksNo ?? '',
-            props.isSksRelevant === true ? 'Ja' : 'Nein',
+            props.isOksActive === true ? 'Ja' : 'Nein',
             this.getDurationDays(props.startOfConstruction, props.endOfConstruction)
           ],
           itemStyle: {

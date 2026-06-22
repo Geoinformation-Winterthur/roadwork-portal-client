@@ -957,7 +957,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   onChangeIsAggloprog() {
     if (this.roadWorkActivityFeature)
       if (this.roadWorkActivityFeature.properties.isAggloprog)
-        this.roadWorkActivityFeature.properties.isSksRelevant = true;
+        this.roadWorkActivityFeature.properties.isOksActive = true;
   }
 
   /** Clean up route subscription if it was created. */

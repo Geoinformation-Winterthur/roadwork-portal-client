@@ -188,7 +188,7 @@
                             [(ngModel)]="roadWorkActivityFeature.properties.approvals.bafuApprovalRequired"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                             matTooltip="BAFU - Bundesamt für Umwelt, Störfallverordnung">
-                            BAFU - Bundesamt für Umwelt
+                            BAFU - Bundesamt für Umwelt (Störfallverordnung)
                         </mat-checkbox>
                     </div>
                     <div class="row auto">
@@ -206,7 +206,7 @@
                         <mat-checkbox
                             [(ngModel)]="roadWorkActivityFeature.properties.approvals.lsvApprovalRequired"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            LSV - Lärmschutzverordnung
+                            LSV - Lärmschutzverordnung (Akustisches Projekt)
                         </mat-checkbox>
                     </div>
                     <div class="row auto">
@@ -485,12 +485,12 @@
                 <div class="cell">
                     <h4>Vorstudie</h4>
                     <mat-checkbox
-                        [(ngModel)]="roadWorkActivityFeature.properties.prestudyRequired"
+                        [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Ist die Durchführung einer Vorstudie vorgesehen? {{ roadWorkActivityFeature.properties.prestudyRequired ? '▼' : '▶ (erweiterten)' }}
+                        Ist eine Vorstudie vorgesehen? {{ roadWorkActivityFeature.properties.prestudy ? '▼' : '▶ (erweiterten)' }}
                     </mat-checkbox>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudyRequired">
+                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
                             <mat-label>Datum SKS</mat-label>
                             <input matInput
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
@@ -499,21 +499,21 @@
                             <mat-datepicker #prestudyDateSks></mat-datepicker>
                         </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudyRequired">
+                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
                         <mat-label>Wieviel Zeit wird dafür benötigt?</mat-label>
                         <input matInput type="text" maxlength="40"
                             [(ngModel)]="roadWorkActivityFeature.properties.prestudyDuration"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudyRequired">
+                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
                         <mat-label>Wer soll beauftragt werden?</mat-label>
                         <input matInput type="text" maxlength="40"
                             [(ngModel)]="roadWorkActivityFeature.properties.prestudyContractor"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudyRequired">
+                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
                         <mat-label>Was soll in der Studie genau geklärt werden?</mat-label>
                         <textarea matInput maxlength="255"
                             cdkTextareaAutosize
@@ -523,7 +523,7 @@
                             </textarea>
                     </mat-form-field>
 
-                    <div class ="form-fields-split-equal indent" *ngIf="roadWorkActivityFeature.properties.prestudyRequired">
+                    <div class ="form-fields-split-equal indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
                         <mat-form-field>
                             <mat-label>Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert</mat-label>
                             <input matInput
@@ -626,7 +626,7 @@
                     </mat-checkbox>
                     
                     <mat-checkbox
-                        [(ngModel)]="roadWorkActivityFeature.properties.trafficRegulationAffected"
+                        [(ngModel)]="roadWorkActivityFeature.properties.trafficRegulation"
                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                         Verkehrsanordnung
                     </mat-checkbox>
