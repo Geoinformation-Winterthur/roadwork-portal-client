@@ -224,7 +224,7 @@
                                             Vorstudie
                                         </mat-checkbox>
                                         <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isTrafficRegulationRequired"
-                                            style="margin:10px;">
+                                            style="margin:10px;" disabled>
                                             Verkehrsanordnung ist notwendig
                                         </mat-checkbox>
                                     </div>
@@ -1465,7 +1465,7 @@
                                                 </mat-form-field>
 
                                                 <mat-checkbox
-                                                    [(ngModel)]="roadWorkActivityFeature.properties.trafficRegulation"
+                                                    [(ngModel)]="roadWorkActivityFeature.properties.isTrafficRegulationRequired"
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                     matTooltip="Ist eine Verkehrsanordnung vorgesehen?">
                                                     Verkehrsanordnung vorgesehen?

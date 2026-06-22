@@ -139,7 +139,6 @@ export class RoadWorkActivityProperties {
     subjectToDepaving: boolean = false;
     pedestriansCyclingAffected: boolean = false;
     disabilityEqualityAffected: boolean = false;
-    trafficRegulation: boolean = false;
 
     // Private entities (#623, 2026.4)
     privateEntityAffected: boolean = false;
