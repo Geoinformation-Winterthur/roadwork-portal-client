@@ -4,7 +4,8 @@ import { User } from '../model/user';
  * User-related utilities.
  */
 export class UserHelper {
-    
+    private static readonly tbaOrganisationalUnits = ['apr', 'amo', 'aew', 'aes', 'apk', 'abu'];
+
     /**
      * Checks if a user is member of TBA Winterhthur
      * (depending on the assigned organistional unit). 
@@ -18,7 +19,7 @@ export class UserHelper {
      */
     public static isTbaUser(user: User): boolean
       {
-        const tbaOrganisationalUnits: string[] = ['apr', 'amo', 'aew', 'aes', 'apk', 'abu'];
-        return tbaOrganisationalUnits.includes(user.organisationalUnit.abbreviation.toLowerCase());
+        const orgUnitLower = user.organisationalUnit.abbreviation.toLowerCase();
+        return this.tbaOrganisationalUnits.includes(orgUnitLower);
       }
 }

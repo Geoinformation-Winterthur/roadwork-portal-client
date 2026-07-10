@@ -129,6 +129,7 @@
                         <div class="row">
                             <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.implementationByThird"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (change)="onImplementationByThirdChange()"
                                 matTooltip="Umsetzung durch Werk/Dritte (ausserhalb TBA)">
                                 Umsetzung durch Werk/Dritte
                             </mat-checkbox>
@@ -152,12 +153,11 @@
                                 <mat-select [(ngModel)]="projectResponsibilityFeature.properties.uuidUser"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     <mat-option
-                                        *ngFor="let userByOrganisationalUnit of usersByOrganisationalUnit[projectResponsibilityFeature.properties.uuidOrganisationalUnit] ?? []"
+                                        *ngFor="let userByOrganisationalUnit of projectManagerUsersByOrganisationalUnit[projectResponsibilityFeature.properties.uuidOrganisationalUnit] ?? []"
                                         [value]="userByOrganisationalUnit.uuid"
-                                        [disabled]="!userByOrganisationalUnit.active || !userByOrganisationalUnit.grantedRoles.projectmanager">
+                                        [disabled]="!userByOrganisationalUnit.active">
                                         {{ userByOrganisationalUnit.firstName }} {{ userByOrganisationalUnit.lastName }}
                                         {{ userByOrganisationalUnit.active ? '' : ' (inaktiv)' }}
-                                        {{ userByOrganisationalUnit.grantedRoles.projectmanager ? '' : ' (nicht Projektmanager)' }}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -185,12 +185,11 @@
                                     <mat-select [(ngModel)]="phaseResponsibilityFeature.properties.uuidUser"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                         <mat-option
-                                            *ngFor="let userByOrganisationalUnit of usersByOrganisationalUnit[phaseResponsibilityFeature.properties.uuidOrganisationalUnit] ?? []"
+                                            *ngFor="let userByOrganisationalUnit of projectManagerUsersByOrganisationalUnit[phaseResponsibilityFeature.properties.uuidOrganisationalUnit] ?? []"
                                             [value]="userByOrganisationalUnit.uuid"
-                                            [disabled]="!userByOrganisationalUnit.active || !userByOrganisationalUnit.grantedRoles.projectmanager">
+                                            [disabled]="!userByOrganisationalUnit.active">
                                             {{ userByOrganisationalUnit.firstName }} {{ userByOrganisationalUnit.lastName }}
                                             {{ userByOrganisationalUnit.active ? '' : ' (inaktiv)' }}
-                                            {{ userByOrganisationalUnit.grantedRoles.projectmanager ? '' : ' (nicht Projektmanager)' }}
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>

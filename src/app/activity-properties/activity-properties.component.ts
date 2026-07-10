@@ -36,7 +36,7 @@ export class ActivityPropertiesComponent implements OnInit {
   public allOrganisationalUnits: OrganisationalUnit[] = [];
   public organisationalUnits: OrganisationalUnit[] = [];
   public allUsers: User[] = [];
-  public usersByOrganisationalUnit: Record<string, User[]> = {};
+  public projectManagerUsersByOrganisationalUnit: Record<string, User[]> = {};
 
   constructor(userService: UserService, organisationService: OrganisationService, activityResponsibilityService: ActivityResponsibilityService) {
     this.userService = userService;
@@ -74,37 +74,38 @@ export class ActivityPropertiesComponent implements OnInit {
     // load users
     this.allUsers = await firstValueFrom(this.userService.getAllUsers())
 
-    await this.refreshProjectUsers();
+    await this.refreshProjectManagerUsers();
   }
 
-  async refreshProjectUsers() {
-    // get the relevant users by organisatinal unit (key: orgUnit, value: user[])
+  async refreshProjectManagerUsers() {
+    // get the relevant users (project managers)
     // filters:
-    // - user is project manager
     // - user is active
     // - is (not) member of tba depending on selected value in "Umsetzung durch Dritte"
     const tbaSelected = !this.roadWorkActivityFeature.properties.implementationByThird;
-    this.usersByOrganisationalUnit = this.allUsers.reduce(
-      (result: Record<string, User[]>, user: User) => {
-        if (user.grantedRoles.projectmanager && user.active && UserHelper.isTbaUser(user) === tbaSelected) {
-          (result[user.organisationalUnit.uuid] ??= []).push(user);
-        }
-        return result;
-      },
-      {} as Record<string, User[]>
-    );
+    const projectManagerUsers = this.allUsers.filter(user => user.active && UserHelper.isTbaUser(user) === tbaSelected);
+
+    // map the relevant users (project managers) to a dictionary by organisational unit (key: orgUnit, value: user[])
+    this.projectManagerUsersByOrganisationalUnit = projectManagerUsers.reduce((orgUnit, user) => {
+      if (!orgUnit[user.organisationalUnit.uuid]) {
+        orgUnit[user.organisationalUnit.uuid] = [];
+      }
+
+      orgUnit[user.organisationalUnit.uuid].push(user);
+      return orgUnit;
+    }, {} as Record<string, User[]>);
 
     // add already assigned user (project), might be filtered by now
-    this.addUserIfNotExists(this.projectResponsibilityFeature.properties.uuidUser)
+    this.addToProjectManagerUsersIfNotExists(this.projectResponsibilityFeature.properties.uuidUser)
 
     // add already assigned user (phases), might be filtered by now
     for (const phaseResponsibility of this.phaseResponsibilityFeatures) {
-      this.addUserIfNotExists(phaseResponsibility.properties.uuidUser)
+      this.addToProjectManagerUsersIfNotExists(phaseResponsibility.properties.uuidUser)
     }
 
-    // get the org units with relevan users
+    // get the org units with project managers
     this.organisationalUnits = this.allOrganisationalUnits.filter(
-      obj => Object.keys(this.usersByOrganisationalUnit).includes(obj.uuid)
+      orgUnit => Object.keys(this.projectManagerUsersByOrganisationalUnit).includes(orgUnit.uuid)
     );
   }
 
@@ -113,24 +114,24 @@ export class ActivityPropertiesComponent implements OnInit {
   *
   * @param user The user to add.
   */
-  addUserIfNotExists(userUuid: string) {
+  addToProjectManagerUsersIfNotExists(userUuid: string) {
     const user = this.allUsers.find(user => user.uuid === userUuid);
     if (!user) return;
 
     const orgUnitUuid = user.organisationalUnit.uuid;
 
-    if (!this.usersByOrganisationalUnit[orgUnitUuid]) {
+    if (!this.projectManagerUsersByOrganisationalUnit[orgUnitUuid]) {
       // add both if org unit missing
-      this.usersByOrganisationalUnit[orgUnitUuid] = [];
-      this.usersByOrganisationalUnit[orgUnitUuid].push(user);
+      this.projectManagerUsersByOrganisationalUnit[orgUnitUuid] = [];
+      this.projectManagerUsersByOrganisationalUnit[orgUnitUuid].push(user);
     }
     else {
       // add user if missing 
-      const userExists = this.usersByOrganisationalUnit[orgUnitUuid].some(
+      const userExists = this.projectManagerUsersByOrganisationalUnit[orgUnitUuid].some(
         elem => elem.uuid === user.uuid);
 
       if (!userExists) {
-        this.usersByOrganisationalUnit[orgUnitUuid].push(user);
+        this.projectManagerUsersByOrganisationalUnit[orgUnitUuid].push(user);
       }
     }
   }
@@ -190,6 +191,8 @@ export class ActivityPropertiesComponent implements OnInit {
     if (phaseResponsibilityFeature.properties.uuid) {
       this.deletedPhaseResponsibilityFeatures.push(phaseResponsibilityFeature);
     }
+
+    this.refreshProjectManagerUsers();
   }
 
   addResponsibilityClick() {
@@ -199,6 +202,10 @@ export class ActivityPropertiesComponent implements OnInit {
     newActivityResponsibility.properties.responsibilityType = "PhaseLead";
     this.phaseResponsibilityFeatures.push(newActivityResponsibility);
   }
+
+  onImplementationByThirdChange() {
+  this.refreshProjectManagerUsers();
+}
 
   comparePhase = (a: any, b: any) =>
     a?.phase === b?.phase;
