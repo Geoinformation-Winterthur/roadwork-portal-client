@@ -145,12 +145,20 @@
             
             <div class="row">
                 <div class="cell middle">
-                    <mat-checkbox
-                        [(ngModel)]="roadWorkActivityFeature.properties.approvals.approvalRequired"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                        matTooltip="Rechtliche/technische Bewilligungen notwendig?">
-                        Rechtliche/technische Bewilligungen notwendig? {{ roadWorkActivityFeature.properties.approvals.approvalRequired ? '▼' : '▶ (erweiterten)' }}
-                    </mat-checkbox>
+                    <span>
+                        <mat-checkbox
+                            (change)="onApprovalRequiredChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.approvals.approvalRequired"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                            matTooltip="Rechtliche/technische Bewilligungen notwendig?">
+                            Rechtliche/technische Bewilligungen notwendig?
+                        </mat-checkbox>
+                        <label class="mat-checkbox-layout">
+                        <span class="mat-checkbox-label checkbox-text" (click)="onApprovalRequiredCollapseClick()">
+                            {{ approvalRequiredCollapsed ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                        </span>
+                        </label>
+                    </span>
                 </div>
                 <div class="row auto">
                     <div class="cell middle" *ngFor="let assignedRoadWorkNeed of assignedRoadWorkNeeds">
@@ -162,7 +170,7 @@
                 </div>
             </div>
 
-            <div *ngIf="roadWorkActivityFeature.properties.approvals.approvalRequired">
+            <div *ngIf="approvalRequiredCollapsed">
                 <div class="row ">
                     <div class="cell middle indent">
                         <mat-checkbox
@@ -396,13 +404,21 @@
             <div class="row two-columns">
                 <div class="cell">
                     <h4>Aggloprogramm</h4>
-                    <mat-checkbox
-                        [(ngModel)]="roadWorkActivityFeature.properties.partOfAggloprogram"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Ist das Vorhaben im Aggloprogramm vorgesehen? {{ roadWorkActivityFeature.properties.partOfAggloprogram ? '▼' : '▶ (erweiterten)' }}
-                    </mat-checkbox>
+                    <span>
+                        <mat-checkbox
+                            (change)="onPartOfAggloprogramChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.partOfAggloprogram"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            Ist das Vorhaben im Aggloprogramm vorgesehen?
+                        </mat-checkbox>
+                        <label class="mat-checkbox-layout">
+                        <span class="mat-checkbox-label checkbox-text" (click)="onPartOfAggloprogramCollapseClick()">
+                            {{ partOfAggloprogramCollapsed ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                        </span>
+                        </label>
+                    </span>
                     
-                    <div class="form-fields-split-one-two indent" *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                    <div class="form-fields-split-one-two indent" *ngIf="partOfAggloprogramCollapsed">
                         <mat-form-field>
                             <mat-label>Generation</mat-label>
                             <input matInput type="number" min="0" max="999"
@@ -429,14 +445,14 @@
                         </div>
                     </div>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                    <mat-form-field class="indent" *ngIf="partOfAggloprogramCollapsed">
                         <mat-label>ARE-Code</mat-label>
                         <input matInput type="text" maxlength="40"
                             [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreCode"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                    <mat-form-field class="indent" *ngIf="partOfAggloprogramCollapsed">
                         <mat-label>ARE-Bezeichnung</mat-label>
                         <textarea matInput maxlength="255"
                             cdkTextareaAutosize
@@ -446,7 +462,7 @@
                             </textarea>
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                    <mat-form-field class="indent" *ngIf="partOfAggloprogramCollapsed">
                         <mat-label>Umzusetzen bis</mat-label>
                         <input matInput
                             [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
@@ -457,7 +473,7 @@
                             [for]="aggloprogramDueDate"></mat-datepicker-toggle>
                     </mat-form-field>
 
-                    <div class="form-fields-split-equal indent" *ngIf="roadWorkActivityFeature.properties.partOfAggloprogram">
+                    <div class="form-fields-split-equal indent" *ngIf="partOfAggloprogramCollapsed">
                         <mat-form-field>
                             <mat-label>Eingestellte Summe (Gesamtkosten in CHF)</mat-label>
                             <input matInput
@@ -484,13 +500,21 @@
 
                 <div class="cell">
                     <h4>Vorstudie</h4>
-                    <mat-checkbox
-                        [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Ist eine Vorstudie vorgesehen? {{ roadWorkActivityFeature.properties.prestudy ? '▼' : '▶ (erweiterten)' }}
-                    </mat-checkbox>
+                    <span>
+                        <mat-checkbox
+                            (change)="onPrestudyChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            Ist eine Vorstudie vorgesehen?
+                        </mat-checkbox>
+                        <label class="mat-checkbox-layout">
+                        <span class="mat-checkbox-label checkbox-text" (click)="onPrestudyCollapseClick()">
+                            {{ prestudyCollapsed ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                        </span>
+                        </label>
+                    </span>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
+                    <mat-form-field class="indent" *ngIf="prestudyCollapsed">
                             <mat-label>Datum SKS</mat-label>
                             <input matInput
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
@@ -499,21 +523,21 @@
                             <mat-datepicker #prestudyDateSks></mat-datepicker>
                         </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
+                    <mat-form-field class="indent" *ngIf="prestudyCollapsed">
                         <mat-label>Wieviel Zeit wird dafür benötigt?</mat-label>
                         <input matInput type="text" maxlength="40"
                             [(ngModel)]="roadWorkActivityFeature.properties.prestudyDuration"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
+                    <mat-form-field class="indent" *ngIf="prestudyCollapsed">
                         <mat-label>Wer soll beauftragt werden?</mat-label>
                         <input matInput type="text" maxlength="40"
                             [(ngModel)]="roadWorkActivityFeature.properties.prestudyContractor"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
+                    <mat-form-field class="indent" *ngIf="prestudyCollapsed">
                         <mat-label>Was soll in der Studie genau geklärt werden?</mat-label>
                         <textarea matInput maxlength="255"
                             cdkTextareaAutosize
@@ -523,7 +547,7 @@
                             </textarea>
                     </mat-form-field>
 
-                    <div class ="form-fields-split-equal indent" *ngIf="roadWorkActivityFeature.properties.prestudy">
+                    <div class ="form-fields-split-equal indent" *ngIf="prestudyCollapsed">
                         <mat-form-field>
                             <mat-label>Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert</mat-label>
                             <input matInput
@@ -634,13 +658,21 @@
                 
                 <div class="cell">
                     <h4>Private</h4>
-                    <mat-checkbox
-                        [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAffected"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Sind Private betroffen? {{ roadWorkActivityFeature.properties.privateEntityAffected ? '▼' : '▶ (erweiterten)' }}
-                    </mat-checkbox>
+                    <span>
+                        <mat-checkbox
+                            (change)="onPrivateEntityAffectedChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAffected"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            Sind Private betroffen?
+                        </mat-checkbox>
+                        <label class="mat-checkbox-layout">
+                        <span class="mat-checkbox-label checkbox-text" (click)="onPrivateEntityAffectedCollapseClick()">
+                            {{ privateEntityAffectedCollapsed ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                        </span>
+                        </label>
+                    </span>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                    <mat-form-field class="indent" *ngIf="privateEntityAffectedCollapsed">
                         <mat-label>In welchem Umfang/mit welchem Auftrag?</mat-label>
                         <textarea matInput maxlength="255"
                             cdkTextareaAutosize
@@ -650,7 +682,7 @@
                             </textarea>
                     </mat-form-field>
 
-                    <mat-form-field class="indent" *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                    <mat-form-field class="indent" *ngIf="privateEntityAffectedCollapsed">
                         <mat-label>Haben diese eigene Projektbaubedürfnisse?</mat-label>
                         <textarea matInput maxlength="255"
                             cdkTextareaAutosize
@@ -660,7 +692,7 @@
                             </textarea>
                     </mat-form-field>
 
-                    <div class="form-fields-split-equal indent" *ngIf="roadWorkActivityFeature.properties.privateEntityAffected">
+                    <div class="form-fields-split-equal indent" *ngIf="privateEntityAffectedCollapsed">
                         <mat-checkbox
                             [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAcquisition"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">

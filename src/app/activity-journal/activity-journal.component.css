@@ -88,3 +88,8 @@ a.disabled {
   font-weight: 500;
   color: rgba(0, 0, 0, .54);
 }
+
+.checkbox-text {
+  cursor: pointer;
+  margin-left: 8px;
+}

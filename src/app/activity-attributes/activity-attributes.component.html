@@ -518,7 +518,7 @@
                                             <div>
                                                 <mat-checkbox
                                                     [(ngModel)]="roadWorkActivityFeature.properties.isAggloprog"
-                                                    (change)="onChangeIsAggloprog()" style="margin:10px;">
+                                                    style="margin:10px;">
                                                     Aggloprogramm
                                                 </mat-checkbox>
                                             </div>
@@ -1449,13 +1449,14 @@
                                                 </div>
                                                 
                                                 <mat-checkbox
-                                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
+                                                    (change)="onPrestudySksChange()"
+                                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudySks"
                                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                                     matTooltip="Ist eine Vorstudie vorgesehen?">
                                                     VS vorgesehen?
                                                 </mat-checkbox>
 
-                                                <mat-form-field *ngIf="roadWorkActivityFeature.properties.prestudy">
+                                                <mat-form-field *ngIf="roadWorkActivityFeature.properties.prestudySks">
                                                     <mat-label>Datum SKS</mat-label>
                                                     <input matInput
                                                         [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"

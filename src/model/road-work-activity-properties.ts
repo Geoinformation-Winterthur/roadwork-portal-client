@@ -104,6 +104,7 @@ export class RoadWorkActivityProperties {
     dateStartSuspended?: Date;
     dateStartCoordinated?: Date;
     isOksActive?: boolean = true;
+    isOksActiveLastModified?: Date
     costLastModified?: Date
     costLastModifiedBy?: User
 
@@ -119,6 +120,8 @@ export class RoadWorkActivityProperties {
 
     // Prestudy
     prestudy: boolean = false;
+    // Prestudy additional (#663, 2026.9)
+    prestudySks: boolean = false;
     // Prestudy additional (#621, 2026.4)
     prestudyDuration: string = "";
     prestudyContractor: string = "";

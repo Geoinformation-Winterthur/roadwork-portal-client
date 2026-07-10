@@ -953,13 +953,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  /** Enforce SKS relevance when Aggloprog is enabled. */
-  onChangeIsAggloprog() {
-    if (this.roadWorkActivityFeature)
-      if (this.roadWorkActivityFeature.properties.isAggloprog)
-        this.roadWorkActivityFeature.properties.isOksActive = true;
-  }
-
   /** Clean up route subscription if it was created. */
   ngOnDestroy() {
     // unsubscribing only if a subscription exists
@@ -1835,8 +1828,11 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       this.snckBar.open('Fehler beim Generieren des Vorgehensvorschlags', '', { duration: 4000 });
     }
   }
-  
 
-
+  onPrestudySksChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.prestudy = this.roadWorkActivityFeature?.properties.prestudySks;
+    }
+  }
 
 }

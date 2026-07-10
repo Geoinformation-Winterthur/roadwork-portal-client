@@ -136,16 +136,6 @@ export class ActivityPropertiesComponent implements OnInit {
     }
   }
 
-  /** Reset study dates when "isStudy" is toggled off. */
-  onChangeIsOksActive() {
-    if (this.roadWorkActivityFeature) {
-      if (!this.roadWorkActivityFeature.properties.isStudy) {
-        this.roadWorkActivityFeature.properties.dateStudyStart = undefined;
-        this.roadWorkActivityFeature.properties.dateStudyEnd = undefined;
-      }
-    }
-  }
-
   async save() {
     // add/update project responsibility feature
     if (this.projectResponsibilityFeature.properties.isChanged()) {
@@ -204,9 +194,15 @@ export class ActivityPropertiesComponent implements OnInit {
   }
 
   onImplementationByThirdChange() {
-  this.refreshProjectManagerUsers();
-}
+    this.refreshProjectManagerUsers();
+  }
 
+  onIsOksActiveChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.isOksActiveLastModified = new Date();
+    }
+  }
+  
   comparePhase = (a: any, b: any) =>
     a?.phase === b?.phase;
 }

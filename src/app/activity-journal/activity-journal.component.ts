@@ -19,12 +19,22 @@ export class ActivityJournalComponent implements OnInit {
   private journalEntryService: JournalEntryService;
   public journalEntryFeatures: JournalEntryFeature[] = [];
 
+  public prestudyCollapsed: Boolean = false;
+  public partOfAggloprogramCollapsed: Boolean = false;
+  public approvalRequiredCollapsed: Boolean = false;
+  public privateEntityAffectedCollapsed: Boolean = false;
+
   constructor(journalEntryService: JournalEntryService) {
     this.journalEntryService = journalEntryService;
   }
 
   ngOnInit() {
     this.refresh();
+
+    this.prestudyCollapsed = this.roadWorkActivityFeature.properties.prestudy;
+    this.partOfAggloprogramCollapsed = this.roadWorkActivityFeature.properties.partOfAggloprogram;
+    this.approvalRequiredCollapsed = this.roadWorkActivityFeature.properties.approvals.approvalRequired;
+    this.privateEntityAffectedCollapsed = this.roadWorkActivityFeature.properties.privateEntityAffected;
   }
 
   async refresh() {
@@ -68,5 +78,37 @@ export class ActivityJournalComponent implements OnInit {
       event.preventDefault();
       return;
     }
+  }
+
+  onApprovalRequiredCollapseClick() {
+    this.approvalRequiredCollapsed = !this.approvalRequiredCollapsed;
+  }
+
+  onApprovalRequiredChange() {
+    this.approvalRequiredCollapsed = this.roadWorkActivityFeature.properties.approvals.approvalRequired;
+  }
+
+  onPartOfAggloprogramCollapseClick() {
+    this.partOfAggloprogramCollapsed = !this.partOfAggloprogramCollapsed;
+  }
+
+  onPartOfAggloprogramChange() {
+    this.partOfAggloprogramCollapsed = this.roadWorkActivityFeature.properties.partOfAggloprogram;
+  }
+
+  onPrestudyCollapseClick() {
+    this.prestudyCollapsed = !this.prestudyCollapsed;
+  }
+
+  onPrestudyChange() {
+    this.prestudyCollapsed = this.roadWorkActivityFeature.properties.prestudy;
+  }
+
+  onPrivateEntityAffectedCollapseClick() {
+    this.privateEntityAffectedCollapsed = !this.privateEntityAffectedCollapsed;
+  }
+
+  onPrivateEntityAffectedChange() {
+    this.privateEntityAffectedCollapsed = this.roadWorkActivityFeature.properties.privateEntityAffected;
   }
 }

@@ -236,10 +236,8 @@
 
                         <div class="row">
                             <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isOksActive"
-                                (change)="onChangeIsOksActive()"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                matTooltip="Mind. eine Massnahme aus dem Bauvorhaben wird im Aggloprogramm geführt. Diese müssen der SKS vorgelegt werden."
-                                [matTooltipDisabled]="roadWorkActivityFeature.properties.isAggloprog">
+                                (change)="onIsOksActiveChange()"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 OKS aktiv
                             </mat-checkbox>
                         </div>
