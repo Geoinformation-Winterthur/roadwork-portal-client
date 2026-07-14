@@ -79,7 +79,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   areaManagerName: string = "";
   statusCode: string = "";
   priorityCode: string = "";
-  involvedUsers: User[] = [];
+  involvedUsersFromNeeds: User[] = [];
+  involvedUsersFromConsults: User[] = [];
 
   /** Toggles for enabling/disabling scheduling fields and editing per role. */
   isScheduleEditingDisabled = true;
@@ -400,7 +401,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                       });
                   }
                   // Populate helper lists and compute phase due date.
-                  this._updateAllInvolvedUsers();
+                  this._updateAllInvolvedUsersFromNeeds();
+                  this._updateAllInvolvedUsersFromConsults();
                   this._updateDueDate();
                 }
 
@@ -736,6 +738,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   /**
    * Toggle a user in/out of the involved users list (immutable update for change detection).
    */
+  // TODO: Unused, finalize and use or remove? (14.07.2026)
   changeInvolvedUsers(user: User) {
     if (this.roadWorkActivityFeature) {
       let involvedUsersCopy = [...this.roadWorkActivityFeature.properties.involvedUsers];
@@ -755,6 +758,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   /** Returns true if the given user is currently an involved user for this activity. */
+  // TODO: Unused, finalize and use or remove? (14.07.2026)
   isInvolvedUser(user: User): boolean {
     return this.roadWorkActivityFeature ? this.roadWorkActivityFeature.properties.involvedUsers.some(
       (involvedUser) => involvedUser.uuid === user.uuid
@@ -763,6 +767,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   /** Convenience variant used by template bindings (by UUID). */
+  // TODO: Unused, finalize and use or remove? (14.07.2026)
   isInvolvedUserSelected(userUuid: string): boolean {
     if (this.roadWorkActivityFeature) {
       for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
@@ -969,12 +974,22 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
 
   /** Collect unique organisation abbreviations of involved users for display. */
   getInvolvedOrgsNames(): string[] {
+    // TODO: Check if this is the correcty way or change to (currently unimplemented/empty) property this.roadWorkActivityFeature.properties.involvedUsers (14.07.2026)
     const result: string[] = [];
     if (this.roadWorkActivityFeature) {
-      for (const involvedUser of this.involvedUsers ?? []) {
+      // get organisational units from involved need users
+      for (const involvedUser of this.involvedUsersFromNeeds ?? []) {
         const abbr = involvedUser?.organisationalUnit?.abbreviation;
         if (abbr && !result.includes(abbr)) result.push(abbr);
       }
+
+      // get organisational units from consult need users
+      for (const involvedUser of this.involvedUsersFromConsults ?? []) {
+        const abbr = involvedUser?.organisationalUnit?.abbreviation;
+        if (abbr && !result.includes(abbr)) result.push(abbr);
+      }
+
+      result.sort();
     }
     return result;
   }
@@ -1005,7 +1020,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
    * Build the union of involved users from all needs linked to the activity.
    * Shows a warning if needs could not be loaded.
    */
-  private _updateAllInvolvedUsers() {
+  private _updateAllInvolvedUsersFromNeeds() {
+    // TODO: Clear list (this.involvedUsersFromNeeds) before load/reload?
     if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids?.length) {
       this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
         .subscribe({
@@ -1019,7 +1035,46 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                   });
                 } else {
                   for (let roadWorkNeed of roadWorkNeeds) {
-                    this.involvedUsers.push(roadWorkNeed.properties.orderer)
+                    this.involvedUsersFromNeeds.push(roadWorkNeed.properties.orderer);
+                  }
+                }
+              }
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Organisationen konnten nicht geladen werden", "", {
+              duration: 4000,
+            });
+          }
+        });
+    }
+  }
+
+    /**
+   * Build the union of involved users from all consults linked to the activity.
+   * Shows a warning if consults could not be loaded.
+   */
+  private _updateAllInvolvedUsersFromConsults() {
+    if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids?.length) {
+      // Load all inputs for the activity and keep only those for the active phase.
+      this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
+        .subscribe({
+          next: (consultationInputs) => {
+            this.involvedUsersFromConsults = [];
+
+            if (consultationInputs) {
+              if (consultationInputs.length > 0 && consultationInputs[0]) {
+                ErrorMessageEvaluation._evaluateErrorMessage(consultationInputs[0]);
+                if (consultationInputs[0].errorMessage.trim().length !== 0) {
+                  this.snckBar.open(consultationInputs[0].errorMessage, "", {
+                    duration: 4000
+                  });
+                } else {
+                  for (let consultationInput of consultationInputs) {
+                    if (consultationInput.ordererFeedback /* Rückmeldung erhalten */
+                      && consultationInput.ordererFeedback != 'no_requirement_anymore' /* Bedarf vorhanden/Bedarf weiterhin vorhanden */){
+                      this.involvedUsersFromConsults.push(consultationInput.inputBy)
+                    }
                   }
                 }
               }
@@ -1093,7 +1148,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       return [];
     }
     
-    // load all inputs for the activity and keep only those for the active phase.
+    // load all inputs for the activity
     const allConsultationInputs = await firstValueFrom(
       this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
     )
@@ -1288,7 +1343,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     this.reportingItemsInconsult2?.ngOnInit();
     this.reportingItemsReporting?.ngOnInit();
     this.ngOnInit();
-    this._updateAllInvolvedUsers();
+    this._updateAllInvolvedUsersFromNeeds();
+    this._updateAllInvolvedUsersFromConsults();
     this._updateDueDate();
     this.editActivityMap?.refresh();
     this.activityJournal?.refresh();
