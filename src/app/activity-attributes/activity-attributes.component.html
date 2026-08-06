@@ -531,44 +531,6 @@
                             <h2>Auflageverfahren</h2>
                             <div fxLayout="row wrap padding" class="tab-content">
                                 <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column"
-                                    [ngStyle]="isScheduleEditingDisabled ? {'pointer-events': 'none', 'opacity': '0.6'} : {}">
-                                    <mat-card-header>
-                                        <mat-card-title>Begehrensäusserung §&nbsp;45</mat-card-title>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div style="display:flex;flex-direction:column;">
-                                            <div>
-                                                <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.isDesire"
-                                                    style="margin:10px;">
-                                                    Begehrensäusserung §&nbsp;45
-                                                </mat-checkbox>
-                                                <br>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Begehrensäusserung Start</mat-label>
-                                                    <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateDesireStart"
-                                                        [matDatepicker]="dateDesireStart"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isDesire">
-                                                    <mat-datepicker #dateDesireStart></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateDesireStart"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Begehrensäusserung Ende</mat-label>
-                                                    <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateDesireEnd"
-                                                        [matDatepicker]="dateDesireEnd"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || !roadWorkActivityFeature.properties.isDesire">
-                                                    <mat-datepicker #dateDesireEnd></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateDesireEnd"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                     fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                     <mat-card-header>
                                         <mat-card-title>Mitwirkungsverfahren §&nbsp;13</mat-card-title>
@@ -771,48 +733,6 @@
                                                     <mat-datepicker #dateReportClose></mat-datepicker>
                                                     <mat-datepicker-toggle matSuffix
                                                         [for]="dateReportClose"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                            </div>
-                                        </div>
-                                    </mat-card-content>
-                                </mat-card>
-                                <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                    fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
-                                    <mat-card-header>
-                                        <mat-card-title>Infoversand</mat-card-title>
-                                    </mat-card-header>
-                                    <mat-card-content>
-                                        <div style="display:flex;flex-direction:column;">
-                                            <div>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Infoversand Start</mat-label>
-                                                    <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateInfoStart"
-                                                        [matDatepicker]="dateInfoStart"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateInfoStart></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateInfoStart"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Infoversand Ende</mat-label>
-                                                    <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateInfoEnd"
-                                                        [matDatepicker]="dateInfoEnd"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateInfoEnd></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateInfoEnd"></mat-datepicker-toggle>
-                                                </mat-form-field>
-                                                <mat-form-field style="margin:10px;">
-                                                    <mat-label>Infoversand Abschluss</mat-label>
-                                                    <input matInput
-                                                        [(ngModel)]="roadWorkActivityFeature.properties.dateInfoClose"
-                                                        [matDatepicker]="dateInfoClose"
-                                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                    <mat-datepicker #dateInfoClose></mat-datepicker>
-                                                    <mat-datepicker-toggle matSuffix
-                                                        [for]="dateInfoClose"></mat-datepicker-toggle>
                                                 </mat-form-field>
                                             </div>
                                         </div>

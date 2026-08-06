@@ -1111,8 +1111,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         if (this.roadWorkActivityFeature.properties.dateReportEnd)
           this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
       } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
-        if (this.roadWorkActivityFeature.properties.dateInfoEnd)
-          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
+        /*if (this.roadWorkActivityFeature.properties.dateInfoEnd)
+          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;*/ // dateInfoEnd removed in #650
       } else {
         this.dueDate = new Date();
         this.dueDate.setDate(this.dueDate.getDate() + 7);

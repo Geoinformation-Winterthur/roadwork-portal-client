@@ -11,7 +11,7 @@ export class RoadWorkActivityProperties {
     uuid: string = "";
     name: string = "";
     projectManager: User = new User();
-    trafficAgent: User = new User();
+    trafficAgent: User = new User(); // unused
     areaManager: User = new User();
     approvals: RoadWorkApprovals = new RoadWorkApprovals();
     description: string = "";
@@ -35,17 +35,17 @@ export class RoadWorkActivityProperties {
     startOfConstruction?: Date;
     endOfConstruction?: Date;
     dateOfAcceptance?: Date;
-    consultDue: Date = new Date(1, 0, 1);
+    consultDue: Date = new Date(1, 0, 1); // unused
     costs?: number;
     costsType: string = "";
     roadWorkNeedsUuids: string[] = [];
     status: string = "";
     isEditingAllowed: boolean = false;
-    isInInternet: boolean = false;
-    billingAddress1: string = "";
-    billingAddress2: string = "";
+    isInInternet: boolean = false; // unused
+    billingAddress1: string = ""; // unused
+    billingAddress2: string = ""; // unused
     investmentNo?: number;
-    pdbFid: number = 0;
+    pdbFid: number = 0; // unused
     strabakoNo: string = "";
     projectNo: string = "";
     roadWorkActivityNo?: string;
@@ -64,8 +64,8 @@ export class RoadWorkActivityProperties {
     evaluationSks: number = 0;
     isPrivate: boolean = false;
     involvedUsers: User[] = [];
-    datePlanned?: Date;
-    dateAccept?: Date;
+    datePlanned?: Date; // unused
+    dateAccept?: Date; // unused
     dateGuarantee?: Date;
     isStudy: boolean = false;
     isTrafficRegulationRequired: boolean = false;
@@ -74,8 +74,8 @@ export class RoadWorkActivityProperties {
     projectStudyApproved?: Date;
     studyApproved?: Date;
     isDesire: boolean = false;
-    dateDesireStart?: Date;
-    dateDesireEnd?: Date;
+      //dateDesireStart?: Date; // removed in #650
+      //dateDesireEnd?: Date; // removed in #650
     isParticip: boolean = false;
     dateParticipStart?: Date;
     dateParticipEnd?: Date;
@@ -90,20 +90,20 @@ export class RoadWorkActivityProperties {
     dateReportStart?: Date;
     dateReportEnd?: Date;
     dateReportClose?: Date;
-    dateInfoStart?: Date;
-    dateInfoEnd?: Date;
-    dateInfoClose?: Date;
+      //dateInfoStart?: Date; // removed in #650
+      //dateInfoEnd?: Date; // removed in #650
+      //dateInfoClose?: Date; // removed in #650
     isAggloprog: boolean = false;
     url: string = "";
     documentAtts?: DocumentAttributes[];
-    dateStartInconsult1?: Date;
+    dateStartInconsult1?: Date; // unused
     dateStartVerified1?: Date; 
-    dateStartInconsult2?: Date;
-    dateStartVerified2?: Date; 
+    dateStartInconsult2?: Date; // unused
+    dateStartVerified2?: Date;  // unused
     dateStartReporting?: Date;
-    dateStartSuspended?: Date;
+    dateStartSuspended?: Date; // unused
     dateStartCoordinated?: Date;
-    isOksActive?: boolean = true;
+    isOksActive?: boolean = false;
     isOksActiveLastModified?: Date
     costLastModified?: Date
     costLastModifiedBy?: User

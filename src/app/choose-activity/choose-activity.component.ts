@@ -624,8 +624,8 @@ export class ChooseActivityComponent implements OnInit {
       if (roadworkActivity.properties.dateReportEnd)
         result = new Date(roadworkActivity.properties.dateReportEnd);
     } else if (roadworkActivity.properties.status == "coordinated") {
-      if (roadworkActivity.properties.dateInfoEnd)
-        result = new Date(roadworkActivity.properties.dateInfoEnd);
+      /*if (roadworkActivity.properties.dateInfoEnd)
+        result = new Date(roadworkActivity.properties.dateInfoEnd);*/ // dateInfoEnd removed in #650
     } else {
       result = new Date();
       result.setDate(result.getDate() + 7);
