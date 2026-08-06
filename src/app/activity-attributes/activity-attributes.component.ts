@@ -1072,7 +1072,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                 } else {
                   for (let consultationInput of consultationInputs) {
                     if (consultationInput.ordererFeedback /* Rückmeldung erhalten */
-                      && consultationInput.ordererFeedback != 'no_requirement_anymore' /* Bedarf vorhanden/Bedarf weiterhin vorhanden */){
+                      && consultationInput.ordererFeedback != 'no_requirement_anymore' /* Bedarf vorhanden/Bedarf weiterhin vorhanden */
+                      && consultationInput.feedbackPhase.startsWith("inconsult") /* Exclude Stellungsnahme */){
                       this.involvedUsersFromConsults.push(consultationInput.inputBy)
                     }
                   }
