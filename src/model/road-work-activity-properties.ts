@@ -73,9 +73,9 @@ export class RoadWorkActivityProperties {
     dateStudyEnd?: Date;
     projectStudyApproved?: Date;
     studyApproved?: Date;
-    isDesire: boolean = false;
-      //dateDesireStart?: Date; // removed in #650
-      //dateDesireEnd?: Date; // removed in #650
+    //isDesire: boolean = false; // removed in #650
+    //dateDesireStart?: Date; // removed in #650
+    //dateDesireEnd?: Date; // removed in #650
     isParticip: boolean = false;
     dateParticipStart?: Date;
     dateParticipEnd?: Date;
@@ -90,9 +90,9 @@ export class RoadWorkActivityProperties {
     dateReportStart?: Date;
     dateReportEnd?: Date;
     dateReportClose?: Date;
-      //dateInfoStart?: Date; // removed in #650
-      //dateInfoEnd?: Date; // removed in #650
-      //dateInfoClose?: Date; // removed in #650
+    //dateInfoStart?: Date; // removed in #650
+    //dateInfoEnd?: Date; // removed in #650
+    //dateInfoClose?: Date; // removed in #650
     isAggloprog: boolean = false;
     url: string = "";
     documentAtts?: DocumentAttributes[];
