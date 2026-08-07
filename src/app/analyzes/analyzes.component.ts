@@ -122,7 +122,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     { key: 'dateOksReal', label: 'OKS genehmigt', symbol: 'roundRect' },
     { key: 'dateGlTba', label: 'GL-TBA', symbol: 'diamond' },
     { key: 'dateGlTbaReal', label: 'GL-TBA genehmigt', symbol: 'circle' },
-    { key: 'dateOfAcceptance', label: 'Abnahmedatum', symbol: 'triangle' }
+    { key: 'dateGuarantee', label: 'Abnahme/Garantie', symbol: 'triangle' } // #650 consolidated dateOfAcceptance and dateGuarantee to dateGuarantee
   ];
 
   defaultColDef: ColDef = {
@@ -253,13 +253,13 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     },
     {
-      headerName: 'Abnahme',
+      headerName: 'Abnahme/Garantie',
       flex: 0.95,
       minWidth: 95,
-      valueGetter: params => this.formatDate(params.data?.properties?.dateOfAcceptance),
+      valueGetter: params => this.formatDate(params.data?.properties?.dateGuarantee), // #650 consolidated dateOfAcceptance and dateGuarantee to dateGuarantee
       comparator: (valueA, valueB, nodeA, nodeB) => {
-        const a = this.toTimestamp(nodeA?.data?.properties?.dateOfAcceptance);
-        const b = this.toTimestamp(nodeB?.data?.properties?.dateOfAcceptance);
+        const a = this.toTimestamp(nodeA?.data?.properties?.dateGuarantee);
+        const b = this.toTimestamp(nodeB?.data?.properties?.dateGuarantee);
         return a - b;
       }
     },

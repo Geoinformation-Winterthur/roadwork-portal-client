@@ -90,6 +90,27 @@ export class RoadWorkActivityProperties {
     dateReportStart?: Date; // Modul Termine, Phase2: "Stellungnahme" >> Start
     dateReportEnd?: Date; // Modul Termine, Phase2: "Stellungnahme" >> End
     dateReportClose?: Date; // Modul Vernehmlassung: "Stellungnahme Abschluss"
+    dateDesignAssignmentIssued?: Date; // Modul Termine, Grobplanung: "Projektierungsauftrag erstellt bis"
+    dateAprDesignCompletion?: Date; // Modul Termine, Grobplanung: "APR Projektiert bis"
+    dateAprConstructionCompletion?: Date; // Modul Termine, Grobplanung, PhaseX: "APR Realisiert bis"
+    dateQuotesRequested?: Date; // Modul Termine, Phase1: "Bestellungen" >> Start
+    dateQuotesReviewed?: Date; // Modul Termine, Phase1: "Bestellungen" >> End
+    datePrepareEdcStart?: Date; // Modul Termine, Phase1: "Projektierungsauftrag erarbeiten" >> Start
+    datePrepareEdcEnd?: Date; // Modul Termine, Phase1: "Projektierungsauftrag erarbeiten" >> End
+    dateHandoverToApk?: Date; // Modul Termine, Phase2: "Übergabesitzung AMO/AEW an APK"
+    dateHandoverToApr?: Date; // Modul Termine, Phase3: "Übergabesitzung APK an APR"
+    dateRequestDesignBudget?: Date; // Modul Termine, Phase3: "Projektierungskredit einholen"
+    dateProjectApprovalStart?: Date; // Modul Termine, Phase3: "Projektfestsetzung" >> Start
+    dateProjectApprovalEnd?: Date; // Modul Termine, Phase3: "Projektfestsetzung" >> End
+    dateConstructionBudgetApprovalStart?: Date; // Modul Termine, Phase3: "Ausführungskredit" >> Start
+    dateConstructionBudgetApprovalEnd?: Date; // Modul Termine, Phase3: "Ausführungskredit" >> End
+    dateSubmissionStart?: Date; // Modul Termine, Phase4: "Submission" >> Start
+    dateSubmissionEnd?: Date; // Modul Termine, Phase4: "Submission" >> End
+    dateStartOfConstructionReal?: Date; // Modul Termine, Phase5: "Baubeginn/ -ende" >> Beginn
+    dateEndOfConstructionReal?: Date; // Modul Termine, Phase5: "Baubeginn/ -ende" >> End
+    dateFinalPavementStart?: Date; // Modul Termine, Phase5: "Einbau Deckbelag" >> Start
+    dateFinalPavementEnd?: Date; // Modul Termine, Phase5: "Einbau Deckbelag" >> End
+    dateProjectBudgetFinalized?: Date; // Modul Termine, Phase5: "Projektkreditabrechnung"
     //dateInfoStart?: Date; // removed in #650
     //dateInfoEnd?: Date; // removed in #650
     //dateInfoClose?: Date; // removed in #650

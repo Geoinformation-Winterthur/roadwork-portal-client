@@ -46,6 +46,7 @@ import { DocxWordService } from 'src/services/docx-export.service';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
 import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
 import { ActivityPropertiesComponent } from '../activity-properties/activity-properties.component';
+import { ActivityDatesComponent } from '../activity-dates/activity-dates.component';
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import saveAs from 'file-saver';
