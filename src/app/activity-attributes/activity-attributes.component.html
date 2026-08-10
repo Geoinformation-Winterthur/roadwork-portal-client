@@ -35,13 +35,102 @@
                             aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;BAUVORHABEN
                         PUBLIZIEREN
                     </button>
-                    <button *ngIf="roadWorkActivityFeature.properties.status != 'suspended'"
-                        (click)="update(false, 'suspended')"
-                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;" [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status, 'suspended')
-                            || roadWorkActivityFeature.properties.isPrivate
-                            || !roadWorkActivityFeature.properties.isEditingAllowed" mat-button>
-                        <mat-icon aria-label="Icon zeigt Stopp-Knopf">stop_circle</mat-icon>&nbsp;SISTIEREN
+                    <button
+                        *ngIf="roadWorkActivityFeature.properties.status !== 'suspended'"
+                        (click)="openSuspendDialog()"
+                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"                        
+                        [disabled]="checkStatusDisabled(roadWorkActivityFeature.properties.status, 'suspended')"
+                        mat-button>
+
+                        <mat-icon aria-label="Icon zeigt Stopp-Knopf">
+                            stop_circle
+                        </mat-icon>
+
+                        &nbsp;SISTIEREN
                     </button>
+
+                    <button
+                        *ngIf="roadWorkActivityFeature.properties.status === 'suspended'"
+                        (click)="resumeSuspendedActivity()"
+                        style="background-color: rgb(236,236,234);margin-top: 1em;margin-right: 1em;"
+                        [disabled]="roadWorkActivityFeature.properties.isPrivate
+                            || !roadWorkActivityFeature.properties.isEditingAllowed"
+                        mat-button>
+
+                        <mat-icon aria-label="Icon zeigt Wiederaufnahme">
+                            play_circle
+                        </mat-icon>
+
+                        &nbsp;SISTIERUNG AUFHEBEN
+                    </button>
+
+                    <div
+                        *ngIf="showSuspendDialog"
+                        style="position: fixed;
+                               inset: 0;
+                               z-index: 10000;
+                               display: flex;
+                               align-items: center;
+                               justify-content: center;
+                               background-color: rgba(0,0,0,0.45);
+                               text-align: left;">
+
+                        <mat-card>
+
+                            <div style="padding: 24px;">
+
+                                <mat-card-title style="margin: 0 0 12px 0;">
+                                    Bauvorhaben sistieren
+                                </mat-card-title>
+
+                                <mat-form-field appearance="fill" style="width: 100%;">
+                                    <mat-label>Grund für die Sistierung</mat-label>
+
+                                    <textarea
+                                        matInput
+                                        maxlength="2000"
+                                        rows="6"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.commentStartSuspended"
+                                        placeholder="Grund eingeben..."
+                                        required>
+                                    </textarea>
+
+                                    <mat-hint align="end">
+                                        {{ roadWorkActivityFeature.properties.commentStartSuspended?.length || 0 }}/2000
+                                    </mat-hint>
+                                </mat-form-field>
+
+                                <mat-card-actions
+                                    align="end"
+                                    style="gap: 0.75em; padding: 16px 0 0 0; margin: 0;">
+
+                                    <button
+                                        mat-button
+                                        type="button"
+                                        (click)="closeSuspendDialog()">
+                                        ABBRECHEN
+                                    </button>
+
+                                    <button
+                                        mat-button
+                                        type="button"
+                                        (click)="confirmSuspend()"
+                                        style="background-color: rgb(236,236,234);"
+                                        [disabled]="!roadWorkActivityFeature.properties.commentStartSuspended?.trim()">
+
+                                        <mat-icon aria-label="Icon zeigt Stopp-Knopf">
+                                            stop_circle
+                                        </mat-icon>
+
+                                        &nbsp;SISTIEREN
+                                    </button>
+
+                                </mat-card-actions>
+
+                            </div>
+
+                        </mat-card>
+                    </div>
                     <button *ngIf="roadWorkActivityFeature.properties.isPrivate ||
                                             userService.getLocalUser().chosenRole == 'administrator'"
                         (click)="removeRoadworkActivity()" style="background-color: rgb(236,236,234);margin: 0.5em;"
@@ -163,8 +252,35 @@
                                 fxFlex="33" fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
                                 <mat-card-content>
                                     <div style="display:flex;flex-direction:column;">
-                                        <app-status-chip [statusCode]="roadWorkActivityFeature.properties.status">
-                                        </app-status-chip>                                        
+                                        <div style="display: flex; align-items: center; gap: 1em; flex-wrap: wrap;">
+
+                                            <app-status-chip
+                                                [statusCode]="roadWorkActivityFeature.properties.status">
+                                            </app-status-chip>
+
+                                            <div
+                                                *ngIf="roadWorkActivityFeature.properties.status === 'suspended'"
+                                                style="
+                                                    padding: 0.75em 1em;
+                                                    background-color: rgb(255, 243, 205);
+                                                    border: 1px solid rgb(230, 200, 120);
+                                                    border-radius: 4px;
+                                                    max-width: 600px;
+                                                ">
+
+                                                <div>
+                                                    <b>Vorheriger Status:</b>
+                                                    {{getStatusLabel(roadWorkActivityFeature.properties.statusBeforeSuspended)}}
+                                                </div>
+
+                                                <div style="margin-top: 0.4em;">
+                                                    <b>Grund der Sistierung:</b>
+                                                    {{ roadWorkActivityFeature.properties.commentStartSuspended }}
+                                                </div>
+
+                                            </div>
+
+                                        </div>                                                                                
                                         <div
                                             style="margin-top: 1em;margin-bottom: 1em;padding: 0.5em;background-color:rgb(240, 240, 240);">
                                             KAP (Koordinationsausschuss Proj.):<br>

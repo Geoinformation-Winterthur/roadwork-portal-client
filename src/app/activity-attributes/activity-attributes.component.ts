@@ -182,6 +182,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
   showTimelineChart = false;
+  showSuspendDialog = false;
 
   /**
    * Constructor: injects all required services and computes initial role permissions.
@@ -1890,6 +1891,90 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   onPrestudySksChange() {
     if (this.roadWorkActivityFeature) {
       this.roadWorkActivityFeature.properties.prestudy = this.roadWorkActivityFeature?.properties.prestudySks;
+    }
+  }
+
+  openSuspendDialog(): void {
+    if (!this.roadWorkActivityFeature) {
+      return;
+    }
+
+    this.roadWorkActivityFeature.properties.commentStartSuspended = '';
+    this.showSuspendDialog = true;
+  }
+
+  closeSuspendDialog(): void {
+    this.showSuspendDialog = false;
+  }
+
+  confirmSuspend(): void {
+    const activity = this.roadWorkActivityFeature;
+
+    if (!activity) {
+      return;
+    }
+
+    const comment =
+      activity.properties.commentStartSuspended?.trim();
+
+    if (!comment) {
+      this.snckBar.open(
+        'Bitte geben Sie einen Grund für die Sistierung an.',
+        '',
+        { duration: 4000 }
+      );
+      return;
+    }
+
+    activity.properties.commentStartSuspended = comment;
+    this.showSuspendDialog = false;
+
+    this.update(false, 'suspended');
+  }
+
+  resumeSuspendedActivity(): void {
+    const activity = this.roadWorkActivityFeature;
+
+    if (!activity?.properties?.statusBeforeSuspended) {
+      this.snckBar.open(
+        'Der vorherige Status ist nicht gespeichert.',
+        '',
+        { duration: 4000 }
+      );
+      return;
+    }
+
+    this.update(false, activity.properties.statusBeforeSuspended);
+  }
+
+  getStatusLabel(status?: string | null): string {
+    switch (status) {
+      case 'review':
+        return 'in Prüfung';
+
+      case 'inconsult1':
+        return 'in Bedarfsklärung – 1. Iteration';
+
+      case 'verified1':
+        return 'verifiziert – 1. Iteration';
+
+      case 'inconsult2':
+        return 'in Bedarfsklärung – 2. Iteration';
+
+      case 'verified2':
+        return 'verifiziert – 2. Iteration';
+
+      case 'reporting':
+        return 'in Stellungnahme';
+
+      case 'coordinated':
+        return 'koordiniert';
+
+      case 'prestudy':
+        return 'Vorstudie';
+
+      default:
+        return status || 'nicht bekannt';
     }
   }
 

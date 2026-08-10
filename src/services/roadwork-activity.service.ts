@@ -10,6 +10,9 @@ import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { ErrorMessage } from 'src/model/error-message';
 import { EnumType } from 'src/model/enum-type';
 
+export interface ResumeActivityResponse {
+  errorMessage?: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +20,7 @@ import { EnumType } from 'src/model/enum-type';
 export class RoadWorkActivityService {
 
   http: HttpClient;
+  private baseUrl = environment.apiUrl;
 
   constructor(http: HttpClient) {
     this.http = http;
@@ -79,6 +83,13 @@ export class RoadWorkActivityService {
       this.http.delete(environment.apiUrl + "/roadworkactivity?uuid=" +
         uuid + "&deletereason=" + deleteReason) as Observable<ErrorMessage>;
     return result;
+  }
+
+  resumeActivity(uuid: string): Observable<ResumeActivityResponse> {
+    return this.http.put<ResumeActivityResponse>(
+      `${this.baseUrl}/Roadworkactivity/Resume/`,
+      { uuid }
+    );
   }
 
 }

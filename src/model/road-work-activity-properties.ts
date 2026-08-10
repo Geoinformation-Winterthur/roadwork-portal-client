@@ -122,7 +122,9 @@ export class RoadWorkActivityProperties {
     dateStartInconsult2?: Date; // unused, Phase: in Bedarfsklärung - 2.Iteration (Phase 12)
     dateStartVerified2?: Date;  // unused, Phase: verifiziert-2 (Phase 12)
     dateStartReporting?: Date; // Phase: Stellungnahme (Phase 12)
-    dateStartSuspended?: Date; // unused, Phase: sistiert
+    dateStartSuspended?: Date;
+    statusBeforeSuspended?: string | null;
+    commentStartSuspended?: string | null;
     dateStartCoordinated?: Date; // Phase: koordiniert (Phase 12)
     isOksActive?: boolean = false;
     isOksActiveLastModified?: Date // System & Export only
