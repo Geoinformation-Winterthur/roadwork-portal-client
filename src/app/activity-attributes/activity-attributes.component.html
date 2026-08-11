@@ -457,9 +457,9 @@
                         </app-activity-journal>
                     </mat-tab>
                     
-                    <mat-tab label="Eigenschaften" *ngIf="roadWorkActivityFeature.properties.uuid!=='' && 
-                            (userService.getLocalUser().chosenRole == 'administrator' || 
-                            userService.getLocalUser().chosenRole == 'territorymanager')">
+                    <!-- "Eigenschaften" must be visible for new activity, therefore no uuid check -->
+                    <mat-tab label="Eigenschaften" *ngIf="userService.getLocalUser().chosenRole == 'administrator' || 
+                            userService.getLocalUser().chosenRole == 'territorymanager'">
                         <!-- Include module activity properties -->
                         <app-activity-properties #activityProperties
                             [roadWorkActivityFeature] = "roadWorkActivityFeature"
