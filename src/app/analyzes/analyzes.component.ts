@@ -15,6 +15,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import {
   ColDef,
   GridApi,
@@ -42,6 +43,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('gridContainer', { static: false })
   gridContainerRef?: ElementRef<HTMLDivElement>;
 
+  @ViewChild('analysisPanels', { static: false })
+  analysisPanelsRef?: ElementRef<HTMLDivElement>;
+
   apiUrl = environment.apiUrl;
 
   private roadWorkNeedService: RoadWorkNeedService;
@@ -50,8 +54,36 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   private gridApi?: GridApi;
   private chartInstance?: echarts.ECharts;
   private resizeObserver?: ResizeObserver;
+  private panelResizeFrame?: number;
+  private outerScrollContainer?: HTMLElement;
+  private previousOuterOverflowY: string = '';
+
+  gridPanelPercent: number = 32;
+  showGrid: boolean = true;
+  showChart: boolean = true;
+
+  private splitterPointerMove = (event: PointerEvent): void => {
+    const container = this.analysisPanelsRef?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    const bounds = container.getBoundingClientRect();
+    const percent = ((event.clientY - bounds.top) / bounds.height) * 100;
+    this.gridPanelPercent = Math.min(70, Math.max(18, percent));
+    this.schedulePanelResize();
+  };
+
+  private splitterPointerUp = (): void => {
+    document.removeEventListener('pointermove', this.splitterPointerMove);
+    document.removeEventListener('pointerup', this.splitterPointerUp);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    this.schedulePanelResize();
+  };
 
   private resizeHandler = () => {
+    this.updateHostHeight();
     if (this.chartInstance) {
       this.chartInstance.resize();
     }
@@ -60,6 +92,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isLoading: boolean = false;
   roadWorkActivities: RoadWorkActivityFeature[] = [];
+  /** Gemeinsame Zeilenbasis: Bauvorhaben und Bedarfe. */
+  timelineProjects: any[] = [];
   selectedProject?: RoadWorkActivityFeature;
 
   filteredProjectCount: number = 0;
@@ -93,6 +127,44 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     other: '#00897b'
   };
 
+  /** Globale WiKIS-Farben für sämtliche Phasendarstellungen. */
+  readonly PHASE_COLORS: { [key: string]: string } = {
+    '1': '#93e3ff',
+    '2': '#3dc3f4',
+    '3': '#ff9797',
+    '4': '#a9d08e',
+    '5': '#70ad47',
+    '6': '#ed7d31'
+  };
+
+  /** Die propertyKeys sind bewusst zentral gehalten und können ans Backend angepasst werden. */
+  readonly FLAG_DEFS: Array<{
+    key: string;
+    label: string;
+    color: string;
+    symbol: string;
+    glyph: string;
+    symbolRotate?: number;
+    propertyKeys: string[];
+    startKeys?: string[];
+    endKeys?: string[];
+  }> = [
+    { key: 'prestudy', label: 'Vorstudie', color: '#ffff00', symbol: 'diamond', glyph: '◆', propertyKeys: ['isPrestudy', 'prestudy', 'isSks'] },
+    { key: 'trafficOrder', label: 'Verkehrsanordnung', color: '#bfbfbf', symbol: 'circle', glyph: '●', propertyKeys: ['hasTrafficOrder', 'trafficOrder', 'isTrafficOrder'] },
+    { key: 'agglomeration', label: 'Aggloprogramm', color: '#00cc00', symbol: 'triangle', glyph: '▶', symbolRotate: 90, propertyKeys: ['isAgglomerationProgram', 'agglomerationProgram'] },
+    { key: 'thirdParty', label: 'Umsetzung durch Werk/Dritte', color: '#9523d2', symbol: 'circle', glyph: '●', propertyKeys: ['isThirdPartyImplementation', 'thirdPartyImplementation', 'isThirdParty', 'isUtility'] },
+    { key: 'sksApproved', label: 'SKS (genehmigt)', color: '#93e3ff', symbol: 'diamond', glyph: '◆', propertyKeys: ['isSksApproved'], startKeys: ['dateSksReal'] },
+    { key: 'glApproved', label: 'Genehmigter Projektierungsauftrag GL', color: '#93e3ff', symbol: 'triangle', glyph: '▲', propertyKeys: ['isGlProjectOrderApproved'], startKeys: ['dateGlTbaReal'] },
+    { key: 'plan13', label: 'Planauflage (§13)', color: '#c00000', symbol: 'diamond', glyph: '◆', propertyKeys: ['isPlanPublication13'], startKeys: ['datePlanPublication13'] },
+    { key: 'plan16', label: 'Planauflage (§16)', color: '#c00000', symbol: 'circle', glyph: '●', propertyKeys: ['isPlanPublication16'], startKeys: ['datePlanPublication16'] },
+    { key: 'projectApproval', label: 'Projektfestsetzung', color: '#c00000', symbol: 'rect', glyph: '■', propertyKeys: ['hasProjectApproval'], startKeys: ['projectApprovalStart'], endKeys: ['projectApprovalEnd'] },
+    { key: 'executionCredit', label: 'Ausführungskredit', color: '#c00000', symbol: 'path://M0,-10 L9.51,-3.09 L5.88,8.09 L-5.88,8.09 L-9.51,-3.09 Z', glyph: '⬟', propertyKeys: ['hasExecutionCredit'], startKeys: ['executionCreditStart'], endKeys: ['executionCreditEnd'] },
+    { key: 'oksActive', label: 'OKS aktiv', color: '#00cc00', symbol: 'path://M0,-10 L9.51,-3.09 L5.88,8.09 L-5.88,8.09 L-9.51,-3.09 Z', glyph: '⬟', propertyKeys: ['isOksActive'], startKeys: ['dateOks'] }
+  ];
+
+  /** Wszystkie zatwierdzone flagi są zawsze widoczne na wykresie. */
+  enabledFlags = new Set<string>(this.FLAG_DEFS.map(flag => flag.key));
+
   readonly PROJECT_KIND_LABELS: { [key: string]: string } = {
     ROAD_NEW_REGIONAL: 'Strasse Überkommunal (Neu)',
     ROAD_NEW_COMMUNAL: 'Strasse Kommunal (Neu)',
@@ -110,34 +182,19 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     type_c: 'Typ C'
   };
 
-  /**
-   * Only the most meaningful milestone dates.
-   */
-  readonly MILESTONE_DEFS: Array<{ key: string; label: string; symbol: string }> = [
-    { key: 'dateSks', label: 'SKS', symbol: 'diamond' },
-    { key: 'dateSksReal', label: 'SKS genehmigt', symbol: 'circle' },
-    { key: 'dateKap', label: 'KAP', symbol: 'triangle' },
-    { key: 'dateKapReal', label: 'KAP genehmigt', symbol: 'rect' },
-    { key: 'dateOks', label: 'OKS', symbol: 'pin' },
-    { key: 'dateOksReal', label: 'OKS genehmigt', symbol: 'roundRect' },
-    { key: 'dateGlTba', label: 'GL-TBA', symbol: 'diamond' },
-    { key: 'dateGlTbaReal', label: 'GL-TBA genehmigt', symbol: 'circle' },
-    { key: 'dateGuarantee', label: 'Abnahme/Garantie', symbol: 'triangle' } // #650 consolidated dateOfAcceptance and dateGuarantee to dateGuarantee
-  ];
-
   defaultColDef: ColDef = {
     sortable: true,
     filter: true,
     resizable: true,
     floatingFilter: true,
-    minWidth: 90
+    minWidth: 110
   };
 
   roadworkActivitiesColDefs: ColDef[] = [
     {
       headerName: 'BV-Nr',
       flex: 0.9,
-      minWidth: 70,
+      minWidth: 90,
       valueGetter: params => params.data?.properties?.roadWorkActivityNo ?? '-'
     },
     {
@@ -153,6 +210,18 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       valueGetter: params => params.data?.properties?.section ?? ''
     },
     {
+      headerName: 'Phase',
+      flex: 0.8,
+      minWidth: 90,
+      valueGetter: params => this.getPhase(params.data),
+      filterValueGetter: params => this.getPhase(params.data),
+      cellStyle: params => {
+        const phase = this.getPhase(params.data);
+        const backgroundColor: string = this.PHASE_COLORS[phase] ?? '';
+        return { backgroundColor };
+      }
+    },
+    {
       headerName: 'Status',
       flex: 1.2,
       minWidth: 110,
@@ -160,25 +229,33 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       filterValueGetter: params => this.getStatusLabelFromRaw(params.data?.properties?.status)
     },
     {
-      headerName: 'Typ',
+      headerName: 'Gebiet',
+      flex: 1.1,
+      minWidth: 110,
+      valueGetter: params => this.getFirstProperty(params.data, ['area', 'territory', 'district']),
+      filterValueGetter: params => this.getFirstProperty(params.data, ['area', 'territory', 'district'])
+    },
+    {
+      headerName: 'Beteiligte',
+      flex: 1.4,
+      minWidth: 140,
+      valueGetter: params => this.getListProperty(params.data, ['participants', 'involvedParties', 'stakeholders']),
+      filterValueGetter: params => this.getListProperty(params.data, ['participants', 'involvedParties', 'stakeholders'])
+    },
+    {
+      headerName: 'Auslösende:r',
+      flex: 1.2,
+      minWidth: 120,
+      valueGetter: params => this.getFirstProperty(params.data, ['initiator', 'triggeredBy', 'requester']),
+      filterValueGetter: params => this.getFirstProperty(params.data, ['initiator', 'triggeredBy', 'requester'])
+    },
+    {
+      headerName: 'Projekt-Art',
       flex: 1.0,
-      minWidth: 90,
+      minWidth: 120,
       valueGetter: params => this.translateProjectType(params.data?.properties?.projectType),
       filterValueGetter: params => this.translateProjectType(params.data?.properties?.projectType)
-    },
-    {
-      headerName: 'Art',
-      flex: 1.6,
-      minWidth: 150,
-      valueGetter: params => this.translateProjectKind(params.data?.properties?.projectKind),
-      filterValueGetter: params => this.translateProjectKind(params.data?.properties?.projectKind)
-    },
-    {
-      headerName: 'SKS Nr',
-      flex: 0.8,
-      minWidth: 80,
-      valueGetter: params => params.data?.properties?.sksNo ?? ''
-    },
+    },    
     {
       headerName: 'Baubeginn',
       flex: 1.0,
@@ -208,61 +285,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       valueGetter: params => this.getDurationDaysFromProject(params.data),
       comparator: (valueA, valueB) => Number(valueA || 0) - Number(valueB || 0)
     },
-    {
-      headerName: 'SKS',
-      flex: 0.9,
-      minWidth: 90,
-      valueGetter: params => this.formatDate(params.data?.properties?.dateSks),
-      comparator: (valueA, valueB, nodeA, nodeB) => {
-        const a = this.toTimestamp(nodeA?.data?.properties?.dateSks);
-        const b = this.toTimestamp(nodeB?.data?.properties?.dateSks);
-        return a - b;
-      }
-    },
-    {
-      headerName: 'KAP',
-      flex: 0.9,
-      minWidth: 90,
-      valueGetter: params => this.formatDate(params.data?.properties?.dateKap),
-      comparator: (valueA, valueB, nodeA, nodeB) => {
-        const a = this.toTimestamp(nodeA?.data?.properties?.dateKap);
-        const b = this.toTimestamp(nodeB?.data?.properties?.dateKap);
-        return a - b;
-      }
-    },
-    {
-      headerName: 'OKS',
-      flex: 0.9,
-      minWidth: 90,
-      valueGetter: params => this.formatDate(params.data?.properties?.dateOks),
-      comparator: (valueA, valueB, nodeA, nodeB) => {
-        const a = this.toTimestamp(nodeA?.data?.properties?.dateOks);
-        const b = this.toTimestamp(nodeB?.data?.properties?.dateOks);
-        return a - b;
-      }
-    },
-    {
-      headerName: 'GL-TBA',
-      flex: 0.95,
-      minWidth: 95,
-      valueGetter: params => this.formatDate(params.data?.properties?.dateGlTba),
-      comparator: (valueA, valueB, nodeA, nodeB) => {
-        const a = this.toTimestamp(nodeA?.data?.properties?.dateGlTba);
-        const b = this.toTimestamp(nodeB?.data?.properties?.dateGlTba);
-        return a - b;
-      }
-    },
-    {
-      headerName: 'Abnahme/Garantie',
-      flex: 0.95,
-      minWidth: 95,
-      valueGetter: params => this.formatDate(params.data?.properties?.dateGuarantee), // #650 consolidated dateOfAcceptance and dateGuarantee to dateGuarantee
-      comparator: (valueA, valueB, nodeA, nodeB) => {
-        const a = this.toTimestamp(nodeA?.data?.properties?.dateGuarantee);
-        const b = this.toTimestamp(nodeB?.data?.properties?.dateGuarantee);
-        return a - b;
-      }
-    },
+    
+    
+    
     {
       headerName: 'Letzte Änderung',
       flex: 1.05,
@@ -278,7 +303,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     roadWorkNeedService: RoadWorkNeedService,
-    roadWorkActivityService: RoadWorkActivityService
+    roadWorkActivityService: RoadWorkActivityService,
+    private readonly hostElementRef: ElementRef<HTMLElement>
   ) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
@@ -289,8 +315,12 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    this.disableOuterVerticalScroll();
+    this.updateHostHeight();
     this.initChart();
     window.addEventListener('resize', this.resizeHandler);
+
+    requestAnimationFrame(() => this.schedulePanelResize());
 
     if (this.gridContainerRef?.nativeElement && typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
@@ -302,6 +332,19 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.resizeHandler);
+    document.removeEventListener('pointermove', this.splitterPointerMove);
+    document.removeEventListener('pointerup', this.splitterPointerUp);
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+
+    if (this.outerScrollContainer) {
+      this.outerScrollContainer.style.overflowY = this.previousOuterOverflowY;
+      this.outerScrollContainer = undefined;
+    }
+
+    if (this.panelResizeFrame !== undefined) {
+      cancelAnimationFrame(this.panelResizeFrame);
+    }
 
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
@@ -340,15 +383,71 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.syncChartWithGridState();
   }
 
+  onSplitterPointerDown(event: PointerEvent): void {
+    event.preventDefault();
+    document.addEventListener('pointermove', this.splitterPointerMove);
+    document.addEventListener('pointerup', this.splitterPointerUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  }
+
+  onSplitterKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    const direction = event.key === 'ArrowUp' ? -1 : 1;
+    this.gridPanelPercent = Math.min(70, Math.max(18, this.gridPanelPercent + direction * 3));
+    this.schedulePanelResize();
+  }
+
+  toggleGridVisibility(): void {
+    if (this.showGrid && !this.showChart) {
+      this.showChart = true;
+    }
+    this.showGrid = !this.showGrid;
+    this.schedulePanelResize();
+  }
+
+  toggleChartVisibility(): void {
+    if (this.showChart && !this.showGrid) {
+      this.showGrid = true;
+    }
+    this.showChart = !this.showChart;
+    this.schedulePanelResize();
+  }
+
+  private schedulePanelResize(): void {
+    if (this.panelResizeFrame !== undefined) {
+      cancelAnimationFrame(this.panelResizeFrame);
+    }
+
+    this.panelResizeFrame = requestAnimationFrame(() => {
+      this.panelResizeFrame = undefined;
+      this.chartInstance?.resize();
+      (this.gridApi as any)?.doLayout?.();
+    });
+  }
+
   loadRoadWorkActivities(): void {
     this.isLoading = true;
 
-    this.roadWorkActivityService.getRoadWorkActivities().subscribe({
-      next: (data: RoadWorkActivityFeature[]) => {
-        this.roadWorkActivities = (data ?? []).filter(item => !!item?.properties);
+    forkJoin({
+      activities: this.roadWorkActivityService.getRoadWorkActivities(),
+      needs: this.roadWorkNeedService.getRoadWorkNeeds()
+    }).subscribe({
+      next: ({ activities, needs }: any) => {
+        this.roadWorkActivities = (activities ?? []).filter((item: any) => !!item?.properties);
+        this.timelineProjects = [
+          ...this.roadWorkActivities.map(item => this.tagProjectType(item, 'Bauvorhaben')),
+          ...(needs ?? [])
+            .filter((item: any) => !!item?.properties)
+            .map((item: any) => this.tagProjectType(item, 'Bedarf'))
+        ];
 
         if (this.gridApi) {
-          this.gridApi.setRowData(this.roadWorkActivities);
+          this.gridApi.setRowData(this.timelineProjects);
           this.fitGridColumns();
         }
 
@@ -358,6 +457,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (_error) => {
         this.roadWorkActivities = [];
+        this.timelineProjects = [];
         this.selectedProject = undefined;
         this.filteredProjectCount = 0;
         this.chartProjectCount = 0;
@@ -384,20 +484,50 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
+   * Use the component's real viewport position instead of assuming a fixed
+   * application header height. One pixel is kept as a rounding safety margin.
+   */
+  private updateHostHeight(): void {
+    const host = this.hostElementRef.nativeElement;
+    const top = Math.max(0, host.getBoundingClientRect().top);
+    const containerBottom = this.outerScrollContainer
+      ? Math.min(window.innerHeight, this.outerScrollContainer.getBoundingClientRect().bottom)
+      : window.innerHeight;
+    const availableHeight = Math.max(1, Math.floor(containerBottom - top - 2));
+    host.style.height = `${availableHeight}px`;
+  }
+
+  /**
+   * The application shell can own a scrollbar (for example mat-sidenav-content),
+   * so hiding overflow on the component itself is not sufficient.
+   */
+  private disableOuterVerticalScroll(): void {
+    let element = this.hostElementRef.nativeElement.parentElement;
+
+    while (element && element !== document.body && element !== document.documentElement) {
+      const overflowY = window.getComputedStyle(element).overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll') {
+        this.outerScrollContainer = element;
+        break;
+      }
+      element = element.parentElement;
+    }
+
+    if (!this.outerScrollContainer) {
+      this.outerScrollContainer = (document.scrollingElement as HTMLElement) || document.documentElement;
+    }
+
+    this.previousOuterOverflowY = this.outerScrollContainer.style.overflowY;
+    this.outerScrollContainer.style.overflowY = 'hidden';
+  }
+
+  /**
    * Fit columns to the available grid width.
    */
   private fitGridColumns(): void {
-    if (!this.gridApi) {
-      return;
-    }
-
-    setTimeout(() => {
-      try {
-        this.gridApi?.sizeColumnsToFit();
-      } catch {
-        // ignore transient sizing errors during layout changes
-      }
-    }, 0);
+    // Do not call sizeColumnsToFit(): with the required number of columns it
+    // makes headers unreadable. AG Grid keeps the horizontal scrollbar inside
+    // the grid and respects each column's minWidth instead.
   }
 
   /**
@@ -418,7 +548,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private getDisplayedRowsFromGrid(): RoadWorkActivityFeature[] {
     if (!this.gridApi) {
-      return [...this.roadWorkActivities];
+      return [...this.timelineProjects];
     }
 
     const rows: RoadWorkActivityFeature[] = [];
@@ -508,6 +638,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         const startTs = this.toTimestamp(props.startOfConstruction);
         const endTs = this.toTimestamp(props.endOfConstruction);
         const categoryIndex = categories.indexOf(this.getProjectDisplayName(project));
+        const phaseColor = this.getPhaseColor(project) || color;
 
         return {
           id: props.uuid || `${statusKey}-${categoryIndex}`,
@@ -526,8 +657,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.getDurationDays(props.startOfConstruction, props.endOfConstruction)
           ],
           itemStyle: {
-            color: this.withAlpha(color, 0.46),
-            borderColor: color,
+            color: this.withAlpha(phaseColor, 0.70),
+            borderColor: phaseColor,
             borderWidth: 1.2
           }
         };
@@ -552,11 +683,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
               y: startCoord[1] - barHeight / 2,
               width: Math.max(endCoord[0] - startCoord[0], 4),
               height: barHeight,
-              r: 3
+              r: 0
             },
             style: api.style({
-              fill: this.withAlpha(color, 0.46),
-              stroke: color,
               lineWidth: 1.2
             })
           };
@@ -572,7 +701,17 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     });
 
-    const milestoneSeries = this.buildMilestoneSeries(validProjects, categories);
+    const flagSeries = this.buildFlagSeries(validProjects, categories);
+    const phaseLegendSeries = Object.keys(this.PHASE_COLORS).map(phase => ({
+      name: `Phase ${phase}`,
+      type: 'scatter',
+      data: [],
+      symbol: 'rect',
+      symbolSize: 12,
+      silent: true,
+      tooltip: { show: false },
+      itemStyle: { color: this.PHASE_COLORS[phase] }
+    }));
 
     const today = new Date();
     const todayTimestamp = new Date(
@@ -582,44 +721,49 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).getTime();
 
     const legendData = [
-      ...this.STATUS_ORDER.map(status => ({
-        name: this.getStatusLabel(status),
-        icon: 'roundRect',
+      ...Object.keys(this.PHASE_COLORS).map(phase => ({
+        name: `Phase ${phase}`,
+        icon: 'rect',
         itemStyle: {
-          color: this.withAlpha(this.getStatusColor(status), 0.46),
-          borderColor: this.getStatusColor(status),
+          color: this.PHASE_COLORS[phase],
+          borderColor: this.PHASE_COLORS[phase],
           borderWidth: 1.2
         }
       })),
-      ...this.MILESTONE_DEFS.map(def => ({
+      ...this.FLAG_DEFS.filter(def => this.enabledFlags.has(def.key)).map(def => ({
         name: def.label,
         icon: def.symbol,
-        itemStyle: {
-          color: '#ffffff',
-          borderColor: '#666',
-          borderWidth: 1.6
-        }
+        itemStyle: { color: def.color }
       }))
     ];
 
     const option: echarts.EChartsOption = {
       animation: true,
+      title: {
+        text: selectedUuid
+          ? `Projekte und Bedarfe auf der Zeitlinie — ${this.selectedProject?.properties?.name || ''}`
+          : 'Projekte und Bedarfe auf der Zeitlinie',
+        left: 16,
+        top: 10,
+        textStyle: {
+          color: '#20252b',
+          fontSize: 17,
+          fontWeight: 'bold'
+        }
+      },
       legend: {
-        selected: {
-          'SKS': false,
-          'SKS genehmigt': false,
-          'KAP': false,
-          'KAP genehmigt': false,
-          'OKS': false,
-          'OKS genehmigt': false,
-          'GL-TBA': false,
-          'GL-TBA genehmigt': false
-        },
-        top: 0,
-        type: 'scroll',
+        top: 38,
+        left: 16,
+        right: 100,
+        type: 'plain',
+        orient: 'horizontal',
         data: legendData as any,
-        itemWidth: 18,
-        itemHeight: 10
+        itemWidth: 14,
+        itemHeight: 10,
+        itemGap: 12,
+        textStyle: {
+          fontSize: 11
+        }
       },
       tooltip: {
         trigger: 'item',
@@ -662,8 +806,15 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       toolbox: {
         right: 10,
         feature: {
-          restore: {},
-          saveAsImage: {}
+          restore: {
+            title: 'Wiederherstellen'
+          },
+          dataView: {
+            readOnly: true,
+            title: 'Datenansicht',
+            lang: ['Datenansicht', 'Schliessen', 'Aktualisieren'],
+            optionToContent: () => this.buildSwissDataView(validProjects)
+          }
         }
       },
       dataZoom: [
@@ -671,11 +822,13 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           type: 'slider',
           xAxisIndex: 0,
           bottom: 8,
-          height: 24
+          height: 24,
+          filterMode: 'weakFilter'
         },
         {
           type: 'inside',
-          xAxisIndex: 0
+          xAxisIndex: 0,
+          filterMode: 'weakFilter'
         },
         {
           type: 'slider',
@@ -697,7 +850,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       grid: {
         left: 290,
         right: 60,
-        top: 80,
+        top: 112,
         bottom: 60
       },
       xAxis: {
@@ -753,8 +906,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       series: [
         ...selectedRowMarkAreaSeries,
+        ...phaseLegendSeries,
         ...statusSeries,
-        ...milestoneSeries
+        ...flagSeries
       ] as any[],
       graphic: [
         {
@@ -764,7 +918,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           style: {
             text: selectedUuid
               ? 'Ausgewähltes Projekt ist hervorgehoben'
-              : 'Farben zeigen den Status',
+              : 'Farben zeigen die Phase',
             fill: '#666',
             font: '12px sans-serif'
           }
@@ -778,6 +932,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chartInstance.setOption({
       series: [
         ...selectedRowMarkAreaSeries.map(() => ({})),
+        ...phaseLegendSeries.map(() => ({})),
         ...this.STATUS_ORDER.map(() => ({
           markLine: {
             silent: true,
@@ -801,9 +956,116 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
             ]
           }
         })),
-        ...this.MILESTONE_DEFS.map(() => ({}))
+        ...flagSeries.map(() => ({}))
       ]
     });
+  }
+
+  exportCurrentViewAsImage(): void {
+    if (!this.chartInstance) {
+      return;
+    }
+    const link = document.createElement('a');
+    link.download = `mehrjahresplanung-${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = this.chartInstance.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#ffffff' });
+    link.click();
+  }
+
+  private buildFlagSeries(projects: RoadWorkActivityFeature[], categories: string[]): any[] {
+    return this.FLAG_DEFS
+      .filter(def => this.enabledFlags.has(def.key))
+      .map(def => ({
+        name: def.label,
+        type: 'scatter',
+        symbol: def.symbol,
+        symbolRotate: def.symbolRotate || 0,
+        symbolSize: 14,
+        z: 25,
+        data: projects.map(project => {
+          const props: any = project.properties || {};
+          const isSet = def.propertyKeys.some(key => props[key] === true);
+          const start = this.getTimestampFromKeys(props, def.startKeys || []);
+          const end = this.getTimestampFromKeys(props, def.endKeys || []);
+          const fallback = this.toTimestamp(props.startOfConstruction);
+          const timestamp = start || end || (isSet ? fallback : 0);
+          if (!timestamp) {
+            return null;
+          }
+          return {
+            value: [timestamp, categories.indexOf(this.getProjectDisplayName(project))],
+            projectName: this.getProjectDisplayName(project),
+            milestoneLabel: def.label,
+            date: timestamp,
+            roadWorkActivityNo: props.roadWorkActivityNo || props.roadWorkNeedNo || '-',
+            statusLabel: this.getStatusLabelFromRaw(props.status),
+            itemStyle: { color: def.color }
+          };
+        }).filter(Boolean)
+      }));
+  }
+
+  /** Data view with Swiss date formatting instead of raw ECharts timestamps. */
+  private buildSwissDataView(projects: RoadWorkActivityFeature[]): HTMLElement {
+    const container = document.createElement('div');
+    container.style.padding = '12px';
+    container.style.overflow = 'auto';
+
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.style.fontSize = '13px';
+
+    const header = document.createElement('tr');
+    [
+      'Titel',
+      'Balken Start',
+      'Balken Ende',
+      ...this.FLAG_DEFS.map(flag => flag.label)
+    ]
+      .forEach(label => {
+        const cell = document.createElement('th');
+        cell.textContent = label;
+        cell.style.padding = '6px 8px';
+        cell.style.borderBottom = '2px solid #999';
+        cell.style.textAlign = 'left';
+        header.appendChild(cell);
+      });
+    table.appendChild(header);
+
+    projects.forEach(project => {
+      const props: any = project.properties || {};
+      const row = document.createElement('tr');
+      const values = [
+        props.name || 'Ohne Name',
+        this.formatDate(props.startOfConstruction),
+        this.formatDate(props.endOfConstruction),
+        ...this.FLAG_DEFS.map(flag => {
+          const isSet = flag.propertyKeys.some(key => props[key] === true);
+          const start = this.getTimestampFromKeys(props, flag.startKeys || []);
+          const end = this.getTimestampFromKeys(props, flag.endKeys || []);
+          const fallback = isSet ? this.toTimestamp(props.startOfConstruction) : 0;
+
+          if (start && end) {
+            return `${this.formatDate(start)} – ${this.formatDate(end)}`;
+          }
+
+          const timestamp = start || end || fallback;
+          return timestamp ? this.formatDate(timestamp) : '';
+        })
+      ];
+
+      values.forEach(value => {
+        const cell = document.createElement('td');
+        cell.textContent = String(value ?? '');
+        cell.style.padding = '5px 8px';
+        cell.style.borderBottom = '1px solid #ddd';
+        row.appendChild(cell);
+      });
+      table.appendChild(row);
+    });
+
+    container.appendChild(table);
+    return container;
   }
 
   /**
@@ -825,58 +1087,6 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     return result;
-  }
-
-  /**
-   * Build scatter series for meaningful milestone dates only.
-   */
-  private buildMilestoneSeries(
-    projects: RoadWorkActivityFeature[],
-    categories: string[]
-  ): any[] {
-    return this.MILESTONE_DEFS.map((def) => {
-      const data = projects
-        .map((project) => {
-          const props: any = project.properties as any;
-          const ts = this.toTimestamp(props[def.key]);
-          if (!ts) {
-            return null;
-          }
-
-          const categoryIndex = categories.indexOf(this.getProjectDisplayName(project));
-          const statusKey = this.normalizeStatus(props.status);
-          const statusColor = this.getStatusColor(statusKey);
-
-          return {
-            value: [ts, categoryIndex],
-            name: this.getProjectDisplayName(project),
-            projectName: this.getProjectDisplayName(project),
-            milestoneLabel: def.label,
-            date: props[def.key],
-            roadWorkActivityNo: props.roadWorkActivityNo ?? '-',
-            statusLabel: this.getStatusLabel(statusKey),
-            itemStyle: {
-              color: '#ffffff',
-              borderColor: statusColor,
-              borderWidth: 1.6
-            },
-            symbolSize: 10
-          };
-        })
-        .filter(item => !!item);
-
-      return {
-        name: def.label,
-        type: 'scatter',
-        legendHoverLink: false,
-        data: data,
-        symbol: def.symbol,
-        emphasis: {
-          disabled: true
-        },
-        z: 20
-      };
-    });
   }
 
   /**
@@ -967,14 +1177,62 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
    * Build display name for project on Y axis.
    */
   private getProjectDisplayName(project: RoadWorkActivityFeature): string {
-    const props = project.properties;
+    const props: any = project.properties;
     const name = props.name?.trim() || 'Ohne Name';
     const identifier =
       props.roadWorkActivityNo?.trim() ||
+      props.roadWorkNeedNo?.trim() ||
       props.projectNo?.trim() ||
       '-';
 
-    return `${name} (${identifier})`;
+    const kind = props.__timelineType ? ` · ${props.__timelineType}` : '';
+    return `${name} (${identifier})${kind}`;
+  }
+
+  private tagProjectType(project: any, type: 'Bauvorhaben' | 'Bedarf'): any {
+    return {
+      ...project,
+      properties: { ...project.properties}
+    };
+  }
+
+  private getPhase(project: any): string {
+    const raw = this.getFirstProperty(project, ['phase', 'projectPhase']);
+    const match = String(raw || '').match(/[1-6]/);
+    return match ? match[0] : '';
+  }
+
+  private getPhaseColor(project: any): string {
+    return this.PHASE_COLORS[this.getPhase(project)] || '';
+  }
+
+  private getFirstProperty(project: any, keys: string[]): any {
+    const props = project?.properties || {};
+    for (const key of keys) {
+      const value = props[key];
+      if (value !== undefined && value !== null && value !== '') {
+        return typeof value === 'object' ? (value.name || value.label || JSON.stringify(value)) : value;
+      }
+    }
+    return '';
+  }
+
+  private getListProperty(project: any, keys: string[]): string {
+    const value = this.getFirstProperty(project, keys);
+    if (!Array.isArray(value)) {
+      return String(value || '');
+    }
+    return value.map(item => typeof item === 'object' ? (item.name || item.label || '') : item).filter(Boolean).join(', ');
+  }
+
+  private getTimestampFromKeys(props: any, keys: string[]): number {
+    for (const key of keys) {
+      const timestamp = this.toTimestamp(props[key]);
+      if (timestamp) {
+        return timestamp;
+      }
+    }
+    return 0;
   }
 
   /**
