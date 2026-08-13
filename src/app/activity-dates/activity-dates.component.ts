@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { DateHelper } from 'src/helper/date-helper';
 
 @Component({
   selector: 'app-activity-dates',
@@ -16,4 +18,7 @@ export class ActivityDatesComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  normalizeDate(event: MatDatepickerInputEvent<Date>): void {
+    return DateHelper.normalizeDate(event);
+  }
 }

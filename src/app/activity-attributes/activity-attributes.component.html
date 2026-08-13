@@ -658,6 +658,7 @@
                                             <input matInput
                                                 [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
                                                 [matDatepicker]="startOfConstructionB"
+                                                (dateChange)="normalizeDate($event)"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                             <mat-datepicker #startOfConstructionB></mat-datepicker>
                                             <mat-datepicker-toggle matSuffix
@@ -669,6 +670,7 @@
                                                 [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
                                                 [matDatepicker]="endOfConstructionB"
                                                 [min]="roadWorkActivityFeature.properties.startOfConstruction"
+                                                (dateChange)="normalizeDate($event)"
                                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                             <mat-datepicker #endOfConstructionB></mat-datepicker>
                                             <mat-datepicker-toggle matSuffix
@@ -1051,7 +1053,7 @@
                                                         <input matInput name="dateGlTbaReal"
                                                             [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
                                                             [matDatepicker]="dateGlTbaReal"
-                                                            (dateChange)="normalizeDateGlTbaReal()"
+                                                            (dateChange)="normalizeDate($event)"
                                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                         <mat-datepicker #dateGlTbaReal></mat-datepicker>
                                                         <mat-datepicker-toggle matSuffix

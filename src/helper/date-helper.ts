@@ -1,3 +1,5 @@
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+
 /**
  * Date-related utilities.
  *
@@ -37,4 +39,20 @@ export class DateHelper {
         return result <= 0 ? 0 : result;
     }
 
+    /**
+     * Sets the daytime to 12:00 for the mat-datepicker to avoid change of the date due to time zones
+     *
+     * Examples:
+     * - mat-datepicker (pure):
+     *    2026-08-11T00:00:00+02:00 → 2026-08-10T22:00:00Z >> DAY HAS CHANGED!!
+     * - mat-datepicker with normalizer:
+     *    2026-08-11T12:00:00+02:00 → 2026-08-11T10:00:00Z >> SAME DAY
+     *
+     * @param event Change event from the date picker
+     */
+    public static normalizeDate(event: MatDatepickerInputEvent<Date>): void {
+        if (event.value) {
+          event.value.setHours(12, 0, 0, 0);
+        }
+      }
 }

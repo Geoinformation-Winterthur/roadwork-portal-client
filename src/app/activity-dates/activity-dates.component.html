@@ -13,6 +13,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateDesignAssignmentIssued"
                                 [matDatepicker]="dateDesignAssignmentIssued"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Projektierungsauftrag erstellt bis">
                             <mat-datepicker #dateDesignAssignmentIssued></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -27,6 +28,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateAprDesignCompletion"
                                 [matDatepicker]="dateAprDesignCompletion"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="APR Projektiert bis">
                             <mat-datepicker #dateAprDesignCompletion></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -41,6 +43,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateAprConstructionCompletion"
                                 [matDatepicker]="dateAprConstructionCompletion"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="APR Realisiert bis">
                             <mat-datepicker #dateAprConstructionCompletion></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -55,6 +58,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.startOfConstruction"
                                 [matDatepicker]="startOfConstruction"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Baubeginn (Voraussichtlich)">
                             <mat-datepicker #startOfConstruction></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -67,6 +71,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.endOfConstruction"
                                 [matDatepicker]="endOfConstruction"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Bauende (Voraussichtlich)">
                             <mat-datepicker #endOfConstruction></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -186,6 +191,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesRequested"
                                 [matDatepicker]="dateQuotesRequested"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Bestellungen (eingeholt)">
                             <mat-datepicker #dateQuotesRequested></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -198,6 +204,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesReviewed"
                                 [matDatepicker]="dateQuotesReviewed"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Bestellungen (geprüft)">
                             <mat-datepicker #dateQuotesReviewed></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -212,6 +219,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.datePrepareEdcStart"
                                 [matDatepicker]="datePrepareEdcStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Projektierungsauftrag erarbeiten  (Start)">
                             <mat-datepicker #datePrepareEdcStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -224,6 +232,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.datePrepareEdcEnd"
                                 [matDatepicker]="datePrepareEdcEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Projektierungsauftrag erarbeiten  (Ende)">
                             <mat-datepicker #datePrepareEdcEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -238,6 +247,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
                                 [matDatepicker]="dateGlTbaReal"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Genehmigter Projektierungsauftrag (GL)">
                             <mat-datepicker #dateGlTbaReal></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -254,6 +264,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateStudyStart"
                                 [matDatepicker]="dateStudyStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Auftrag für Vorstudie erarbeiten">
                             <mat-datepicker #dateStudyStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -268,6 +279,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateStudyEnd"
                                 [matDatepicker]="dateStudyEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Genehmigter Auftrag Vorstudie (GL)">
                             <mat-datepicker #dateStudyEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -282,6 +294,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.projectStudyApproved"
                                 [matDatepicker]="projectStudyApproved"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Vorstudie erarbeiten">
                             <mat-datepicker #projectStudyApproved></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -296,6 +309,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.studyApproved"
                                 [matDatepicker]="studyApproved"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Genehmigte Vorstudie (GL)">
                             <mat-datepicker #studyApproved></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -310,6 +324,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateHandoverToApk"
                                 [matDatepicker]="dateHandoverToApk"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Übergabesitzung AMO/AEW an APK">
                             <mat-datepicker #dateHandoverToApk></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -319,7 +334,7 @@
                 </div>
 
                 <div class="cell">
-                    <h4>Phase 3 - Projektierung</h4>
+                    <h4>Phase 3 - Projektierung (inkl. Bewiligungen)</h4>
                     
                     <div class ="form-fields-split-equal">
                         <mat-form-field>
@@ -328,6 +343,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateHandoverToApr"
                                 [matDatepicker]="dateHandoverToApr"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Übergabesitzung APK an APR">
                             <mat-datepicker #dateHandoverToApr></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -337,12 +353,13 @@
 
                     <div class ="form-fields-split-equal">
                         <mat-form-field>
-                            <mat-label>Projektierungskredit einholen</mat-label>
+                            <mat-label>Projektierungskredit</mat-label>
                             <input matInput
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateRequestDesignBudget"
                                 [matDatepicker]="dateRequestDesignBudget"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                matTooltip="Projektierungskredit einholen">
+                                (dateChange)="normalizeDate($event)"
+                                matTooltip="Projektierungskredit">
                             <mat-datepicker #dateRequestDesignBudget></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
                                 [for]="dateRequestDesignBudget"></mat-datepicker-toggle>
@@ -356,6 +373,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateParticipStart"
                                 [matDatepicker]="dateParticipStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Planauflage §13 (Start)">
                             <mat-datepicker #dateParticipStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -368,6 +386,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateParticipEnd"
                                 [matDatepicker]="dateParticipEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Planauflage §13 (Ende)">
                             <mat-datepicker #dateParticipEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -382,6 +401,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircStart"
                                 [matDatepicker]="datePlanCircStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Planauflage §16 (Start)">
                             <mat-datepicker #datePlanCircStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -394,6 +414,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.datePlanCircEnd"
                                 [matDatepicker]="datePlanCircEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Planauflage §16 (Ende)">
                             <mat-datepicker #datePlanCircEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -408,6 +429,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateProjectApprovalStart"
                                 [matDatepicker]="dateProjectApprovalStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Projektfestsetzung (Start)">
                             <mat-datepicker #dateProjectApprovalStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -420,6 +442,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateProjectApprovalEnd"
                                 [matDatepicker]="dateProjectApprovalEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Projektfestsetzung (Ende)">
                             <mat-datepicker #dateProjectApprovalEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -434,6 +457,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateConstructionBudgetApprovalStart"
                                 [matDatepicker]="dateConstructionBudgetApprovalStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Ausführungskredit (Start)">
                             <mat-datepicker #dateConstructionBudgetApprovalStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -446,6 +470,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateConstructionBudgetApprovalEnd"
                                 [matDatepicker]="dateConstructionBudgetApprovalEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Ausführungskredit (Ende)">
                             <mat-datepicker #dateConstructionBudgetApprovalEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -462,6 +487,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateSubmissionStart"
                                 [matDatepicker]="dateSubmissionStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Submission (Start)">
                             <mat-datepicker #dateSubmissionStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -474,6 +500,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateSubmissionEnd"
                                 [matDatepicker]="dateSubmissionEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Submission (Ende)">
                             <mat-datepicker #dateSubmissionEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -490,6 +517,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateStartOfConstructionReal"
                                 [matDatepicker]="dateStartOfConstructionReal"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Baubeginn">
                             <mat-datepicker #dateStartOfConstructionReal></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -502,6 +530,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateEndOfConstructionReal"
                                 [matDatepicker]="dateEndOfConstructionReal"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Bauende">
                             <mat-datepicker #dateEndOfConstructionReal></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -516,6 +545,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateFinalPavementStart"
                                 [matDatepicker]="dateFinalPavementStart"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Einbau Deckbelag (Start)">
                             <mat-datepicker #dateFinalPavementStart></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -528,6 +558,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateFinalPavementEnd"
                                 [matDatepicker]="dateFinalPavementEnd"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Einbau Deckbelag (Ende)">
                             <mat-datepicker #dateFinalPavementEnd></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -542,6 +573,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateGuarantee"
                                 [matDatepicker]="dateGuarantee"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Abnahme/Garantie">
                             <mat-datepicker #dateGuarantee></mat-datepicker>
                             <mat-datepicker-toggle matSuffix
@@ -556,6 +588,7 @@
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateProjectBudgetFinalized"
                                 [matDatepicker]="dateProjectBudgetFinalized"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                (dateChange)="normalizeDate($event)"
                                 matTooltip="Projektkreditabrechnung">
                             <mat-datepicker #dateProjectBudgetFinalized></mat-datepicker>
                             <mat-datepicker-toggle matSuffix

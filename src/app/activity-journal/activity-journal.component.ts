@@ -3,6 +3,8 @@ import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature'
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { JournalEntryService } from '../../services/journal-entry.service';
 import { JournalEntryFeature } from '../../model/journal-entry-feature';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { DateHelper } from 'src/helper/date-helper';
 
 @Component({
   selector: 'app-activity-journal',
@@ -110,5 +112,9 @@ export class ActivityJournalComponent implements OnInit {
 
   onPrivateEntityAffectedChange() {
     this.privateEntityAffectedCollapsed = this.roadWorkActivityFeature.properties.privateEntityAffected;
+  }
+
+  normalizeDate(event: MatDatepickerInputEvent<Date>): void {
+    return DateHelper.normalizeDate(event);
   }
 }

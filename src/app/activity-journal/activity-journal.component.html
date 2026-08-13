@@ -467,6 +467,7 @@
                         <input matInput
                             [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
                             [matDatepicker]="aggloprogramDueDate"
+                            (dateChange)="normalizeDate($event)"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                         <mat-datepicker #aggloprogramDueDate></mat-datepicker>
                         <mat-datepicker-toggle matSuffix
@@ -553,6 +554,7 @@
                             <input matInput
                                 [(ngModel)]="roadWorkActivityFeature.properties.prestudyVkErConfirmed"
                                 [matDatepicker]="prestudyVkErConfirmed"
+                                (dateChange)="normalizeDate($event)"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                                 matTooltip="Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert">
                             <mat-datepicker #prestudyVkErConfirmed></mat-datepicker>
@@ -727,6 +729,7 @@
                         <input matInput
                             [(ngModel)]="roadWorkActivityFeature.properties.staffResourcesAprConfirmed"
                             [matDatepicker]="staffResourcesAprConfirmed"
+                            (dateChange)="normalizeDate($event)"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                             matTooltip="Personelle Ressourcen APR (ab Phase 3) abgesprochen">
                         <mat-datepicker #staffResourcesAprConfirmed></mat-datepicker>
@@ -739,6 +742,7 @@
                         <input matInput
                             [(ngModel)]="roadWorkActivityFeature.properties.costEstimateAprConfirmed"
                             [matDatepicker]="costEstimateAprConfirmed"
+                            (dateChange)="normalizeDate($event)"
                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
                             matTooltip="Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen">
                         <mat-datepicker #costEstimateAprConfirmed></mat-datepicker>

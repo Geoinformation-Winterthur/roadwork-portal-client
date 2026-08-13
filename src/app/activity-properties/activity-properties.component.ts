@@ -8,7 +8,6 @@ import { RoadWorkActivityFeature } from '../../model/road-work-activity-feature'
 import { ActivityResponsibilityFeature } from '../../model/activity-responsibility-feature';
 import { OrganisationalUnit } from '../../model/organisational-unit';
 import { User } from '../../model/user';
-import { UserHelper } from '../../helper/user-helper';
 
 @Component({
   selector: 'app-activity-properties',
@@ -83,7 +82,7 @@ export class ActivityPropertiesComponent implements OnInit {
     // - user is active
     // - is (not) member of tba depending on selected value in "Umsetzung durch Dritte"
     const tbaSelected = !this.roadWorkActivityFeature.properties.implementationByThird;
-    const projectManagerUsers = this.allUsers.filter(user => user.active && UserHelper.isTbaUser(user) === tbaSelected);
+    const projectManagerUsers = this.allUsers.filter(user => user.active && user.organisationalUnit.isCivilEngineering === tbaSelected);
 
     // map the relevant users (project managers) to a dictionary by organisational unit (key: orgUnit, value: user[])
     this.projectManagerUsersByOrganisationalUnit = projectManagerUsers.reduce((orgUnit, user) => {

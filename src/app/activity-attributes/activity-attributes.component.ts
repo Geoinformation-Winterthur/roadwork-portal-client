@@ -50,6 +50,8 @@ import { ActivityDatesComponent } from '../activity-dates/activity-dates.compone
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import saveAs from 'file-saver';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { DateHelper } from 'src/helper/date-helper';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -1367,17 +1369,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  normalizeDateGlTbaReal(): void {
-    const props = this.roadWorkActivityFeature?.properties;
-    if (!props?.dateGlTbaReal) return;
-
-    const d = new Date(props.dateGlTbaReal);
-    props.dateGlTbaReal = new Date(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      12, 0, 0, 0
-    );
+  normalizeDate(event: MatDatepickerInputEvent<Date>): void {
+    return DateHelper.normalizeDate(event);
   }
   
   private resizeHandler = () => {
