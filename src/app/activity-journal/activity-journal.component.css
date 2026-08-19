@@ -79,6 +79,17 @@ a.disabled {
     gap: 1rem;
 }
 
+.form-fields-split-three {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1.2fr;
+    gap: 1rem;
+}
+
+.aggloprogram-fields {
+    display: flex;
+    flex-direction: column;
+}
+
 .indent {
   margin-left: 24px;
 }

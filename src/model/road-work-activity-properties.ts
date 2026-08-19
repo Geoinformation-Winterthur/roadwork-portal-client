@@ -134,12 +134,14 @@ export class RoadWorkActivityProperties {
     // Aggloprogramm (#617, 2026.4)
     partOfAggloprogram: boolean = false;
     aggloprogramGeneration?: number;
+    aggloprogramMeasureNumber: string = "";
     aggloprogramLink: string = "";
     aggloprogramAreCode: string = "";
     aggloprogramAreDescription: string = "";
     aggloprogramDueDate?: Date // Modul Journal, Agglo: "Umzusetzen bis"
     aggloprogramCostTotal?: number;
     aggloprogramCostCanton?: number;
+    aggloprogramComment: string = "";
 
     // Prestudy
     prestudy: boolean = false;

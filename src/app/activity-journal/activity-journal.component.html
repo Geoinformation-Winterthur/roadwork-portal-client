@@ -418,83 +418,103 @@
                         </label>
                     </span>
                     
-                    <div class="form-fields-split-one-two indent" *ngIf="partOfAggloprogramCollapsed">
-                        <mat-form-field>
-                            <mat-label>Generation</mat-label>
-                            <input matInput type="number" min="0" max="999"
-                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramGeneration"
-                                placeholder="Zahl 0 - 999"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        </mat-form-field>
-
-                        <div class="flex-container">
-                            <mat-form-field class="flex-item">
-                                <mat-label>Link</mat-label>
-                                <input matInput type="text" maxlength="255"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramLink"
+                    <div class="aggloprogram-fields indent" *ngIf="partOfAggloprogramCollapsed">
+                        <div class="form-fields-split-three">
+                            <mat-form-field>
+                                <mat-label>Generation/Prio</mat-label>
+                                <input matInput type="number" min="0" max="999"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramGeneration"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                             </mat-form-field>
-                            <a rel="noopener noreferrer"
-                                [class.disabled]="!isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink)"
-                                [href]="roadWorkActivityFeature.properties.aggloprogramLink"
-                                [title]="isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink) ? roadWorkActivityFeature.properties.aggloprogramLink : 'Ungültige Link-Adresse'"
-                                (click)="onAClick($event, roadWorkActivityFeature.properties.aggloprogramLink)"
-                                target="_blank">
-                                    <mat-icon aria-label="Icon zeigt Link">open_in_new</mat-icon>
-                            </a>
+
+                            <mat-form-field>
+                                <mat-label>Mn Nr.</mat-label>
+                                <input matInput type="text" maxlength="40"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramMeasureNumber"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-label>ARE-Code</mat-label>
+                                <input matInput type="text" maxlength="40"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreCode"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </mat-form-field>
                         </div>
-                    </div>
 
-                    <mat-form-field class="indent" *ngIf="partOfAggloprogramCollapsed">
-                        <mat-label>ARE-Code</mat-label>
-                        <input matInput type="text" maxlength="40"
-                            [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreCode"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                    </mat-form-field>
-
-                    <mat-form-field class="indent" *ngIf="partOfAggloprogramCollapsed">
-                        <mat-label>ARE-Bezeichnung</mat-label>
-                        <textarea matInput maxlength="255"
-                            cdkTextareaAutosize
-                            cdkAutosizeMaxRows="15"
-                            [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreDescription"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </textarea>
-                    </mat-form-field>
-
-                    <mat-form-field class="indent" *ngIf="partOfAggloprogramCollapsed">
-                        <mat-label>Umzusetzen bis</mat-label>
-                        <input matInput
-                            [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
-                            [matDatepicker]="aggloprogramDueDate"
-                            (dateChange)="normalizeDate($event)"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        <mat-datepicker #aggloprogramDueDate></mat-datepicker>
-                        <mat-datepicker-toggle matSuffix
-                            [for]="aggloprogramDueDate"></mat-datepicker-toggle>
-                    </mat-form-field>
-
-                    <div class="form-fields-split-equal indent" *ngIf="partOfAggloprogramCollapsed">
                         <mat-form-field>
-                            <mat-label>Eingestellte Summe (Gesamtkosten in CHF)</mat-label>
-                            <input matInput
-                                type="number"
-                                min="0"
-                                max="999999999"
-                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostTotal"
-                                placeholder="Betrag in CHF"
+                            <mat-label>ARE-Bezeichnung</mat-label>
+                            <textarea matInput maxlength="255"
+                                cdkTextareaAutosize
+                                cdkAutosizeMaxRows="15"
+                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreDescription"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </textarea>
                         </mat-form-field>
 
+                        <div class="form-fields-split-one-two">
+                            <mat-form-field>
+                                <mat-label>Umzusetzen bis</mat-label>
+                                <input matInput
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
+                                    [matDatepicker]="aggloprogramDueDate"
+                                    (dateChange)="normalizeDate($event)"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                <mat-datepicker #aggloprogramDueDate></mat-datepicker>
+                                <mat-datepicker-toggle matSuffix
+                                    [for]="aggloprogramDueDate"></mat-datepicker-toggle>
+                            </mat-form-field>
+
+                            <div class="flex-container">
+                                <mat-form-field class="flex-item">
+                                    <mat-label>Link</mat-label>
+                                    <input matInput type="text" maxlength="255"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramLink"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <a rel="noopener noreferrer"
+                                    [class.disabled]="!isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink)"
+                                    [href]="roadWorkActivityFeature.properties.aggloprogramLink"
+                                    [title]="isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink) ? roadWorkActivityFeature.properties.aggloprogramLink : 'Ungültige Link-Adresse'"
+                                    (click)="onAClick($event, roadWorkActivityFeature.properties.aggloprogramLink)"
+                                    target="_blank">
+                                    <mat-icon aria-label="Icon zeigt Link">open_in_new</mat-icon>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="form-fields-split-equal">
+                            <mat-form-field>
+                                <mat-label>Eingestellte Summe (Gesamtkosten in CHF)</mat-label>
+                                <input matInput
+                                    type="number"
+                                    min="0"
+                                    max="999999999"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostTotal"
+                                    placeholder="Betrag in CHF"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-label>Übernahme durch Kanton (in CHF)</mat-label>
+                                <input matInput
+                                    type="number"
+                                    min="0"
+                                    max="999999999"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostCanton"
+                                    placeholder="Betrag in CHF"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </mat-form-field>
+                        </div>
+
                         <mat-form-field>
-                            <mat-label>Übernahme durch Kanton (in CHF)</mat-label>
-                            <input matInput
-                                type="number"
-                                min="0"
-                                max="999999999"
-                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostCanton"
-                                placeholder="Betrag in CHF"
+                            <mat-label>Kommentar Agglo</mat-label>
+                            <textarea matInput maxlength="2048"
+                                cdkTextareaAutosize
+                                cdkAutosizeMaxRows="15"
+                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramComment"
                                 [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </textarea>
                         </mat-form-field>
                     </div>
                 </div>
