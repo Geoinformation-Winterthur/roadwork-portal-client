@@ -1977,4 +1977,20 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
+  formatQuarter(value: Date | string | null | undefined): string {
+    if (!value) {
+      return '-';
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '-';
+    }
+
+    const quarter = Math.floor(date.getMonth() / 3) + 1;
+
+    return `${quarter}.Q ${date.getFullYear()}`;
+  }
+
 }
