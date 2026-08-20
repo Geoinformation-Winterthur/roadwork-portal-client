@@ -1046,20 +1046,7 @@
                                                             </mat-option>
                                                         </mat-select>
                                                     </mat-form-field>
-                                                </form>
-                                                <form>                                                   
-                                                    <mat-form-field style="margin:10px;">
-                                                        <mat-label>GL TBA</mat-label>
-                                                        <input matInput name="dateGlTbaReal"
-                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
-                                                            [matDatepicker]="dateGlTbaReal"
-                                                            (dateChange)="normalizeDate($event)"
-                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                                        <mat-datepicker #dateGlTbaReal></mat-datepicker>
-                                                        <mat-datepicker-toggle matSuffix
-                                                            [for]="dateGlTbaReal"></mat-datepicker-toggle>
-                                                    </mat-form-field>
-                                                </form>
+                                                </form>                                                
                                             </div>
                                         </mat-card-content>
                                     </mat-card>
