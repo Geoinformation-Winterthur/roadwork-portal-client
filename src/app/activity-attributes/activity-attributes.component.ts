@@ -1586,13 +1586,15 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
               position: 'insideEndTop'
             },
             data: [
-              {
-                name: 'Spätest möglicher Projektbeginn',
-                xAxis: chartData.latestProjectStart
-              },
+              ...(chartData.latestProjectStart
+                ? [{
+                    name: 'Spätest möglicher Projektbeginn',
+                    xAxis: chartData.latestProjectStart.getTime()
+                  }]
+                : []),
               {
                 name: 'Heute',
-                xAxis: chartData.today,
+                xAxis: chartData.today.getTime(),
                 lineStyle: {
                   color: '#d9534f',
                   width: 2,
@@ -1732,7 +1734,11 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       const wish = this.toDate(p.finishOptimumTo);
       const late = this.toDate(p.finishLateTo);
 
-      const constructionDuration = Number(p.constructionDuration ?? 0);
+      const durationValue = Number(p.constructionDuration);
+      const constructionDuration =
+        Number.isFinite(durationValue) && durationValue > 0
+          ? durationValue
+          : 0;
 
       let constructionStart: Date | undefined;
       const constructionEnd = late;
