@@ -190,7 +190,7 @@
                             <input matInput
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesRequested"
                                 [matDatepicker]="dateQuotesRequested"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                [disabled]="true"
                                 (dateChange)="normalizeDate($event)"
                                 matTooltip="Bestellungen (eingeholt)">
                             <mat-datepicker #dateQuotesRequested></mat-datepicker>
@@ -203,7 +203,7 @@
                             <input matInput
                                 [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesReviewed"
                                 [matDatepicker]="dateQuotesReviewed"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                [disabled]="true"
                                 (dateChange)="normalizeDate($event)"
                                 matTooltip="Bestellungen (geprüft)">
                             <mat-datepicker #dateQuotesReviewed></mat-datepicker>

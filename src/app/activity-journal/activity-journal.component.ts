@@ -117,4 +117,32 @@ export class ActivityJournalComponent implements OnInit {
   normalizeDate(event: MatDatepickerInputEvent<Date>): void {
     return DateHelper.normalizeDate(event);
   }
+
+  onQuotesRequestedChange() {
+    if (this.roadWorkActivityFeature) {
+      if (this.roadWorkActivityFeature.properties.quotesRequested)
+      {
+        this.roadWorkActivityFeature.properties.dateQuotesRequested = new Date();
+        this.roadWorkActivityFeature.properties.dateQuotesRequested.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
+      }
+      else
+      {
+        this.roadWorkActivityFeature.properties.dateQuotesRequested = undefined;
+      }
+    }
+  }
+
+  onQuotesReviewedChange() {
+    if (this.roadWorkActivityFeature) {
+      if (this.roadWorkActivityFeature.properties.quotesReviewed)
+      {
+        this.roadWorkActivityFeature.properties.dateQuotesReviewed = new Date();
+        this.roadWorkActivityFeature.properties.dateQuotesReviewed.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
+      }
+      else
+      {
+        this.roadWorkActivityFeature.properties.dateQuotesReviewed = undefined;
+      }
+    }
+  }
 }

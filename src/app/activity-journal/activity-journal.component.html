@@ -783,13 +783,15 @@
                         
                         <mat-checkbox
                             [(ngModel)]="roadWorkActivityFeature.properties.quotesRequested"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                            (change)="onQuotesRequestedChange()">
                             Bestellungen eingeholt
                         </mat-checkbox>
                         
                         <mat-checkbox
                             [(ngModel)]="roadWorkActivityFeature.properties.quotesReviewed"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                            (change)="onQuotesReviewedChange()">
                             Bestellungen geprüft
                         </mat-checkbox>
                         
