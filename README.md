@@ -16,7 +16,7 @@ Run `npx ng build` to build the project. The build artifacts will be stored in t
 
 Example command to build for production environment (DO NOT USE THIS WITH GIT BASH):
 `npx ng build --configuration production --aot --outputHashing=all`
-=> Before this command: INCREMENT VERSION NUMBER in package.json, package-lock.json and welcome.component.ts.
+=> Before this command: INCREMENT VERSION NUMBER in welcome.component.ts.
 
 Example command to build for test environment (DO NOT USE THIS WITH GIT BASH):
 `npx ng build --configuration test --aot --outputHashing=all`
