@@ -1,3 +1,7 @@
 .edit-activity-map {
     width: 100%
 }
+
+button.active {
+  font-weight: bold;
+}

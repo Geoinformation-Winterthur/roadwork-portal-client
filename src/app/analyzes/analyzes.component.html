@@ -1,55 +1,87 @@
-<div style="margin: 0; margin-left: 2em; margin-right: 1em;">
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
 
-  <div style="margin-bottom: 1em;">
-    <h2 style="margin-bottom: .2rem;">
-      Bauvorhaben - Analysen ({{ filteredProjectCount }} / {{ roadWorkActivities.length }})
-    </h2>
-    <span *ngIf="missingTimelineDatesCount > 0">
-      <b>{{ filteredProjectCount - missingTimelineDatesCount }}</b> Projekte
-      werden auf der Zeitlinie angezeigt, weil sie Baubeginn und Bauende haben.
-    </span>
-  </div>
+<main class="analyzes-page">
+  <header class="page-heading">
+    <div class="page-heading-row">
+      <h2>
+        Bauvorhaben und Bedarfe – Analysen
+        <span class="page-count">({{ filteredProjectCount }} / {{ timelineProjects.length }})</span>
+      </h2>
 
-  <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="primary"></mat-progress-bar>
+      <div class="page-actions">
+        <button mat-stroked-button class="action-button" disabled
+                matTooltip="Die Word-Spezifikation folgt nach den Ferien">
+          Mehrjahresplanung
+        </button>
 
-  <div style="display: grid; grid-template-rows: 25vh 50vh; gap: 2.5rem;">
-    <div #gridContainer>
-      <ag-grid-angular
-        class="ag-theme-alpine"
-        rowSelection="single"
-        [rowData]="roadWorkActivities"
-        [columnDefs]="roadworkActivitiesColDefs"
-        [defaultColDef]="defaultColDef"
-        [animateRows]="true"
-        [rowHeight]="28"
-        [headerHeight]="28"
-        style="width: 100%; height: 100%;"
-        (gridReady)="onGridReady($event)"
-        (selectionChanged)="onSelectionChanged($event)"
-        (filterChanged)="onFilterChanged($event)"
-        (sortChanged)="onSortChanged($event)">
-      </ag-grid-angular>
-    </div>
+        <button mat-stroked-button class="action-button"
+                type="button" (click)="exportCurrentViewAsImage()">
+          Ansicht als Bild
+        </button>
 
-    <div>
-      <h3 style="margin: 0 0 .35rem 0;">
-        Projekte auf der Zeitlinie
-        <span *ngIf="selectedProject?.properties?.name">
-          — {{ selectedProject?.properties?.name }}
-        </span>
-      </h3>
+        <button mat-stroked-button class="action-button"
+                type="button" (click)="toggleGridVisibility()">
+          {{ showGrid ? 'Tabelle ausblenden' : 'Tabelle anzeigen' }}
+        </button>
 
-      <div style="font-size: 13px; color: #666; margin-bottom: .4rem;">
-        <span *ngIf="missingTimelineDatesCount === 0">
-          Alle gefilterten Projekte werden auf der Zeitlinie angezeigt.
-        </span>
-      </div>
+        <button mat-stroked-button class="action-button"
+                type="button" (click)="toggleChartVisibility()">
+          {{ showChart ? 'Zeitlinie ausblenden' : 'Zeitlinie anzeigen' }}
+        </button>
 
-      <div
-        #timelineChart
-        style="width: 100%; height: calc(100% - 2.6rem); min-height: 380px; border: 1px solid #ddd; background: #fff;">
       </div>
     </div>
+    <p>
+      <strong>{{ chartProjectCount }}</strong> Projekte und Bedarfe werden auf der Zeitlinie angezeigt,
+      weil sie Baubeginn und Bauende haben.
+      <span *ngIf="missingTimelineDatesCount > 0">
+        <strong>{{ missingTimelineDatesCount }}</strong> Einträge ohne Bauzeitraum werden nur in der Liste angezeigt.
+      </span>
+    </p>
+  </header>
 
+<div #analysisPanels class="analysis-panels">
+<div #gridContainer class="ag-theme-alpine project-grid"
+     [style.flex-basis.%]="gridPanelPercent"
+     [class.panel-hidden]="!showGrid"
+     [class.panel-expanded]="showGrid && !showChart">
+  <ag-grid-angular
+    style="width: 100%; height: 100%"
+    [rowData]="timelineProjects"
+    [columnDefs]="roadworkActivitiesColDefs"
+    [defaultColDef]="defaultColDef"
+    [rowHeight]="27"
+    [headerHeight]="31"
+    [floatingFiltersHeight]="29"
+    rowSelection="single"
+    (gridReady)="onGridReady($event)"
+    (filterChanged)="onFilterChanged($event)"
+    (sortChanged)="onSortChanged($event)"
+    (selectionChanged)="onSelectionChanged($event)">
+  </ag-grid-angular>
+</div>
+
+<div class="panel-splitter"
+     [class.panel-hidden]="!showGrid || !showChart"
+     role="separator"
+     tabindex="0"
+     aria-orientation="horizontal"
+     [attr.aria-valuenow]="gridPanelPercent"
+     aria-valuemin="18"
+     aria-valuemax="70"
+     aria-label="Grösse von Tabelle und Zeitlinie ändern"
+     (pointerdown)="onSplitterPointerDown($event)"
+     (keydown)="onSplitterKeydown($event)">
+  <span class="splitter-handle"></span>
+</div>
+
+<div class="timeline-section"
+     [class.panel-hidden]="!showChart"
+     [class.panel-expanded]="showChart && !showGrid">
+  <div
+    #timelineChart
+    class="timeline-chart">
   </div>
 </div>
+</div>
+</main>

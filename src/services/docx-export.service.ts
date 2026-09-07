@@ -32,10 +32,11 @@ export interface DocxBuildOptions {
   logoUrl?: string;                                    // header logo (URL/data:)
   headerSubtitle?: string;                             // small subtitle under logo
   orientation?: 'portrait' | 'landscape';              // default: portrait
+  footerTitle?: string;  
   marginsCm?: { top: number; right: number; bottom: number; left: number }; // default: 2/1/2/2
   fileName?: string;
   isPreProtocol: boolean,
-  children: Array<Paragraph | Table | string | number | null | undefined>;
+  children: Array<Paragraph | Table | string | number | null | undefined>;  
 }
 
 /** Domain item used to build tables directly from data. */
@@ -100,7 +101,8 @@ export class DocxWordService {
     const {
       username = 'wikis_manager',
       logoUrl,
-      headerSubtitle = '',
+      headerSubtitle =  '', 
+      footerTitle =  '',
       orientation = 'portrait',
       marginsCm = { top: 2, right: 1, bottom: 2, left: 2 },
       isPreProtocol,
@@ -138,7 +140,7 @@ export class DocxWordService {
           children: [
             // Left-aligned text
             new TextRun({
-              text: TITLE_PROTOCOL_NAME + " - " + (isPreProtocol ? "Vor-Protokoll" : "Protokoll"),
+              text:  footerTitle ||  (TITLE_PROTOCOL_NAME + " - " + (isPreProtocol ? "Vor-Protokoll" : "Protokoll")),
             }),                                    
             new TextRun({ text: "\t" }),            
             new TextRun({
@@ -412,14 +414,39 @@ export class DocxWordService {
 
 
   /** Verteiler (distribution list) */
+  /** Verteiler (distribution list) */
   makeDistributionPersonsList(children: any[]) {
-    // Filter all persons that belong to the distribution list
-    const rowsData = (children || [])
+    const items = children || [];
+
+    const defaultText = "Alle Anwesenden / Entschuldigten gem. Auflistung";
+
+    const isRelevantPerson = (item: any) =>
+      item && item.isRoadworkProject !== true;
+
+    const personKey = (item: any) =>
+      `${item.name || ""}`.trim().toLowerCase();
+
+    // Personen, die bereits unter Anwesende oder Entschuldigt aufgeführt sind
+    const alreadyListedKeys = new Set(
+      items
+        .filter(
+          (item) =>
+            isRelevantPerson(item) &&
+            (
+              item.isPresent === true ||
+              (item.isPresent === false && item.shouldBePresent === true)
+            )
+        )
+        .map(personKey)
+    );
+
+    // Nur Verteiler-Personen, die noch nicht aufgeführt wurden
+    const additionalDistributionPersons = items
       .filter(
         (item) =>
-          item &&
-          item.isRoadworkProject !== true &&
-          item.isDistributionList === true
+          isRelevantPerson(item) &&
+          item.isDistributionList === true &&
+          !alreadyListedKeys.has(personKey(item))
       )
       .map((item) => ({
         Name: item.name,
@@ -427,17 +454,20 @@ export class DocxWordService {
         Workarea: item.workArea,
       }));
 
-    // If list is empty, return a placeholder line
-    if (rowsData.length === 0) {
-      return [this.p("—")]; // Placeholder for empty list
+    // Nur Default-Satz, wenn keine zusätzlichen Personen vorhanden sind
+    if (additionalDistributionPersons.length === 0) {
+      return [
+        this.p(defaultText)
+      ];
     }
 
-    // Create manually numbered entries (1., 2., 3., ...)
-    return rowsData.map((r, index) =>
-      this.p(
-        `${r.Name}, ${r.Organisation}, ${r.Workarea}`
+    // Default-Satz + "sowie:" + zusätzliche Personen
+    return [
+      this.p(`${defaultText} sowie:`),
+      ...additionalDistributionPersons.map((r) =>
+        this.p(`${r.Name}, ${r.Organisation}, ${r.Workarea}`)
       )
-    );
+    ];
   }
   
 
@@ -1147,6 +1177,7 @@ export class DocxWordService {
 
     // Fetch and filter by phase
     const allInputs = await firstValueFrom(this.consultationService.getConsultationInputs(uuid));
+
     const filteredWithFeedback = (allInputs ?? [])
                       .filter(ci => ci?.feedbackGiven === true)
                       .filter(ci => ci?.feedbackPhase === feedbackPhase);
@@ -1458,6 +1489,218 @@ export class DocxWordService {
     }
     
     return Array.from(orgs).sort().join(', ');
+  }
+
+  /**
+   * Generates a Word document (DOCX) for a single project (Vorgehensvorschlag).
+   * Contains same structure as SKS-Protokoll Punkt 2, but only for one activity.
+   */
+  async generateProjectProposalReport(
+    project: any,
+    logoUrl?: string,
+    headerSubtitle?: string,
+    chartImageDataUrl?: string
+  ): Promise<Blob> {
+    try {
+      console.log('before:');
+      console.log('project.id', project.id);
+      console.log('project.uuid', project.uuid);      
+      project.id = project.uuid;
+      console.log('after:');
+      console.log('project.id', project.id);
+      console.log('project.uuid', project.uuid);
+      // Load the project context (roadWorkActivity, primaryNeed, etc.)
+      await firstValueFrom(this.reportLoaderService.loadRoadWorkActivity$(project.id));
+
+      // Load a map image (data URL for DOCX embedding)
+      const mapUrl = await this.reportLoaderService.loadProjectPerimeterMap();
+
+      // Collect meta information
+      const primary = (this.reportLoaderService as any)?.primaryNeed;
+      const mgmt = (this.reportLoaderService as any)?.managementArea;
+      const roadWorkActivity = (this.reportLoaderService as any)?.roadWorkActivity;
+
+      const ausloesende = `${primary?.properties?.orderer?.firstName ?? '-'} ${primary?.properties?.orderer?.lastName ?? '-'}`;
+      const ausloesendesWerk = primary?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-';
+      const gm = `${mgmt?.manager?.firstName ?? '-'} ${mgmt?.manager?.lastName ?? '-'}`;
+      const comment = roadWorkActivity?.properties?.comment ?? '-';
+      const mitwirkende = await this.buildMitwirkendeFromNeeds();
+
+      // Prepare table rows for assigned road work needs
+      const assigned = this.reportLoaderService?.needsOfActivityService?.assignedRoadWorkNeeds ?? [];
+      const assignedRows = assigned.map((item: any) => ({
+        titelAbschnitt: `${item?.properties?.name ?? '-'}`,
+        ausloesegrund: item?.properties?.description ?? '-',
+        ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
+        werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
+        erstelltAm: this.formatDate(item?.properties?.created),
+        wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
+        ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
+      }));
+
+      // Fetch intersecting road work needs
+      const roadWorkNeeds: any[] = await firstValueFrom(
+        this.roadWorkNeedService.getIntersectingRoadWorkNeeds(project.id)
+      );
+      const assignedUuids = new Set(
+        assigned
+          .map((item: any) => item?.properties?.uuid)
+          .filter((uuid: string | undefined) => !!uuid)
+      );
+
+      const notAssignedNeedsRows = roadWorkNeeds
+        .filter((item: any) => {
+          const uuid = item?.properties?.uuid;
+          if (!uuid) return true;
+          return !assignedUuids.has(uuid);
+        })
+        .map((item: any) => ({
+          titelAbschnitt: `${item?.properties?.name ?? '-'}`,
+          ausloesegrund: item?.properties?.description ?? '-',
+          ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
+          werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
+          erstelltAm: this.formatDate(item?.properties?.created),
+          wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
+          ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
+        }));
+
+      // Build content blocks
+      const allProjectBlocks: Array<Paragraph | Table> = [];
+
+      const intro = await this.makeIntroBlock({
+        logoUrl: 'assets/win_logo.png',
+        addressLines: [
+          'Stadt Winterthur',
+          '*Tiefbauamt*',
+          'Pionierstrasse 7',
+          '8403 Winterthur',
+          '',
+        ],
+        title: headerSubtitle || 'Vorgehensvorschlag',
+        subtitle: ' ', 
+        logoWidthPx: 140,
+      });
+
+      allProjectBlocks.push(...intro);
+
+      // Title: Bauvorhaben + Name
+      allProjectBlocks.push(
+        this.makeFullWidthTitle(
+          `Bauvorhaben ${project.roadWorkActivityNo ?? ''}`,
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
+        )
+      );
+      allProjectBlocks.push(
+        this.makeFullWidthTitle(
+          `${project.name ?? ''} `,
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
+        )
+      );
+      allProjectBlocks.push(
+        this.makeFullWidthTitle(
+          `${project.workingTitle ?? ''} `,
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
+        )
+      );
+
+      // Map image
+      const imageRun = await this.imageFromUrlFitted(mapUrl, 680);
+      if (imageRun) {
+        allProjectBlocks.push(new Paragraph({ alignment: AlignmentType.LEFT, children: [imageRun] }));
+      }
+
+      // Optional chart image
+      if (chartImageDataUrl) {
+        const chartRun = await this.imageFromUrlFitted(chartImageDataUrl, 680);
+
+        if (chartRun) {
+          allProjectBlocks.push(this.smallGap());          
+          allProjectBlocks.push(
+            new Paragraph({
+              alignment: AlignmentType.LEFT,
+              children: [chartRun],
+            })
+          );
+        }
+      }      
+
+      // Meta information
+      allProjectBlocks.push(...this.makeProjectMetaBlock({ ausloesende, ausloesendesWerk, gm, comment, mitwirkende }));
+
+      // Assigned needs
+      const assignedNeedsRowsSorted = assignedRows.sort((a, b) =>
+        a.ausloesend.localeCompare(b.ausloesend)
+      );
+
+      allProjectBlocks.push(
+        this.smallGap(),
+        this.pBold('Zugewiesene (berücksichtigte) Bedarfe'),
+        this.makeNeedsTableFromRows(assignedNeedsRowsSorted)
+      );
+
+      // Aspects/Factors
+      allProjectBlocks.push(this.smallGap());
+      allProjectBlocks.push(this.pBold('Aspekte/Faktoren'));
+      allProjectBlocks.push(this.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"));
+      
+      const rows = [
+        { label: "Ist im Aggloprogramm", value: project.isAggloprog ? 'X' : 'Keine' },
+        { label: "Mitwirkungsverfahren gemäss § 13", value: project.isParticip ? 'X' : 'Keine' },
+        { label: "Planauflage gemäss § 16", value: project.isPlanCirc ? 'X' : 'Keine'},
+        { label: "Verkehrsanordnung ist notwendig", value: project.isTrafficRegulationRequired ? 'X' : 'Keine'},
+      ];
+
+      const selected = rows.filter(r => r.value.toUpperCase() === "X");
+
+      if (selected.length === 0) {
+        allProjectBlocks.push(this.p("Keine"));
+      } else {
+        for (const r of selected) {
+          allProjectBlocks.push(this.p(`[ ${r.value} ] : ${r.label}`));
+        }
+      }
+
+      allProjectBlocks.push(this.smallGap());
+
+      // Consultation section 1
+      allProjectBlocks.push(this.pBold('Vernehmlassung'));
+      allProjectBlocks.push(this.smallGap());
+      allProjectBlocks.push(this.pBold('Bedarfsklärung - 1.Iteration'));
+      
+      const consultationSection1 = await this.makeConsultationInputsSection({
+        uuid: project.id,
+        feedbackPhase: 'inconsult1',
+        isPhaseReporting: false,
+      });
+      allProjectBlocks.push(...consultationSection1);
+
+      // Consultation section 2
+      allProjectBlocks.push(this.smallGap());
+      allProjectBlocks.push(this.pBold('Bedarfsklärung - 2.Iteration'));
+      
+      const consultationSection2 = await this.makeConsultationInputsSection({
+        uuid: project.id,
+        feedbackPhase: 'inconsult2',
+        isPhaseReporting: false,
+      });
+      allProjectBlocks.push(...consultationSection2);
+
+      // Build and return the DOCX blob
+      const blob = await this.build({
+        username: 'wikis_manager',
+        logoUrl: '',
+        headerSubtitle: headerSubtitle || '',    
+        footerTitle: 'Vorgehensvorschlag',    
+        isPreProtocol: false,
+        children: allProjectBlocks,
+        fileName: `Vorgehensvorschlag_${project.roadWorkActivityNo || 'Bauvorhaben'}.docx`,
+      });
+
+      return blob;
+    } catch (err) {
+      console.error('generateProjectProposalReport: error', err);
+      throw err;
+    }
   }
 
 }

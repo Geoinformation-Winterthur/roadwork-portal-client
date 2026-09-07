@@ -11,7 +11,7 @@
  * - Coordinates with child components (map + reporting items) and several services.
  * - Implements role-based editing permissions and field enabling/disabling.
  */
-import { Component, OnInit, ViewChild, ViewEncapsulation, Optional, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, Optional, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
@@ -32,6 +32,7 @@ import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
+import { ConsultationInput } from 'src/model/consultation-input';
 import { environment } from 'src/environments/environment';
 import { StatusHelper } from 'src/helper/status-helper';
 import { EnumType } from 'src/model/enum-type';
@@ -41,7 +42,16 @@ import { DeleteActivityDialogComponent } from '../delete-activity-dialog/delete-
 import { ConsultationService } from 'src/services/consultation.service';
 import { TimeFactorHelper } from 'src/helper/time-factor-helper';
 import { PdfDocumentHelper } from 'src/helper/pdf-document-helper';
+import { DocxWordService } from 'src/services/docx-export.service';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
+import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
+import { ActivityPropertiesComponent } from '../activity-properties/activity-properties.component';
+import { ActivityDatesComponent } from '../activity-dates/activity-dates.component';
+import * as echarts from 'echarts';
+import { EChartsOption } from 'echarts';
+import saveAs from 'file-saver';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { DateHelper } from 'src/helper/date-helper';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -49,7 +59,7 @@ import { ReportingItemsComponent } from '../reporting-items/reporting-items.comp
   styleUrls: ['./activity-attributes.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ActivityAttributesComponent implements OnInit {
+export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Child map component reference (OpenLayers wrapper). */
   @ViewChild("edit_activity_map") editActivityMap: any;
@@ -57,8 +67,9 @@ export class ActivityAttributesComponent implements OnInit {
   @ViewChild("reportingItemsInconsult1") reportingItemsInconsult1 !: ReportingItemsComponent;
   @ViewChild("reportingItemsInconsult2") reportingItemsInconsult2 !: ReportingItemsComponent;
   @ViewChild("reportingItemsReporting") reportingItemsReporting !: ReportingItemsComponent;
-  /** Access to template-driven control for project kind validation. */
-  @ViewChild('projectKindCtrl') projectKindCtrl!: NgModel;
+  @ViewChild(ActivityJournalComponent) activityJournal!: ActivityJournalComponent;
+  @ViewChild(ActivityPropertiesComponent) activityProperties!: ActivityPropertiesComponent;
+  @ViewChild('timelineChart') timelineChartRef!: ElementRef<HTMLDivElement>;
 
   /** Currently edited activity entity and its intersecting management area. */
   roadWorkActivityFeature?: RoadWorkActivityFeature;
@@ -71,7 +82,8 @@ export class ActivityAttributesComponent implements OnInit {
   areaManagerName: string = "";
   statusCode: string = "";
   priorityCode: string = "";
-  involvedUsers: User[] = [];
+  involvedUsersFromNeeds: User[] = [];
+  involvedUsersFromConsults: User[] = [];
 
   /** Toggles for enabling/disabling scheduling fields and editing per role. */
   isScheduleEditingDisabled = true;
@@ -98,7 +110,9 @@ export class ActivityAttributesComponent implements OnInit {
   /** Shared service cache for needs displayed in this activity. */
   needsOfActivityService: NeedsOfActivityService;
   roadworkNeedsOnMap: RoadWorkNeedFeature[] = [];
-
+  chartOptions: EChartsOption = {};
+  private chartInstance?: echarts.ECharts;  
+  
   /** System-wide configuration values (e.g., planned dates). */
   configurationData: ConfigurationData = new ConfigurationData();
 
@@ -121,23 +135,35 @@ export class ActivityAttributesComponent implements OnInit {
   needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
-  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "time_factor", "consult_input"];
+  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "constructionDuration", "time_factor", "consult_input"];
 
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
 
   roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
 
   /** Hard-coded project kind options (distinct from backend-provided project types). */
-  readonly projectKindOptions = [
-    { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' },
-    { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' },
-    { value: 'ROAD_MAINTENANCE_REGIONAL', label: 'Strasse Überkommunal (Unterhalt)' },
-    { value: 'ROAD_MAINTENANCE_COMMUNAL', label: 'Strasse Kommunal (Unterhalt)' },
-    { value: 'TRENCH_WITH_RESURFACING', label: 'Aufgrabung mit Belagsersatz' },
+  readonly projectKindOptions = [  
+    { value: 'ROAD_PROJECT', label: 'Strassenprojekt' },
+    { value: 'STRUCTURES', label: 'Kunstbauten' },
+    { value: 'SEWER_CONSTRUCTION', label: 'Kanalbau' },
+    { value: 'SEWER_MAINTENANCE', label: 'Kanalsanierung' },
+    { value: 'WATERBODY', label: 'Gewässerprojekt' },
+    { value: 'UTILITY_CONSTRUCTION', label: 'Werkleitungsbau mit Instandstellung' },
+    { value: 'THIRD_PARTY', label: 'Im Auftrag Dritter' },
+    { value: 'OTHER', label: 'Übrige' }
+  ];
+  
+  // OLD Values (before #643)
+  /*readonly projectKindOptions = [
+    { value: 'ROAD_NEW_REGIONAL', label: 'Strasse Überkommunal (Neu)' }, // >> NEW: ROAD_PROJECT
+    { value: 'ROAD_NEW_COMMUNAL', label: 'Strasse Kommunal (Neu)' }, // >> NEW: ROAD_PROJECT
+    { value: 'ROAD_MAINTENANCE_REGIONAL', label: 'Strasse Überkommunal (Unterhalt)' }, // >> NEW: ROAD_PROJECT
+    { value: 'ROAD_MAINTENANCE_COMMUNAL', label: 'Strasse Kommunal (Unterhalt)' }, // >> NEW: ROAD_PROJECT
+    { value: 'TRENCH_WITH_RESURFACING', label: 'Aufgrabung mit Belagsersatz' }, // >> NEW: UTILITY_CONSTRUCTION
     { value: 'WATERBODY', label: 'Gewässer' },
     { value: 'SEWER_MAINTENANCE', label: 'Kanalbau (Unterhalt)' },
     { value: 'OTHER', label: 'Übrige' }
-  ];
+  ];*/
 
   /** Utility exposed for formatting in templates. */
   PdfDocumentHelper = PdfDocumentHelper;
@@ -153,9 +179,12 @@ export class ActivityAttributesComponent implements OnInit {
   private documentService: DocumentService;
   private appConfigService: AppConfigService;
   private consultationService: ConsultationService;
+  private docxWordService: DocxWordService;
 
   private dialog: MatDialog;
   private snckBar: MatSnackBar;
+  showTimelineChart = false;
+  showSuspendDialog = false;
 
   /**
    * Constructor: injects all required services and computes initial role permissions.
@@ -166,7 +195,7 @@ export class ActivityAttributesComponent implements OnInit {
     roadWorkNeedService: RoadWorkNeedService, userService: UserService,
     organisationService: OrganisationService, appConfigService: AppConfigService,
     consultationService: ConsultationService, router: Router, private cdr: ChangeDetectorRef,
-    snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog) {
+    snckBar: MatSnackBar, documentService: DocumentService, dialog: MatDialog, docxWordService: DocxWordService) {
     this.activatedRoute = activatedRoute!;
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
@@ -180,6 +209,7 @@ export class ActivityAttributesComponent implements OnInit {
     this.statusHelper = new StatusHelper();
     this.documentService = documentService;
     this.consultationService = consultationService;
+    this.docxWordService = docxWordService;
     this.dialog = dialog;
     // Editing permissions: locked down unless user is admin or territory manager.
     this.isEditingForRoleNotAllowed = this.userService.getLocalUser().chosenRole != 'administrator' && this.userService.getLocalUser().chosenRole != 'territorymanager';
@@ -375,7 +405,8 @@ export class ActivityAttributesComponent implements OnInit {
                       });
                   }
                   // Populate helper lists and compute phase due date.
-                  this._updateAllInvolvedUsers();
+                  this._updateAllInvolvedUsersFromNeeds();
+                  this._updateAllInvolvedUsersFromConsults();
                   this._updateDueDate();
                 }
 
@@ -405,6 +436,18 @@ export class ActivityAttributesComponent implements OnInit {
 
   }
 
+  
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      try {                        
+        window.addEventListener('resize', this.resizeHandler);          
+      } catch (error) {
+        console.error("Fehler beim Initialisieren des Resize-Listeners", error);        
+      }
+    });
+  }
+
+
   /** Publish wrapper: toggles privacy to public and saves/creates accordingly. */
   publish() {
     if (this.roadWorkActivityFeature) {
@@ -416,23 +459,47 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   /** Save wrapper: validates key fields, then updates or creates. */
-  save() {
-    if (this.projectKindCtrl) {
-      this.projectKindCtrl.control.markAsTouched();
-      this.projectKindCtrl.control.updateValueAndValidity();
-    }
-
-    if (this.projectKindCtrl.invalid) {
+  async save() {
+    if (!this.activityProperties?.validateProjectKind()) {
       this.snckBar.open("Bitte wählen Sie eine Projekt-Art aus.", "", {
         duration: 4000
       });
       return;
     }
+
     if (this.roadWorkActivityFeature) {
       if (this.roadWorkActivityFeature.properties.uuid)
+      {
+        let delay = 0;
+
+        // Save existing activity
         this.update();
+
+        try {
+          await this.activityJournal?.save();
+        } catch (error: any) {
+          // Show message delayed to avoid eating the previous snckBar
+          delay += 4000;
+          setTimeout(() => {
+            this.snckBar.open("Fehler beim Speichern des Journals", "", { duration: 4000 });
+          }, delay);
+        }
+        
+        try {
+          await this.activityProperties?.save();
+        } catch (error: any) {
+          // Show message delayed to avoid eating the previous snckBar
+          delay += 4000;
+          setTimeout(() => {
+            this.snckBar.open("Fehler beim Speichern der Projekt/Phasenverantwortung", "", { duration: 4000 });
+          }, delay);
+        }
+      }
       else
+      {
+        // Add new activity
         this.add();
+      }
     }
   }
 
@@ -675,6 +742,7 @@ export class ActivityAttributesComponent implements OnInit {
   /**
    * Toggle a user in/out of the involved users list (immutable update for change detection).
    */
+  // TODO: Unused, finalize and use or remove? (14.07.2026)
   changeInvolvedUsers(user: User) {
     if (this.roadWorkActivityFeature) {
       let involvedUsersCopy = [...this.roadWorkActivityFeature.properties.involvedUsers];
@@ -694,6 +762,7 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   /** Returns true if the given user is currently an involved user for this activity. */
+  // TODO: Unused, finalize and use or remove? (14.07.2026)
   isInvolvedUser(user: User): boolean {
     return this.roadWorkActivityFeature ? this.roadWorkActivityFeature.properties.involvedUsers.some(
       (involvedUser) => involvedUser.uuid === user.uuid
@@ -702,6 +771,7 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   /** Convenience variant used by template bindings (by UUID). */
+  // TODO: Unused, finalize and use or remove? (14.07.2026)
   isInvolvedUserSelected(userUuid: string): boolean {
     if (this.roadWorkActivityFeature) {
       for (let involvedUser of this.roadWorkActivityFeature.properties.involvedUsers) {
@@ -892,29 +962,38 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  /** Enforce SKS relevance when Aggloprog is enabled. */
-  onChangeIsAggloprog() {
-    if (this.roadWorkActivityFeature)
-      if (this.roadWorkActivityFeature.properties.isAggloprog)
-        this.roadWorkActivityFeature.properties.isSksRelevant = true;
-  }
-
   /** Clean up route subscription if it was created. */
   ngOnDestroy() {
     // unsubscribing only if a subscription exists
     if (this.activatedRouteSubscription) {
       this.activatedRouteSubscription.unsubscribe();
     }
+
+    window.removeEventListener('resize', this.resizeHandler);
+    if (this.chartInstance) {
+      this.chartInstance.dispose();
+      this.chartInstance = undefined;
+    }
   }
 
   /** Collect unique organisation abbreviations of involved users for display. */
   getInvolvedOrgsNames(): string[] {
+    // TODO: Check if this is the correcty way or change to (currently unimplemented/empty) property this.roadWorkActivityFeature.properties.involvedUsers (14.07.2026)
     const result: string[] = [];
     if (this.roadWorkActivityFeature) {
-      for (const involvedUser of this.involvedUsers ?? []) {
+      // get organisational units from involved need users
+      for (const involvedUser of this.involvedUsersFromNeeds ?? []) {
         const abbr = involvedUser?.organisationalUnit?.abbreviation;
         if (abbr && !result.includes(abbr)) result.push(abbr);
       }
+
+      // get organisational units from consult need users
+      for (const involvedUser of this.involvedUsersFromConsults ?? []) {
+        const abbr = involvedUser?.organisationalUnit?.abbreviation;
+        if (abbr && !result.includes(abbr)) result.push(abbr);
+      }
+
+      result.sort();
     }
     return result;
   }
@@ -945,8 +1024,9 @@ export class ActivityAttributesComponent implements OnInit {
    * Build the union of involved users from all needs linked to the activity.
    * Shows a warning if needs could not be loaded.
    */
-  private _updateAllInvolvedUsers() {
-    if (this.roadWorkActivityFeature) {
+  private _updateAllInvolvedUsersFromNeeds() {
+    // TODO: Clear list (this.involvedUsersFromNeeds) before load/reload?
+    if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids?.length) {
       this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
         .subscribe({
           next: (roadWorkNeeds) => {
@@ -959,7 +1039,47 @@ export class ActivityAttributesComponent implements OnInit {
                   });
                 } else {
                   for (let roadWorkNeed of roadWorkNeeds) {
-                    this.involvedUsers.push(roadWorkNeed.properties.orderer)
+                    this.involvedUsersFromNeeds.push(roadWorkNeed.properties.orderer);
+                  }
+                }
+              }
+            }
+          },
+          error: (error) => {
+            this.snckBar.open("Organisationen konnten nicht geladen werden", "", {
+              duration: 4000,
+            });
+          }
+        });
+    }
+  }
+
+    /**
+   * Build the union of involved users from all consults linked to the activity.
+   * Shows a warning if consults could not be loaded.
+   */
+  private _updateAllInvolvedUsersFromConsults() {
+    if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids?.length) {
+      // Load all inputs for the activity and keep only those for the active phase.
+      this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
+        .subscribe({
+          next: (consultationInputs) => {
+            this.involvedUsersFromConsults = [];
+
+            if (consultationInputs) {
+              if (consultationInputs.length > 0 && consultationInputs[0]) {
+                ErrorMessageEvaluation._evaluateErrorMessage(consultationInputs[0]);
+                if (consultationInputs[0].errorMessage.trim().length !== 0) {
+                  this.snckBar.open(consultationInputs[0].errorMessage, "", {
+                    duration: 4000
+                  });
+                } else {
+                  for (let consultationInput of consultationInputs) {
+                    if (consultationInput.ordererFeedback /* Rückmeldung erhalten */
+                      && consultationInput.ordererFeedback != 'no_requirement_anymore' /* Bedarf vorhanden/Bedarf weiterhin vorhanden */
+                      && consultationInput.feedbackPhase.startsWith("inconsult") /* Exclude Stellungsnahme */){
+                      this.involvedUsersFromConsults.push(consultationInput.inputBy)
+                    }
                   }
                 }
               }
@@ -995,8 +1115,8 @@ export class ActivityAttributesComponent implements OnInit {
         if (this.roadWorkActivityFeature.properties.dateReportEnd)
           this.dueDate = this.roadWorkActivityFeature.properties.dateReportEnd;
       } else if (this.roadWorkActivityFeature.properties.status == "coordinated") {
-        if (this.roadWorkActivityFeature.properties.dateInfoEnd)
-          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;
+        /*if (this.roadWorkActivityFeature.properties.dateInfoEnd)
+          this.dueDate = this.roadWorkActivityFeature.properties.dateInfoEnd;*/ // dateInfoEnd removed in #650
       } else {
         this.dueDate = new Date();
         this.dueDate.setDate(this.dueDate.getDate() + 7);
@@ -1024,6 +1144,37 @@ export class ActivityAttributesComponent implements OnInit {
   }
 
   /**
+   * Temporary method (quick fix) to get the consult users for the notification email in 'Vernehmlassung' -> 'Übersicht'.
+   * The 'Übersicht' tab (the one with the email) seems to be the only part of 'Vernehmlassung' not refactored yet.
+   * Better move 'Vernehmlassung' -> 'Übersicht' to a separete component as well.
+   */
+  private async getConsultationUserEmails(feedbackPhase: string): Promise<string[]> {
+    if (!this.roadWorkActivityFeature) {
+      return [];
+    }
+    
+    // load all inputs for the activity
+    const allConsultationInputs = await firstValueFrom(
+      this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
+    )
+    
+    // exclude the consultations from other phases and get the user email from the consultations.
+    let consultationUserEmails = []
+    for (let consultationInput of allConsultationInputs) {
+      if (consultationInput.feedbackPhase === feedbackPhase) {
+        if (consultationInput.inputBy?.mailAddress) {
+          consultationUserEmails.push(consultationInput.inputBy.mailAddress);
+        }
+      }
+    }
+
+    // remove dublicates
+    consultationUserEmails = [...new Set(consultationUserEmails)]
+
+    return consultationUserEmails;
+  }
+
+  /**
    * Compose and open a "mailto:" link to invite/notify involved users depending on the new status.
    * - Adds the logged-in user as CC.
    * - Includes deep links to open the appropriate tab in the UI.
@@ -1042,19 +1193,24 @@ export class ActivityAttributesComponent implements OnInit {
         await this.getAreaManager(geometry);
       }
 
-      if (this.involvedUsers.length > 0) {
+      // some old stuff, required? (2026.7)
+      /*if (this.involvedUsers.length > 0) {
         mailText += this.involvedUsers[0].mailAddress + ";"
-      }
+      }*/
 
-      for (let involvedUser of this.roadWorkActivityFeature?.properties.involvedUsers) {
-        mailText += involvedUser.mailAddress + ";";
-      }
+      const consultationsUserEmail = await this.getConsultationUserEmails(newStatus);
+      mailText += consultationsUserEmail.join(',');
 
       let separator = "?";
 
+      // get the users for cc. current user and gm (might be the same therefore [...new Set(... ).
       let loggedInUser = this.userService.getLocalUser();
-      if (loggedInUser && loggedInUser.mailAddress) {
-        mailText += separator + "cc=" + loggedInUser.mailAddress;
+      let areaManager = this.roadWorkActivityFeature.properties.areaManager;
+      let copyUsersEmail = [...new Set([loggedInUser?.mailAddress, areaManager?.mailAddress])]
+      // remove the users already in mailto
+      copyUsersEmail = copyUsersEmail.filter((e): e is string => !!e && !consultationsUserEmail.includes(e));
+      if (copyUsersEmail.length) {
+        mailText += separator + "cc=" + copyUsersEmail.join(',');
         separator = "&";
       }
 
@@ -1192,10 +1348,13 @@ export class ActivityAttributesComponent implements OnInit {
     this.reportingItemsInconsult2?.ngOnInit();
     this.reportingItemsReporting?.ngOnInit();
     this.ngOnInit();
-    this._updateAllInvolvedUsers();
+    this._updateAllInvolvedUsersFromNeeds();
+    this._updateAllInvolvedUsersFromConsults();
     this._updateDueDate();
     this.editActivityMap?.refresh();
-    this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature);
+    this.activityJournal?.refresh();
+    this.activityProperties?.refresh();
+    //this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature); // missing, todo: cleanup
   }
 
   onSksPlannedChanged(selectedDate: Date) {
@@ -1210,17 +1369,628 @@ export class ActivityAttributesComponent implements OnInit {
     }
   }
 
-  normalizeDateGlTbaReal(): void {
-    const props = this.roadWorkActivityFeature?.properties;
-    if (!props?.dateGlTbaReal) return;
+  normalizeDate(event: MatDatepickerInputEvent<Date>): void {
+    return DateHelper.normalizeDate(event);
+  }
+  
+  private resizeHandler = () => {
+    this.chartInstance?.resize();
+  };  
 
-    const d = new Date(props.dateGlTbaReal);
-    props.dateGlTbaReal = new Date(
-      d.getFullYear(),
-      d.getMonth(),
-      d.getDate(),
-      12, 0, 0, 0
+  private renderConstructionBar = (params: any, api: any) => {
+    const categoryIndex = api.value(0);
+    const start = api.coord([api.value(1), categoryIndex]);
+    const end = api.coord([api.value(2), categoryIndex]);
+
+    const height = 14;
+
+    return {
+      type: 'rect',
+      shape: {
+        x: start[0],
+        y: start[1] - height / 2,
+        width: end[0] - start[0],
+        height
+      },
+      style: {
+        fill: '#005CA9'
+      }
+    };
+  };
+
+  private toDate(value: any): Date | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (date.getFullYear() <= 1 || isNaN(date.getTime())) {
+      return undefined;
+    }
+
+    return date;
+  }
+
+  private formatChartDate(value?: Date): string {
+    if (!value) {
+      return '-';
+    }
+
+    return value.toLocaleDateString('de-CH');
+  }  
+
+  toggleTimelineChart(): void {
+
+    this.showTimelineChart = !this.showTimelineChart;
+
+    if (this.showTimelineChart) {
+
+      setTimeout(() => {
+        this.initChart();
+      });
+    }
+  }
+
+  getTimelineChartImage(): string | null {
+    return this.chartInstance?.getDataURL({
+      type: 'png',
+      pixelRatio: 2,
+      backgroundColor: '#fff'
+    }) ?? null;
+  }
+
+  initChart(): void {
+    if (!this.timelineChartRef?.nativeElement) {
+      return;
+    }
+
+    if (this.chartInstance) {
+      this.chartInstance.dispose();
+    }
+
+    const chartData = this.buildTimelineChartData();
+
+    this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
+
+    this.chartInstance.setOption({
+      title: {
+        text: 'Terminansicht Bedarfe',
+        left: 10,
+        top: 5,
+        textStyle: {
+          fontSize: 14,
+          fontWeight: 'normal'
+        }
+      },
+
+      legend: {
+        top: 30,
+        data: [
+          'Voraussichtliche Bauzeit',
+          'Frühester Baubeginn',
+          'Wunsch Baubeginn',
+          'Späteste Inbetriebnahme'
+        ]
+      },
+
+      tooltip: {
+        trigger: 'item',
+        formatter: (params: any) => {
+          const d = params.data?.raw;
+
+          if (!d) {
+            return '';
+          }
+
+          return `
+            <b>${d.label}${d.isPrimary ? ' / Auslösend' : ''}</b><br/>
+            Frühester Baubeginn: ${this.formatChartDate(d.early)}<br/>
+            Wunsch Baubeginn: ${this.formatChartDate(d.wish)}<br/>
+            Späteste Inbetriebnahme: ${this.formatChartDate(d.late)}<br/>
+            Dauer der Bautätigkeit: ${d.constructionDuration ?? '-'} Monate<br/>
+            Spätest möglicher Baubeginn: ${this.formatChartDate(d.constructionStart)}
+          `;
+        }
+      },
+
+      grid: {
+        left: 120,
+        right: 40,
+        top: 90,
+        bottom: 55
+      },
+
+      xAxis: [
+        {
+          // dolna linia: tylko Q1, Q2, Q3, Q4
+          type: 'time',
+          min: chartData.minDate,
+          max: chartData.maxDate,
+
+          splitNumber: chartData.quarterCount,
+
+          minInterval: 1000 * 60 * 60 * 24 * 80,
+          maxInterval: 1000 * 60 * 60 * 24 * 95,
+
+          axisLabel: {
+            hideOverlap: false,
+            formatter: (value: number) => {
+              const d = new Date(value);
+              const quarter = Math.floor(d.getMonth() / 3) + 1;
+
+              return `Q${quarter}`;
+            }
+          },
+
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#d9d9d9',
+              width: 1
+            }
+          }
+        },
+        {
+          // górna linia: lata wycentrowane nad kwartałami
+          type: 'category',
+          position: 'top',
+          data: chartData.years,
+
+          axisLabel: {
+            hideOverlap: false,
+            margin: 8,
+            fontWeight: 'bold'
+          },
+
+          axisTick: {
+            show: false
+          },
+
+          axisLine: {
+            show: false
+          },
+
+          splitLine: {
+            show: false
+          }
+        }
+      ],
+
+      yAxis: {
+        type: 'category',
+        inverse: true,
+        data: chartData.labels,
+        axisTick: {
+          show: false
+        }
+      },
+
+      series: [
+        {
+          name: 'Voraussichtliche Bauzeit',
+          type: 'custom',
+          xAxisIndex: 0,
+          renderItem: this.renderConstructionBar,
+          encode: {
+            x: [1, 2],
+            y: 0
+          },
+          data: chartData.constructionBars,
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            label: {
+              show: true,
+              formatter: (params: any) => params.name,
+              position: 'insideEndTop'
+            },
+            data: [
+              ...(chartData.latestProjectStart
+                ? [{
+                    name: 'Spätest möglicher Projektbeginn',
+                    xAxis: chartData.latestProjectStart.getTime()
+                  }]
+                : []),
+              {
+                name: 'Heute',
+                xAxis: chartData.today.getTime(),
+                lineStyle: {
+                  color: '#d9534f',
+                  width: 2,
+                  type: 'dashed'
+                },
+                label: {
+                  color: '#d9534f'
+                }
+              }
+            ],
+            lineStyle: {
+              color: '#000000',
+              width: 2,
+              type: 'solid'
+            }
+          }
+        },
+
+        {
+          name: 'Frühester Baubeginn',
+          type: 'scatter',
+          xAxisIndex: 0,
+          symbolSize: 10,
+          itemStyle: {
+            color: '#9ecae1'
+          },
+          data: chartData.earlyPoints,
+
+          markLine: {
+            silent: true,
+            symbol: 'none',
+            label: {
+              show: false
+            },
+            lineStyle: {
+              color: '#8c8c8c',
+              width: 2,
+              type: 'solid'
+            },
+            data: this.buildYearLines(chartData.minDate, chartData.maxDate)
+          }
+        },
+
+        {
+          name: 'Wunsch Baubeginn',
+          type: 'scatter',
+          xAxisIndex: 0,
+          symbolSize: 15,
+          itemStyle: {
+            color: '#005CA9'
+          },
+          data: chartData.wishPoints
+        },
+
+        {
+          name: 'Späteste Inbetriebnahme',
+          type: 'scatter',
+          xAxisIndex: 0,
+          symbolSize: 11,
+          itemStyle: {
+            color: (params: any) => {
+              const d = params.data?.raw;
+
+              const constructionEnd = this.toDate(
+                this.roadWorkActivityFeature?.properties?.endOfConstruction
+              );
+
+              if (d?.late && constructionEnd && d.late < constructionEnd) {
+                return '#d9534f';
+              }
+
+              return '#b3cf3a';
+            },
+            borderColor: '#5f7f00',
+            borderWidth: 1
+          },
+          data: chartData.latePoints
+        }
+      ]
+    });
+
+    this.chartInstance.resize();
+  }
+
+  private buildTimelineChartData() {
+    const needs = this.needsOfActivityService.assignedRoadWorkNeeds ?? [];    
+
+    const sortedNeeds = [...needs].sort((a, b) => {
+      if (a.properties.isPrimary) {
+        return -1;
+      }
+
+      if (b.properties.isPrimary) {
+        return 1;
+      }
+
+      const aEarly = this.toDate(a.properties.finishEarlyTo)?.getTime() ?? 0;
+      const bEarly = this.toDate(b.properties.finishEarlyTo)?.getTime() ?? 0;
+
+      if (aEarly !== bEarly) {
+        return aEarly - bEarly;
+      }
+
+      const aWish = this.toDate(a.properties.finishOptimumTo)?.getTime() ?? 0;
+      const bWish = this.toDate(b.properties.finishOptimumTo)?.getTime() ?? 0;
+
+      if (aWish !== bWish) {
+        return aWish - bWish;
+      }
+
+      const aLate = this.toDate(a.properties.finishLateTo)?.getTime() ?? 0;
+      const bLate = this.toDate(b.properties.finishLateTo)?.getTime() ?? 0;
+
+      return aLate - bLate;
+    });
+
+    const labels = sortedNeeds.map(need =>
+      need.properties.orderer?.organisationalUnit?.abbreviation ?? need.properties.name
     );
+
+    const allDates: Date[] = [];
+    const today = new Date();
+    allDates.push(today);
+
+    const earlyPoints: any[] = [];
+    const wishPoints: any[] = [];
+    const latePoints: any[] = [];
+    const constructionBars: any[] = [];
+
+    const latestPossibleStarts: Date[] = [];
+
+    sortedNeeds.forEach((need, index) => {
+      const p = need.properties;
+      const label = labels[index];
+
+      const early = this.toDate(p.finishEarlyTo);
+      const wish = this.toDate(p.finishOptimumTo);
+      const late = this.toDate(p.finishLateTo);
+
+      const durationValue = Number(p.constructionDuration);
+      const constructionDuration =
+        Number.isFinite(durationValue) && durationValue > 0
+          ? durationValue
+          : 0;
+
+      let constructionStart: Date | undefined;
+      const constructionEnd = late;
+
+      if (late && constructionDuration > 0) {
+        constructionStart = new Date(late);
+        constructionStart.setMonth(
+          constructionStart.getMonth() - constructionDuration
+        );
+      }
+
+      if (constructionStart) {
+        latestPossibleStarts.push(constructionStart);
+      }
+
+      const raw = {
+        label,
+        early,
+        wish,
+        late,
+        constructionStart,
+        constructionEnd,
+        constructionDuration,
+        isPrimary: p.isPrimary
+      };
+
+      if (early) {
+        allDates.push(early);
+        earlyPoints.push({
+          value: [early, index],
+          raw
+        });
+      }
+
+      if (wish) {
+        allDates.push(wish);
+        wishPoints.push({
+          value: [wish, index],
+          raw
+        });
+      }
+
+      if (late) {
+        allDates.push(late);
+        latePoints.push({
+          value: [late, index],
+          raw
+        });
+      }
+
+      if (constructionStart && constructionEnd) {
+        allDates.push(constructionStart, constructionEnd);
+
+        constructionBars.push({
+          value: [index, constructionStart, constructionEnd],
+          raw
+        });
+      }
+    });
+
+    const yearsFromDates = allDates.map(d => d.getFullYear());
+    const currentYear = new Date().getFullYear();
+
+    const minYear = yearsFromDates.length ? Math.min(...yearsFromDates) : currentYear;
+    const maxYear = yearsFromDates.length ? Math.max(...yearsFromDates) : currentYear;
+
+    const years: string[] = [];
+
+    for (let year = minYear; year <= maxYear; year++) {
+      years.push(`${year}`);
+    }
+
+    const latestProjectStart = latestPossibleStarts.length
+      ? new Date(Math.min(...latestPossibleStarts.map(d => d.getTime())))
+      : undefined;
+
+    return {
+      labels,
+      earlyPoints,
+      wishPoints,
+      latePoints,
+      constructionBars,
+
+      minDate: `${minYear}-01-01`,
+      maxDate: `${maxYear}-12-31`,
+
+      quarterCount: years.length * 4,
+      years,
+
+      latestProjectStart,
+      today
+    };
+  }
+
+  private buildYearLines(minDate: string, maxDate: string) {
+    const minYear = new Date(minDate).getFullYear();
+    const maxYear = new Date(maxDate).getFullYear();
+
+    const lines: any[] = [];
+
+    for (let year = minYear; year <= maxYear; year++) {
+      lines.push({
+        xAxis: `${year}-01-01`
+      });
+    }
+
+    return lines;
+  }
+
+  /**
+   * Event handler for "Vorgehensvorschlag" button.
+   * Generates a Word document (.docx) with project information (similar to SKS-Protokoll).
+   */
+  async onProjectProposalClick() {
+    if (!this.roadWorkActivityFeature) {
+      this.snckBar.open('Bauvorhaben nicht geladen', '', { duration: 3000 });
+      return;
+    }
+
+    try {
+      this.snckBar.open('Vorgehensvorschlag wird generiert...', '', { duration: 2000 });
+
+      // Get logo from environment if available
+      const logoUrl = "assets/win_logo.png";
+      const headerSubtitle = 'Vorgehensvorschlag';
+      const timelineChartImage = this.getTimelineChartImage() ?? undefined;
+
+      // Generate the report
+      const blob = await this.docxWordService.generateProjectProposalReport(
+        this.roadWorkActivityFeature.properties,
+        logoUrl,
+        headerSubtitle,
+        timelineChartImage
+      );
+
+      
+      // Save the file with a meaningful name
+      const projectNo = this.roadWorkActivityFeature.properties.roadWorkActivityNo || 'Bauvorhaben';
+      const fileName = `Vorgehensvorschlag_${projectNo}.docx`;
+      saveAs(blob, fileName);
+
+      this.snckBar.open('Vorgehensvorschlag erfolgreich generiert', '', { duration: 3000 });
+    } catch (err) {
+      console.error('onProjectProposalClick: error', err);
+      this.snckBar.open('Fehler beim Generieren des Vorgehensvorschlags', '', { duration: 4000 });
+    }
+  }
+
+  onPrestudySksChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.prestudy = this.roadWorkActivityFeature?.properties.prestudySks;
+    }
+  }
+
+  openSuspendDialog(): void {
+    if (!this.roadWorkActivityFeature) {
+      return;
+    }
+
+    this.roadWorkActivityFeature.properties.commentStartSuspended = '';
+    this.showSuspendDialog = true;
+  }
+
+  closeSuspendDialog(): void {
+    this.showSuspendDialog = false;
+  }
+
+  confirmSuspend(): void {
+    const activity = this.roadWorkActivityFeature;
+
+    if (!activity) {
+      return;
+    }
+
+    const comment =
+      activity.properties.commentStartSuspended?.trim();
+
+    if (!comment) {
+      this.snckBar.open(
+        'Bitte geben Sie einen Grund für die Sistierung an.',
+        '',
+        { duration: 4000 }
+      );
+      return;
+    }
+
+    activity.properties.commentStartSuspended = comment;
+    this.showSuspendDialog = false;
+
+    this.update(false, 'suspended');
+  }
+
+  resumeSuspendedActivity(): void {
+    const activity = this.roadWorkActivityFeature;
+
+    if (!activity?.properties?.statusBeforeSuspended) {
+      this.snckBar.open(
+        'Der vorherige Status ist nicht gespeichert.',
+        '',
+        { duration: 4000 }
+      );
+      return;
+    }
+
+    this.update(false, activity.properties.statusBeforeSuspended);
+  }
+
+  getStatusLabel(status?: string | null): string {
+    switch (status) {
+      case 'review':
+        return 'in Prüfung';
+
+      case 'inconsult1':
+        return 'in Bedarfsklärung – 1. Iteration';
+
+      case 'verified1':
+        return 'verifiziert – 1. Iteration';
+
+      case 'inconsult2':
+        return 'in Bedarfsklärung – 2. Iteration';
+
+      case 'verified2':
+        return 'verifiziert – 2. Iteration';
+
+      case 'reporting':
+        return 'in Stellungnahme';
+
+      case 'coordinated':
+        return 'koordiniert';
+
+      case 'prestudy':
+        return 'Vorstudie';
+
+      default:
+        return status || 'nicht bekannt';
+    }
+  }
+
+  formatQuarter(value: Date | string | null | undefined): string {
+    if (!value) {
+      return '-';
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return '-';
+    }
+
+    const quarter = Math.floor(date.getMonth() / 3) + 1;
+
+    return `${quarter}.Q ${date.getFullYear()}`;
   }
 
 }

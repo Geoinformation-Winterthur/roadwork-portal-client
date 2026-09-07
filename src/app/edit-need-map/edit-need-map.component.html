@@ -24,5 +24,15 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
+    <mat-form-field style="margin: 1em;">
+    <mat-label>Hintergrundkarte</mat-label>
+        <mat-select [(ngModel)]="selectedBaseLayer" (selectionChange)="setBaseLayer($event.value)">            
+            <mat-option value="upwms"> Amtliche Vermessung</mat-option>
+            <mat-option value="standard">Standard</mat-option>
+            <mat-option value="swissimage">Swissimage</mat-option>
+            <mat-option value="osm_de">OpenStreetMap</mat-option>
+            <mat-option value="stadtplan">Stadtplan</mat-option>
+        </mat-select>
+    </mat-form-field>
 </div>
 <div id="edit_need_map" class="edit-need-map"></div>

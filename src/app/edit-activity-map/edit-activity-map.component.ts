@@ -3,7 +3,7 @@
  * @copyright Copyright (c) Geoinformation Winterthur. All rights reserved.
  *
  * Component for drawing and editing a roadwork activity perimeter on an OpenLayers map.
- * - Shows base WMS layers, existing needs (requirements) and the current activity.
+ * - Shows base layers, existing needs (requirements) and the current activity.
  * - Lets users draw a new polygon, modify an existing one, or copy from an existing need.
  * - Persists geometry back to the backend and maintains related "needs of activity".
  *
@@ -20,6 +20,7 @@ import View from 'ol/View';
 import Select from 'ol/interaction/Select';
 import { SelectEvent } from 'ol/interaction/Select';
 import TileWMS from 'ol/source/TileWMS';
+import XYZ from 'ol/source/XYZ';
 import VectorSource from 'ol/source/Vector';
 import Draw from 'ol/interaction/Draw';
 import Modify from 'ol/interaction/Modify';
@@ -48,6 +49,7 @@ import html2canvas from 'html2canvas';
 import { StorageService } from 'src/services/storage.service';
 import { fromLonLat } from 'ol/proj';
 import BaseLayer from 'ol/layer/Base';
+import { BaseLayerName, BaseLayers, MapBaseLayerService } from 'src/services/map-base-layer.service';
 
 @Component({
   selector: 'app-edit-activity-map',
@@ -75,6 +77,12 @@ export class EditActivityMapComponent implements OnInit {
 
   /** OpenLayers map instance (created in initializeMap). */
   map: Map = new Map();
+
+  /** Base map layers (only one visible at a time). */
+  baseLayers!: BaseLayers;
+
+  /** Currently selected base layer key. */
+  selectedBaseLayer: BaseLayerName = 'standard';  
 
   /** Address search results and input string for geocoding/zoom. */
   addresses: Address[] = [];
@@ -115,7 +123,8 @@ export class EditActivityMapComponent implements OnInit {
     roadWorkNeedService: RoadWorkNeedService,
     managementAreaService: ManagementAreaService,
     addressService: AddressService,
-    storageService: StorageService) {
+    storageService: StorageService,
+    private mapBaseLayerService: MapBaseLayerService) {
     this.roadWorkActivityService = roadWorkActivityService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
@@ -281,26 +290,13 @@ export class EditActivityMapComponent implements OnInit {
     /** Use Swiss LV95 projection; "getProjection" resolves by code. */
     const epsg2056Proj: Projection = getProjection('EPSG:2056') as Projection;
 
-    /** Build the map with two WMS tile layers, then vector layers on top. */
+
+    this.baseLayers = this.mapBaseLayerService.createBaseLayers();
+
     this.map = new Map({
       target: 'edit_activity_map',
       layers: [
-        new Tile({
-          source: new TileWMS({
-            url: 'http://wms.zh.ch/upwms',
-            params: { 'LAYERS': 'upwms', 'TILED': true },
-            serverType: 'mapserver',
-             crossOrigin: 'anonymous'
-          })
-        }),
-        new Tile({
-          source: new TileWMS({
-            url: 'http://wms.zh.ch/OGDCMS3ZH',
-            params: { 'LAYERS': 'OGDCMS3ZH', 'TILED': true },
-            serverType: 'mapserver',
-            crossOrigin: 'anonymous'
-          })
-        }),
+         ...this.mapBaseLayerService.asArray(this.baseLayers),
         this.roadWorkNeedLayer,
         roadWorkActivityLayer,
         userDrawLayer,
@@ -341,6 +337,15 @@ export class EditActivityMapComponent implements OnInit {
 
     /** Initial load of needs and activity geometry onto the map. */
     this._reloadRoadworkNeeds(true);
+  }
+
+  /**
+   * Switch between base layers.
+   */
+  setBaseLayer(layerName: BaseLayerName): void {
+    this.selectedBaseLayer = layerName;
+    this.mapBaseLayerService.setVisibleBaseLayer(this.baseLayers, layerName);
+    this.map.render();
   }
 
   /** Year filter changed (if used) → reload needs; keep current extent. */

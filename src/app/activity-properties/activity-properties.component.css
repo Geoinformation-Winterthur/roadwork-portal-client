@@ -1,0 +1,61 @@
+.cell {
+    padding: 0rem 1rem;
+    gap: 0.25rem;
+    min-width: 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Horizontal alignment, because of  flex-direction: column*/
+    justify-content: flex-start; /* Vertical alignment, because of  flex-direction: column*/
+}
+
+.row {
+    display: grid;
+    /*grid-template-columns: repeat(2, minmax(250px, 1fr));*/
+    gap: 0.5rem;
+}
+
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-fields-split-equal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-fields-split-responsibility {
+    display: grid;
+    grid-template-columns: 4fr 10fr 5fr 1fr;
+    gap: 1rem;
+}
+
+mat-form-field {
+  min-width: 20px;
+}
+
+button.icon-only {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-width: 24px;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.align-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+mat-card-header.left-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* avoid misplaced tooltip from too wide checkbox controlls */
+mat-checkbox {
+  width: fit-content;
+}
