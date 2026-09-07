@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { RoadWorkActivityProperties } from 'src/model/road-work-activity-properties';
 import { ErrorMessage } from 'src/model/error-message';
 import { EnumType } from 'src/model/enum-type';
 
@@ -65,9 +66,18 @@ export class RoadWorkActivityService {
   }
 
   updateRoadWorkActivity(roadworkActivity?: RoadWorkActivityFeature): Observable<RoadWorkActivityFeature> {
+    const roadworkActivityWithoutHistory = roadworkActivity ? {
+      ...roadworkActivity,
+      properties: { ...roadworkActivity.properties }
+    } : roadworkActivity;
+
+    if (roadworkActivityWithoutHistory) {
+      delete (roadworkActivityWithoutHistory.properties as Partial<RoadWorkActivityProperties>).activityHistory;
+    }
+
     let result: Observable<any> =
       this.http.put<RoadWorkActivityFeature>(environment.apiUrl + "/roadworkactivity/",
-                roadworkActivity) as Observable<RoadWorkActivityFeature>;
+                roadworkActivityWithoutHistory) as Observable<RoadWorkActivityFeature>;
     return result;
   }
 
