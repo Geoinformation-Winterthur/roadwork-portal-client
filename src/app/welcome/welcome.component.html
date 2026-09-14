@@ -2,119 +2,396 @@
  Author: Edgar Butwilowski
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
-<div *ngIf="!userService.isUserLoggedIn()" style="color: white;padding: 2em;background-color: rgb(196, 30, 30);">
-    <h1>Tiefbauamt Winterthur</h1><br />
-    <h2 style="margin-top: -1em;text-decoration: none;font-weight: lighter;">Departement Bau und Mobilität</h2>
+
+<div
+    *ngIf="!userService.isUserLoggedIn()"
+    style="
+        color: white;
+        padding: 2em;
+        background-color: rgb(196, 30, 30);
+    ">
+
+    <h1>Tiefbauamt Winterthur</h1>
+    <br />
+
+    <h2
+        style="
+            margin-top: -1em;
+            text-decoration: none;
+            font-weight: lighter;
+        ">
+        Departement Bau und Mobilität
+    </h2>
+
 </div>
-<div style="margin: 2em;color: rgb(90, 90, 90);">
-    <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
-        Willkommen im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool für <b>I</b>nfrastrukturvorhaben
-        im
-        öffentlichen <b>S</b>trassenraum) des Tiefbauamts Winterthur.
-    </h3>
-    <div i18n *ngIf="!userService.isUserLoggedIn()">
-        <p>Gemäss Verordnung über die Koordination von Bauarbeiten
-            im öffentlichen Strassenraum der Stadt Winterthur (Baukoordinationsverordnung) sind alle
-            städtischen
-            Abteilungen, privatrechtliche und öffentlich-rechtliche Unternehmen der Stadt, des Kantons und des
-            Bundes
-            sowie sonstige Private im öffentlichen Strassenraum (Eigentum der Stadt Winterthur) zum koordinierten
-            Bauen
-            verpflichtet.</p>
-        <p>
-            Die Abteilung Planung & Koordination des Tiefbauamts der Stadt Winterthur nimmt diese Aufgabe im Rahmen der
-            dazu
-            vorgesehenen Steuergremien (OKS, SKS und KAP) wahr. Mit Hilfe von WiKIS soll die Eingabe von
-            Wünschen
-            (Bedarf) vereinfacht und die Koordination der Bauvorhaben zentralisiert werden.</p>
-        <p>
-            Der Zugriff auf WiKIS ist nur via Login möglich - dieses finden Sie auf dieser Seite, in der
-            rechten oberen Ecke.
-            Bitte wenden Sie sich für die erstmalige Erfassung Ihrer Daten an
-            <a href="mailto:planung.koordination@win.ch">planung.koordination&#64;win.ch</a>
-        </p>
-        <p style="margin-top: 5em;font-size: 0.8em;">v {{ appVersion }}</p>
-    </div>
-    <h3 i18n *ngIf="userService.isUserLoggedIn()" style="font-weight: lighter;color: black;">
-        Willkommen {{user.firstName}} {{user.lastName}} im <b>WiKIS</b> (<b>Wi</b>nterthurer <b>K</b>oordinationstool
-        für
-        <b>I</b>nfrastrukturvorhaben im öffentlichen <b>S</b>trassenraum)
+
+
+<div
+    style="
+        margin: 2em;
+        color: rgb(90, 90, 90);
+    ">
+
+    <h3
+        i18n
+        *ngIf="!userService.isUserLoggedIn()"
+        style="
+            font-weight: lighter;
+            color: black;
+        ">
+
+        Willkommen im <b>WiKIS</b>
+        (<b>Wi</b>nterthurer
+        <b>K</b>oordinationstool für
+        <b>I</b>nfrastrukturvorhaben im
+        öffentlichen <b>S</b>trassenraum)
         des Tiefbauamts Winterthur.
+
     </h3>
-    <div *ngIf="userService.isUserLoggedIn()">
-        <mat-tab-group>
-            <mat-tab label="Aktuelles">
-                <div style="margin: 2em;">
-                    Über das WinWebGIS findest du die graphische Darstellung der Bauvorhaben. Für Details bitte diesen Button klicken:
-                    
-                        <button mat-button (click)="openWinWebGIS()" style="margin: 1em;background-color: rgb(236,236,234);">
-                            <mat-icon aria-label="Karte">map</mat-icon>&nbsp;Im WinWebGIS öffnen
-                        </button>
-                    
-                    <div *ngIf="myRoadWorkActivityFeatures.length === 0 && myRoadWorkNeedFeatures.length === 0"><span
-                            style="padding: 0.5em;border: 1px solid;border-color: rgb(219, 255, 198);background-color: rgb(231, 255, 217);">Es
-                            gibt zurzeit keine Meldungen im Zusammenhang mit deinem persönlichen Login.</span>
-                    </div>
-                    <div *ngIf="myRoadWorkActivityFeatures.length !== 0 || myRoadWorkNeedFeatures.length !== 0">
-                        Folgende Einträge stehen im Zusammenhang mit deinem <b>persönlichen Login</b>:
 
-                        <div *ngIf="myRoadWorkNeedFeatures.length !== 0" style="margin-top: 2em;">
-                          <h3>Bedarfe</h3>                                                          
-                          <ag-grid-angular
-                              #agGridNeed
-                              class="ag-theme-alpine"
-                              [rowData]="myRoadWorkNeedFeatures"
-                              [columnDefs]="columnDefsNeed"
-                              [defaultColDef]="defaultColDef"
-                              [localeText]="localeText"
-                              style="width: 100%; height: 25vh;">
-                          </ag-grid-angular>                              
-                        </div>
 
-                        <div *ngIf="myRoadWorkActivityFeatures.length !== 0" style="margin-top: 2em;">
-                            <h3>Bauvorhaben</h3>
-                            <div>
-                                <ag-grid-angular
-                                  #agGridActivity
-                                  class="ag-theme-alpine"
-                                  [rowData]="myRoadWorkActivityFeatures"
-                                  [columnDefs]="columnDefsActivity"
-                                  [defaultColDef]="defaultColDef"
-                                  [localeText]="localeText"
-                                  style="width: 100%; height: 25vh;">
-                                </ag-grid-angular>
-                            </div>
-                        </div>
-                    </div>
-                   
-                </div>                     
-            </mat-tab>
-            <mat-tab label="Einstellungen">
-                <div style="margin: 2em;">
-                    <p>
-                        Sie sind in der Rolle <b>
-                            <span
-                                *ngIf="userService.getLocalUser().chosenRole === 'view'">View</span>
-                            <span
-                                *ngIf="userService.getLocalUser().chosenRole === 'eventmanager'">Eventmanagement</span>
-                            <span
-                                *ngIf="userService.getLocalUser().chosenRole === 'projectmanager'">Projektleitung</span>
-                            <span *ngIf="userService.getLocalUser().chosenRole === 'orderer'">Auslösende:r</span>
-                            <span
-                                *ngIf="userService.getLocalUser().chosenRole === 'territorymanager'">Gebietsmanagement</span>
-                            <span
-                                *ngIf="userService.getLocalUser().chosenRole === 'administrator'">Administration</span></b>.
-                    </p>                    
-                    <div style="padding: 1em;border: 1px solid lightgray;">
-                        <p>Passphrase neu setzen:</p>
-                        <mat-form-field>
-                            <input matInput [(ngModel)]="user.passPhrase" type="text" placeholder="Neue Passphrase"
-                                type="password">
-                        </mat-form-field>
-                        <button mat-button (click)="update(true)" style="margin:1em;">ÄNDERN</button>
-                    </div>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
+    <div
+        i18n
+        *ngIf="!userService.isUserLoggedIn()">
+
+        <p>
+            Gemäss Verordnung über die Koordination von Bauarbeiten
+            im öffentlichen Strassenraum der Stadt Winterthur
+            (Baukoordinationsverordnung) sind alle städtischen
+            Abteilungen, privatrechtliche und öffentlich-rechtliche
+            Unternehmen der Stadt, des Kantons und des Bundes
+            sowie sonstige Private im öffentlichen Strassenraum
+            (Eigentum der Stadt Winterthur) zum koordinierten Bauen
+            verpflichtet.
+        </p>
+
+        <p>
+            Die Abteilung Planung & Koordination des Tiefbauamts der
+            Stadt Winterthur nimmt diese Aufgabe im Rahmen der dazu
+            vorgesehenen Steuergremien (OKS, SKS und KAP) wahr.
+            Mit Hilfe von WiKIS soll die Eingabe von Wünschen
+            (Bedarf) vereinfacht und die Koordination der
+            Bauvorhaben zentralisiert werden.
+        </p>
+
+        <p>
+            Der Zugriff auf WiKIS ist nur via Login möglich -
+            dieses finden Sie auf dieser Seite, in der rechten
+            oberen Ecke.
+
+            Bitte wenden Sie sich für die erstmalige Erfassung
+            Ihrer Daten an
+
+            <a href="mailto:planung.koordination@win.ch">
+                planung.koordination&#64;win.ch
+            </a>
+        </p>
+
+        <p
+            style="
+                margin-top: 5em;
+                font-size: 0.8em;
+            ">
+            v {{ appVersion }}
+        </p>
+
     </div>
+
+
+    <h3
+        i18n
+        *ngIf="userService.isUserLoggedIn()"
+        style="
+            font-weight: lighter;
+            color: black;
+        ">
+
+        Willkommen
+        {{ user.firstName }}
+        {{ user.lastName }}
+
+        im <b>WiKIS</b>
+
+        (<b>Wi</b>nterthurer
+        <b>K</b>oordinationstool für
+        <b>I</b>nfrastrukturvorhaben im
+        öffentlichen <b>S</b>trassenraum)
+
+        des Tiefbauamts Winterthur.
+
+    </h3>
+
+
+    <div
+        *ngIf="userService.isUserLoggedIn()">
+
+        <mat-tab-group>
+
+            <mat-tab label="Aktuelles">
+
+                <div style="margin: 2em;">
+
+                    Über das WinWebGIS findest du die graphische
+                    Darstellung der Bauvorhaben.
+                    Für Details bitte diesen Button klicken:
+
+                    <button
+                        mat-button
+                        (click)="openWinWebGIS()"
+                        style="
+                            margin: 1em;
+                            background-color: rgb(236,236,234);
+                        ">
+
+                        <mat-icon aria-label="Karte">
+                            map
+                        </mat-icon>
+
+                        &nbsp;Im WinWebGIS öffnen
+
+                    </button>
+
+
+                    <!--
+                        Do not show the empty message while
+                        road work activities are still loading.
+                    -->
+                    <div
+                        *ngIf="
+                            myRoadWorkActivityFeatures.length === 0 &&
+                            myRoadWorkNeedFeatures.length === 0 &&
+                            !isLoadingRoadWorkActivities
+                        ">
+
+                        <span
+                            style="
+                                padding: 0.5em;
+                                border: 1px solid;
+                                border-color: rgb(219, 255, 198);
+                                background-color: rgb(231, 255, 217);
+                            ">
+
+                            Es gibt zurzeit keine Meldungen im Zusammenhang
+                            mit deinem persönlichen Login.
+
+                        </span>
+
+                    </div>
+
+
+                    <!--
+                        Show this area also while Bauvorhaben
+                        are still loading.
+                    -->
+                    <div
+                        *ngIf="
+                            myRoadWorkActivityFeatures.length !== 0 ||
+                            myRoadWorkNeedFeatures.length !== 0 ||
+                            isLoadingRoadWorkActivities
+                        ">
+
+                        Folgende Einträge stehen im Zusammenhang mit deinem
+                        <b>persönlichen Login</b>:
+
+
+                        <!-- Bedarfe -->
+
+                        <div
+                            *ngIf="myRoadWorkNeedFeatures.length !== 0"
+                            style="margin-top: 2em;">
+
+                            <h3>
+                                Bedarfe
+                            </h3>
+
+                            <ag-grid-angular
+                                #agGridNeed
+                                class="ag-theme-alpine"
+                                [rowData]="myRoadWorkNeedFeatures"
+                                [columnDefs]="columnDefsNeed"
+                                [defaultColDef]="defaultColDef"
+                                [localeText]="localeText"
+                                style="
+                                    width: 100%;
+                                    height: 25vh;
+                                ">
+                            </ag-grid-angular>
+
+                        </div>
+
+
+                        <!-- Bauvorhaben -->
+
+                        <div
+                            *ngIf="
+                                isLoadingRoadWorkActivities ||
+                                myRoadWorkActivityFeatures.length !== 0
+                            "
+                            style="margin-top: 2em;">
+
+                            <h3>
+                                Bauvorhaben
+                            </h3>
+
+
+                            <!-- Loading indicator -->
+
+                            <div
+                                *ngIf="isLoadingRoadWorkActivities"
+                                style="
+                                    padding: 12px 0 16px 0;
+                                ">
+
+                                <div
+                                    style="
+                                        margin-bottom: 8px;
+                                        font-size: 0.9em;
+                                        color: rgb(100, 100, 100);
+                                    ">
+
+                                    Bauvorhaben werden geladen...
+
+                                </div>
+
+                                <mat-progress-bar
+                                    mode="indeterminate">
+                                </mat-progress-bar>
+
+                            </div>
+
+
+                            <!-- Grid -->
+
+                            <div
+                                *ngIf="
+                                    !isLoadingRoadWorkActivities &&
+                                    myRoadWorkActivityFeatures.length !== 0
+                                ">
+
+                                <ag-grid-angular
+                                    #agGridActivity
+                                    class="ag-theme-alpine"
+                                    [rowData]="myRoadWorkActivityFeatures"
+                                    [columnDefs]="columnDefsActivity"
+                                    [defaultColDef]="defaultColDef"
+                                    [localeText]="localeText"
+                                    style="
+                                        width: 100%;
+                                        height: 25vh;
+                                    ">
+                                </ag-grid-angular>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </mat-tab>
+
+
+            <mat-tab label="Einstellungen">
+
+                <div style="margin: 2em;">
+
+                    <p>
+
+                        Sie sind in der Rolle
+
+                        <b>
+
+                            <span
+                                *ngIf="
+                                    userService.getLocalUser().chosenRole ===
+                                    'view'
+                                ">
+                                View
+                            </span>
+
+                            <span
+                                *ngIf="
+                                    userService.getLocalUser().chosenRole ===
+                                    'eventmanager'
+                                ">
+                                Eventmanagement
+                            </span>
+
+                            <span
+                                *ngIf="
+                                    userService.getLocalUser().chosenRole ===
+                                    'projectmanager'
+                                ">
+                                Projektleitung
+                            </span>
+
+                            <span
+                                *ngIf="
+                                    userService.getLocalUser().chosenRole ===
+                                    'orderer'
+                                ">
+                                Auslösende:r
+                            </span>
+
+                            <span
+                                *ngIf="
+                                    userService.getLocalUser().chosenRole ===
+                                    'territorymanager'
+                                ">
+                                Gebietsmanagement
+                            </span>
+
+                            <span
+                                *ngIf="
+                                    userService.getLocalUser().chosenRole ===
+                                    'administrator'
+                                ">
+                                Administration
+                            </span>
+
+                        </b>.
+
+                    </p>
+
+
+                    <div
+                        style="
+                            padding: 1em;
+                            border: 1px solid lightgray;
+                        ">
+
+                        <p>
+                            Passphrase neu setzen:
+                        </p>
+
+                        <mat-form-field>
+
+                            <input
+                                matInput
+                                [(ngModel)]="user.passPhrase"
+                                placeholder="Neue Passphrase"
+                                type="password">
+
+                        </mat-form-field>
+
+                        <button
+                            mat-button
+                            (click)="update(true)"
+                            style="margin: 1em;">
+
+                            ÄNDERN
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </mat-tab>
+
+        </mat-tab-group>
+
+    </div>
+
 </div>
