@@ -7,26 +7,74 @@
                 <mat-label>Status/Phase</mat-label>
                 <!-- Option bodies are a copy of the names from status-chip.component.html -->
                 <mat-select [(ngModel)]="roadWorkActivityFeature.properties.status">
+                    <!-- Phase 1 -->
+
+                    <mat-option [value]="'planning_p1'">Strategische Planung (Phase 1)</mat-option>
+
                     <mat-option [value]="'requirement'">Bedarf (Phase 11)</mat-option>
+
                     <mat-option [value]="'review'">in Prüfung (Phase 12)</mat-option>
+
                     <mat-option [value]="'verified1'">verifiziert-1 (Phase 12)</mat-option>
+
                     <mat-option [value]="'verified2'">verifiziert-2 (Phase 12)</mat-option>
+
                     <mat-option [value]="'inconsult1'">in Bedarfsklärung - 1.Iteration (Phase 12)</mat-option>
+
                     <mat-option [value]="'inconsult2'">in Bedarfsklärung - 2.Iteration (Phase 12)</mat-option>
+
                     <mat-option [value]="'reporting'">Stellungnahme (Phase 12)</mat-option>
+
                     <mat-option [value]="'coordinated'">koordiniert (Phase 12)</mat-option>
+
                     <mat-option [value]="'initiation_p13'">Initialisieren (Phase 13)</mat-option>
+
+                    <!-- Phase 2 -->
+
+                    <mat-option [value]="'prestudy_p2'">Vorstudie (Phase 2)</mat-option>
+
                     <mat-option [value]="'prestudy'">Vorstudie (Phase 21)</mat-option>
+
+                    <!-- Phase 3 -->
+
+                    <mat-option [value]="'design_p3'">Projektierung (Phase 3)</mat-option>
+
                     <mat-option [value]="'predesign_p31'">Vorprojekt (Phase 31)</mat-option>
+
                     <mat-option [value]="'design_p32'">Bauprojekt (Phase 32)</mat-option>
+
                     <mat-option [value]="'approval_p33'">Bewilligungsverfahren (Phase 33)</mat-option>
-                    <mat-option [value]="'tendering_p41'">Ausschreibung (Phase 41)</mat-option>
+
+                    <!-- Phase 4 -->
+
+                    <mat-option [value]="'tendering_p4'">Ausschreibung (Phase 4)</mat-option>
+
+                    <mat-option [value]="'tendering_p41'">Ausschreibung / Vergabe (Phase 41)</mat-option>
+
+                    <!-- Phase 5 -->
+
+                    <mat-option [value]="'construction_p5'">Realisierung (Phase 5)</mat-option>
+
                     <mat-option [value]="'executiondesign_p51'">Ausführungsprojekt (Phase 51)</mat-option>
+
                     <mat-option [value]="'execution_p52'">Ausführung (Phase 52)</mat-option>
+
                     <mat-option [value]="'commissioning_p53'">Inbetriebnahme (Phase 53)</mat-option>
+
+                    <!-- Phase 6 -->
+
+                    <mat-option [value]="'operations_p6'">Bewirtschaftung (Phase 6)</mat-option>
+
                     <mat-option [value]="'closed_p61'">Abgerechnet (Abgeschlossen, Phase 61)</mat-option>
+
+                    <!-- Other -->
+
                     <mat-option [value]="'archived'">Archiviert</mat-option>
+
+                    <mat-option [value]="'need_archived'">Bedarf archiviert</mat-option>
+
                     <mat-option [value]="'deferred'">zurückgestellt</mat-option>
+
                     <mat-option [value]="'suspended'">sistiert</mat-option>
                 </mat-select>
             </mat-form-field>

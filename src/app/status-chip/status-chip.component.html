@@ -1,119 +1,127 @@
 <div style="margin: 0.3em;margin-bottom: 1em;">
   <mat-chip-list>
-      <!-- There is a copy of the status names in activity-properties.component.html. Any changes needs to be updated there as well! -->
-      <!-- Phase 1 -->
-      <mat-chip *ngIf="statusCode === 'requirement'" class="chip-phase-1">
-        <span *ngIf="short">11/Bedarf</span>
-        <span *ngIf="!short">Bedarf (Phase 11)</span>        
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'review'" class="chip-phase-1">
-        <span *ngIf="short">12/Prüfung</span>
-        <span *ngIf="!short">in Prüfung (Phase 12)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'verified1'" class="chip-phase-1">
-        <span *ngIf="short">12/verifiziert-1</span>
-        <span *ngIf="!short">verifiziert-1 (Phase 12)</span>        
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'verified2'" class="chip-phase-1">
-        <span *ngIf="short">12/verifiziert-2</span>
-        <span *ngIf="!short">verifiziert-2 (Phase 12)</span>        
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'inconsult1'" class="chip-phase-1">
-        <span *ngIf="short">12/Bedarfsklärung - 1.Iteration</span>
-        <span *ngIf="!short">in Bedarfsklärung - 1.Iteration (Phase 12)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'inconsult2'" class="chip-phase-1">
-        <span *ngIf="short">12/Bedarfsklärung - 2.Iteration</span>
-        <span *ngIf="!short">in Bedarfsklärung - 2.Iteration (Phase 12)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'reporting'"
-        class="chip-phase-1">
-        <span *ngIf="short">12/Stellungnahme</span>
-        <span *ngIf="!short">Stellungnahme (Phase 12)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'coordinated'"
-        class="chip-phase-1">
-        <span *ngIf="short">12/koordiniert</span>
-        <span *ngIf="!short">koordiniert (Phase 12)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'initiation_p13'"
-        class="chip-phase-1">
-        <span *ngIf="short">13/Initialisieren</span>
-        <span *ngIf="!short">Initialisieren (Phase 13)</span>
-      </mat-chip>
+    <!-- There is a copy of the status names in activity-properties.component.html. Any changes needs to be updated there as well! -->
+    <!-- Phase 1 -->
+    <mat-chip *ngIf="statusCode === 'planning_p1'" class="chip-phase-1">
+      <span *ngIf="short">1/Strategische Planung</span>
+      <span *ngIf="!short">Strategische Planung (Phase 1)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'requirement'" class="chip-phase-1">
+      <span *ngIf="short">11/Bedarf</span>
+      <span *ngIf="!short">Bedarf (Phase 11)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'review'" class="chip-phase-1">
+      <span *ngIf="short">12/Prüfung</span>
+      <span *ngIf="!short">in Prüfung (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'verified1'" class="chip-phase-1">
+      <span *ngIf="short">12/verifiziert-1</span>
+      <span *ngIf="!short">verifiziert-1 (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'verified2'" class="chip-phase-1">
+      <span *ngIf="short">12/verifiziert-2</span>
+      <span *ngIf="!short">verifiziert-2 (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'inconsult1'" class="chip-phase-1">
+      <span *ngIf="short">12/Bedarfsklärung - 1.Iteration</span>
+      <span *ngIf="!short">in Bedarfsklärung - 1.Iteration (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'inconsult2'" class="chip-phase-1">
+      <span *ngIf="short">12/Bedarfsklärung - 2.Iteration</span>
+      <span *ngIf="!short">in Bedarfsklärung - 2.Iteration (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'reporting'" class="chip-phase-1">
+      <span *ngIf="short">12/Stellungnahme</span>
+      <span *ngIf="!short">Stellungnahme (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'coordinated'" class="chip-phase-1">
+      <span *ngIf="short">12/koordiniert</span>
+      <span *ngIf="!short">koordiniert (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'initiation_p13'" class="chip-phase-1">
+      <span *ngIf="short">13/Initialisieren</span>
+      <span *ngIf="!short">Initialisieren (Phase 13)</span>
+    </mat-chip>
 
-      <!-- Phase 2 -->
-      <mat-chip *ngIf="statusCode === 'prestudy'"
-        class="chip-phase-2">
-        <span *ngIf="short">21/Vorstudie</span>
-        <span *ngIf="!short">Vorstudie (Phase 21)</span>
-      </mat-chip>
-        
-      <!-- Phase 3 -->
-      <mat-chip *ngIf="statusCode === 'predesign_p31'"
-        class="chip-phase-3">
-        <span *ngIf="short">32/Vorprojekt</span>
-        <span *ngIf="!short">Vorprojekt (Phase 31)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'design_p32'"
-        class="chip-phase-3">
-        <span *ngIf="short">32/Bauprojekt</span>
-        <span *ngIf="!short">Bauprojekt (Phase 32)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'approval_p33'"
-        class="chip-phase-33">
-        <span *ngIf="short">33/Bewilligungsverfahren</span>
-        <span *ngIf="!short">Bewilligungsverfahren (Phase 33)</span>
-      </mat-chip>
+    <!-- Phase 2 -->
+    <mat-chip *ngIf="statusCode === 'prestudy_p2'" class="chip-phase-2">
+      <span *ngIf="short">2/Vorstudie</span>
+      <span *ngIf="!short">Vorstudie (Phase 2)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'prestudy'" class="chip-phase-2">
+      <span *ngIf="short">21/Vorstudie</span>
+      <span *ngIf="!short">Vorstudie (Phase 21)</span>
+    </mat-chip>
 
-      <!-- Phase 4 -->
-      <mat-chip *ngIf="statusCode === 'tendering_p41'"
-        class="chip-phase-4">
-        <span *ngIf="short">41/Ausschreibung</span>
-        <span *ngIf="!short">Ausschreibung (Phase 41)</span>
-      </mat-chip>
+    <!-- Phase 3 -->
+    <mat-chip *ngIf="statusCode === 'design_p3'" class="chip-phase-3">
+      <span *ngIf="short">3/Projektierung</span>
+      <span *ngIf="!short">Projektierung (Phase 3)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'predesign_p31'" class="chip-phase-3">
+      <span *ngIf="short">31/Vorprojekt</span>
+      <span *ngIf="!short">Vorprojekt (Phase 31)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'design_p32'" class="chip-phase-3">
+      <span *ngIf="short">32/Bauprojekt</span>
+      <span *ngIf="!short">Bauprojekt (Phase 32)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'approval_p33'" class="chip-phase-3">
+      <span *ngIf="short">33/Bewilligungsverfahren</span>
+      <span *ngIf="!short">Bewilligungsverfahren (Phase 33)</span>
+    </mat-chip>
 
-      <!-- Phase 5 -->
-      <mat-chip *ngIf="statusCode === 'executiondesign_p51'"
-        class="chip-phase-5">
-        <span *ngIf="short">51/Ausführungsprojekt</span>
-        <span *ngIf="!short">Ausführungsprojekt (Phase 51)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'execution_p52'"
-        class="chip-phase-5">
-        <span *ngIf="short">52/Ausführung</span>
-        <span *ngIf="!short">Ausführung (Phase 52)</span>
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'commissioning_p53'"
-        class="chip-phase-5">
-        <span *ngIf="short">53/Inbetriebnahme</span>
-        <span *ngIf="!short">Inbetriebnahme (Phase 53)
-          </span>
-      </mat-chip>
+    <!-- Phase 4 -->
+    <mat-chip *ngIf="statusCode === 'tendering_p4'" class="chip-phase-4">
+      <span *ngIf="short">4/Ausschreibung</span>
+      <span *ngIf="!short">Ausschreibung (Phase 4)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'tendering_p41'" class="chip-phase-4">
+      <span *ngIf="short">41/Ausschreibung / Vergabe</span>
+      <span *ngIf="!short">Ausschreibung / Vergabe (Phase 41)</span>
+    </mat-chip>
 
-      <!-- Phase 6 -->
-      <mat-chip *ngIf="statusCode === 'closed_p61'"
-        class="chip-phase-6">
-        <span *ngIf="short">61/Abgerechnet</span>
-        <span *ngIf="!short">Abgerechnet (Abgeschlossen, Phase 61)</span>
-      </mat-chip>
+    <!-- Phase 5 -->
+    <mat-chip *ngIf="statusCode === 'construction_p5'" class="chip-phase-5">
+      <span *ngIf="short">5/Realisierung</span>
+      <span *ngIf="!short">Realisierung (Phase 5)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'executiondesign_p51'" class="chip-phase-5">
+      <span *ngIf="short">51/Ausführungsprojekt</span>
+      <span *ngIf="!short">Ausführungsprojekt (Phase 51)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'execution_p52'" class="chip-phase-5">
+      <span *ngIf="short">52/Ausführung</span>
+      <span *ngIf="!short">Ausführung (Phase 52)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'commissioning_p53'" class="chip-phase-5">
+      <span *ngIf="short">53/Inbetriebnahme</span>
+      <span *ngIf="!short">Inbetriebnahme (Phase 53)</span>
+    </mat-chip>
 
-      <!-- Other -->
-      <mat-chip *ngIf="statusCode === 'archived'"
-        class="chip-archived">
-        Archiviert
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'need_archived'"
-        class="chip-archived">
-        Bedarf archiviert
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'deferred'"
-        class="chip-deferred">
-        zurückgestellt
-      </mat-chip>
-      <mat-chip *ngIf="statusCode === 'suspended'"
-        class="chip-suspended">
-        sistiert
-      </mat-chip>
-    </mat-chip-list>
-  </div>
+    <!-- Phase 6 -->
+    <mat-chip *ngIf="statusCode === 'operations_p6'" class="chip-phase-6">
+      <span *ngIf="short">6/Bewirtschaftung</span>
+      <span *ngIf="!short">Bewirtschaftung (Phase 6)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'closed_p61'" class="chip-phase-6">
+      <span *ngIf="short">61/Abgerechnet</span>
+      <span *ngIf="!short">Abgerechnet (Abgeschlossen, Phase 61)</span>
+    </mat-chip>
+
+    <!-- Other -->
+    <mat-chip *ngIf="statusCode === 'archived'" class="chip-archived">
+      Archiviert
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'need_archived'" class="chip-archived">
+      Bedarf archiviert
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'deferred'" class="chip-deferred">
+      zurückgestellt
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'suspended'" class="chip-suspended">
+      sistiert
+    </mat-chip>
+
+  </mat-chip-list>
+</div>
