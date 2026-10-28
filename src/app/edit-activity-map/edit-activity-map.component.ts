@@ -82,7 +82,7 @@ export class EditActivityMapComponent implements OnInit {
   baseLayers!: BaseLayers;
 
   /** Currently selected base layer key. */
-  selectedBaseLayer: BaseLayerName = 'standard';  
+  selectedBaseLayer: BaseLayerName = 'stadtplan';  
 
   /** Address search results and input string for geocoding/zoom. */
   addresses: Address[] = [];
