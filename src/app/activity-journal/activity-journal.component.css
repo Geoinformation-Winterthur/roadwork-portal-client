@@ -28,6 +28,10 @@ a.disabled {
     /*outline: 2px solid greenyellow;*/ /* Grid visible, use design time only */
 }
 
+.cell.no-indent {
+    padding: 0rem 1rem 0rem 0rem;
+}
+
 .cell.middle {
     justify-content: center; /* Vertical alignment, because of  flex-direction: column*/
 }
@@ -47,45 +51,45 @@ a.disabled {
 }
 
 .single-column {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .two-columns {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
 .form-fields-split-one-two {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     gap: 1rem;
 }
 
 .form-fields-split-two-one {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     gap: 1rem;
 }
 
 .form-fields-split-three-one {
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
     gap: 1rem;
 }
 
 .form-fields-split-equal {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 1rem;
 }
 
 .form-fields-split-three {
     display: grid;
-    grid-template-columns: 1fr 1.3fr 1.2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.2fr);
     gap: 1rem;
 }
 
-.aggloprogram-fields {
+.collapse-container {
     display: flex;
     flex-direction: column;
 }
@@ -103,4 +107,48 @@ a.disabled {
 .checkbox-text {
   cursor: pointer;
   margin-left: 8px;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Small date fields */
+.date-field-small ::ng-deep .mat-form-field-flex {
+    height: 24px;
+    align-items: center;
+}
+
+.date-field-small ::ng-deep .mat-form-field-wrapper,
+.date-field-small ::ng-deep .mat-form-field-label-wrapper,
+.date-field-small ::ng-deep .mat-form-field-underline {
+    padding: 0;
+    position: static;
+}
+
+.date-field-small ::ng-deep .mat-form-field-label {
+    top: 0;
+}
+
+.date-field-small ::ng-deep .mat-form-field-subscript-wrapper {
+    padding: 0;
+    position: relative;
+}
+
+.date-field-small ::ng-deep .mat-form-field-infix {
+    padding: 0;
+    border-top: 0;
+}
+
+/* Crop checkbox label text if it is too long */
+::ng-deep .mat-checkbox-layout {
+  max-width: 100%;
+}
+
+::ng-deep .mat-checkbox-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

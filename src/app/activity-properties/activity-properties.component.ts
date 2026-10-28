@@ -199,6 +199,7 @@ export class ActivityPropertiesComponent implements OnInit {
   onIsOksActiveChange() {
     if (this.roadWorkActivityFeature) {
       this.roadWorkActivityFeature.properties.isOksActiveLastModified = new Date();
+      this.roadWorkActivityFeature.properties.isOksActiveLastModified.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
     }
   }
   

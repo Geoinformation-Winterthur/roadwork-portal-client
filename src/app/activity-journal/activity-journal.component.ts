@@ -21,10 +21,14 @@ export class ActivityJournalComponent implements OnInit {
   private journalEntryService: JournalEntryService;
   public journalEntryFeatures: JournalEntryFeature[] = [];
 
-  public prestudyCollapsed: Boolean = false;
-  public partOfAggloprogramCollapsed: Boolean = false;
-  public approvalRequiredCollapsed: Boolean = false;
-  public privateEntityAffectedCollapsed: Boolean = false;
+  public approvalRequiredExpanded: Boolean = false;
+  public partOfAggloprogramExpanded: Boolean = false;
+  public prestudyExpanded: Boolean = false;
+  public affectedInfrastructureExpanded: Boolean = true;
+  public privateEntityAffectedExpanded: Boolean = false;
+  public provisExpanded: Boolean = true;
+  public projectPlanningExpanded: Boolean = true;
+  public issueApprovalExpanded: Boolean = true;
 
   constructor(journalEntryService: JournalEntryService) {
     this.journalEntryService = journalEntryService;
@@ -33,10 +37,12 @@ export class ActivityJournalComponent implements OnInit {
   ngOnInit() {
     this.refresh();
 
-    this.prestudyCollapsed = this.roadWorkActivityFeature.properties.prestudy;
-    this.partOfAggloprogramCollapsed = this.roadWorkActivityFeature.properties.partOfAggloprogram;
-    this.approvalRequiredCollapsed = this.roadWorkActivityFeature.properties.approvals.approvalRequired;
-    this.privateEntityAffectedCollapsed = this.roadWorkActivityFeature.properties.privateEntityAffected;
+    this.approvalRequiredExpanded = this.roadWorkActivityFeature.properties.approvals.approvalRequired;
+    this.partOfAggloprogramExpanded = this.roadWorkActivityFeature.properties.partOfAggloprogram;
+    this.prestudyExpanded = this.roadWorkActivityFeature.properties.prestudy;
+    this.privateEntityAffectedExpanded = this.roadWorkActivityFeature.properties.privateEntityAffected;
+    this.projectPlanningExpanded = !this.roadWorkActivityFeature.properties.gisUpdated;
+    this.issueApprovalExpanded = !this.roadWorkActivityFeature.properties.filedInFabasoft;
   }
 
   async refresh() {
@@ -83,66 +89,148 @@ export class ActivityJournalComponent implements OnInit {
   }
 
   onApprovalRequiredCollapseClick() {
-    this.approvalRequiredCollapsed = !this.approvalRequiredCollapsed;
+    this.approvalRequiredExpanded = !this.approvalRequiredExpanded;
   }
 
   onApprovalRequiredChange() {
-    this.approvalRequiredCollapsed = this.roadWorkActivityFeature.properties.approvals.approvalRequired;
+    this.approvalRequiredExpanded = this.roadWorkActivityFeature.properties.approvals.approvalRequired;
   }
 
   onPartOfAggloprogramCollapseClick() {
-    this.partOfAggloprogramCollapsed = !this.partOfAggloprogramCollapsed;
+    this.partOfAggloprogramExpanded = !this.partOfAggloprogramExpanded;
   }
 
   onPartOfAggloprogramChange() {
-    this.partOfAggloprogramCollapsed = this.roadWorkActivityFeature.properties.partOfAggloprogram;
+    this.partOfAggloprogramExpanded = this.roadWorkActivityFeature.properties.partOfAggloprogram;
   }
 
   onPrestudyCollapseClick() {
-    this.prestudyCollapsed = !this.prestudyCollapsed;
+    this.prestudyExpanded = !this.prestudyExpanded;
   }
 
   onPrestudyChange() {
-    this.prestudyCollapsed = this.roadWorkActivityFeature.properties.prestudy;
+    this.prestudyExpanded = this.roadWorkActivityFeature.properties.prestudy;
+  }
+
+  onAffectedInfrastructureCollapseClick() {
+    this.affectedInfrastructureExpanded = !this.affectedInfrastructureExpanded;
   }
 
   onPrivateEntityAffectedCollapseClick() {
-    this.privateEntityAffectedCollapsed = !this.privateEntityAffectedCollapsed;
+    this.privateEntityAffectedExpanded = !this.privateEntityAffectedExpanded;
   }
 
   onPrivateEntityAffectedChange() {
-    this.privateEntityAffectedCollapsed = this.roadWorkActivityFeature.properties.privateEntityAffected;
+    this.privateEntityAffectedExpanded = this.roadWorkActivityFeature.properties.privateEntityAffected;
+  }
+
+  onProvisCollapseClick() {
+    this.provisExpanded = !this.provisExpanded;
+  }
+
+  onProjectPlanningCollapseClick() {
+    this.projectPlanningExpanded = !this.projectPlanningExpanded;
+  }
+
+  onIssueApprovalCollapseClick() {
+    this.issueApprovalExpanded = !this.issueApprovalExpanded;
   }
 
   normalizeDate(event: MatDatepickerInputEvent<Date>): void {
     return DateHelper.normalizeDate(event);
   }
 
+  private getDateNowOrUndefined(checkedField: boolean): Date | undefined {
+    if (checkedField)
+    {
+      const date = new Date();
+      date.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
+      return date;
+    }
+    else
+    {
+      return undefined;
+    }
+  }
+
+  onCoreDrillingContractedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateCoreDrillingContracted =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.coreDrillingContracted);
+    }
+  }
+
   onQuotesRequestedChange() {
     if (this.roadWorkActivityFeature) {
-      if (this.roadWorkActivityFeature.properties.quotesRequested)
-      {
-        this.roadWorkActivityFeature.properties.dateQuotesRequested = new Date();
-        this.roadWorkActivityFeature.properties.dateQuotesRequested.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
-      }
-      else
-      {
-        this.roadWorkActivityFeature.properties.dateQuotesRequested = undefined;
-      }
+      this.roadWorkActivityFeature.properties.dateQuotesRequested =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.quotesRequested);
     }
   }
 
   onQuotesReviewedChange() {
     if (this.roadWorkActivityFeature) {
-      if (this.roadWorkActivityFeature.properties.quotesReviewed)
-      {
-        this.roadWorkActivityFeature.properties.dateQuotesReviewed = new Date();
-        this.roadWorkActivityFeature.properties.dateQuotesReviewed.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
-      }
-      else
-      {
-        this.roadWorkActivityFeature.properties.dateQuotesReviewed = undefined;
-      }
+      this.roadWorkActivityFeature.properties.dateQuotesReviewed =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.quotesReviewed);
+    }
+  }
+
+  onStaffResourcesAprConfirmedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateStaffResourcesAprConfirmed =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.staffResourcesAprConfirmed);
+    }
+  }
+
+  onCostEstimateAprConfirmedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateCostEstimateAprConfirmed =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.costEstimateAprConfirmed);
+    }
+  }
+
+  onAfmCheckedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateAfmChecked =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.afmChecked);
+    }
+  }
+
+  onGisUpdatedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateGisUpdated =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.gisUpdated);
+
+      this.projectPlanningExpanded = !this.roadWorkActivityFeature.properties.gisUpdated;
+    }
+  }
+
+  onPreReviewedByCfChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.datePreReviewedByCf =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.preReviewedByCf);
+    }
+  }
+
+  onPreReviewedByRdChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.datePreReviewedByRd =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.preReviewedByRd);
+    }
+  }
+
+  onFormallyApprovedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateFormallyApproved =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.formallyApproved);
+    }
+  }
+
+  onFiledInFabasoftChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.dateFiledInFabasoft =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.filedInFabasoft);
+
+      this.issueApprovalExpanded = !this.roadWorkActivityFeature.properties.filedInFabasoft;
     }
   }
 }

@@ -179,22 +179,30 @@ export class RoadWorkActivityProperties {
     erpNumber?: number;
 
     // Ressources (#625, 2026.4)
-    staffResourcesAprConfirmed?: Date // Modul Journal: "Personelle Ressourcen APR (ab Phase 3) abgesprochen"
-    costEstimateAprConfirmed?: Date // Modul Journal: "Journal >> "Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen"
+    staffResourcesAprConfirmed: boolean = false;
+    dateStaffResourcesAprConfirmed?: Date // Modul Journal: "Personelle Ressourcen APR (ab Phase 3) abgesprochen"
+    costEstimateAprConfirmed: boolean = false;
+    dateCostEstimateAprConfirmed?: Date // Modul Journal: "Journal >> "Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen"
 
     // Engineering contract (#626, 2026.4)
     coreDrillingContracted: boolean = false;
+    dateCoreDrillingContracted?: Date;
     quotesRequested: boolean = false;
     quotesReviewed: boolean = false;
-    aprChecked: boolean = false;
     afmChecked: boolean = false;
-
-    // Approval and filing (#626, 2026.4)
-    cfDone: boolean = false;
-    rdDone: boolean = false;
-    approved: boolean = false;
-    fabasoftDone: boolean = false;
+    dateAfmChecked?: Date
     gisUpdated: boolean = false;
+    dateGisUpdated?: Date 
+
+    // Approval (#626, 2026.4)
+    preReviewedByCf: boolean = false;
+    datePreReviewedByCf?: Date
+    preReviewedByRd: boolean = false;
+    datePreReviewedByRd?: Date
+    formallyApproved: boolean = false;
+    dateFormallyApproved?: Date
+    filedInFabasoft: boolean = false;
+    dateFiledInFabasoft?: Date
 
     // Additional attributes for journal (#616, 2026.4)
     plannedTasks: string = "";
