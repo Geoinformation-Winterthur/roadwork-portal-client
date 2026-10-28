@@ -28,7 +28,7 @@ export class MapBaseLayerService {
       stadtplan: new TileLayer({
         visible: true,
         source: new TileWMS({
-          url: 'https://stadtplantest.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan',
+          url: 'https://stadtplan.winterthur.ch/wms/Hintergrundkarte_LK_AV_Situationsplan',
           params: {
             LAYERS: [
               'Landeskarte200',
@@ -69,9 +69,9 @@ export class MapBaseLayerService {
       standard: new TileLayer({
         visible: false,
         source: new TileWMS({
-          url: 'https://wms.zh.ch/OGDCMS3ZH',
+          url: 'https://wms.zh.ch/CMS3ZHWMS',
           params: {
-            LAYERS: 'OGDCMS3ZH',
+            LAYERS: 'CMS3ZHWMS',
             TILED: true
           },
           serverType: 'mapserver',

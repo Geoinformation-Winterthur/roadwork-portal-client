@@ -52,7 +52,7 @@ export class EditNeedMapComponent implements OnInit {
   baseLayers!: BaseLayers;
 
   /** Currently selected base layer key. */
-  selectedBaseLayer: BaseLayerName = 'standard';  
+  selectedBaseLayer: BaseLayerName = 'stadtplan';  
 
   userDrawSource: VectorSource = new VectorSource();
   loadSource: VectorSource = new VectorSource();
