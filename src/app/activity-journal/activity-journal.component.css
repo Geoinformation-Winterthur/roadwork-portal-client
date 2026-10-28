@@ -1,7 +1,7 @@
 a.disabled {
-  color: grey;
-  cursor: not-allowed;
-  text-decoration: none;
+    color: grey;
+    cursor: not-allowed;
+    text-decoration: none;
 }
 
 .row {
@@ -28,22 +28,18 @@ a.disabled {
     /*outline: 2px solid greenyellow;*/ /* Grid visible, use design time only */
 }
 
-.cell.no-indent {
-    padding: 0rem 1rem 0rem 0rem;
-}
-
 .cell.middle {
     justify-content: center; /* Vertical alignment, because of  flex-direction: column*/
 }
 
-.flex-container {
-  display: flex;
-  width: 100%;
-  align-items: center;
+.flex-row-center {
+    display: flex;
+    width: 100%;
+    align-items: center;
 }
 
-.flex-item {
-  flex: 1;
+.flex-cell-fill {
+    flex: 1;
 }
 
 .cell p {
@@ -94,19 +90,10 @@ a.disabled {
     flex-direction: column;
 }
 
-.indent {
-  margin-left: 24px;
-}
-
 .mat-header-look {
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, .54);
-}
-
-.checkbox-text {
-  cursor: pointer;
-  margin-left: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, .54);
 }
 
 .title-row {
@@ -142,13 +129,51 @@ a.disabled {
     border-top: 0;
 }
 
+.clickable-text {
+    cursor: pointer;
+    margin-left: 8px;
+}
+
 /* Crop checkbox label text if it is too long */
 ::ng-deep .mat-checkbox-layout {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 ::ng-deep .mat-checkbox-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Layout for multiple columns */
+.columns-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+/* A single column */
+.column {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* A single cell in a column */
+.column-cell {
+    padding: 0rem 1rem;
+    gap: 0.25rem;
+    min-width: 0; 
+}
+
+@media (max-width: 800px) {
+  .columns-layout {
+    flex-direction: column;
+  }
+
+  .column {
+    width: 100%;
+  }
 }

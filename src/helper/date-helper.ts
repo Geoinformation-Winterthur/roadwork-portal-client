@@ -55,4 +55,19 @@ export class DateHelper {
           event.value.setHours(12, 0, 0, 0);
         }
       }
+
+    /**
+     * Get the date of today with the daytime 12:00 to avoid change of the date due to time zones
+     *
+     * Examples:
+     * - now (pure):
+     *    2026-08-11T00:00:00+02:00 → 2026-08-10T22:00:00Z >> DAY HAS CHANGED!!
+     * - now with normalizer:
+     *    2026-08-11T12:00:00+02:00 → 2026-08-11T10:00:00Z >> SAME DAY
+     */
+    public static getNormalizedDateNow(): Date {
+        let now = new Date();
+        now.setHours(12, 0, 0, 0);
+        return now;
+    }
 }

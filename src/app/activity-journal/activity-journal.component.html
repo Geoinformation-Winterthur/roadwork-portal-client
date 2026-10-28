@@ -146,7 +146,7 @@
             <div class="cell">
                 <div class="title-row">
                     <h4>Bewiligungen</h4>
-                    <span class="mat-checkbox-label checkbox-text" (click)="onApprovalRequiredCollapseClick()">
+                    <span class="mat-checkbox-label clickable-text" (click)="onApprovalRequiredCollapseClick()">
                         {{ approvalRequiredExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
                     </span>
                 </div>
@@ -403,631 +403,634 @@
                 <mat-card-title>Zusätzliche Anforderungen</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            <div class="row two-columns">
-                <div class="cell">
-                    <div class="title-row">
-                        <h4>Aggloprogramm</h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onPartOfAggloprogramCollapseClick()">
-                            {{ partOfAggloprogramExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
-                    </div>
-                    
-                    <mat-checkbox
-                        (change)="onPartOfAggloprogramChange()"
-                        [(ngModel)]="roadWorkActivityFeature.properties.partOfAggloprogram"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Ist das Vorhaben im Aggloprogramm vorgesehen?
-                    </mat-checkbox>
-                    
-                    <div class="collapse-container" *ngIf="partOfAggloprogramExpanded">
-                        <div class="form-fields-split-three">
-                            <mat-form-field>
-                                <mat-label>Generation/Prio</mat-label>
-                                <input matInput type="number" min="0" max="999"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramGeneration"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </mat-form-field>
-
-                            <mat-form-field>
-                                <mat-label>Mn Nr.</mat-label>
-                                <input matInput type="text" maxlength="40"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramMeasureNumber"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </mat-form-field>
-
-                            <mat-form-field>
-                                <mat-label>ARE-Code</mat-label>
-                                <input matInput type="text" maxlength="40"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreCode"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </mat-form-field>
+            <div class="columns-layout">
+                <div class="column left">
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4>Aggloprogramm</h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onPartOfAggloprogramCollapseClick()">
+                                {{ partOfAggloprogramExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
                         </div>
-
-                        <mat-form-field>
-                            <mat-label>ARE-Bezeichnung</mat-label>
-                            <textarea matInput maxlength="255"
-                                cdkTextareaAutosize
-                                cdkAutosizeMaxRows="15"
-                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreDescription"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </textarea>
-                        </mat-form-field>
-
-                        <div class="form-fields-split-one-two">
-                            <mat-form-field>
-                                <mat-label>Umzusetzen bis</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
-                                    [matDatepicker]="aggloprogramDueDate"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #aggloprogramDueDate></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="aggloprogramDueDate"></mat-datepicker-toggle>
-                            </mat-form-field>
-
-                            <div class="flex-container">
-                                <mat-form-field class="flex-item">
-                                    <mat-label>Link</mat-label>
-                                    <input matInput type="text" maxlength="255"
-                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramLink"
+                        
+                        <mat-checkbox
+                            (change)="onPartOfAggloprogramChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.partOfAggloprogram"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            Ist das Vorhaben im Aggloprogramm vorgesehen?
+                        </mat-checkbox>
+                        
+                        <div class="collapse-container" *ngIf="partOfAggloprogramExpanded">
+                            <div class="form-fields-split-three">
+                                <mat-form-field>
+                                    <mat-label>Generation/Prio</mat-label>
+                                    <input matInput type="number" min="0" max="999"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramGeneration"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
-                                <a rel="noopener noreferrer"
-                                    [class.disabled]="!isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink)"
-                                    [href]="roadWorkActivityFeature.properties.aggloprogramLink"
-                                    [title]="isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink) ? roadWorkActivityFeature.properties.aggloprogramLink : 'Ungültige Link-Adresse'"
-                                    (click)="onAClick($event, roadWorkActivityFeature.properties.aggloprogramLink)"
-                                    target="_blank">
-                                    <mat-icon aria-label="Icon zeigt Link">open_in_new</mat-icon>
-                                </a>
+
+                                <mat-form-field>
+                                    <mat-label>Mn Nr.</mat-label>
+                                    <input matInput type="text" maxlength="40"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramMeasureNumber"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>ARE-Code</mat-label>
+                                    <input matInput type="text" maxlength="40"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreCode"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
                             </div>
-                        </div>
-
-                        <div class="form-fields-split-equal">
-                            <mat-form-field>
-                                <mat-label>Eingestellte Summe (Gesamtkosten in CHF)</mat-label>
-                                <input matInput
-                                    type="number"
-                                    min="0"
-                                    max="999999999"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostTotal"
-                                    placeholder="Betrag in CHF"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </mat-form-field>
 
                             <mat-form-field>
-                                <mat-label>Übernahme durch Kanton (in CHF)</mat-label>
-                                <input matInput
-                                    type="number"
-                                    min="0"
-                                    max="999999999"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostCanton"
-                                    placeholder="Betrag in CHF"
+                                <mat-label>ARE-Bezeichnung</mat-label>
+                                <textarea matInput maxlength="255"
+                                    cdkTextareaAutosize
+                                    cdkAutosizeMaxRows="15"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramAreDescription"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </mat-form-field>
-                        </div>
-
-                        <mat-form-field>
-                            <mat-label>Kommentar Agglo</mat-label>
-                            <textarea matInput maxlength="2048"
-                                cdkTextareaAutosize
-                                cdkAutosizeMaxRows="15"
-                                [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramComment"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            </textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-
-                <div class="cell">
-                    <div class="title-row">
-                        <h4>Vorstudie</h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onPrestudyCollapseClick()">
-                            {{ prestudyExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
-                    </div>
-
-                    <mat-checkbox
-                        (change)="onPrestudyChange()"
-                        [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Ist eine Vorstudie vorgesehen?
-                    </mat-checkbox>
-
-                    <div class="collapse-container" *ngIf="prestudyExpanded">
-                        <mat-form-field>
-                                <mat-label>Datum SKS</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
-                                    [matDatepicker]="prestudyDateSks"
-                                    [disabled]="true">
-                                <mat-datepicker #prestudyDateSks></mat-datepicker>
-                            </mat-form-field>
-
-                        <mat-form-field>
-                            <mat-label>Wieviel Zeit wird dafür benötigt?</mat-label>
-                            <input matInput type="text" maxlength="40"
-                                [(ngModel)]="roadWorkActivityFeature.properties.prestudyDuration"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <mat-label>Wer soll beauftragt werden?</mat-label>
-                            <input matInput type="text" maxlength="40"
-                                [(ngModel)]="roadWorkActivityFeature.properties.prestudyContractor"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <mat-label>Was soll in der Studie genau geklärt werden?</mat-label>
-                            <textarea matInput maxlength="255"
-                                cdkTextareaAutosize
-                                cdkAutosizeMaxRows="15"
-                                [(ngModel)]="roadWorkActivityFeature.properties.prestudyDetail"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </textarea>
-                        </mat-form-field>
+                            </mat-form-field>
 
-                        <div class ="form-fields-split-equal">
+                            <div class="form-fields-split-one-two">
+                                <mat-form-field>
+                                    <mat-label>Umzusetzen bis</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramDueDate"
+                                        [matDatepicker]="aggloprogramDueDate"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #aggloprogramDueDate></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="aggloprogramDueDate"></mat-datepicker-toggle>
+                                </mat-form-field>
+
+                                <div class="flex-row-center">
+                                    <mat-form-field class="flex-cell-fill">
+                                        <mat-label>Link</mat-label>
+                                        <input matInput type="text" maxlength="255"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramLink"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </mat-form-field>
+                                    <a rel="noopener noreferrer"
+                                        [class.disabled]="!isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink)"
+                                        [href]="roadWorkActivityFeature.properties.aggloprogramLink"
+                                        [title]="isValidUrl(roadWorkActivityFeature.properties.aggloprogramLink) ? roadWorkActivityFeature.properties.aggloprogramLink : 'Ungültige Link-Adresse'"
+                                        (click)="onAClick($event, roadWorkActivityFeature.properties.aggloprogramLink)"
+                                        target="_blank">
+                                        <mat-icon aria-label="Icon zeigt Link">open_in_new</mat-icon>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="form-fields-split-equal">
+                                <mat-form-field>
+                                    <mat-label>Eingestellte Summe (Gesamtkosten in CHF)</mat-label>
+                                    <input matInput
+                                        type="number"
+                                        min="0"
+                                        max="999999999"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostTotal"
+                                        placeholder="Betrag in CHF"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Übernahme durch Kanton (in CHF)</mat-label>
+                                    <input matInput
+                                        type="number"
+                                        min="0"
+                                        max="999999999"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramCostCanton"
+                                        placeholder="Betrag in CHF"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                            </div>
+
                             <mat-form-field>
-                                <mat-label>Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudyVkErConfirmed"
-                                    [matDatepicker]="prestudyVkErConfirmed"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                    matTooltip="Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert">
-                                <mat-datepicker #prestudyVkErConfirmed></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="prestudyVkErConfirmed"></mat-datepicker-toggle>
-                            </mat-form-field>
-
-                            <mat-form-field>
-                                <mat-label>VK ER für VS ist in Provis eröffnet</mat-label>
-                                <input matInput
-                                    type="number"
-                                    min="0"
-                                    max="999999999"
-                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudyVkErNumber"
-                                    placeholder="Nr. Hauptprojekt Provis"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                    matTooltip="VK ER für VS ist in Provis eröffnet">
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cell">
-                    <div class="title-row">
-                        <h4>Betroffene Infrastruktur</h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onAffectedInfrastructureCollapseClick()">
-                            {{ affectedInfrastructureExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
-                    </div>
-
-                    <div class="collapse-container" *ngIf="affectedInfrastructureExpanded">
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.busStopsSheltersAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Haltestation/Wartehallen
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.structuresAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                            matTooltip="Kunstbauten (Brücken, Stege, Unterführungen, Durchlässe, Treppen oder ähnliches)">
-                            Kunstbauten (Brücken, Stege, Unterführungen, Durchlässe, Treppen, etc.)
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.roadDrainageAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Strassenentwässerung
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.houseConnectionsAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Privater Hausanschluss (GAL)
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.wasteFacilitiesAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Entsorgungseinrichtungen (UFC/Sammelstellen)
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.technicalInstallationsAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Technische Einrichtungen wie LSA, usw.
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.treesAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Neue Bäume / Umsetzen von Bäumen
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.streetFurnitureAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Bänke/ Stadtmobiliar
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.urbanClimateAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Stadtklima
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.subjectToDepaving"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Entsiegelung
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.pedestriansCyclingAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Fuss-/Veloverkehr
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.disabilityEqualityAffected"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Behindertengleichstellungsgesetz (BehiG)
-                        </mat-checkbox>
-                        
-                        <mat-checkbox
-                            [(ngModel)]="roadWorkActivityFeature.properties.isTrafficRegulationRequired"
-                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                            Ist eine Verkehrsanordnung vorgesehen?
-                        </mat-checkbox>
-                    </div>
-                </div>
-                
-                <div class="cell">
-                    <div class="title-row">
-                        <h4>Private</h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onPrivateEntityAffectedCollapseClick()">
-                            {{ privateEntityAffectedExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
-                    </div>
-
-                    <mat-checkbox
-                        (change)="onPrivateEntityAffectedChange()"
-                        [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAffected"
-                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        Sind Private betroffen?
-                    </mat-checkbox>
-
-                    <div class="collapse-container" *ngIf="privateEntityAffectedExpanded">
-                        <mat-form-field>
-                            <mat-label>In welchem Umfang/mit welchem Auftrag?</mat-label>
-                            <textarea matInput maxlength="255"
-                                cdkTextareaAutosize
-                                cdkAutosizeMaxRows="15"
-                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityExtent"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                <mat-label>Kommentar Agglo</mat-label>
+                                <textarea matInput maxlength="2048"
+                                    cdkTextareaAutosize
+                                    cdkAutosizeMaxRows="15"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.aggloprogramComment"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </textarea>
-                        </mat-form-field>
-
-                        <mat-form-field>
-                            <mat-label>Haben diese eigene Projektbaubedürfnisse?</mat-label>
-                            <textarea matInput maxlength="255"
-                                cdkTextareaAutosize
-                                cdkAutosizeMaxRows="15"
-                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityRequirements"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                </textarea>
-                        </mat-form-field>
-
-                        <div class="form-fields-split-equal">
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAcquisition"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                matTooltip="Sind diese durch Rechts-/Landerwerb betroffen?">
-                                Sind diese durch Rechts-/Landerwerb betroffen?
-                            </mat-checkbox>
-
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.privateEntityIsInitiator"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                Ist Privater = Auslöser?
-                            </mat-checkbox>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cell">
-                    <div class="title-row">
-                        <h4>Provis (Abacus)</h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onProvisCollapseClick()">
-                            {{ provisExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
-                    </div>
-
-                    <div class="collapse-container" *ngIf="provisExpanded">
-                        <mat-form-field>
-                            <mat-label>Das Vorhaben wurde in Provis (Abacus) eröffnet</mat-label>
-                            <input matInput
-                                type="number"
-                                min="0"
-                                max="999999999"
-                                [(ngModel)]="roadWorkActivityFeature.properties.erpNumber"
-                                placeholder="Nr. Hauptprojekt Provis"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                        </mat-form-field>
-                    </div>
-                </div>
-
-                <div class="cell">
-                    <div class="title-row">
-                        <h4>Projektierungsauftrag</h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onProjectPlanningCollapseClick()">
-                            {{ projectPlanningExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
-                    </div>
-
-                    <div class="collapse-container" *ngIf="projectPlanningExpanded">
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.coreDrillingContracted"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onCoreDrillingContractedChange()">
-                                Bohrkern beauftragt
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.coreDrillingContracted ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateCoreDrillingContracted"
-                                    [matDatepicker]="dateCoreDrillingContracted"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateCoreDrillingContracted></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateCoreDrillingContracted"></mat-datepicker-toggle>
                             </mat-form-field>
                         </div>
-                        
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.quotesRequested"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onQuotesRequestedChange()">
-                                Bestellungen eingeholt
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.quotesRequested ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesRequested"
-                                    [matDatepicker]="dateQuotesRequested"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateQuotesRequested></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateQuotesRequested"></mat-datepicker-toggle>
-                            </mat-form-field>
-                        </div>
-                        
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.quotesReviewed"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onQuotesReviewedChange()">
-                                Bestellungen geprüft
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.quotesReviewed ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesReviewed"
-                                    [matDatepicker]="dateQuotesReviewed"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateQuotesReviewed></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateQuotesReviewed"></mat-datepicker-toggle>
-                            </mat-form-field>
-                        </div>
-
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.staffResourcesAprConfirmed"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onStaffResourcesAprConfirmedChange()"
-                                matTooltip="Personelle Ressourcen APR (ab Phase 3) abgesprochen">
-                                Personelle Ressourcen APR (ab Phase 3) abgesprochen
-                            </mat-checkbox>
-                            
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.staffResourcesAprConfirmed ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateStaffResourcesAprConfirmed"
-                                    [matDatepicker]="dateStaffResourcesAprConfirmed"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateStaffResourcesAprConfirmed></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateStaffResourcesAprConfirmed"></mat-datepicker-toggle>
-                            </mat-form-field>
-                        </div>
-
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox class="truncate-field"
-                                [(ngModel)]="roadWorkActivityFeature.properties.costEstimateAprConfirmed"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onCostEstimateAprConfirmedChange()"
-                                    matTooltip="Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen">
-                                Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.costEstimateAprConfirmed ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateCostEstimateAprConfirmed"
-                                    [matDatepicker]="dateCostEstimateAprConfirmed"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateCostEstimateAprConfirmed></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateCostEstimateAprConfirmed"></mat-datepicker-toggle>
-                            </mat-form-field>
-                        </div>
-                        
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                [(ngModel)]="roadWorkActivityFeature.properties.afmChecked"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onAfmCheckedChange()">
-                                Check AfM
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.afmChecked ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateAfmChecked"
-                                    [matDatepicker]="dateAfmChecked"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateAfmChecked></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateAfmChecked"></mat-datepicker-toggle>
-                            </mat-form-field>
-                        </div>
-                        
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                (change)="onGisUpdatedChange()"
-                                [(ngModel)]="roadWorkActivityFeature.properties.gisUpdated"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
-                                (change)="onGisUpdatedChange()">
-                                Nachführung in GIS
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.gisUpdated ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateGisUpdated"
-                                    [matDatepicker]="dateGisUpdated"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateGisUpdated></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateGisUpdated"></mat-datepicker-toggle>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cell">
-                    <div class="title-row">
-                        <h4 matTooltip="APK erstellt die Ausgabengenehmigung und lässt diese durch C&F und den Rechtsdienst parallel vorprüfen. Das Ergebnis aus dieser Vorprüfung ist die verfügte Ausgabengenehmigung. Nach Konsolidierung wird diese dem Stab gesendet. Der Stab eröffnet dies in Fabasoft und startet die Prozessgenehmigung in Fabasoft. Nach Abschluss wird das visierte PDF zurück an APK gesendet. APK legt das Dokument in Fabasoft am richtigen Ort ab.">
-                            Ausgabengenehmigung
-                        </h4>
-                        <span class="mat-checkbox-label checkbox-text" (click)="onIssueApprovalCollapseClick()">
-                            {{ issueApprovalExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
-                        </span>
                     </div>
                     
-                    <div class="collapse-container" *ngIf="issueApprovalExpanded">
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                (change)="onPreReviewedByCfChange()"
-                                [(ngModel)]="roadWorkActivityFeature.properties.preReviewedByCf"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                Durch C&F vorgeprüft
-                            </mat-checkbox>
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4>Betroffene Infrastruktur</h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onAffectedInfrastructureCollapseClick()">
+                                {{ affectedInfrastructureExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
+                        </div>
 
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.preReviewedByCf ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
+                        <div class="collapse-container" *ngIf="affectedInfrastructureExpanded">
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.busStopsSheltersAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Haltestation/Wartehallen
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.structuresAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                matTooltip="Kunstbauten (Brücken, Stege, Unterführungen, Durchlässe, Treppen oder ähnliches)">
+                                Kunstbauten (Brücken, Stege, Unterführungen, Durchlässe, Treppen, etc.)
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.roadDrainageAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Strassenentwässerung
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.houseConnectionsAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Privater Hausanschluss (GAL)
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.wasteFacilitiesAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Entsorgungseinrichtungen (UFC/Sammelstellen)
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.technicalInstallationsAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Technische Einrichtungen wie LSA, usw.
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.treesAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Neue Bäume / Umsetzen von Bäumen
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.streetFurnitureAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Bänke/ Stadtmobiliar
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.urbanClimateAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Stadtklima
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.subjectToDepaving"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Entsiegelung
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.pedestriansCyclingAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Fuss-/Veloverkehr
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.disabilityEqualityAffected"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Behindertengleichstellungsgesetz (BehiG)
+                            </mat-checkbox>
+                            
+                            <mat-checkbox
+                                [(ngModel)]="roadWorkActivityFeature.properties.isTrafficRegulationRequired"
+                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                Ist eine Verkehrsanordnung vorgesehen?
+                            </mat-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4>Provis (Abacus)</h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onProvisCollapseClick()">
+                                {{ provisExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
+                        </div>
+
+                        <div class="collapse-container" *ngIf="provisExpanded">
+                            <mat-form-field>
+                                <mat-label>Das Vorhaben wurde in Provis (Abacus) eröffnet</mat-label>
                                 <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.datePreReviewedByCf"
-                                    [matDatepicker]="datePreReviewedByCf"
-                                    (dateChange)="normalizeDate($event)"
+                                    type="number"
+                                    min="0"
+                                    max="999999999"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.erpNumber"
+                                    placeholder="Nr. Hauptprojekt Provis"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #datePreReviewedByCf></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="datePreReviewedByCf"></mat-datepicker-toggle>
                             </mat-form-field>
                         </div>
-                        
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                (change)="onPreReviewedByRdChange()"
-                                [(ngModel)]="roadWorkActivityFeature.properties.preReviewedByRd"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                Durch RD vorgeprüft
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.preReviewedByRd ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.datePreReviewedByRd"
-                                    [matDatepicker]="datePreReviewedByRd"
-                                    (dateChange)="normalizeDate($event)"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #datePreReviewedByRd></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="datePreReviewedByRd"></mat-datepicker-toggle>
-                            </mat-form-field>
+                    </div>
+                    
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4 matTooltip="APK erstellt die Ausgabengenehmigung und lässt diese durch C&F und den Rechtsdienst parallel vorprüfen. Das Ergebnis aus dieser Vorprüfung ist die verfügte Ausgabengenehmigung. Nach Konsolidierung wird diese dem Stab gesendet. Der Stab eröffnet dies in Fabasoft und startet die Prozessgenehmigung in Fabasoft. Nach Abschluss wird das visierte PDF zurück an APK gesendet. APK legt das Dokument in Fabasoft am richtigen Ort ab.">
+                                Ausgabengenehmigung
+                            </h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onIssueApprovalCollapseClick()">
+                                {{ issueApprovalExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
                         </div>
                         
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                (change)="onFormallyApprovedChange()"
-                                [(ngModel)]="roadWorkActivityFeature.properties.formallyApproved"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                Ist verfügt
-                            </mat-checkbox>
-
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.formallyApproved ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateFormallyApproved"
-                                    [matDatepicker]="dateFormallyApproved"
-                                    (dateChange)="normalizeDate($event)"
+                        <div class="collapse-container" *ngIf="issueApprovalExpanded">
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    (change)="onPreReviewedByCfChange()"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.preReviewedByCf"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateFormallyApproved></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateFormallyApproved"></mat-datepicker-toggle>
-                            </mat-form-field>
+                                    Durch C&F vorgeprüft
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.preReviewedByCf ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.datePreReviewedByCf"
+                                        [matDatepicker]="datePreReviewedByCf"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #datePreReviewedByCf></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="datePreReviewedByCf"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    (change)="onPreReviewedByRdChange()"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.preReviewedByRd"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    Durch RD vorgeprüft
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.preReviewedByRd ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.datePreReviewedByRd"
+                                        [matDatepicker]="datePreReviewedByRd"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #datePreReviewedByRd></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="datePreReviewedByRd"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    (change)="onFormallyApprovedChange()"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.formallyApproved"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    Ist verfügt
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.formallyApproved ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateFormallyApproved"
+                                        [matDatepicker]="dateFormallyApproved"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateFormallyApproved></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateFormallyApproved"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    (change)="onFiledInFabasoftChange()"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.filedInFabasoft"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    Abgelegt in Fabasoft
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.filedInFabasoft ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateFiledInFabasoft"
+                                        [matDatepicker]="dateFiledInFabasoft"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateFiledInFabasoft></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateFiledInFabasoft"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
                         </div>
-                        
-                        <div class="form-fields-split-two-one">
-                            <mat-checkbox
-                                (change)="onFiledInFabasoftChange()"
-                                [(ngModel)]="roadWorkActivityFeature.properties.filedInFabasoft"
-                                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                Abgelegt in Fabasoft
-                            </mat-checkbox>
+                    </div>
+                </div>
+                <div class="column right">
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4>Vorstudie</h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onPrestudyCollapseClick()">
+                                {{ prestudyExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
+                        </div>
 
-                            <mat-form-field floatLabel="never" class="date-field-small"
-                                [style.visibility]="roadWorkActivityFeature.properties.filedInFabasoft ? 'visible' : 'hidden'">
-                                <mat-label>Datum</mat-label>
-                                <input matInput
-                                    [(ngModel)]="roadWorkActivityFeature.properties.dateFiledInFabasoft"
-                                    [matDatepicker]="dateFiledInFabasoft"
-                                    (dateChange)="normalizeDate($event)"
+                        <mat-checkbox
+                            (change)="onPrestudyChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.prestudy"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            Ist eine Vorstudie vorgesehen?
+                        </mat-checkbox>
+
+                        <div class="collapse-container" *ngIf="prestudyExpanded">
+                            <mat-form-field>
+                                    <mat-label>Datum SKS</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
+                                        [matDatepicker]="prestudyDateSks"
+                                        [disabled]="true">
+                                    <mat-datepicker #prestudyDateSks></mat-datepicker>
+                                </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-label>Wieviel Zeit wird dafür benötigt?</mat-label>
+                                <input matInput type="text" maxlength="40"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudyDuration"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
-                                <mat-datepicker #dateFiledInFabasoft></mat-datepicker>
-                                <mat-datepicker-toggle matSuffix
-                                    [for]="dateFiledInFabasoft"></mat-datepicker-toggle>
                             </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-label>Wer soll beauftragt werden?</mat-label>
+                                <input matInput type="text" maxlength="40"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudyContractor"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-label>Was soll in der Studie genau geklärt werden?</mat-label>
+                                <textarea matInput maxlength="255"
+                                    cdkTextareaAutosize
+                                    cdkAutosizeMaxRows="15"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.prestudyDetail"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                            </mat-form-field>
+
+                            <div class ="form-fields-split-equal">
+                                <mat-form-field>
+                                    <mat-label>Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.prestudyVkErConfirmed"
+                                        [matDatepicker]="prestudyVkErConfirmed"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                        matTooltip="Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen und reserviert">
+                                    <mat-datepicker #prestudyVkErConfirmed></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="prestudyVkErConfirmed"></mat-datepicker-toggle>
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>VK ER für VS ist in Provis eröffnet</mat-label>
+                                    <input matInput
+                                        type="number"
+                                        min="0"
+                                        max="999999999"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.prestudyVkErNumber"
+                                        placeholder="Nr. Hauptprojekt Provis"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                        matTooltip="VK ER für VS ist in Provis eröffnet">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4>Private</h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onPrivateEntityAffectedCollapseClick()">
+                                {{ privateEntityAffectedExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
+                        </div>
+
+                        <mat-checkbox
+                            (change)="onPrivateEntityAffectedChange()"
+                            [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAffected"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                            Sind Private betroffen?
+                        </mat-checkbox>
+
+                        <div class="collapse-container" *ngIf="privateEntityAffectedExpanded">
+                            <mat-form-field>
+                                <mat-label>In welchem Umfang/mit welchem Auftrag?</mat-label>
+                                <textarea matInput maxlength="255"
+                                    cdkTextareaAutosize
+                                    cdkAutosizeMaxRows="15"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.privateEntityExtent"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                            </mat-form-field>
+
+                            <mat-form-field>
+                                <mat-label>Haben diese eigene Projektbaubedürfnisse?</mat-label>
+                                <textarea matInput maxlength="255"
+                                    cdkTextareaAutosize
+                                    cdkAutosizeMaxRows="15"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.privateEntityRequirements"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                            </mat-form-field>
+
+                            <div class="form-fields-split-equal">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.privateEntityAcquisition"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    matTooltip="Sind diese durch Rechts-/Landerwerb betroffen?">
+                                    Sind diese durch Rechts-/Landerwerb betroffen?
+                                </mat-checkbox>
+
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.privateEntityIsInitiator"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    Ist Privater = Auslöser?
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column-cell">
+                        <div class="title-row">
+                            <h4>Projektierungsauftrag</h4>
+                            <span class="mat-checkbox-label clickable-text" (click)="onProjectPlanningCollapseClick()">
+                                {{ projectPlanningExpanded ? '▼ (einklappen)' : '▶ (erweiterten)' }}
+                            </span>
+                        </div>
+
+                        <div class="collapse-container" *ngIf="projectPlanningExpanded">
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.coreDrillingContracted"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onCoreDrillingContractedChange()">
+                                    Bohrkern beauftragt
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.coreDrillingContracted ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateCoreDrillingContracted"
+                                        [matDatepicker]="dateCoreDrillingContracted"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateCoreDrillingContracted></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateCoreDrillingContracted"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.quotesRequested"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onQuotesRequestedChange()">
+                                    Bestellungen eingeholt
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.quotesRequested ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesRequested"
+                                        [matDatepicker]="dateQuotesRequested"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateQuotesRequested></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateQuotesRequested"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.quotesReviewed"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onQuotesReviewedChange()">
+                                    Bestellungen geprüft
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.quotesReviewed ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateQuotesReviewed"
+                                        [matDatepicker]="dateQuotesReviewed"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateQuotesReviewed></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateQuotesReviewed"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.staffResourcesAprConfirmed"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onStaffResourcesAprConfirmedChange()"
+                                    matTooltip="Personelle Ressourcen APR (ab Phase 3) abgesprochen">
+                                    Personelle Ressourcen APR (ab Phase 3) abgesprochen
+                                </mat-checkbox>
+                                
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.staffResourcesAprConfirmed ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateStaffResourcesAprConfirmed"
+                                        [matDatepicker]="dateStaffResourcesAprConfirmed"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateStaffResourcesAprConfirmed></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateStaffResourcesAprConfirmed"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.costEstimateAprConfirmed"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onCostEstimateAprConfirmedChange()"
+                                        matTooltip="Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen">
+                                    Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.costEstimateAprConfirmed ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateCostEstimateAprConfirmed"
+                                        [matDatepicker]="dateCostEstimateAprConfirmed"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateCostEstimateAprConfirmed></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateCostEstimateAprConfirmed"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    [(ngModel)]="roadWorkActivityFeature.properties.afmChecked"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onAfmCheckedChange()">
+                                    Check AfM
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.afmChecked ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateAfmChecked"
+                                        [matDatepicker]="dateAfmChecked"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateAfmChecked></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateAfmChecked"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
+                            
+                            <div class="form-fields-split-two-one">
+                                <mat-checkbox
+                                    (change)="onGisUpdatedChange()"
+                                    [(ngModel)]="roadWorkActivityFeature.properties.gisUpdated"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    (change)="onGisUpdatedChange()">
+                                    Nachführung in GIS
+                                </mat-checkbox>
+
+                                <mat-form-field floatLabel="never" class="date-field-small"
+                                    [style.visibility]="roadWorkActivityFeature.properties.gisUpdated ? 'visible' : 'hidden'">
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.dateGisUpdated"
+                                        [matDatepicker]="dateGisUpdated"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #dateGisUpdated></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="dateGisUpdated"></mat-datepicker-toggle>
+                                </mat-form-field>
+                            </div>
                         </div>
                     </div>
                 </div>

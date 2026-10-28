@@ -143,9 +143,7 @@ export class ActivityJournalComponent implements OnInit {
   private getDateNowOrUndefined(checkedField: boolean): Date | undefined {
     if (checkedField)
     {
-      const date = new Date();
-      date.setHours(12, 0, 0, 0); // avoid date change due to timezone, see date-helper.normalizeDate
-      return date;
+      return DateHelper.getNormalizedDateNow(); // avoid date change due to timezone, see date-helper.normalizeDate
     }
     else
     {
