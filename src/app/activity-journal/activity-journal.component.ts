@@ -151,6 +151,13 @@ export class ActivityJournalComponent implements OnInit {
     }
   }
 
+  onPrestudyVkErConfirmedChange() {
+    if (this.roadWorkActivityFeature) {
+      this.roadWorkActivityFeature.properties.datePrestudyVkErConfirmed =
+        this.getDateNowOrUndefined(this.roadWorkActivityFeature.properties.prestudyVkErConfirmed);
+    }
+  }
+
   onCoreDrillingContractedChange() {
     if (this.roadWorkActivityFeature) {
       this.roadWorkActivityFeature.properties.dateCoreDrillingContracted =

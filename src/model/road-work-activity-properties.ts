@@ -128,8 +128,8 @@ export class RoadWorkActivityProperties {
     dateStartCoordinated?: Date; // Phase: koordiniert (Phase 12)
     isOksActive?: boolean = false;
     isOksActiveLastModified?: Date // System & Export only
-    costLastModified?: Date // System & Export only
-    costLastModifiedBy?: User
+    costLastModified?: Date; // System & Export only
+    costLastModifiedBy?: User;
 
     // Aggloprogramm (#617, 2026.4)
     partOfAggloprogram: boolean = false;
@@ -138,7 +138,7 @@ export class RoadWorkActivityProperties {
     aggloprogramLink: string = "";
     aggloprogramAreCode: string = "";
     aggloprogramAreDescription: string = "";
-    aggloprogramDueDate?: Date // Modul Journal, Agglo: "Umzusetzen bis"
+    aggloprogramDueDate?: Date; // Modul Journal, Agglo: "Umzusetzen bis"
     aggloprogramCostTotal?: number;
     aggloprogramCostCanton?: number;
     aggloprogramComment: string = "";
@@ -151,7 +151,8 @@ export class RoadWorkActivityProperties {
     prestudyDuration: string = "";
     prestudyContractor: string = "";
     prestudyDetail: string = "";
-    prestudyVkErConfirmed?: Date // Modul Journal: "Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen.."
+    datePrestudyVkErConfirmed?: Date; // Modul Journal: "Finanzielle Ressourcen für Phase 2 (VK ER) abgesprochen.."
+    prestudyVkErConfirmed: boolean = false;
     prestudyVkErNumber?: number;
 
     // Affected entities (#622, 2026.4)
@@ -180,9 +181,9 @@ export class RoadWorkActivityProperties {
 
     // Ressources (#625, 2026.4)
     staffResourcesAprConfirmed: boolean = false;
-    dateStaffResourcesAprConfirmed?: Date // Modul Journal: "Personelle Ressourcen APR (ab Phase 3) abgesprochen"
+    dateStaffResourcesAprConfirmed?: Date; // Modul Journal: "Personelle Ressourcen APR (ab Phase 3) abgesprochen"
     costEstimateAprConfirmed: boolean = false;
-    dateCostEstimateAprConfirmed?: Date // Modul Journal: "Journal >> "Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen"
+    dateCostEstimateAprConfirmed?: Date; // Modul Journal: "Journal >> "Kostenschätzung mit APR (Phase 3 bis 5) abgesprochen"
 
     // Engineering contract (#626, 2026.4)
     coreDrillingContracted: boolean = false;
@@ -190,19 +191,19 @@ export class RoadWorkActivityProperties {
     quotesRequested: boolean = false;
     quotesReviewed: boolean = false;
     afmChecked: boolean = false;
-    dateAfmChecked?: Date
+    dateAfmChecked?: Date;
     gisUpdated: boolean = false;
-    dateGisUpdated?: Date 
+    dateGisUpdated?: Date;
 
     // Approval (#626, 2026.4)
     preReviewedByCf: boolean = false;
-    datePreReviewedByCf?: Date
+    datePreReviewedByCf?: Date;
     preReviewedByRd: boolean = false;
-    datePreReviewedByRd?: Date
+    datePreReviewedByRd?: Date;
     formallyApproved: boolean = false;
-    dateFormallyApproved?: Date
+    dateFormallyApproved?: Date;
     filedInFabasoft: boolean = false;
-    dateFiledInFabasoft?: Date
+    dateFiledInFabasoft?: Date;
 
     // Additional attributes for journal (#616, 2026.4)
     plannedTasks: string = "";
