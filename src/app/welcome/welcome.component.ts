@@ -106,6 +106,24 @@ export class WelcomeComponent implements OnInit {
           reporting: '12/Stellungnahme',
           coordinated: '12/koordiniert',
           prestudy: '21/Vorstudie',
+          planning_p1: '1/Strategische Planung',
+          initiation_p13: '13/Initialisieren',
+          prestudy_p2: '2/Vorstudie',
+          design_p3: '3/Projektierung',
+          predesign_p31: '31/Vorprojekt',
+          design_p32: '32/Bauprojekt',
+          approval_p33: '33/Bewilligungsverfahren',
+          tendering_p4: '4/Ausschreibung',
+          tendering_p41: '41/Ausschreibung / Vergabe',
+          construction_p5: '5/Realisierung',
+          executiondesign_p51: '51/Ausführungsprojekt',
+          execution_p52: '52/Ausführung',
+          commissioning_p53: '53/Inbetriebnahme',
+          operations_p6: '6/Bewirtschaftung',
+          closed_p61: '61/Abgerechnet',
+          archived: 'Archiviert',
+          need_archived: 'Bedarf archiviert',
+          deferred: 'zurückgestellt',
           suspended: 'sistiert'
         };
 
@@ -156,6 +174,78 @@ export class WelcomeComponent implements OnInit {
           prestudy: {
             label: '21/Vorstudie',
             color: '#81c784'
+          },
+          planning_p1: {
+            label: '1/Strategische Planung',
+            color: '#b3e5fc'
+          },
+          initiation_p13: {
+            label: '13/Initialisieren',
+            color: '#90caf9'
+          },
+          prestudy_p2: {
+            label: '2/Vorstudie',
+            color: '#81c784'
+          },
+          design_p3: {
+            label: '3/Projektierung',
+            color: '#ffcc80'
+          },
+          predesign_p31: {
+            label: '31/Vorprojekt',
+            color: '#ffcc80'
+          },
+          design_p32: {
+            label: '32/Bauprojekt',
+            color: '#ffcc80'
+          },
+          approval_p33: {
+            label: '33/Bewilligungsverfahren',
+            color: '#ffcc80'
+          },
+          tendering_p4: {
+            label: '4/Ausschreibung',
+            color: '#ffe082'
+          },
+          tendering_p41: {
+            label: '41/Ausschreibung / Vergabe',
+            color: '#ffe082'
+          },
+          construction_p5: {
+            label: '5/Realisierung',
+            color: '#ffab91'
+          },
+          executiondesign_p51: {
+            label: '51/Ausführungsprojekt',
+            color: '#ffab91'
+          },
+          execution_p52: {
+            label: '52/Ausführung',
+            color: '#ffab91'
+          },
+          commissioning_p53: {
+            label: '53/Inbetriebnahme',
+            color: '#ffab91'
+          },
+          operations_p6: {
+            label: '6/Bewirtschaftung',
+            color: '#ce93d8'
+          },
+          closed_p61: {
+            label: '61/Abgerechnet',
+            color: '#ce93d8'
+          },
+          archived: {
+            label: 'Archiviert',
+            color: '#e0e0e0'
+          },
+          need_archived: {
+            label: 'Bedarf archiviert',
+            color: '#e0e0e0'
+          },
+          deferred: {
+            label: 'zurückgestellt',
+            color: '#e0e0e0'
           },
           suspended: {
             label: 'sistiert',
@@ -413,6 +503,24 @@ export class WelcomeComponent implements OnInit {
           reporting: '12/Stellungnahme',
           coordinated: '12/koordiniert',
           prestudy: '21/Vorstudie',
+          planning_p1: '1/Strategische Planung',
+          initiation_p13: '13/Initialisieren',
+          prestudy_p2: '2/Vorstudie',
+          design_p3: '3/Projektierung',
+          predesign_p31: '31/Vorprojekt',
+          design_p32: '32/Bauprojekt',
+          approval_p33: '33/Bewilligungsverfahren',
+          tendering_p4: '4/Ausschreibung',
+          tendering_p41: '41/Ausschreibung / Vergabe',
+          construction_p5: '5/Realisierung',
+          executiondesign_p51: '51/Ausführungsprojekt',
+          execution_p52: '52/Ausführung',
+          commissioning_p53: '53/Inbetriebnahme',
+          operations_p6: '6/Bewirtschaftung',
+          closed_p61: '61/Abgerechnet',
+          archived: 'Archiviert',
+          need_archived: 'Bedarf archiviert',
+          deferred: 'zurückgestellt',
           suspended: 'sistiert'
         };
 
@@ -463,6 +571,78 @@ export class WelcomeComponent implements OnInit {
           prestudy: {
             label: '21/Vorstudie',
             color: '#81c784'
+          },
+          planning_p1: {
+            label: '1/Strategische Planung',
+            color: '#b3e5fc'
+          },
+          initiation_p13: {
+            label: '13/Initialisieren',
+            color: '#90caf9'
+          },
+          prestudy_p2: {
+            label: '2/Vorstudie',
+            color: '#81c784'
+          },
+          design_p3: {
+            label: '3/Projektierung',
+            color: '#ffcc80'
+          },
+          predesign_p31: {
+            label: '31/Vorprojekt',
+            color: '#ffcc80'
+          },
+          design_p32: {
+            label: '32/Bauprojekt',
+            color: '#ffcc80'
+          },
+          approval_p33: {
+            label: '33/Bewilligungsverfahren',
+            color: '#ffcc80'
+          },
+          tendering_p4: {
+            label: '4/Ausschreibung',
+            color: '#ffe082'
+          },
+          tendering_p41: {
+            label: '41/Ausschreibung / Vergabe',
+            color: '#ffe082'
+          },
+          construction_p5: {
+            label: '5/Realisierung',
+            color: '#ffab91'
+          },
+          executiondesign_p51: {
+            label: '51/Ausführungsprojekt',
+            color: '#ffab91'
+          },
+          execution_p52: {
+            label: '52/Ausführung',
+            color: '#ffab91'
+          },
+          commissioning_p53: {
+            label: '53/Inbetriebnahme',
+            color: '#ffab91'
+          },
+          operations_p6: {
+            label: '6/Bewirtschaftung',
+            color: '#ce93d8'
+          },
+          closed_p61: {
+            label: '61/Abgerechnet',
+            color: '#ce93d8'
+          },
+          archived: {
+            label: 'Archiviert',
+            color: '#e0e0e0'
+          },
+          need_archived: {
+            label: 'Bedarf archiviert',
+            color: '#e0e0e0'
+          },
+          deferred: {
+            label: 'zurückgestellt',
+            color: '#e0e0e0'
           },
           suspended: {
             label: 'sistiert',
