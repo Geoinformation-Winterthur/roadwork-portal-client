@@ -9,37 +9,72 @@
       </h2>
 
       <div class="page-actions">
+        <button mat-stroked-button class="action-button" type="button"
+                (click)="toggleGridVisibility()">
+          {{ showGrid ? 'Tabelle ausblenden' : 'Tabelle anzeigen' }}
+        </button>
+        <button mat-stroked-button class="action-button" type="button"
+                (click)="toggleChartVisibility()">
+          {{ showChart ? 'Zeitlinie ausblenden' : 'Zeitlinie anzeigen' }}
+        </button>
+        <div class="gantt-toolbar-controls" *ngIf="showChart">
+          <label for="gantt-row-count">Sichtbare Projekte:</label>
+          <select id="gantt-row-count" [value]="ganttVisibleRows"
+                  (change)="ganttSetRowCount($any($event.target).value)">
+            <option *ngFor="let count of ganttVisibleChoices" [value]="count">{{ count === 0 ? 'Alle (kompakt)' : count }}</option>
+          </select>
+
+          <label for="gantt-time-preset">Zeitraum:</label>
+          <select id="gantt-time-preset" [value]="ganttTimePreset"
+                  (change)="ganttSetTimePreset($any($event.target).value)">
+            <option value="three">3 Jahre</option>
+            <option value="five">5 Jahre</option>
+            <option value="seven">7 Jahre</option>
+            <option value="all">Gesamter Zeitraum</option>
+            <option *ngIf="ganttTimePreset === 'custom'" value="custom">Eigener Ausschnitt</option>
+          </select>
+
+          <button type="button" (click)="ganttResetSettings()">Standard</button>
+          <button type="button" (click)="ganttLegendExpanded = !ganttLegendExpanded">
+            {{ ganttLegendExpanded ? 'Termine ausblenden' : 'Termine und Ereignisse wählen' }} ({{ ganttSelected.size }})
+          </button>
+        </div>
         <button mat-stroked-button class="action-button" disabled
                 matTooltip="Die Word-Spezifikation folgt nach den Ferien">
           Mehrjahresplanung
         </button>
-
-        <button mat-stroked-button class="action-button"
-                type="button" (click)="exportCurrentViewAsImage()">
+        <button mat-stroked-button class="action-button" type="button"
+                (click)="exportCurrentViewAsImage()">
           Ansicht als Bild
         </button>
-
-        <button mat-stroked-button class="action-button"
-                type="button" (click)="toggleGridVisibility()">
-          {{ showGrid ? 'Tabelle ausblenden' : 'Tabelle anzeigen' }}
-        </button>
-
-        <button mat-stroked-button class="action-button"
-                type="button" (click)="toggleChartVisibility()">
-          {{ showChart ? 'Zeitlinie ausblenden' : 'Zeitlinie anzeigen' }}
-        </button>
-
       </div>
     </div>
     <p>
       <strong>{{ chartProjectCount }}</strong> Projekte und Bedarfe werden auf der Zeitlinie angezeigt,
-      weil sie Baubeginn und Bauende haben.
+      weil mindestens ein fachlicher Projekttermin vorhanden ist.
       <span *ngIf="missingTimelineDatesCount > 0">
-        <strong>{{ missingTimelineDatesCount }}</strong> Einträge ohne Bauzeitraum werden nur in der Liste angezeigt.
+        <strong>{{ missingTimelineDatesCount }}</strong> Einträge ohne Projekttermine werden nur in der Liste angezeigt.
       </span>
     </p>
   </header>
 
+<div class="gantt-selector" *ngIf="showChart && ganttLegendExpanded">
+  <div class="gantt-selector-actions">
+    <button type="button" (click)="ganttSelectAll(true)">Alle anzeigen</button>
+    <button type="button" (click)="ganttSelectAll(false)">Alle ausblenden</button>
+    <label><input type="checkbox" [checked]="ganttIsSelected('Projektzeitraum')" (change)="ganttToggle('Projektzeitraum', $any($event.target).checked)"> Projektzeitraum</label>
+    <label><input type="checkbox" [checked]="ganttIsSelected('Bauausführung')" (change)="ganttToggle('Bauausführung', $any($event.target).checked)"> Bauausführung</label>
+  </div>
+  <div class="gantt-selector-groups">
+    <fieldset *ngFor="let group of ganttGroups">
+      <legend>{{ group }}</legend>
+      <label *ngFor="let item of ganttMilestonesInGroup(group)">
+        <input type="checkbox" [checked]="ganttIsSelected(item.label)" (change)="ganttToggle(item.label, $any($event.target).checked)">
+        <span class="gantt-event-symbol" [style.color]="item.color">{{ ganttSymbolGlyph(item.symbol) }}</span>{{ item.label }}
+      </label>
+    </fieldset>
+  </div>
+</div>
 <div #analysisPanels class="analysis-panels">
 <div #gridContainer class="ag-theme-alpine project-grid"
      [style.flex-basis.%]="gridPanelPercent"
