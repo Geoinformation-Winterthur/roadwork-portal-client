@@ -18,6 +18,14 @@
           {{ showChart ? 'Zeitlinie ausblenden' : 'Zeitlinie anzeigen' }}
         </button>
         <div class="gantt-toolbar-controls" *ngIf="showChart">
+          <label for="gantt-color-mode">Balkenfarben:</label>
+          <select id="gantt-color-mode" [value]="ganttColorMode"
+                  (change)="ganttSetColorMode($any($event.target).value)"
+                  title="Projektzeitraum entweder einheitlich oder nach aktueller Projektphase einfärben">
+            <option value="period">Zeiträume</option>
+            <option value="phase">Aktuelle Phase</option>
+          </select>
+
           <label for="gantt-row-count">Sichtbare Projekte:</label>
           <select id="gantt-row-count" [value]="ganttVisibleRows"
                   (change)="ganttSetRowCount($any($event.target).value)">

@@ -88,6 +88,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   private resizeObserver?: ResizeObserver;
+  private chartResizeObserver?: ResizeObserver;
+  private shellResizeObserver?: ResizeObserver;
+  private layoutRefreshTimers: ReturnType<typeof setTimeout>[] = [];
   private panelResizeFrame?: number;
   private outerScrollContainer?: HTMLElement;
   private previousOuterOverflowY: string = '';
@@ -117,11 +120,11 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   private resizeHandler = () => {
-    this.updateHostHeight();
-    if (this.chartInstance) {
-      this.chartInstance.resize();
-    }
-    this.fitGridColumns();
+    this.schedulePanelResize();
+  };
+
+  private shellTransitionHandler = (): void => {
+    this.schedulePanelResize();
   };
 
   isLoading: boolean = false;
@@ -356,7 +359,33 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initChart();
     window.addEventListener('resize', this.resizeHandler);
 
-    requestAnimationFrame(() => this.schedulePanelResize());
+    // Recalculate the chart when its container receives its final size.
+    if (this.timelineChartRef?.nativeElement && typeof ResizeObserver !== 'undefined') {
+      this.chartResizeObserver = new ResizeObserver(() => {
+        if (this.showChart) {
+          this.schedulePanelResize();
+        }
+      });
+      this.chartResizeObserver.observe(this.timelineChartRef.nativeElement);
+    }
+
+    // Angular Material can finish positioning the route after the first render.
+    this.schedulePanelResize();
+    for (const delay of [0, 100, 300]) {
+      this.layoutRefreshTimers.push(setTimeout(() => this.schedulePanelResize(), delay));
+    }
+
+    // Watch the app shell as well as the chart: router transitions do not
+    // necessarily trigger a browser resize event.
+    if (typeof ResizeObserver !== 'undefined') {
+      this.shellResizeObserver = new ResizeObserver(() => this.schedulePanelResize());
+      const parent = this.hostElementRef.nativeElement.parentElement;
+      if (parent) this.shellResizeObserver.observe(parent);
+      if (this.outerScrollContainer && this.outerScrollContainer !== parent) {
+        this.shellResizeObserver.observe(this.outerScrollContainer);
+      }
+    }
+    this.outerScrollContainer?.addEventListener('transitionend', this.shellTransitionHandler);
 
     if (this.gridContainerRef?.nativeElement && typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => {
@@ -368,6 +397,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.resizeHandler);
+    this.outerScrollContainer?.removeEventListener('transitionend', this.shellTransitionHandler);
+    for (const timer of this.layoutRefreshTimers) clearTimeout(timer);
+    this.layoutRefreshTimers = [];
     document.removeEventListener('pointermove', this.splitterPointerMove);
     document.removeEventListener('pointerup', this.splitterPointerUp);
     document.body.style.cursor = '';
@@ -385,6 +417,14 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = undefined;
+    }
+    if (this.chartResizeObserver) {
+      this.chartResizeObserver.disconnect();
+      this.chartResizeObserver = undefined;
+    }
+    if (this.shellResizeObserver) {
+      this.shellResizeObserver.disconnect();
+      this.shellResizeObserver = undefined;
     }
 
     this.timelineChartRef?.nativeElement.removeEventListener('wheel', this.ganttWheelHandler, true);
@@ -462,6 +502,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.panelResizeFrame = requestAnimationFrame(() => {
       this.panelResizeFrame = undefined;
+      this.updateHostHeight();
       this.chartInstance?.resize();
       (this.gridApi as any)?.doLayout?.();
     });
@@ -491,6 +532,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedProject = undefined;
         this.syncChartWithGridState();
         this.isLoading = false;
+        this.schedulePanelResize();
       },
       error: (_error) => {
         this.roadWorkActivities = [];
@@ -634,6 +676,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly ganttGroups: string[] = ['Bedarf', 'Sitzungen', 'Vorstudie', 'Koordination', 'Projektierung', 'Bauausführung', 'Abschluss'];
   readonly ganttVisibleChoices: number[] = [10, 15, 25, 40, 60, 100, 0];
   ganttVisibleRows = 15;
+  ganttColorMode: 'period' | 'phase' = 'period';
   ganttTimePreset: 'three' | 'five' | 'seven' | 'all' | 'custom' = 'five';
   private ganttStoredXZoom: { start: number; end: number } | null = null;
   private readonly ganttSettingsKey = 'wikis.analyzes.gantt.v4';
@@ -673,6 +716,13 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderTimeline(this.getDisplayedRowsFromGrid());
   }
 
+  ganttSetColorMode(value: string): void {
+    if (value !== 'period' && value !== 'phase') { return; }
+    this.ganttColorMode = value;
+    this.ganttSaveSettings();
+    this.renderTimeline(this.getDisplayedRowsFromGrid());
+  }
+
   ganttSetRowCount(value: string): void {
     this.ganttVisibleRows = Math.max(0, Number(value) || 0);
     this.ganttSaveSettings();
@@ -685,6 +735,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       localStorage.setItem(this.ganttSettingsKey, JSON.stringify({
         selected: Array.from(this.ganttSelected),
         visibleRows: this.ganttVisibleRows,
+        colorMode: this.ganttColorMode,
         timePreset: this.ganttTimePreset,
         xZoom: this.ganttStoredXZoom
       }));
@@ -702,6 +753,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       if (Array.isArray(saved.selected)) {
         this.ganttSelected = new Set(saved.selected.filter((name: any) => typeof name === 'string' && validNames.has(name)));
       }
+      if (saved.colorMode === 'period' || saved.colorMode === 'phase') { this.ganttColorMode = saved.colorMode; }
       if (this.ganttVisibleChoices.includes(saved.visibleRows)) { this.ganttVisibleRows = saved.visibleRows; }
       if (['three', 'five', 'seven', 'all', 'custom'].includes(saved.timePreset)) { this.ganttTimePreset = saved.timePreset; }
       if (saved.xZoom && Number.isFinite(saved.xZoom.start) && Number.isFinite(saved.xZoom.end)) {
@@ -736,6 +788,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       'Baubeginn effektiv', 'Bauende effektiv', 'Abnahme / Garantie'
     ]);
     this.ganttVisibleRows = 15;
+    this.ganttColorMode = 'period';
     this.ganttTimePreset = 'five';
     this.ganttStoredXZoom = null;
     this.ganttSaveSettings();
@@ -862,7 +915,14 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           value: [index, bounds[0], bounds[1]],
           projectName: labels[index],
           source: name,
-          itemStyle: { color, opacity: 0.83 }
+          itemStyle: {
+            color: name === 'Projektzeitraum' && this.ganttColorMode === 'phase'
+              ? (this.getPhaseColor(project) || color)
+              : color,
+            opacity: 0.9
+          },
+          currentStatus: String(project.properties?.status || ''),
+          currentPhase: this.getPhase(project)
         };
       }).filter(Boolean);
       return {
@@ -872,7 +932,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           const start = api.coord([api.value(1), rowIndex]);
           const end = api.coord([api.value(2), rowIndex]);
           const rowHeight = api.size([0, 1])[1];
-          const height = Math.max(3, Math.min(12, rowHeight * barFraction));
+          const height = Math.max(2, Math.min(name === 'Projektzeitraum' ? 6 : 15, rowHeight * barFraction));
           const offset = name === 'Bauausführung' ? rowHeight * 0.15 : name === 'Projektzeitraum' ? -rowHeight * 0.12 : rowHeight * 0.04;
           const shape = echarts.graphic.clipRectByRect({
             x: Math.min(start[0], end[0]),
@@ -891,8 +951,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     };
 
-    const projectBar = makeBars('Projektzeitraum', '#168c93', 0.19, 2, (_props, range) => [range.start, range.end]);
-    const constructionBar = makeBars('Bauausführung', '#70ad47', 0.52, 4, (props) => {
+    const projectBar = makeBars('Projektzeitraum', '#168c93', 0.15, 2, (_props, range) => [range.start, range.end]);
+    const constructionBar = makeBars('Bauausführung', '#70ad47', 0.62, 4, (props) => {
       const start = this.ganttTimestamp(props.dateStartOfConstructionReal) || this.ganttTimestamp(props.startOfConstruction);
       const end = this.ganttTimestamp(props.dateEndOfConstructionReal) || this.ganttTimestamp(props.endOfConstruction);
       return start && end ? [start, end] : null;
@@ -991,7 +1051,10 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           if (params.seriesType === 'scatter') {
             return `<b>${safe(data.projectName)}</b><br/>${safe(data.milestoneLabel)}: ${this.formatDate(data.date)}<br/>BV-Nr: ${safe(data.roadWorkActivityNo)}`;
           }
-          return `<b>${safe(data.projectName)}</b><br/>${safe(data.source)}<br/>Start: ${this.formatDate(data.value[1])}<br/>Ende: ${this.formatDate(data.value[2])}`;
+          const phaseInfo = data.source === 'Projektzeitraum' && this.ganttColorMode === 'phase'
+            ? `<br/>Aktuelle Phase: ${safe(data.currentPhase || '-')} · Status: ${safe(data.currentStatus || '-')}`
+            : '';
+          return `<b>${safe(data.projectName)}</b><br/>${safe(data.source)}${phaseInfo}<br/>Start: ${this.formatDate(data.value[1])}<br/>Ende: ${this.formatDate(data.value[2])}`;
         }
       },
       series: [

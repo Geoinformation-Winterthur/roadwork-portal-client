@@ -1,8 +1,12 @@
 #mainbox {
     height: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
 }
 
 mat-toolbar {
+    flex: 0 0 auto;
     background-color: white;
     color:rgb(55,62,68);
 }
@@ -41,9 +45,11 @@ mat-toolbar {
 }
 
 mat-sidenav-container {
-    position: absolute;
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
     width: 100%;
-    height: 90%;
+    height: auto;
 }
 mat-sidenav-content {
     height:100%;
