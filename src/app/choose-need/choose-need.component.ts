@@ -115,15 +115,15 @@ export class ChooseNeedComponent implements OnInit {
         // Render colored pill for status indicator.
         const status = data?.properties?.status;
         const map: { [key: string]: { label: string; color: string } } = {
-          requirement: { label: '11/Bedarf', color: '#b3e5fc' },
-          review: { label: '12/Prüfung', color: '#90caf9' },
-          verified1: { label: '12/verifiziert-1', color: '#64b5f6' },
-          verified2: { label: '12/verifiziert-2', color: '#64b5f6' },
-          inconsult1: { label: '12/Bedarfsklärung - 1.Iteration', color: '#4fc3f7' },
-          inconsult2: { label: '12/Bedarfsklärung - 2.Iteration', color: '#4fc3f7' },
-          reporting: { label: '12/Stellungnahme', color: '#29b6f6' },
-          coordinated: { label: '12/koordiniert', color: '#0288d1' },
-          prestudy: { label: '21/Vorstudie', color: '#81c784' },
+          requirement: { label: '11/Bedarf', color: '#93e3ff' },
+          review: { label: '12/Prüfung', color: '#93e3ff' },
+          verified1: { label: '12/verifiziert-1', color: '#93e3ff' },
+          verified2: { label: '12/verifiziert-2', color: '#93e3ff' },
+          inconsult1: { label: '12/Bedarfsklärung - 1.Iteration', color: '#93e3ff' },
+          inconsult2: { label: '12/Bedarfsklärung - 2.Iteration', color: '#93e3ff' },
+          reporting: { label: '12/Stellungnahme', color: '#93e3ff' },
+          coordinated: { label: '12/koordiniert', color: '#93e3ff' },
+          prestudy: { label: '21/Vorstudie', color: '#3dc3f4' },
           suspended: { label: 'sistiert', color: '#e0e0e0' }
         };
 

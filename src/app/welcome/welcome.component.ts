@@ -141,99 +141,99 @@ export class WelcomeComponent implements OnInit {
         } = {
           requirement: {
             label: '11/Bedarf',
-            color: '#b3e5fc'
+            color: '#93e3ff'
           },
           review: {
             label: '12/Prüfung',
-            color: '#90caf9'
+            color: '#93e3ff'
           },
           verified1: {
             label: '12/verifiziert-1',
-            color: '#64b5f6'
+            color: '#93e3ff'
           },
           verified2: {
             label: '12/verifiziert-2',
-            color: '#64b5f6'
+            color: '#93e3ff'
           },
           inconsult1: {
             label: '12/Bedarfsklärung - 1.Iteration',
-            color: '#4fc3f7'
+            color: '#93e3ff'
           },
           inconsult2: {
             label: '12/Bedarfsklärung - 2.Iteration',
-            color: '#4fc3f7'
+            color: '#93e3ff'
           },
           reporting: {
             label: '12/Stellungnahme',
-            color: '#29b6f6'
+            color: '#93e3ff'
           },
           coordinated: {
             label: '12/koordiniert',
-            color: '#0288d1'
+            color: '#93e3ff'
           },
           prestudy: {
             label: '21/Vorstudie',
-            color: '#81c784'
+            color: '#3dc3f4'
           },
           planning_p1: {
             label: '1/Strategische Planung',
-            color: '#b3e5fc'
+            color: '#93e3ff'
           },
           initiation_p13: {
             label: '13/Initialisieren',
-            color: '#90caf9'
+            color: '#93e3ff'
           },
           prestudy_p2: {
             label: '2/Vorstudie',
-            color: '#81c784'
+            color: '#3dc3f4'
           },
           design_p3: {
             label: '3/Projektierung',
-            color: '#ffcc80'
+            color: '#ff9797'
           },
           predesign_p31: {
             label: '31/Vorprojekt',
-            color: '#ffcc80'
+            color: '#ff9797'
           },
           design_p32: {
             label: '32/Bauprojekt',
-            color: '#ffcc80'
+            color: '#ff9797'
           },
           approval_p33: {
             label: '33/Bewilligungsverfahren',
-            color: '#ffcc80'
+            color: '#c00000'
           },
           tendering_p4: {
             label: '4/Ausschreibung',
-            color: '#ffe082'
+            color: '#a9d08e'
           },
           tendering_p41: {
             label: '41/Ausschreibung / Vergabe',
-            color: '#ffe082'
+            color: '#a9d08e'
           },
           construction_p5: {
             label: '5/Realisierung',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           executiondesign_p51: {
             label: '51/Ausführungsprojekt',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           execution_p52: {
             label: '52/Ausführung',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           commissioning_p53: {
             label: '53/Inbetriebnahme',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           operations_p6: {
             label: '6/Bewirtschaftung',
-            color: '#ce93d8'
+            color: '#ed7d31'
           },
           closed_p61: {
             label: '61/Abgerechnet',
-            color: '#ce93d8'
+            color: '#ed7d31'
           },
           archived: {
             label: 'Archiviert',
@@ -538,99 +538,99 @@ export class WelcomeComponent implements OnInit {
         } = {
           requirement: {
             label: '11/Bedarf',
-            color: '#b3e5fc'
+            color: '#93e3ff'
           },
           review: {
             label: '12/Prüfung',
-            color: '#90caf9'
+            color: '#93e3ff'
           },
           verified1: {
             label: '12/verifiziert-1',
-            color: '#64b5f6'
+            color: '#93e3ff'
           },
           verified2: {
             label: '12/verifiziert-2',
-            color: '#64b5f6'
+            color: '#93e3ff'
           },
           inconsult1: {
             label: '12/Bedarfsklärung - 1.Iteration',
-            color: '#4fc3f7'
+            color: '#93e3ff'
           },
           inconsult2: {
             label: '12/Bedarfsklärung - 2.Iteration',
-            color: '#4fc3f7'
+            color: '#93e3ff'
           },
           reporting: {
             label: '12/Stellungnahme',
-            color: '#29b6f6'
+            color: '#93e3ff'
           },
           coordinated: {
             label: '12/koordiniert',
-            color: '#0288d1'
+            color: '#93e3ff'
           },
           prestudy: {
             label: '21/Vorstudie',
-            color: '#81c784'
+            color: '#3dc3f4'
           },
           planning_p1: {
             label: '1/Strategische Planung',
-            color: '#b3e5fc'
+            color: '#93e3ff'
           },
           initiation_p13: {
             label: '13/Initialisieren',
-            color: '#90caf9'
+            color: '#93e3ff'
           },
           prestudy_p2: {
             label: '2/Vorstudie',
-            color: '#81c784'
+            color: '#3dc3f4'
           },
           design_p3: {
             label: '3/Projektierung',
-            color: '#ffcc80'
+            color: '#ff9797'
           },
           predesign_p31: {
             label: '31/Vorprojekt',
-            color: '#ffcc80'
+            color: '#ff9797'
           },
           design_p32: {
             label: '32/Bauprojekt',
-            color: '#ffcc80'
+            color: '#ff9797'
           },
           approval_p33: {
             label: '33/Bewilligungsverfahren',
-            color: '#ffcc80'
+            color: '#c00000'
           },
           tendering_p4: {
             label: '4/Ausschreibung',
-            color: '#ffe082'
+            color: '#a9d08e'
           },
           tendering_p41: {
             label: '41/Ausschreibung / Vergabe',
-            color: '#ffe082'
+            color: '#a9d08e'
           },
           construction_p5: {
             label: '5/Realisierung',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           executiondesign_p51: {
             label: '51/Ausführungsprojekt',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           execution_p52: {
             label: '52/Ausführung',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           commissioning_p53: {
             label: '53/Inbetriebnahme',
-            color: '#ffab91'
+            color: '#70ad47'
           },
           operations_p6: {
             label: '6/Bewirtschaftung',
-            color: '#ce93d8'
+            color: '#ed7d31'
           },
           closed_p61: {
             label: '61/Abgerechnet',
-            color: '#ce93d8'
+            color: '#ed7d31'
           },
           archived: {
             label: 'Archiviert',

@@ -166,6 +166,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     '1': '#93e3ff',
     '2': '#3dc3f4',
     '3': '#ff9797',
+    '33': '#c00000',
     '4': '#a9d08e',
     '5': '#70ad47',
     '6': '#ed7d31'
@@ -620,10 +621,10 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     { label: 'Projektfestsetzung', group: 'Projektierung', color: '#c00000', symbol: 'rect', keys: ['dateProjectApprovalEnd'] },
     { label: 'Ausführungskredit', group: 'Projektierung', color: '#c00000', symbol: 'path://M0,-10 L9.51,-3.09 L5.88,8.09 L-5.88,8.09 L-9.51,-3.09 Z', keys: ['dateConstructionBudgetApprovalEnd'] },
     { label: 'Submission Ende', group: 'Projektierung', color: '#9b4550', symbol: 'triangle', keys: ['dateSubmissionEnd'] },
-    { label: 'Baubeginn geplant', group: 'Bauausführung', color: '#327b46', symbol: 'circle', keys: ['startOfConstruction'] },
-    { label: 'Baubeginn effektiv', group: 'Bauausführung', color: '#17662b', symbol: 'pin', keys: ['dateStartOfConstructionReal'] },
-    { label: 'Bauende geplant', group: 'Bauausführung', color: '#5e9f3c', symbol: 'circle', keys: ['endOfConstruction'] },
-    { label: 'Bauende effektiv', group: 'Bauausführung', color: '#356f2c', symbol: 'diamond', keys: ['dateEndOfConstructionReal'] },
+    { label: 'Baubeginn geplant', group: 'Bauausführung', color: '#385723', symbol: 'circle', keys: ['startOfConstruction'] },
+    { label: 'Baubeginn effektiv', group: 'Bauausführung', color: '#385723', symbol: 'pin', keys: ['dateStartOfConstructionReal'] },
+    { label: 'Bauende geplant', group: 'Bauausführung', color: '#385723', symbol: 'circle', keys: ['endOfConstruction'] },
+    { label: 'Bauende effektiv', group: 'Bauausführung', color: '#385723', symbol: 'diamond', keys: ['dateEndOfConstructionReal'] },
     { label: 'Deckbelag Ende', group: 'Bauausführung', color: '#528731', symbol: 'triangle', keys: ['dateFinalPavementEnd'] },
     { label: 'Abnahme / Garantie', group: 'Abschluss', color: '#c12e45', symbol: 'diamond', keys: ['dateGuarantee', 'dateAccept'] },
     { label: 'Projektkreditabrechnung', group: 'Abschluss', color: '#a9334b', symbol: 'rect', keys: ['dateProjectBudgetFinalized'] },
@@ -891,7 +892,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const projectBar = makeBars('Projektzeitraum', '#168c93', 0.19, 2, (_props, range) => [range.start, range.end]);
-    const constructionBar = makeBars('Bauausführung', '#4a9c52', 0.52, 4, (props) => {
+    const constructionBar = makeBars('Bauausführung', '#70ad47', 0.52, 4, (props) => {
       const start = this.ganttTimestamp(props.dateStartOfConstructionReal) || this.ganttTimestamp(props.startOfConstruction);
       const end = this.ganttTimestamp(props.dateEndOfConstructionReal) || this.ganttTimestamp(props.endOfConstruction);
       return start && end ? [start, end] : null;
@@ -1242,9 +1243,23 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getPhase(project: any): string {
-    const raw = this.getFirstProperty(project, ['phase', 'projectPhase']);
-    const match = String(raw || '').match(/[1-6]/);
-    return match ? match[0] : '';
+    const status = String(project?.properties?.status || '');
+    const statusPhase: { [key: string]: string } = {
+      requirement: '1', review: '1', verified1: '1', verified2: '1',
+      inconsult1: '1', inconsult2: '1', reporting: '1', coordinated: '1',
+      planning_p1: '1', initiation_p13: '1',
+      prestudy: '2', prestudy_p2: '2',
+      design_p3: '3', predesign_p31: '3', design_p32: '3',
+      approval_p33: '33',
+      tendering_p4: '4', tendering_p41: '4',
+      construction_p5: '5', executiondesign_p51: '5',
+      execution_p52: '5', commissioning_p53: '5',
+      operations_p6: '6', closed_p61: '6'
+    };
+    if (statusPhase[status]) return statusPhase[status];
+    const raw = String(this.getFirstProperty(project, ['phase', 'projectPhase']) || '');
+    const match = raw.match(/(?:^|\D)(33|[1-6])(?=\D|$)/);
+    return match ? match[1] : '';
   }
 
   private getPhaseColor(project: any): string {
