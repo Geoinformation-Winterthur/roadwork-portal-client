@@ -1014,9 +1014,9 @@ export class DocxWordService {
     } else {
       approach.push(this.smallGap());
       approach.push(this.pBold(`2. Koordination Bauvorhaben`));
-      approach.push(this.p("Die nachfolgenden Vorgehen werden voraussichtlich an der SKS vom " +
-                    this.formatDate(nextSksDate) +
-                    " behandelt."));      
+      approach.push(this.p("Die nachfolgenden Vorgehen wurden an der SKS vom " +
+                        this.sanitizeText(sksDate) +
+                        " behandelt."));
     }
     return approach;
   }
