@@ -53,6 +53,40 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private gridApi?: GridApi;
   private chartInstance?: echarts.ECharts;
+  private readonly ganttWheelHandler = (event: WheelEvent): void => {
+    if (!this.chartInstance || !this.showChart) { return; }
+    const chart = this.chartInstance;
+    const options: any = chart.getOption();
+    const zooms: any[] = options?.dataZoom || [];
+    const zoomId = event.ctrlKey ? 'gantt-x-inside' : 'gantt-y-inside';
+    const zoom = zooms.find(item => item.id === zoomId);
+    if (!zoom) { return; }
+    event.preventDefault();
+    event.stopPropagation();
+    const start = typeof zoom.start === 'number' ? zoom.start : 0;
+    const end = typeof zoom.end === 'number' ? zoom.end : 100;
+    const span = Math.max(0.1, end - start);
+    const normalizedDelta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 120 : 1);
+    const factor = Math.exp(Math.max(-3, Math.min(3, normalizedDelta / 500)));
+    const newSpan = Math.max(0.5, Math.min(100, span * factor));
+    const elementRect = this.timelineChartRef?.nativeElement.getBoundingClientRect();
+    let position = 0.5;
+    if (elementRect && event.ctrlKey) {
+      const gridLeft = 370;
+      const gridRight = 58;
+      const plotWidth = Math.max(1, elementRect.width - gridLeft - gridRight);
+      position = Math.max(0, Math.min(1, (event.clientX - elementRect.left - gridLeft) / plotWidth));
+    }
+    const midpoint = start + span * position;
+    const nextStart = Math.max(0, Math.min(100 - newSpan, midpoint - newSpan * position));
+    chart.dispatchAction({
+      type: 'dataZoom',
+      dataZoomId: zoomId,
+      start: nextStart,
+      end: nextStart + newSpan
+    });
+  };
+
   private resizeObserver?: ResizeObserver;
   private panelResizeFrame?: number;
   private outerScrollContainer?: HTMLElement;
@@ -311,6 +345,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.ganttLoadSettings();
     this.loadRoadWorkActivities();
   }
 
@@ -351,6 +386,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resizeObserver = undefined;
     }
 
+    this.timelineChartRef?.nativeElement.removeEventListener('wheel', this.ganttWheelHandler, true);
     if (this.chartInstance) {
       this.chartInstance.dispose();
       this.chartInstance = undefined;
@@ -480,6 +516,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
+    this.timelineChartRef.nativeElement.addEventListener('wheel', this.ganttWheelHandler, { passive: false, capture: true });
+    this.chartInstance.on('datazoom', () => this.ganttOnZoom());
     this.syncChartWithGridState();
   }
 
@@ -561,404 +599,411 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     return rows;
   }
 
-  /**
-   * Timeline requires construction start and end dates.
-   */
-  private hasTimelineDates(project?: RoadWorkActivityFeature): boolean {
-    const props = project?.properties;
-    return !!props?.startOfConstruction && !!props?.endOfConstruction;
+  /** Selectable dates and project milestones, grouped for the legend. */
+  readonly GANTT_MILESTONES: Array<{ label: string; group: string; color: string; symbol: string; keys: string[] }> = [
+    { label: 'Bedarf angemeldet', group: 'Bedarf', color: '#607d8b', symbol: 'circle', keys: ['dateFrom'] },
+    { label: 'Wunschtermin', group: 'Bedarf', color: '#78909c', symbol: 'diamond', keys: ['dateOptimum'] },
+    { label: 'Bedarf bis', group: 'Bedarf', color: '#546e7a', symbol: 'triangle', keys: ['dateTo'] },
+    { label: 'SKS', group: 'Sitzungen', color: '#93e3ff', symbol: 'diamond', keys: ['dateSksReal', 'dateSksPlanned', 'dateSks'] },
+    { label: 'KAP', group: 'Sitzungen', color: '#315ac4', symbol: 'triangle', keys: ['dateKapReal', 'dateKap'] },
+    { label: 'GL Auftrag', group: 'Sitzungen', color: '#93e3ff', symbol: 'triangle', keys: ['dateGlTbaReal', 'dateGlTba'] },
+    { label: 'OKS', group: 'Sitzungen', color: '#00cc00', symbol: 'path://M0,-10 L9.51,-3.09 L5.88,8.09 L-5.88,8.09 L-9.51,-3.09 Z', keys: ['dateOksReal', 'dateOks'] },
+    { label: 'Vorstudie Start', group: 'Vorstudie', color: '#0086ad', symbol: 'circle', keys: ['dateStudyStart'] },
+    { label: 'Vorstudie Auftrag GL', group: 'Vorstudie', color: '#007396', symbol: 'diamond', keys: ['dateStudyEnd'] },
+    { label: 'Vorstudie genehmigt', group: 'Vorstudie', color: '#005c82', symbol: 'pin', keys: ['studyApproved'] },
+    { label: 'Bedarfsklärung 1 Ende', group: 'Koordination', color: '#cf8f23', symbol: 'diamond', keys: ['dateConsultEnd1'] },
+    { label: 'Bedarfsklärung 2 Ende', group: 'Koordination', color: '#bd741c', symbol: 'triangle', keys: ['dateConsultEnd2'] },
+    { label: 'Stellungnahme Ende', group: 'Koordination', color: '#a76513', symbol: 'rect', keys: ['dateReportEnd'] },
+    { label: 'Planauflage (§13)', group: 'Projektierung', color: '#c00000', symbol: 'diamond', keys: ['dateParticipStart'] },
+    { label: 'Planauflage (§16)', group: 'Projektierung', color: '#c00000', symbol: 'circle', keys: ['datePlanCircStart'] },
+    { label: 'Projektierungsauftrag', group: 'Projektierung', color: '#a44e9d', symbol: 'pin', keys: ['dateDesignAssignmentIssued'] },
+    { label: 'Projektfestsetzung', group: 'Projektierung', color: '#c00000', symbol: 'rect', keys: ['dateProjectApprovalEnd'] },
+    { label: 'Ausführungskredit', group: 'Projektierung', color: '#c00000', symbol: 'path://M0,-10 L9.51,-3.09 L5.88,8.09 L-5.88,8.09 L-9.51,-3.09 Z', keys: ['dateConstructionBudgetApprovalEnd'] },
+    { label: 'Submission Ende', group: 'Projektierung', color: '#9b4550', symbol: 'triangle', keys: ['dateSubmissionEnd'] },
+    { label: 'Baubeginn geplant', group: 'Bauausführung', color: '#327b46', symbol: 'circle', keys: ['startOfConstruction'] },
+    { label: 'Baubeginn effektiv', group: 'Bauausführung', color: '#17662b', symbol: 'pin', keys: ['dateStartOfConstructionReal'] },
+    { label: 'Bauende geplant', group: 'Bauausführung', color: '#5e9f3c', symbol: 'circle', keys: ['endOfConstruction'] },
+    { label: 'Bauende effektiv', group: 'Bauausführung', color: '#356f2c', symbol: 'diamond', keys: ['dateEndOfConstructionReal'] },
+    { label: 'Deckbelag Ende', group: 'Bauausführung', color: '#528731', symbol: 'triangle', keys: ['dateFinalPavementEnd'] },
+    { label: 'Abnahme / Garantie', group: 'Abschluss', color: '#c12e45', symbol: 'diamond', keys: ['dateGuarantee', 'dateAccept'] },
+    { label: 'Projektkreditabrechnung', group: 'Abschluss', color: '#a9334b', symbol: 'rect', keys: ['dateProjectBudgetFinalized'] },
+    { label: 'Aggloprogramm Termin', group: 'Abschluss', color: '#8359ba', symbol: 'pin', keys: ['aggloprogramDueDate'] }
+  ];
+
+  readonly ganttGroups: string[] = ['Bedarf', 'Sitzungen', 'Vorstudie', 'Koordination', 'Projektierung', 'Bauausführung', 'Abschluss'];
+  readonly ganttVisibleChoices: number[] = [10, 15, 25, 40, 60, 100, 0];
+  ganttVisibleRows = 15;
+  ganttTimePreset: 'three' | 'five' | 'seven' | 'all' | 'custom' = 'five';
+  private ganttStoredXZoom: { start: number; end: number } | null = null;
+  private readonly ganttSettingsKey = 'wikis.analyzes.gantt.v4';
+  ganttLegendExpanded = false;
+  ganttSelected = new Set<string>([
+    'Projektzeitraum', 'Bauausführung', 'SKS', 'KAP', 'GL Auftrag', 'OKS',
+    'Vorstudie genehmigt', 'Projektfestsetzung', 'Ausführungskredit',
+    'Baubeginn effektiv', 'Bauende effektiv', 'Abnahme / Garantie'
+  ]);
+
+  ganttMilestonesInGroup(group: string): Array<{ label: string; group: string; color: string; symbol: string; keys: string[] }> {
+    return this.GANTT_MILESTONES.filter(item => item.group === group);
   }
 
-  /**
-   * Render timeline chart.
-   */
+  ganttSymbolGlyph(symbol: string): string {
+    if (symbol === 'diamond') { return '◆'; }
+    if (symbol === 'triangle') { return '▲'; }
+    if (symbol === 'rect') { return '■'; }
+    if (symbol === 'pin') { return '▼'; }
+    if (symbol.startsWith('path://')) { return '⬟'; }
+    return '●';
+  }
+
+  ganttIsSelected(label: string): boolean { return this.ganttSelected.has(label); }
+
+  ganttToggle(label: string, checked: boolean): void {
+    if (checked) { this.ganttSelected.add(label); } else { this.ganttSelected.delete(label); }
+    this.ganttSaveSettings();
+    this.renderTimeline(this.getDisplayedRowsFromGrid());
+  }
+
+  ganttSelectAll(select: boolean): void {
+    this.ganttSelected = select
+      ? new Set<string>(['Projektzeitraum', 'Bauausführung', ...this.GANTT_MILESTONES.map(item => item.label)])
+      : new Set<string>();
+    this.ganttSaveSettings();
+    this.renderTimeline(this.getDisplayedRowsFromGrid());
+  }
+
+  ganttSetRowCount(value: string): void {
+    this.ganttVisibleRows = Math.max(0, Number(value) || 0);
+    this.ganttSaveSettings();
+    this.renderTimeline(this.getDisplayedRowsFromGrid());
+  }
+
+  /** Keep chart preferences in this browser only. */
+  private ganttSaveSettings(): void {
+    try {
+      localStorage.setItem(this.ganttSettingsKey, JSON.stringify({
+        selected: Array.from(this.ganttSelected),
+        visibleRows: this.ganttVisibleRows,
+        timePreset: this.ganttTimePreset,
+        xZoom: this.ganttStoredXZoom
+      }));
+    } catch (_error) {
+      // Storage can be disabled by browser privacy settings.
+    }
+  }
+
+  private ganttLoadSettings(): void {
+    try {
+      const raw = localStorage.getItem(this.ganttSettingsKey);
+      if (!raw) { return; }
+      const saved = JSON.parse(raw);
+      const validNames = new Set(['Projektzeitraum', 'Bauausführung', ...this.GANTT_MILESTONES.map(item => item.label)]);
+      if (Array.isArray(saved.selected)) {
+        this.ganttSelected = new Set(saved.selected.filter((name: any) => typeof name === 'string' && validNames.has(name)));
+      }
+      if (this.ganttVisibleChoices.includes(saved.visibleRows)) { this.ganttVisibleRows = saved.visibleRows; }
+      if (['three', 'five', 'seven', 'all', 'custom'].includes(saved.timePreset)) { this.ganttTimePreset = saved.timePreset; }
+      if (saved.xZoom && Number.isFinite(saved.xZoom.start) && Number.isFinite(saved.xZoom.end)) {
+        this.ganttStoredXZoom = { start: saved.xZoom.start, end: saved.xZoom.end };
+      }
+    } catch (_error) {
+      // Invalid settings should never prevent the analyses page from loading.
+    }
+  }
+
+  ganttSetTimePreset(value: string): void {
+    if (!['three', 'five', 'seven', 'all'].includes(value)) { return; }
+    this.ganttTimePreset = value as 'three' | 'five' | 'seven' | 'all';
+    this.ganttStoredXZoom = null;
+    this.ganttSaveSettings();
+    this.renderTimeline(this.getDisplayedRowsFromGrid());
+  }
+
+  ganttToday(): void {
+    this.ganttSetTimePreset('three');
+  }
+
+  ganttShowAllDates(): void {
+    this.ganttSetTimePreset('all');
+  }
+
+  ganttResetSettings(): void {
+    try { localStorage.removeItem(this.ganttSettingsKey); } catch (_error) { /* Storage may be unavailable. */ }
+    this.ganttSelected = new Set([
+      'Projektzeitraum', 'Bauausführung', 'SKS', 'KAP', 'GL Auftrag', 'OKS',
+      'Vorstudie genehmigt', 'Projektfestsetzung', 'Ausführungskredit',
+      'Baubeginn effektiv', 'Bauende effektiv', 'Abnahme / Garantie'
+    ]);
+    this.ganttVisibleRows = 15;
+    this.ganttTimePreset = 'five';
+    this.ganttStoredXZoom = null;
+    this.ganttSaveSettings();
+    this.renderTimeline(this.getDisplayedRowsFromGrid());
+  }
+
+  private ganttOnZoom(): void {
+    if (!this.chartInstance) { return; }
+    const options: any = this.chartInstance.getOption();
+    const zooms: any[] = options?.dataZoom || [];
+    const xZoom = zooms.find(zoom => zoom.xAxisIndex === 0 || (Array.isArray(zoom.xAxisIndex) && zoom.xAxisIndex.includes(0)));
+    if (!xZoom || !Number.isFinite(xZoom.start) || !Number.isFinite(xZoom.end)) { return; }
+    if (this.ganttStoredXZoom && Math.abs(this.ganttStoredXZoom.start - xZoom.start) < 0.001 && Math.abs(this.ganttStoredXZoom.end - xZoom.end) < 0.001) { return; }
+    this.ganttStoredXZoom = { start: xZoom.start, end: xZoom.end };
+    this.ganttTimePreset = 'custom';
+    this.ganttSaveSettings();
+  }
+
+  private ganttInitialXZoom(axisMin: number, axisMax: number): { start: number; end: number } {
+    if (this.ganttTimePreset === 'custom' && this.ganttStoredXZoom) { return this.ganttStoredXZoom; }
+    if (this.ganttTimePreset === 'all' || axisMax <= axisMin) { return { start: 0, end: 100 }; }
+    const year = new Date().getFullYear();
+    const half = this.ganttTimePreset === 'three' ? 1 : this.ganttTimePreset === 'seven' ? 3 : 2;
+    const from = new Date(year - half, 0, 1).getTime();
+    const to = new Date(year + half + 1, 0, 1).getTime();
+    const percent = (date: number) => Math.min(100, Math.max(0, ((date - axisMin) / (axisMax - axisMin)) * 100));
+    const start = percent(from);
+    const end = percent(to);
+    return end - start >= 0.5 ? { start, end } : { start: 0, end: 100 };
+  }
+
+  /** Dates that delimit a project; system timestamps are intentionally excluded. */
+  private readonly TIMELINE_DATE_FIELDS: Array<{ key: string; label: string }> = [
+    { key: 'dateFrom', label: 'Bedarf ab' },
+    { key: 'dateOptimum', label: 'Optimaltermin' },
+    { key: 'dateTo', label: 'Bedarf bis' },
+    { key: 'dateStudyStart', label: 'Vorstudie Start' },
+    { key: 'dateStudyEnd', label: 'Vorstudie Ende' },
+    { key: 'projectStudyApproved', label: 'Vorstudie fertig' },
+    { key: 'studyApproved', label: 'Vorstudie genehmigt' },
+    { key: 'dateSks', label: 'SKS' },
+    { key: 'dateSksReal', label: 'SKS genehmigt' },
+    { key: 'dateGlTbaReal', label: 'GL Auftrag' },
+    { key: 'dateConsultStart1', label: 'Bedarfsklärung 1 Start' },
+    { key: 'dateConsultEnd1', label: 'Bedarfsklärung 1 Ende' },
+    { key: 'dateConsultStart2', label: 'Bedarfsklärung 2 Start' },
+    { key: 'dateConsultEnd2', label: 'Bedarfsklärung 2 Ende' },
+    { key: 'dateReportStart', label: 'Stellungnahme Start' },
+    { key: 'dateReportEnd', label: 'Stellungnahme Ende' },
+    { key: 'dateDesignAssignmentIssued', label: 'Projektierungsauftrag' },
+    { key: 'dateProjectApprovalStart', label: 'Projektfestsetzung Start' },
+    { key: 'dateProjectApprovalEnd', label: 'Projektfestsetzung Ende' },
+    { key: 'dateConstructionBudgetApprovalStart', label: 'Ausführungskredit Start' },
+    { key: 'dateConstructionBudgetApprovalEnd', label: 'Ausführungskredit Ende' },
+    { key: 'dateSubmissionStart', label: 'Submission Start' },
+    { key: 'dateSubmissionEnd', label: 'Submission Ende' },
+    { key: 'startOfConstruction', label: 'Baubeginn geplant' },
+    { key: 'endOfConstruction', label: 'Bauende geplant' },
+    { key: 'dateStartOfConstructionReal', label: 'Baubeginn effektiv' },
+    { key: 'dateEndOfConstructionReal', label: 'Bauende effektiv' },
+    { key: 'dateFinalPavementStart', label: 'Deckbelag Start' },
+    { key: 'dateFinalPavementEnd', label: 'Deckbelag Ende' },
+    { key: 'dateGuarantee', label: 'Abnahme / Garantie' },
+    { key: 'dateAccept', label: 'Abnahme' },
+    { key: 'aggloprogramDueDate', label: 'Aggloprogramm Termin' }
+  ];
+
+  private ganttTimestamp(value: any): number {
+    const timestamp = this.toTimestamp(value);
+    const year = timestamp ? new Date(timestamp).getFullYear() : 0;
+    return year >= 1990 && year <= 2100 ? timestamp : 0;
+  }
+
+  private getTimelineRange(project?: RoadWorkActivityFeature): { start: number; end: number; source: string; dates: Array<{label: string; value: number}> } | null {
+    const props: any = project?.properties || {};
+    const dates = this.TIMELINE_DATE_FIELDS
+      .map(def => ({ label: def.label, value: this.ganttTimestamp(props[def.key]) }))
+      .filter(item => item.value > 0);
+    if (!dates.length) { return null; }
+    const timestamps = dates.map(item => item.value);
+    const start = Math.min(...timestamps);
+    const end = Math.max(...timestamps);
+    const day = 86400000;
+    return { start, end: end > start ? end : start + day, source: 'Bekannte Projekttermine', dates };
+  }
+
+  private hasTimelineDates(project?: RoadWorkActivityFeature): boolean {
+    return this.getTimelineRange(project) !== null;
+  }
+
+  /** Render a readable, vertically navigable Gantt chart. */
   private renderTimeline(projects: RoadWorkActivityFeature[]): void {
-    if (!this.chartInstance) {
-      return;
-    }
-
-    const validProjects = (projects ?? []).filter(project => this.hasTimelineDates(project));
-
-    if (validProjects.length === 0) {
+    if (!this.chartInstance) { return; }
+    const rows = (projects || []).filter(project => this.hasTimelineDates(project));
+    if (!rows.length) {
       this.chartInstance.clear();
-      this.chartInstance.setOption({
-        title: {
-          text: 'Keine Projekte mit Start- und Enddatum im aktuellen Filter',
-          left: 'center',
-          top: 'middle',
-          textStyle: {
-            fontSize: 16,
-            fontWeight: 'normal',
-            color: '#666'
-          }
-        }
-      });
+      this.chartInstance.setOption({ title: { text: 'Keine Projekte mit fachlichen Terminen im aktuellen Filter', left: 'center', top: 'middle' } });
       return;
     }
 
-    const categories = validProjects.map(project => this.getProjectDisplayName(project));
-    const selectedUuid = this.selectedProject?.properties?.uuid ?? '';
+    const labels = rows.map(project => this.getProjectDisplayName(project));
+    const ranges = rows.map(project => this.getTimelineRange(project)!);
+    const min = Math.min(...ranges.map(range => range.start));
+    const max = Math.max(...ranges.map(range => range.end));
+    const padding = Math.max(86400000 * 60, Math.round((max - min) * 0.04));
+    const axisMin = min - padding;
+    const axisMax = max + padding;
+    const initialXZoom = this.ganttInitialXZoom(axisMin, axisMax);
+    const selectedUuid = this.selectedProject?.properties?.uuid;
+    const ROWS_VISIBLE = this.ganttVisibleRows === 0 ? rows.length : Math.min(this.ganttVisibleRows, rows.length);
+    const needsVerticalZoom = rows.length > ROWS_VISIBLE;
+    const top = 102;
+    const bottom = 64;
+    const gridLeft = 370;
+    const gridRight = 76;
 
-    let minProjectDate = Number.MAX_SAFE_INTEGER;
-    let maxProjectDate = 0;
-
-    const grouped = this.groupProjectsByStatus(validProjects);
-
-    validProjects.forEach(project => {
-      const startTs = this.toTimestamp(project.properties.startOfConstruction);
-      const endTs = this.toTimestamp(project.properties.endOfConstruction);
-
-      if (startTs > 0 && startTs < minProjectDate) {
-        minProjectDate = startTs;
-      }
-      if (endTs > maxProjectDate) {
-        maxProjectDate = endTs;
-      }
-    });
-
-    const rawSpan = Math.max(maxProjectDate - minProjectDate, 1);
-    const padding = Math.max(Math.round(rawSpan * 0.10), 24 * 60 * 60 * 1000);
-    const axisMin = minProjectDate - padding;
-    const axisMax = maxProjectDate + padding;
-
-    const selectedRowMarkAreaSeries = this.buildSelectedRowMarkAreaSeries(
-      validProjects,
-      categories,
-      axisMin,
-      axisMax,
-      selectedUuid
-    );
-
-    const statusSeries = this.STATUS_ORDER.map((statusKey) => {
-      const color = this.getStatusColor(statusKey);
-      const statusProjects = grouped[statusKey] || [];
-
-      const data = statusProjects.map((project) => {
-        const props = project.properties;
-        const startTs = this.toTimestamp(props.startOfConstruction);
-        const endTs = this.toTimestamp(props.endOfConstruction);
-        const categoryIndex = categories.indexOf(this.getProjectDisplayName(project));
-        const phaseColor = this.getPhaseColor(project) || color;
-
+    const makeBars = (name: string, color: string, barFraction: number, z: number,
+      getBounds: (props: any, range: { start: number; end: number }) => [number, number] | null) => {
+      const data = rows.map((project, index) => {
+        const bounds = getBounds(project.properties as any, ranges[index]);
+        if (!bounds || bounds[1] < bounds[0]) { return null; }
         return {
-          id: props.uuid || `${statusKey}-${categoryIndex}`,
-          name: this.getProjectDisplayName(project),
-          value: [
-            categoryIndex,
-            startTs,
-            endTs,
-            props.roadWorkActivityNo ?? '-',
-            this.getStatusLabel(statusKey),
-            this.translateProjectType(props.projectType),
-            this.translateProjectKind(props.projectKind),
-            props.section ?? '',
-            props.sksNo ?? '',
-            props.isOksActive === true ? 'Ja' : 'Nein',
-            this.getDurationDays(props.startOfConstruction, props.endOfConstruction)
-          ],
-          itemStyle: {
-            color: this.withAlpha(phaseColor, 0.70),
-            borderColor: phaseColor,
-            borderWidth: 1.2
-          }
+          name: labels[index],
+          value: [index, bounds[0], bounds[1]],
+          projectName: labels[index],
+          source: name,
+          itemStyle: { color, opacity: 0.83 }
         };
-      });
-
+      }).filter(Boolean);
       return {
-        name: this.getStatusLabel(statusKey),
-        type: 'custom',
-        legendHoverLink: false,
-        data: data,
-        renderItem: (params: any, api: any) => {
-          const categoryIndex = api.value(0);
-          const startCoord = api.coord([api.value(1), categoryIndex]);
-          const endCoord = api.coord([api.value(2), categoryIndex]);
-          const barHeight = api.size([0, 1])[1] * 0.54;
-
-          return {
-            type: 'rect',
-            transition: ['shape', 'style'],
-            shape: {
-              x: startCoord[0],
-              y: startCoord[1] - barHeight / 2,
-              width: Math.max(endCoord[0] - startCoord[0], 4),
-              height: barHeight,
-              r: 0
-            },
-            style: api.style({
-              lineWidth: 1.2
-            })
-          };
+        name, type: 'custom', data, z, silent: false,
+        renderItem: (_params: any, api: any) => {
+          const rowIndex = api.value(0);
+          const start = api.coord([api.value(1), rowIndex]);
+          const end = api.coord([api.value(2), rowIndex]);
+          const rowHeight = api.size([0, 1])[1];
+          const height = Math.max(3, Math.min(12, rowHeight * barFraction));
+          const offset = name === 'Bauausführung' ? rowHeight * 0.15 : name === 'Projektzeitraum' ? -rowHeight * 0.12 : rowHeight * 0.04;
+          const shape = echarts.graphic.clipRectByRect({
+            x: Math.min(start[0], end[0]),
+            y: start[1] - height / 2 + offset,
+            width: Math.max(2, Math.abs(end[0] - start[0])),
+            height
+          }, {
+            x: _params.coordSys.x,
+            y: _params.coordSys.y,
+            width: _params.coordSys.width,
+            height: _params.coordSys.height
+          });
+          return shape ? { type: 'rect', shape, style: api.style(), z2: z } : null;
         },
-        encode: {
-          x: [1, 2],
-          y: 0
-        },
-        emphasis: {
-          disabled: true
-        },
-        z: 2
+        encode: { x: [1, 2], y: 0 }
       };
-    });
+    };
 
-    const flagSeries = this.buildFlagSeries(validProjects, categories);
-    const phaseLegendSeries = Object.keys(this.PHASE_COLORS).map(phase => ({
-      name: `Phase ${phase}`,
+    const projectBar = makeBars('Projektzeitraum', '#168c93', 0.19, 2, (_props, range) => [range.start, range.end]);
+    const constructionBar = makeBars('Bauausführung', '#4a9c52', 0.52, 4, (props) => {
+      const start = this.ganttTimestamp(props.dateStartOfConstructionReal) || this.ganttTimestamp(props.startOfConstruction);
+      const end = this.ganttTimestamp(props.dateEndOfConstructionReal) || this.ganttTimestamp(props.endOfConstruction);
+      return start && end ? [start, end] : null;
+    });
+    const milestoneSeries = this.GANTT_MILESTONES.filter(def => this.ganttSelected.has(def.label)).map(def => ({
+      name: def.label,
       type: 'scatter',
-      data: [],
-      symbol: 'rect',
+      symbol: def.symbol,
       symbolSize: 12,
-      silent: true,
-      tooltip: { show: false },
-      itemStyle: { color: this.PHASE_COLORS[phase] }
+      z: 10,
+      itemStyle: { color: def.color, borderColor: '#fff', borderWidth: 0.8 },
+      data: rows.map((project, index) => {
+        const props: any = project.properties || {};
+        const timestamp = def.keys.map(key => this.ganttTimestamp(props[key])).find(value => value > 0);
+        return timestamp ? {
+          value: [timestamp, index],
+          projectName: labels[index],
+          milestoneLabel: def.label,
+          date: timestamp,
+          roadWorkActivityNo: props.roadWorkActivityNo || props.roadWorkNeedNo || '-'
+        } : null;
+      }).filter(Boolean)
     }));
 
     const today = new Date();
-    const todayTimestamp = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    ).getTime();
-
-    const legendData = [
-      ...Object.keys(this.PHASE_COLORS).map(phase => ({
-        name: `Phase ${phase}`,
-        icon: 'rect',
-        itemStyle: {
-          color: this.PHASE_COLORS[phase],
-          borderColor: this.PHASE_COLORS[phase],
-          borderWidth: 1.2
-        }
-      })),
-      ...this.FLAG_DEFS.filter(def => this.enabledFlags.has(def.key)).map(def => ({
-        name: def.label,
-        icon: def.symbol,
-        itemStyle: { color: def.color }
-      }))
-    ];
-
+    today.setHours(0, 0, 0, 0);
     const option: echarts.EChartsOption = {
-      animation: true,
+      animation: false,
       title: {
-        text: selectedUuid
-          ? `Projekte und Bedarfe auf der Zeitlinie — ${this.selectedProject?.properties?.name || ''}`
-          : 'Projekte und Bedarfe auf der Zeitlinie',
-        left: 16,
-        top: 10,
-        textStyle: {
-          color: '#20252b',
-          fontSize: 17,
-          fontWeight: 'bold'
-        }
+        text: selectedUuid ? `Projekte und Bedarfe — ${this.selectedProject?.properties?.name || ''}` : 'Projekte und Bedarfe auf der Zeitlinie',
+        left: 16, top: 8,
+        textStyle: { color: '#20252b', fontSize: 16 }
       },
       legend: {
-        top: 38,
-        left: 16,
-        right: 100,
-        type: 'plain',
-        orient: 'horizontal',
-        data: legendData as any,
-        itemWidth: 14,
-        itemHeight: 10,
-        itemGap: 12,
-        textStyle: {
-          fontSize: 11
-        }
+        type: 'scroll', orient: 'horizontal', top: 37, left: 16, right: 72,
+        itemWidth: 13, itemHeight: 10, itemGap: 17,
+        textStyle: { fontSize: 11 },
+        selectedMode: false,
+        data: [
+          ...(this.ganttSelected.has('Projektzeitraum') ? [{ name: 'Projektzeitraum', icon: 'roundRect' }] : []),
+          ...(this.ganttSelected.has('Bauausführung') ? [{ name: 'Bauausführung', icon: 'roundRect' }] : []),
+          ...this.GANTT_MILESTONES.filter(def => this.ganttSelected.has(def.label)).map(def => ({ name: def.label, icon: def.symbol }))
+        ] as any
       },
-      tooltip: {
-        trigger: 'item',
-        confine: true,
-        backgroundColor: 'rgba(255,255,255,0.97)',
-        borderColor: '#ccc',
-        borderWidth: 1,
-        textStyle: {
-          color: '#222'
+      grid: { left: gridLeft, right: gridRight, top, bottom: bottom, containLabel: false },
+      xAxis: {
+        type: 'time', min: axisMin, max: axisMax,
+        name: 'Zeit', nameLocation: 'middle', nameGap: 31,
+        axisLabel: { formatter: (value: number) => new Date(value).toLocaleDateString('de-CH', { month: '2-digit', year: 'numeric' }) },
+        splitLine: { show: true, lineStyle: { color: '#e6e9ed' } }
+      },
+      yAxis: {
+        type: 'category', data: labels, inverse: true,
+        axisLabel: {
+          width: 320, margin: 16, overflow: 'truncate',
+          formatter: (name: string, index: number) => rows[index]?.properties?.uuid === selectedUuid ? `{selected|${name}}` : name,
+          rich: { selected: { backgroundColor: '#fff3bf', color: '#222', borderRadius: 3, padding: [2, 4, 2, 4] } }
         },
-        formatter: (params: any) => {
-          const seriesType = params.seriesType;
-          const data = params.data;
-
-          if (seriesType === 'scatter') {
-            return [
-              `<b>${data.projectName}</b>`,
-              `${data.milestoneLabel}: ${this.formatDate(data.date)}`,
-              `BV-Nr: ${data.roadWorkActivityNo || '-'}`,
-              `Status: ${data.statusLabel || '-'}`
-            ].join('<br/>');
-          }
-
-          const item = params.data;
-          return [
-            `<b>${item.name}</b>`,
-            `BV-Nr: ${item.value[3] || '-'}`,
-            `Status: ${item.value[4] || '-'}`,
-            `Typ: ${item.value[5] || '-'}`,
-            `Art: ${item.value[6] || '-'}`,
-            `Bereich: ${item.value[7] || '-'}`,
-            `SKS Nr: ${item.value[8] || '-'}`,
-            `SKS relevant: ${item.value[9] || '-'}`,
-            `Baubeginn: ${this.formatDate(item.value[1])}`,
-            `Bauende: ${this.formatDate(item.value[2])}`,
-            `Dauer: ${item.value[10] || 0} Tage`
-          ].join('<br/>');
-        }
-      },
-      toolbox: {
-        right: 10,
-        feature: {
-          restore: {
-            title: 'Wiederherstellen'
-          },
-          dataView: {
-            readOnly: true,
-            title: 'Datenansicht',
-            lang: ['Datenansicht', 'Schliessen', 'Aktualisieren'],
-            optionToContent: () => this.buildSwissDataView(validProjects)
-          }
-        }
+        axisTick: { show: false },
+        splitLine: { show: true, lineStyle: { color: '#f0f2f4' } }
       },
       dataZoom: [
         {
-          type: 'slider',
-          xAxisIndex: 0,
-          bottom: 8,
-          height: 24,
-          filterMode: 'weakFilter'
+          id: 'gantt-x-slider', type: 'slider', xAxisIndex: 0,
+          bottom: 6, height: 21, filterMode: 'weakFilter',
+          start: initialXZoom.start, end: initialXZoom.end
         },
         {
-          type: 'inside',
-          xAxisIndex: 0,
-          filterMode: 'weakFilter'
+          id: 'gantt-x-inside', type: 'inside', xAxisIndex: 0,
+          filterMode: 'weakFilter', start: initialXZoom.start, end: initialXZoom.end,
+          zoomOnMouseWheel: false, moveOnMouseWheel: false
         },
+        ...(needsVerticalZoom ? [{
+          id: 'gantt-y-slider', type: 'slider' as const,
+          yAxisIndex: 0, orient: 'vertical' as const,
+          right: 10, top, bottom, width: 17,
+          showDetail: false, showDataShadow: false,
+          startValue: 0, endValue: Math.max(0, ROWS_VISIBLE - 1),
+          filterMode: 'empty' as const,
+          fillerColor: 'rgba(38, 113, 170, 0.23)',
+          borderColor: '#c7d2de', handleSize: 13, moveHandleSize: 9
+        }] : []),
         {
-          type: 'slider',
-          yAxisIndex: 0,
-          right: 8,
-          width: 16,
-          filterMode: 'empty',
-          showDetail: false
-        },
-        {
-          type: 'inside',
-          yAxisIndex: 0,
-          filterMode: 'empty',
-          moveOnMouseMove: true,
-          moveOnMouseWheel: true,
-          zoomOnMouseWheel: false
+          id: 'gantt-y-inside', type: 'inside' as const,
+          yAxisIndex: 0, filterMode: 'empty' as const,
+          start: 0, end: needsVerticalZoom ? 100 * ROWS_VISIBLE / rows.length : 100,
+          moveOnMouseWheel: false, zoomOnMouseWheel: false
         }
       ],
-      grid: {
-        left: 290,
-        right: 60,
-        top: 112,
-        bottom: 60
-      },
-      xAxis: {
-        type: 'time',
-        min: axisMin,
-        max: axisMax,
-        name: 'Zeit',
-        nameLocation: 'middle',
-        nameGap: 35,
-        splitLine: {
-          show: true,
-          lineStyle: {
-            color: '#eee'
+      tooltip: {
+        trigger: 'item', confine: true,
+        formatter: (params: any) => {
+          const data = params.data;
+          if (!data) { return ''; }
+          const safe = (value: any) => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          if (params.seriesType === 'scatter') {
+            return `<b>${safe(data.projectName)}</b><br/>${safe(data.milestoneLabel)}: ${this.formatDate(data.date)}<br/>BV-Nr: ${safe(data.roadWorkActivityNo)}`;
           }
-        },
-        axisLabel: {
-          formatter: (value: number) => {
-            const date = new Date(value);
-            return date.toLocaleDateString('de-CH', {
-              year: 'numeric',
-              month: '2-digit'
-            });
-          }
-        }
-      },
-      yAxis: {
-        type: 'category',
-        data: categories,
-        inverse: true,
-        axisLabel: {
-          width: 260,
-          overflow: 'truncate',
-          formatter: (value: string) => {
-            const selectedName = this.selectedProject
-              ? this.getProjectDisplayName(this.selectedProject)
-              : '';
-
-            if (value === selectedName) {
-              return `{selected|${value}}`;
-            }
-
-            return value;
-          },
-          rich: {
-            selected: {
-              backgroundColor: 'rgba(255, 235, 59, 0.35)',
-              padding: [2, 6, 2, 6],
-              borderRadius: 4,
-              color: '#222'
-            }
-          }
+          return `<b>${safe(data.projectName)}</b><br/>${safe(data.source)}<br/>Start: ${this.formatDate(data.value[1])}<br/>Ende: ${this.formatDate(data.value[2])}`;
         }
       },
       series: [
-        ...selectedRowMarkAreaSeries,
-        ...phaseLegendSeries,
-        ...statusSeries,
-        ...flagSeries
-      ] as any[],
-      graphic: [
-        {
-          type: 'text',
-          right: 22,
-          top: 56,
-          style: {
-            text: selectedUuid
-              ? 'Ausgewähltes Projekt ist hervorgehoben'
-              : 'Farben zeigen die Phase',
-            fill: '#666',
-            font: '12px sans-serif'
-          }
-        }
-      ]
+        { ...projectBar, data: this.ganttSelected.has('Projektzeitraum') ? projectBar.data : [], markLine: {
+          silent: true, symbol: ['none', 'none'],
+          data: [{ xAxis: today.getTime() }],
+          lineStyle: { color: '#c42d3a', width: 1.5, type: 'dashed' },
+          label: { formatter: 'Heute', color: '#c42d3a', position: 'insideEndTop' }
+        } },
+        { ...constructionBar, data: this.ganttSelected.has('Bauausführung') ? constructionBar.data : [] }, ...milestoneSeries
+      ] as any[]
     };
-
-    this.chartInstance.clear();
     this.chartInstance.setOption(option, true);
-
-    this.chartInstance.setOption({
-      series: [
-        ...selectedRowMarkAreaSeries.map(() => ({})),
-        ...phaseLegendSeries.map(() => ({})),
-        ...this.STATUS_ORDER.map(() => ({
-          markLine: {
-            silent: true,
-            symbol: ['none', 'none'],
-            label: {
-              show: true,
-              formatter: 'Heute',
-              position: 'insideEndTop',
-              color: '#b00020',
-              fontWeight: 'bold'
-            },
-            lineStyle: {
-              color: '#b00020',
-              width: 2,
-              type: 'dashed'
-            },
-            data: [
-              {
-                xAxis: todayTimestamp
-              }
-            ]
-          }
-        })),
-        ...flagSeries.map(() => ({}))
-      ]
-    });
   }
 
   exportCurrentViewAsImage(): void {
@@ -1037,8 +1082,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       const row = document.createElement('tr');
       const values = [
         props.name || 'Ohne Name',
-        this.formatDate(props.startOfConstruction),
-        this.formatDate(props.endOfConstruction),
+        this.formatDate(this.getTimelineRange(project)?.start),
+        this.formatDate(this.getTimelineRange(project)?.end),
         ...this.FLAG_DEFS.map(flag => {
           const isSet = flag.propertyKeys.some(key => props[key] === true);
           const start = this.getTimestampFromKeys(props, flag.startKeys || []);

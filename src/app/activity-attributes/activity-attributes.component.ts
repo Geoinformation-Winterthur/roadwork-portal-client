@@ -1180,104 +1180,104 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
    * - Includes deep links to open the appropriate tab in the UI.
    * - Inserts phase-specific wording and deadlines if available.
    */
-  public async openMail(newStatus: string) {
-
-    let mailText = "mailto:";
-
-    if (this.roadWorkActivityFeature &&
-      (newStatus == "inconsult1" || newStatus == "inconsult2" || newStatus == "reporting")) {
-
-      if (this.roadWorkActivityFeature.geometry
-        && !this.roadWorkActivityFeature.properties.areaManager) {
-        let geometry = this.roadWorkActivityFeature.geometry;
-        await this.getAreaManager(geometry);
-      }
-
-      // some old stuff, required? (2026.7)
-      /*if (this.involvedUsers.length > 0) {
-        mailText += this.involvedUsers[0].mailAddress + ";"
-      }*/
-
-      const consultationsUserEmail = await this.getConsultationUserEmails(newStatus);
-      mailText += consultationsUserEmail.join(',');
-
-      let separator = "?";
-
-      // get the users for cc. current user and gm (might be the same therefore [...new Set(... ).
-      let loggedInUser = this.userService.getLocalUser();
-      let areaManager = this.roadWorkActivityFeature.properties.areaManager;
-      let copyUsersEmail = [...new Set([loggedInUser?.mailAddress, areaManager?.mailAddress])]
-      // remove the users already in mailto
-      copyUsersEmail = copyUsersEmail.filter((e): e is string => !!e && !consultationsUserEmail.includes(e));
-      if (copyUsersEmail.length) {
-        mailText += separator + "cc=" + copyUsersEmail.join(',');
-        separator = "&";
-      }
-
-      mailText += separator + "subject=Die";
-
-      if (newStatus == "inconsult1")
-        mailText += " Bedarfsklärung - 1.Iteration ";
-      else if (newStatus == "inconsult2")
-        mailText += " Bedarfsklärung - 2.Iteration ";
-      else if (newStatus == "reporting")
-        mailText += " Stellungnahme ";
-
-      mailText += "zum Bauvorhaben '" +
-        this.roadWorkActivityFeature.properties.name +
-        "' beginnt. Deine Meinung ist gefragt.&";
-
-      mailText += "body=Liebe Kolleginnen und Kollegen%0A%0A";
-      if (newStatus == "inconsult1" || newStatus == "inconsult2")
-        mailText += "Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
-      else if (newStatus == "reporting")
-        mailText += "Das nachfolgende Bauvorhaben ist aktuell in der Vernehmlassung (elektronische Zirkulation).%0A%0A";
-
-      mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid;
-      if (newStatus == "inconsult1")
-        mailText += "?open_tab=bedarfsklaerung1";
-      else if (newStatus == "inconsult2")
-        mailText += "?open_tab=bedarfsklaerung2";
-      else if (newStatus == "reporting")
-        mailText += "?open_tab=stellungnahme";
-
-      mailText += "%0A%0A";
-      mailText += environment.fullAppPath + "activities/" + this.roadWorkActivityFeature.properties.uuid + "%0A%0A";
-      mailText += "Bezeichnung: " + this.roadWorkActivityFeature.properties.name + "%0A%0A";
-
-      if (newStatus == "inconsult1" || newStatus == "inconsult2") {
-        mailText += "Bitte beurteile, ob in deinem Bereich Bedarf zum Mitbauen besteht oder nicht. ";
-        mailText += "Mit Klick auf obigen Link gelangst du zum Bauvorhaben.%0A%0A";
-        mailText += "Sollte Bedarf vorhanden sein, so bitten wir dich, den Button «Bedarf erfassen» zu benutzen ";
-        mailText += "(Hinweis: Perimeter und Zeitbedarf sind als Vorschlag bereits hinterlegt und können individuell angepasst werden). ";
-        mailText += "Du hilfst uns durch Erfassen eines neuen Bedarfs, dein Anliegen besser zu verstehen. ";
-        mailText += "Sollte kein Interesse bestehen, dann wähle bitte «Kein Bedarf».%0A%0A";
-      }
-      else if (newStatus == "reporting")
-        mailText += "Mit Klick auf obigen Link kannst du das Bauvorhaben beurteilen und bei Bedarf eine Rückmeldung geben.%0A%0A";
-
-      if ((newStatus == "inconsult1") && this.roadWorkActivityFeature.properties.dateConsultEnd1)
-        mailText += "Die Bedarfsklärung läuft bis zum " +
-          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd1).toLocaleDateString("de-CH") + "%0A%0A";
-      else if ((newStatus == "inconsult2") && this.roadWorkActivityFeature.properties.dateConsultEnd2)
-        mailText += "Die Bedarfsklärung läuft bis zum " +
-          new Date(this.roadWorkActivityFeature.properties.dateConsultEnd2).toLocaleDateString("de-CH") + "%0A%0A";
-      else if (newStatus == "reporting" && this.roadWorkActivityFeature.properties.dateReportEnd)
-        mailText += "Die Stellungnahme läuft bis zum " +
-          new Date(this.roadWorkActivityFeature.properties.dateReportEnd).toLocaleDateString("de-CH") + "%0A%0A";
-      if (newStatus == "reporting")
-        mailText += "Mit «Senden» übermittelst du uns deine Rückmeldung.%0A%0A";
-      mailText += "Vielen Dank für deine Teilnahme.%0A%0A";
-      mailText += "Freundliche Grüsse.%0A%0A";
-
-      const am = this.roadWorkActivityFeature?.properties?.areaManager;
-      const amName = am ? `${am.firstName ?? ''} ${am.lastName ?? ''}`.trim() : 'Gebietsmanagement';
-      mailText += `${encodeURIComponent(amName)}%0A%0A`;
-
-      window.open(mailText, "_blank", "noreferrer");
-
+  public async openMail(newStatus: string): Promise<void> {
+    if (!this.roadWorkActivityFeature ||
+      (newStatus !== 'inconsult1' && newStatus !== 'inconsult2' && newStatus !== 'reporting')) {
+      return;
     }
 
+    const activity = this.roadWorkActivityFeature;
+    const props = activity.properties;
+
+    if (activity.geometry && !props.areaManager) {
+      await this.getAreaManager(activity.geometry);
+    }
+
+    let consultationEmails: string[];
+    try {
+      consultationEmails = await this.getConsultationUserEmails(newStatus);
+    } catch (error) {
+      console.error('Error loading consultation recipients:', error);
+      this.snckBar.open('E-Mail-Empfänger konnten nicht geladen werden.', '', { duration: 4000 });
+      return;
+    }
+
+    const recipients = [...new Set(consultationEmails.map(email => email.trim()).filter(Boolean))];
+    const recipientKeys = new Set(recipients.map(email => email.toLowerCase()));
+    const loggedInUser = this.userService.getLocalUser();
+    const areaManager = props.areaManager;
+    const ccEmails = [...new Set(
+      [loggedInUser?.mailAddress, areaManager?.mailAddress]
+        .filter((email): email is string => !!email)
+        .map(email => email.trim())
+        .filter(Boolean)
+    )].filter(email => !recipientKeys.has(email.toLowerCase()));
+
+    const phase = newStatus === 'inconsult1'
+      ? 'Bedarfsklärung - 1.Iteration'
+      : newStatus === 'inconsult2'
+        ? 'Bedarfsklärung - 2.Iteration'
+        : 'Stellungnahme';
+
+    const subject = `Die ${phase} zum Bauvorhaben '${props.name}' beginnt. Deine Meinung ist gefragt.`;
+    const tabName = newStatus === 'inconsult1'
+      ? 'bedarfsklaerung1'
+      : newStatus === 'inconsult2'
+        ? 'bedarfsklaerung2'
+        : 'stellungnahme';
+
+    const activityUrl = `${environment.fullAppPath}activities/${props.uuid}`;
+    const deepLink = `${activityUrl}?open_tab=${tabName}`;
+    const paragraphs: string[] = [
+      'Liebe Kolleginnen und Kollegen',
+      newStatus === 'reporting'
+        ? 'Das nachfolgende Bauvorhaben ist aktuell in der Vernehmlassung (elektronische Zirkulation).'
+        : 'Der untenstehende Bedarf wurde bei uns eingegeben und ist aktuell in der Vernehmlassung (elektronische Zirkulation).',
+      deepLink,
+      activityUrl,
+      `Bezeichnung: ${props.name}`
+    ];
+
+    if (newStatus === 'inconsult1' || newStatus === 'inconsult2') {
+      paragraphs.push(
+        'Bitte beurteile, ob in deinem Bereich Bedarf zum Mitbauen besteht oder nicht. Mit Klick auf obigen Link gelangst du zum Bauvorhaben.',
+        'Sollte Bedarf vorhanden sein, so bitten wir dich, den Button «Bedarf erfassen» zu benutzen (Hinweis: Perimeter und Zeitbedarf sind als Vorschlag bereits hinterlegt und können individuell angepasst werden). Du hilfst uns durch Erfassen eines neuen Bedarfs, dein Anliegen besser zu verstehen. Sollte kein Interesse bestehen, dann wähle bitte «Kein Bedarf».'
+      );
+    } else {
+      paragraphs.push('Mit Klick auf obigen Link kannst du das Bauvorhaben beurteilen und bei Bedarf eine Rückmeldung geben.');
+    }
+
+    const dueDate = newStatus === 'inconsult1'
+      ? props.dateConsultEnd1
+      : newStatus === 'inconsult2'
+        ? props.dateConsultEnd2
+        : props.dateReportEnd;
+    if (dueDate) {
+      const dueDateText = new Date(dueDate).toLocaleDateString('de-CH');
+      paragraphs.push(newStatus === 'reporting'
+        ? `Die Stellungnahme läuft bis zum ${dueDateText}`
+        : `Die Bedarfsklärung läuft bis zum ${dueDateText}`);
+    }
+
+    if (newStatus === 'reporting') {
+      paragraphs.push('Mit «Senden» übermittelst du uns deine Rückmeldung.');
+    }
+
+    const amName = areaManager
+      ? `${areaManager.firstName ?? ''} ${areaManager.lastName ?? ''}`.trim() || 'Gebietsmanagement'
+      : 'Gebietsmanagement';
+    paragraphs.push('Vielen Dank für deine Teilnahme.', 'Freundliche Grüsse.', amName);
+
+    // Encode each mailto query parameter exactly once, including nested URLs.
+    const body = paragraphs.join('\r\n\r\n');
+    const mailto = `mailto:${recipients.join(',')}` +
+      '?' + [
+        ...(ccEmails.length ? [`cc=${encodeURIComponent(ccEmails.join(','))}`] : []),
+        `subject=${encodeURIComponent(subject)}`,
+        `body=${encodeURIComponent(body)}`
+      ].join('&');
+
+    window.open(mailto, '_blank', 'noreferrer');
   }
 
   /**
