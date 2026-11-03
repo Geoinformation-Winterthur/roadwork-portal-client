@@ -28,6 +28,7 @@ import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { Router } from '@angular/router';
 import { ColDef, ColumnMenuTab } from 'ag-grid-community';
+import { Observable, tap, catchError, of, lastValueFrom, concatMap, map } from 'rxjs';
 
 @Component({
   selector: 'app-reporting-items',
@@ -178,6 +179,10 @@ export class ReportingItemsComponent implements OnInit {
    *   prepare the current user's editable `consultationInput` (if any).
    */
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  private loadData() {
 
     // Permission: who can submit consultation input in the current phase.
     if ((this.userService.getLocalUser().chosenRole === 'orderer' ||
@@ -207,14 +212,8 @@ export class ReportingItemsComponent implements OnInit {
       this.isPhaseReporting = true;
     }
 
-    // Load all available users for assignment UI.
-    this.userService.getAllUsers().subscribe({
-      next: (users) => {
-        this.availableUsers = users;
-      },
-      error: (error) => {
-      }
-    });
+    // Set the phase for the local editable input model.
+    this.consultationInput.feedbackPhase = this.feedbackPhase;
 
     // Refresh the full user object for the current session user (e.g., ensure UUID).
     this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
@@ -227,62 +226,85 @@ export class ReportingItemsComponent implements OnInit {
         }
       });
 
-    // Set the phase for the local editable input model.
-    this.consultationInput.feedbackPhase = this.feedbackPhase;
+    this.getMappedConsultationInputs().pipe(
+      // Load the consultation inputs for the current activity and phase.
+      tap(result => this.consultationInputsFromReporting = result),
 
-    // Load all inputs for the activity and keep only those for the active phase.
-    this.consultationService.getConsultationInputs(this.roadWorkActivity.properties.uuid)
-      .subscribe({
-        next: (consultationInputs) => {
-          let consultationInputsFromReportingTemp: ConsultationInput[] = [];
-          for (let consultationInput of consultationInputs) {
-            if (consultationInput.feedbackPhase === this.feedbackPhase) {
-              consultationInputsFromReportingTemp.push(consultationInput);
-            }
-          }
-          this.consultationInputsFromReporting = consultationInputsFromReportingTemp;
+      // Load all available users for assignment UI.
+      concatMap(() => this.getAvailableUsers()),
+      tap(result => this.availableUsers = result),
 
-          // Locale-aware sort: by org abbreviation, then by full name.
-          const collator = new Intl.Collator('de-CH', { sensitivity: 'base', ignorePunctuation: true, numeric: true });
+      // Pre-fill the editable `consultationInput` with current user's existing entry (if any).
+      tap(() => this.preFillconsultationInput()),
 
+      // Remove already assigned users from the available list.
+      tap(() => this.removeAlreadyAssignedUsers())
+    ).subscribe();
+  }
+
+  private getAvailableUsers(): Observable<User[]> {
+    return this.userService.getAllUsers().pipe(
+      map(users => users.filter(user => user.active))
+    );
+  }
+
+  private getMappedConsultationInputs(): Observable<ConsultationInput[]> {
+    return this.consultationService.getConsultationInputs(this.roadWorkActivity.properties.uuid).pipe(
+      map((consultationInputs) => {
+        // Locale-aware sort: by org abbreviation, then by full name.
+        const collator = new Intl.Collator('de-CH', { sensitivity: 'base', ignorePunctuation: true, numeric: true });
+
+        return consultationInputs
+          .filter(input =>
+            input.feedbackPhase === this.feedbackPhase
+          )
+          .slice()
           // Sort by organisation (abbr), then by full name
-          this.consultationInputsFromReporting = (this.consultationInputsFromReporting ?? [])
-            .slice()
-            .sort((a, b) => {
-              const aOrg = a?.inputBy?.organisationalUnit?.abbreviation ?? '';
-              const bOrg = b?.inputBy?.organisationalUnit?.abbreviation ?? '';
+          .sort((a, b) => {
+            const aOrg = a?.inputBy?.organisationalUnit?.abbreviation ?? '';
+            const bOrg = b?.inputBy?.organisationalUnit?.abbreviation ?? '';
 
-              const orgCmp = collator.compare(aOrg, bOrg);
-              if (orgCmp !== 0) return orgCmp;
+            const orgCmp = collator.compare(aOrg, bOrg);
+            if (orgCmp !== 0) return orgCmp;
 
-              const aName = `${a?.inputBy?.firstName ?? ''} ${a?.inputBy?.lastName ?? ''}`.trim();
-              const bName = `${b?.inputBy?.firstName ?? ''} ${b?.inputBy?.lastName ?? ''}`.trim();
+            const aName = `${a?.inputBy?.firstName ?? ''} ${a?.inputBy?.lastName ?? ''}`.trim();
+            const bName = `${b?.inputBy?.firstName ?? ''} ${b?.inputBy?.lastName ?? ''}`.trim();
 
-              return collator.compare(aName, bName);
+            return collator.compare(aName, bName);
           });
+      })
+    );
+  }
 
-          // Pre-fill the editable `consultationInput` with current user's existing entry (if any).
-          for (let consultationInput of consultationInputs) {
-            if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
-              consultationInput.feedbackPhase === this.feedbackPhase) {
-              this.consultationInput = new ConsultationInput();
-              this.consultationInput.uuid = "" + consultationInput.uuid;
-              this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
-              this.consultationInput.managerFeedback = "" + consultationInput.managerFeedback;
-              this.consultationInput.inputBy = consultationInput.inputBy;
-              this.consultationInput.lastEdit = consultationInput.lastEdit;
-              this.consultationInput.decline = consultationInput.decline;
-              this.consultationInput.valuation = consultationInput.valuation;
-              this.consultationInput.feedbackPhase = this.feedbackPhase;
-              break;
-            }
+  private preFillconsultationInput(): void {
+    for (let consultationInput of this.consultationInputsFromReporting) {
+          if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
+            consultationInput.feedbackPhase === this.feedbackPhase) {
+            this.consultationInput = new ConsultationInput();
+            this.consultationInput.uuid = "" + consultationInput.uuid;
+            this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
+            this.consultationInput.managerFeedback = "" + consultationInput.managerFeedback;
+            this.consultationInput.inputBy = consultationInput.inputBy;
+            this.consultationInput.lastEdit = consultationInput.lastEdit;
+            this.consultationInput.decline = consultationInput.decline;
+            this.consultationInput.valuation = consultationInput.valuation;
+            this.consultationInput.feedbackPhase = this.feedbackPhase;
+            break;
           }
-
-        },
-        error: (error) => {
         }
-      });
-  }  
+  }
+
+  private removeAlreadyAssignedUsers(): void {
+    const assignedUserUuids = new Set(
+      this.consultationInputsFromReporting
+        .map((input) => input.inputBy?.uuid)
+        .filter((uuid): uuid is string => Boolean(uuid))
+    );
+
+    this.availableUsers = this.availableUsers.filter(
+      (user) => !assignedUserUuids.has(user.uuid)
+    );
+  }
 
   /**
    * Persist changes to a single consultation input.
@@ -376,7 +398,7 @@ export class ReportingItemsComponent implements OnInit {
               this.consultationInputsFromReporting.push(consultationInputObj);
 
               // Reloads data/permissions by re-running initialization.
-              this.ngOnInit();
+              this.loadData();
             }
           },
           error: (error) => {
@@ -416,7 +438,7 @@ export class ReportingItemsComponent implements OnInit {
           });
         }
       });
-    this.ngOnInit();
+    this.loadData();
   }      
 
   /**
@@ -442,5 +464,4 @@ export class ReportingItemsComponent implements OnInit {
       this.router.navigate(["/needs/new"], { queryParams: params });
     }
   }
-
 }
