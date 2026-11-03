@@ -763,9 +763,7 @@
                             <mat-form-field>
                                 <mat-label>Das Vorhaben wurde in Provis (Abacus) eröffnet</mat-label>
                                 <input matInput
-                                    type="number"
-                                    min="0"
-                                    max="999999999"
+                                    type="text"
                                     [(ngModel)]="roadWorkActivityFeature.properties.erpNumber"
                                     placeholder="Nr. Hauptprojekt Provis"
                                     [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
