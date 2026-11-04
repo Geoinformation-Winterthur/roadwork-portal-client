@@ -7,5 +7,6 @@ export class Costs {
     public costs?: number;
     public projectType?: string;
     public costsComment?: string;
-    public errorMessage?: string = "";
+    public erpNumber?: string;
+    public errorMessage: string = "";
 }

@@ -1,0 +1,150 @@
+<div style="margin: 2em;">
+    <div>
+        <table mat-table [dataSource]="costsOfAssignedNeeds" class="mat-elevation-z2"
+            style="width: 100%">
+
+            <ng-container matColumnDef="created">
+                <th mat-header-cell *matHeaderCellDef> Datum </th>
+                <td mat-cell *matCellDef="let cost">
+                    {{getAssignedNeedForCost(cost).properties.created | date: 'dd.MM.yyyy'}}
+                </td>
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
+
+            <ng-container matColumnDef="org">
+                <th mat-header-cell *matHeaderCellDef> Auslösendes Werk </th>
+                <td mat-cell *matCellDef="let cost">
+                    {{getAssignedNeedForCost(cost).properties.orderer.organisationalUnit.abbreviation}}
+                </td>
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
+
+            <ng-container matColumnDef="orderer">
+                <th mat-header-cell *matHeaderCellDef> Auslösende:r </th>
+                <td mat-cell *matCellDef="let cost">
+                    {{getAssignedNeedForCost(cost).properties.orderer.firstName}}
+                    {{getAssignedNeedForCost(cost).properties.orderer.lastName}}
+                </td>
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Titel/Bezeichnung </th>
+                <td mat-cell *matCellDef="let cost">
+                    {{getAssignedNeedForCost(cost).properties.name}}
+                </td>
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
+
+            <ng-container matColumnDef="comment">
+                <th mat-header-cell *matHeaderCellDef> Bemerkung </th>
+                <td mat-cell *matCellDef="let cost">
+                    {{cost.costsComment}}
+                </td>
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
+
+            <ng-container matColumnDef="cost_type">
+                <th mat-header-cell *matHeaderCellDef> Kredit-/Kostenart </th>
+                <td mat-cell *matCellDef="let cost">
+                    <span *ngIf="cost.projectType == 'streets'">
+                        Strassen (501000/501011/501012)
+                    </span>
+                    <span *ngIf="cost.projectType == 'waters'">
+                        Wasserbau (502000/502011/502012)
+                    </span>
+                    <span *ngIf="cost.projectType == 'channel'">
+                        Kanalisation (503031/503032)
+                    </span>
+                    <span *ngIf="cost.projectType == 'others'">
+                        Übrige
+                    </span>
+                    <span *ngIf="cost.projectType == 'third_parties'">
+                        Im Auftrag Dritter
+                    </span>
+                </td>
+                <td mat-footer-cell *matFooterCellDef><i>Summe aus Bedarfserfassung</i></td>
+            </ng-container>
+
+            <ng-container matColumnDef="costs">
+                <th mat-header-cell *matHeaderCellDef> CHF </th>
+                <td mat-cell *matCellDef="let cost">
+                    {{cost.costs | number }}
+                </td>
+                <td mat-footer-cell *matFooterCellDef>
+                    <b>{{ totalCosts | number }}</b>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="erp_number">
+                <th mat-header-cell *matHeaderCellDef> Projekt-Nr. (Provis) </th>
+                <td mat-cell *matCellDef="let cost">
+                    <mat-form-field>
+                        <input matInput
+                            type="text"
+                            [(ngModel)]="cost.erpNumber"
+                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                            (focusout)="updateProvisNr(cost)">
+                    </mat-form-field>
+                </td>
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="roadWorkNeedsCostsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: roadWorkNeedsCostsColumns;"></tr>
+            <tr mat-footer-row *matFooterRowDef="roadWorkNeedsCostsColumns"></tr>
+        </table>
+    </div>
+    <div style="border: 1px solid lightgrey;padding: 1em;margin-top: 1em;">
+        <p>
+            <b>Grob-Kostenschätzung gem. Projektierungsauftrag Ende Phase&nbsp;1
+                (+/-&nbsp;50&nbsp;%)/Langfristprognose</b>
+        </p>
+        <div style="text-align: right;">
+            <mat-form-field style="margin-bottom: -0.8em;">
+                <input matInput type="number" min="0"
+                    [(ngModel)]="roadWorkActivityFeature.properties.costs"
+                    placeholder="Langfristprognose (CHF)"
+                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+            </mat-form-field>
+            <p style="color:grey;margin-bottom: 2em;">({{
+                roadWorkActivityFeature.properties.costs |
+                number }} CHF)</p>
+            <p style="margin:0.5em;">
+                <span *ngIf="roadWorkActivityFeature.properties.costs &&
+                        roadWorkActivityFeature.properties.costs < totalCosts"
+                    style="background-color: rgb(238, 170, 170);padding: 0.5em;">
+                    Achtung: Angegebene Langfristprognose ist
+                    geringer als die berechnete Kostensumme.
+                </span>
+            </p>
+        </div>
+        <mat-form-field style="width: 100%;">
+            <mat-label>Bemerkung GM</mat-label>
+            <textarea matInput maxlength="255"
+                [(ngModel)]="roadWorkActivityFeature.properties.costsType"
+                placeholder="Bemerkung GM..."
+                [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+        </mat-form-field>
+        <p>
+            <b>Datum</b>:
+            <span *ngIf="roadWorkActivityFeature.properties.costLastModified">
+                {{roadWorkActivityFeature.properties.costLastModified | date: 'dd.MM.yyyy'}}
+            </span>
+            <span *ngIf="!roadWorkActivityFeature.properties.costLastModified">
+                <i>Noch nicht gesetzt</i>
+            </span>
+        </p>
+        <p>
+            <b>Gebietsmanagement</b>:
+            <span *ngIf="roadWorkActivityFeature.properties.costLastModifiedBy &&
+                    roadWorkActivityFeature.properties.costLastModifiedBy?.uuid">
+                {{roadWorkActivityFeature.properties.costLastModifiedBy.firstName}}
+                {{roadWorkActivityFeature.properties.costLastModifiedBy.lastName}}
+            </span>
+            <span *ngIf="!roadWorkActivityFeature.properties.costLastModifiedBy?.uuid">
+                <i>Noch nicht gesetzt</i>
+            </span>
+        </p>
+    </div>
+</div>

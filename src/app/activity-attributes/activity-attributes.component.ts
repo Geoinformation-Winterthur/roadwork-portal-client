@@ -19,7 +19,6 @@ import { User } from 'src/model/user';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { FormControl, NgModel } from '@angular/forms';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
-import { Costs } from 'src/model/costs';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
@@ -47,6 +46,7 @@ import { ReportingItemsComponent } from '../reporting-items/reporting-items.comp
 import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
 import { ActivityPropertiesComponent } from '../activity-properties/activity-properties.component';
 import { ActivityDatesComponent } from '../activity-dates/activity-dates.component';
+import { ActivityCostsComponent } from '../activity-costs/activity-costs.component';
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import saveAs from 'file-saver';
@@ -93,7 +93,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   availableUsers: User[] = [];
   availableOrganisations: OrganisationalUnit[] = [];
   usersOfChosenOrganisation: User[] = [];
-  costsOfAssignedNeeds: Costs[] = [];
 
   /** Injected services stored for reuse in methods. */
   userService: UserService;
@@ -138,8 +137,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "constructionDuration", "time_factor", "consult_input"];
 
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
-
-  roadWorkNeedsCostsColumns: string[] = ["created", "org", "orderer", "name", "comment", "cost_type", "costs"];
 
   /** Hard-coded project kind options (distinct from backend-provided project types). */
   readonly projectKindOptions = [  
@@ -383,13 +380,9 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                           this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
                           this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
 
-                          // Collect costs and detect needs with documents for display.
+                          // Detect needs with documents for display.
                           let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = [];
-                          let costsOfAssignedNeedsTemp: Costs[] = [];
                           for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
-                            if (assignedRoadWorkNeed.properties.costs)
-                              for (let costs of assignedRoadWorkNeed.properties.costs)
-                                costsOfAssignedNeedsTemp.push(costs);
                             if ((assignedRoadWorkNeed.properties.documentAtts &&
                               assignedRoadWorkNeed.properties.documentAtts.length != 0)
                               || assignedRoadWorkNeed.properties.url
@@ -398,7 +391,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                             }
                           }
                           this.needsOfActivityService.assignedRoadWorkNeedsWithDocuments = assignedRoadWorkNeedsWithDocuments;
-                          this.costsOfAssignedNeeds = costsOfAssignedNeedsTemp;
                         },
                         error: (error) => {
                         }
@@ -946,12 +938,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     return new RoadWorkNeedFeature();
   }
 
-  /** Sums all cost items associated with assigned needs (NaN-safe). */
-  get totalCosts(): number {
-    return this.costsOfAssignedNeeds
-      .reduce((sum, c) => sum + (c?.costs ?? 0), 0);
-  }
-
   /** Reset study dates when "isStudy" is toggled off. */
   onChangeIsStudy() {
     if (this.roadWorkActivityFeature) {
@@ -1122,25 +1108,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         this.dueDate.setDate(this.dueDate.getDate() + 7);
       }
     }
-  }
-
-  /** Finds which assigned need a given cost item belongs to. */
-  getAssignedNeedForCost(cost: Costs): RoadWorkNeedFeature {
-    for (let assignedRoadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds)
-      if (assignedRoadWorkNeed.properties.costs)
-        for (let tempCost of assignedRoadWorkNeed.properties.costs)
-          if (tempCost.uuid == cost.uuid)
-            return assignedRoadWorkNeed;
-    return new RoadWorkNeedFeature();
-  }
-
-  /** Sum helper for a cost array (ignores undefined values). */
-  sumUpCosts(costs: Costs[]): number {
-    let result: number = 0;
-    for (let cost of costs)
-      if (cost && cost.costs)
-        result += cost.costs;
-    return result;
   }
 
   /**
