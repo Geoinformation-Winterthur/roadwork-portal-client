@@ -250,10 +250,23 @@
                 </p>    
                 
         </div>
-
+        <div>
+            <div style="display: flex; gap: 10px; min-width: 300px; margin-top: 20px; margin-bottom: 1em;">
+                <button mat-button
+                    style="background-color: rgb(236,236,234);margin-top: 1em;margin-bottom: 1em;padding: 0.5em;padding-left:1em; padding-right: 1em"
+                    [disabled]="!isAssigningUsersAllowed" (click)="addAllReviewers()">
+                    Alle Vernehmlassenden hinzufügen
+                </button>
+                <button mat-button
+                    style="background-color: rgb(236,236,234);margin-top: 1em;margin-bottom: 1em;padding: 0.5em;padding-left:1em; padding-right: 1em"
+                    [disabled]="!isAssigningUsersAllowed" (click)="addAllConsultations()">
+                    Alle beteiligen Auslösenden hinzufügen
+                </button>
+            </div>
+        </div>
         <div style="width: 100%;table-layout: fixed;">                                                   
             <div>
-                <div style="min-width: 300px; margin-top: 50px; margin-bottom: 1em;">
+                <div style="min-width: 300px; margin-top: 20px; margin-bottom: 1em;">
                     <button mat-button style="background-color: rgb(236,236,234);margin-top: 1em;margin-bottom: 1em;padding: 0.5em;padding-left:1em; padding-right: 1em" 
                         [disabled]="!isAssigningUsersAllowed"
                            (click)="isAssigningUsersVisible=!isAssigningUsersVisible">

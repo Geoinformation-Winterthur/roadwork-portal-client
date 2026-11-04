@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AffectedRowsResult } from 'src/model/affected-rows_result';
 import { ConsultationInput } from 'src/model/consultation-input';
 
 @Injectable({
@@ -27,6 +28,14 @@ export class ConsultationService {
             Observable<ConsultationInput> {
     let result: Observable<any> =
       this.http.post(environment.apiUrl + "/consultation/?roadworkactivityuuid=" + roadworkActivityUuid,
+            consultationInput);
+    return result;
+  }
+
+  addConsultationInputs(roadworkActivityUuid: string, consultationInput: ConsultationInput[]): 
+            Observable<AffectedRowsResult> {
+    let result: Observable<any> =
+      this.http.post(environment.apiUrl + "/consultations/?roadworkactivityuuid=" + roadworkActivityUuid,
             consultationInput);
     return result;
   }

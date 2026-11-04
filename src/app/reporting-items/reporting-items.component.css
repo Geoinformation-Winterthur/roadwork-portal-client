@@ -2,3 +2,8 @@
     min-width: 380px;
     margin: 0.5em;
 }
+
+.mat-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

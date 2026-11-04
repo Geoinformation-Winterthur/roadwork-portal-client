@@ -29,6 +29,7 @@ import { RoadworkPolygon } from 'src/model/road-work-polygon';
 import { Router } from '@angular/router';
 import { ColDef, ColumnMenuTab } from 'ag-grid-community';
 import { Observable, tap, catchError, of, lastValueFrom, concatMap, map } from 'rxjs';
+import { List } from 'echarts';
 
 @Component({
   selector: 'app-reporting-items',
@@ -53,9 +54,6 @@ export class ReportingItemsComponent implements OnInit {
   @Input()
   feedbackPhaseName: string = 'Phasenbezeichnung';
   
-  /** The consultation input of the *current* user for the current activity & phase. */
-  consultationInput: ConsultationInput = new ConsultationInput();
-
   /** All consultation inputs for this activity filtered to the chosen phase. */
   consultationInputsFromReporting: ConsultationInput[] = [];
 
@@ -212,9 +210,6 @@ export class ReportingItemsComponent implements OnInit {
       this.isPhaseReporting = true;
     }
 
-    // Set the phase for the local editable input model.
-    this.consultationInput.feedbackPhase = this.feedbackPhase;
-
     // Refresh the full user object for the current session user (e.g., ensure UUID).
     this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
       .subscribe({
@@ -233,9 +228,6 @@ export class ReportingItemsComponent implements OnInit {
       // Load all available users for assignment UI.
       concatMap(() => this.getAvailableUsers()),
       tap(result => this.availableUsers = result),
-
-      // Pre-fill the editable `consultationInput` with current user's existing entry (if any).
-      tap(() => this.preFillconsultationInput()),
 
       // Remove already assigned users from the available list.
       tap(() => this.removeAlreadyAssignedUsers())
@@ -274,24 +266,6 @@ export class ReportingItemsComponent implements OnInit {
           });
       })
     );
-  }
-
-  private preFillconsultationInput(): void {
-    for (let consultationInput of this.consultationInputsFromReporting) {
-          if (consultationInput.inputBy.mailAddress === this.user.mailAddress &&
-            consultationInput.feedbackPhase === this.feedbackPhase) {
-            this.consultationInput = new ConsultationInput();
-            this.consultationInput.uuid = "" + consultationInput.uuid;
-            this.consultationInput.ordererFeedback = "" + consultationInput.ordererFeedback;
-            this.consultationInput.managerFeedback = "" + consultationInput.managerFeedback;
-            this.consultationInput.inputBy = consultationInput.inputBy;
-            this.consultationInput.lastEdit = consultationInput.lastEdit;
-            this.consultationInput.decline = consultationInput.decline;
-            this.consultationInput.valuation = consultationInput.valuation;
-            this.consultationInput.feedbackPhase = this.feedbackPhase;
-            break;
-          }
-        }
   }
 
   private removeAlreadyAssignedUsers(): void {
@@ -350,16 +324,16 @@ export class ReportingItemsComponent implements OnInit {
    * - Persist via `ConsultationService` and append to the local list on success.
    */
   addConsultation(user: User): void {        
-    this.consultationInput = new ConsultationInput();
-    this.consultationInput.inputBy.mailAddress = user.mailAddress;
-    this.consultationInput.feedbackPhase = this.feedbackPhase;
-    this.consultationInput.lastEdit = new Date();
-    this.consultationInput.decline = false;
-    this.consultationInput.valuation = 0;
-    this.consultationInput.ordererFeedback = "";
-    this.consultationInput.managerFeedback = "";
-    this.consultationInput.uuid = "";
-    this.consultationInput.inputBy = user;
+    let consultationInput = new ConsultationInput();
+    consultationInput.inputBy.mailAddress = user.mailAddress;
+    consultationInput.feedbackPhase = this.feedbackPhase;
+    consultationInput.lastEdit = new Date();
+    consultationInput.decline = false;
+    consultationInput.valuation = 0;
+    consultationInput.ordererFeedback = "";
+    consultationInput.managerFeedback = "";
+    consultationInput.uuid = "";
+    consultationInput.inputBy = user;
 
     if (this.consultationInputsFromReporting.some(u => u.inputBy.uuid === user.uuid)) {
       this.snckBar.open("Vernehmlassende:r ist schon in der Liste.", undefined, {
@@ -370,7 +344,7 @@ export class ReportingItemsComponent implements OnInit {
     }
 
     this.consultationService.addConsultationInput(this.roadWorkActivity.properties.uuid,
-        this.consultationInput)
+        consultationInput)
         .subscribe({
           next: (consultationInput) => {
             if (consultationInput) {
@@ -397,7 +371,7 @@ export class ReportingItemsComponent implements OnInit {
 
               this.consultationInputsFromReporting.push(consultationInputObj);
 
-              // Reloads data/permissions by re-running initialization.
+              // Reloads data/permissions 
               this.loadData();
             }
           },
@@ -426,19 +400,19 @@ export class ReportingItemsComponent implements OnInit {
                 duration: 4000
               });
             } else {
-              this.snckBar.open("Bemerkung wurde gelöscht", "", {
+              this.snckBar.open("Beteiligter wurde gelöscht", "", {
                 duration: 4000
               });
             }
+            this.loadData();
           }
         },
         error: (error) => {
-          this.snckBar.open("Unbekannter Fehler beim Löschen der Bemerkung", "", {
+          this.snckBar.open("Unbekannter Fehler beim Löschen des Beteiligten", "", {
             duration: 4000
           });
         }
       });
-    this.loadData();
   }      
 
   /**
@@ -463,5 +437,79 @@ export class ReportingItemsComponent implements OnInit {
       };
       this.router.navigate(["/needs/new"], { queryParams: params });
     }
+  }
+
+  /**
+   * Assign all reviewers to this activity for the current feedback phase.
+   * Steps:
+   * - Build a new `ConsultationInput` object for the user.
+   * - Prevent duplicates by checking `consultationInputsFromReporting`.
+   * - Persist via `ConsultationService` and append to the local list on success.
+   */
+  addAllReviewers() { 
+    let users = this.availableUsers.filter(user => user.grantedRoles.orderer //Aktuell Auslösende weil es Rolle vernehmlassende noch nicht gibt. // TODO change role orderer to role 'reviewer'
+      && !this.consultationInputsFromReporting.some(consultationInput => consultationInput?.inputBy?.uuid === user.uuid)); 
+
+    this.addConsultations(users);
+  }
+
+  /**
+   * Assign users to this activity for the current feedback phase.
+   * Steps:
+   * - Build a new `ConsultationInput` object for the user.
+   * - Prevent duplicates by checking `consultationInputsFromReporting`.
+   * - Persist via `ConsultationService` and append to the local list on success.
+   */
+  addAllConsultations() { 
+    let needs  = this.needsOfActivityService.assignedRoadWorkNeeds;
+    let users = needs.map(need => need.properties?.orderer);
+    
+    this.addConsultations(users);
+  }
+
+  addConsultations(users: User[]) {
+
+    let consultationInputs : ConsultationInput[] = [];
+
+    users.forEach(user => {
+      if (!this.consultationInputsFromReporting.some(consultationInput => consultationInput.inputBy.uuid === user.uuid)) {
+        let consultationInput = new ConsultationInput();
+        consultationInput.feedbackPhase = this.feedbackPhase;
+        consultationInput.lastEdit = new Date();
+        consultationInput.decline = false;
+        consultationInput.valuation = 0;
+        consultationInput.ordererFeedback = "";
+        consultationInput.managerFeedback = "";
+        consultationInput.uuid = "";
+        consultationInput.inputBy = user;
+        consultationInputs.push(consultationInput);
+      }
+    });
+
+    this.consultationService.addConsultationInputs(this.roadWorkActivity.properties.uuid,
+      consultationInputs)
+      .subscribe({
+        next: (affectedRowsResult) => {
+          if (affectedRowsResult) {
+            ErrorMessageEvaluation._evaluateErrorMessage(affectedRowsResult);
+            if (affectedRowsResult.errorMessage?.trim().length !== 0) {
+              this.snckBar.open(affectedRowsResult.errorMessage, "", {
+                duration: 4000
+              });
+            } else {
+              this.snckBar.open(`${affectedRowsResult.affectedRows} von ${consultationInputs.length} Beteiligte gespeichert`, "", {
+                duration: 4000
+              });
+            }
+            // Reloads data/permissions 
+            this.loadData();
+          }
+        },
+        error: (error) => {
+          this.snckBar.open("Unbekannter Fehler beim Speichern der Rückmeldung", "", {
+            duration: 4000
+          });
+        }
+      });
   }
 }
