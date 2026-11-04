@@ -561,6 +561,14 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
     this.timelineChartRef.nativeElement.addEventListener('wheel', this.ganttWheelHandler, { passive: false, capture: true });
     this.chartInstance.on('datazoom', () => this.ganttOnZoom());
+    this.chartInstance.on('legendselectchanged', (event: any) => {
+      // Legend visibility must not change the series chosen in the date selector.
+      for (const name of this.ganttSelected) {
+        if (event.selected?.[name] === false) { this.ganttLegendHidden.add(name); }
+        else if (event.selected?.[name] === true) { this.ganttLegendHidden.delete(name); }
+      }
+      this.ganttSaveSettings();
+    });
     this.syncChartWithGridState();
   }
 
@@ -680,6 +688,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   ganttTimePreset: 'three' | 'five' | 'seven' | 'all' | 'custom' = 'five';
   private ganttStoredXZoom: { start: number; end: number } | null = null;
   private readonly ganttSettingsKey = 'wikis.analyzes.gantt.v4';
+  private ganttLegendHidden = new Set<string>();
   ganttLegendExpanded = false;
   ganttSelected = new Set<string>([
     'Projektzeitraum', 'Bauausführung', 'SKS', 'KAP', 'GL Auftrag', 'OKS',
@@ -704,6 +713,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ganttToggle(label: string, checked: boolean): void {
     if (checked) { this.ganttSelected.add(label); } else { this.ganttSelected.delete(label); }
+    this.ganttLegendHidden.delete(label);
     this.ganttSaveSettings();
     this.renderTimeline(this.getDisplayedRowsFromGrid());
   }
@@ -712,6 +722,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ganttSelected = select
       ? new Set<string>(['Projektzeitraum', 'Bauausführung', ...this.GANTT_MILESTONES.map(item => item.label)])
       : new Set<string>();
+    this.ganttLegendHidden.clear();
     this.ganttSaveSettings();
     this.renderTimeline(this.getDisplayedRowsFromGrid());
   }
@@ -734,6 +745,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       localStorage.setItem(this.ganttSettingsKey, JSON.stringify({
         selected: Array.from(this.ganttSelected),
+        legendHidden: Array.from(this.ganttLegendHidden),
         visibleRows: this.ganttVisibleRows,
         colorMode: this.ganttColorMode,
         timePreset: this.ganttTimePreset,
@@ -753,6 +765,9 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       if (Array.isArray(saved.selected)) {
         this.ganttSelected = new Set(saved.selected.filter((name: any) => typeof name === 'string' && validNames.has(name)));
       }
+      this.ganttLegendHidden = new Set<string>(Array.isArray(saved.legendHidden)
+        ? saved.legendHidden.filter((name: any) => typeof name === 'string' && validNames.has(name) && this.ganttSelected.has(name))
+        : []);
       if (saved.colorMode === 'period' || saved.colorMode === 'phase') { this.ganttColorMode = saved.colorMode; }
       if (this.ganttVisibleChoices.includes(saved.visibleRows)) { this.ganttVisibleRows = saved.visibleRows; }
       if (['three', 'five', 'seven', 'all', 'custom'].includes(saved.timePreset)) { this.ganttTimePreset = saved.timePreset; }
@@ -782,6 +797,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ganttResetSettings(): void {
     try { localStorage.removeItem(this.ganttSettingsKey); } catch (_error) { /* Storage may be unavailable. */ }
+    this.ganttLegendHidden.clear();
     this.ganttSelected = new Set([
       'Projektzeitraum', 'Bauausführung', 'SKS', 'KAP', 'GL Auftrag', 'OKS',
       'Vorstudie genehmigt', 'Projektfestsetzung', 'Ausführungskredit',
@@ -990,7 +1006,12 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         type: 'scroll', orient: 'horizontal', top: 37, left: 16, right: 72,
         itemWidth: 13, itemHeight: 10, itemGap: 17,
         textStyle: { fontSize: 11 },
-        selectedMode: false,
+        selectedMode: 'multiple',
+        selected: Object.fromEntries(
+          ['Projektzeitraum', 'Bauausführung', ...this.GANTT_MILESTONES.map(def => def.label)]
+            .filter(name => this.ganttSelected.has(name))
+            .map(name => [name, !this.ganttLegendHidden.has(name)])
+        ),
         data: [
           ...(this.ganttSelected.has('Projektzeitraum') ? [{ name: 'Projektzeitraum', icon: 'roundRect' }] : []),
           ...(this.ganttSelected.has('Bauausführung') ? [{ name: 'Bauausführung', icon: 'roundRect' }] : []),
@@ -1058,13 +1079,13 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       },
       series: [
-        { ...projectBar, data: this.ganttSelected.has('Projektzeitraum') ? projectBar.data : [], markLine: {
+        ...(this.ganttSelected.has('Projektzeitraum') ? [{ ...projectBar, markLine: {
           silent: true, symbol: ['none', 'none'],
           data: [{ xAxis: today.getTime() }],
           lineStyle: { color: '#c42d3a', width: 1.5, type: 'dashed' },
           label: { formatter: 'Heute', color: '#c42d3a', position: 'insideEndTop' }
-        } },
-        { ...constructionBar, data: this.ganttSelected.has('Bauausführung') ? constructionBar.data : [] }, ...milestoneSeries
+        } }] : []),
+        ...(this.ganttSelected.has('Bauausführung') ? [constructionBar] : []), ...milestoneSeries
       ] as any[]
     };
     this.chartInstance.setOption(option, true);
