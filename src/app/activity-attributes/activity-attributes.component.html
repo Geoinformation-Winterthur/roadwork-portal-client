@@ -729,21 +729,21 @@
                                     </td>
                                 </ng-container>
 
-                                <ng-container matColumnDef="constructionDuration">
+                                <ng-container matColumnDef="constructionDurationDays">
                                     <th
                                         mat-header-cell
                                         *matHeaderCellDef
-                                        matTooltip="Dauer der Bautätigkeit in Monaten">
+                                        matTooltip="Dauer der Bautätigkeit in Tagen">
                                         Dauer
                                     </th>
 
                                     <td
                                         mat-cell
                                         *matCellDef="let need"
-                                        class="mat-column-constructionDuration">
+                                        class="mat-column-constructionDurationDays">
 
                                         {{
-                                            need?.properties?.constructionDuration
+                                            need?.properties?.constructionDurationDays
                                                 | number:'1.0-0'
                                         }}
                                     </td>

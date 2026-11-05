@@ -134,7 +134,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   needsDocsDisplayedColumns: string[] = ['name', 'url', 'documents'];
   chooseInvolvedUserDisplayedColumns: string[] = ['org', 'abbr', 'name', 'choose'];
 
-  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "constructionDuration", "time_factor", "consult_input"];
+  assignedRoadWorkNeedsDisplayedColumns: string[] = ["name", "orderer_org", "contact_person", "earliest", "wish", "latest", "constructionDurationDays", "time_factor", "consult_input"];
 
   consultationInputsDisplayedColumns: string[] = ["orderer_org", "contact_person", "need", "realisation"];
 
@@ -1455,7 +1455,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
             Frühester Baubeginn: ${this.formatChartDate(d.early)}<br/>
             Wunsch Baubeginn: ${this.formatChartDate(d.wish)}<br/>
             Späteste Inbetriebnahme: ${this.formatChartDate(d.late)}<br/>
-            Dauer der Bautätigkeit: ${d.constructionDuration ?? '-'} Monate<br/>
+            Dauer der Bautätigkeit: ${d.constructionDurationDays ?? '-'} Tage<br/>
             Spätest möglicher Baubeginn: ${this.formatChartDate(d.constructionStart)}
           `;
         }
@@ -1701,19 +1701,20 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       const wish = this.toDate(p.finishOptimumTo);
       const late = this.toDate(p.finishLateTo);
 
-      const durationValue = Number(p.constructionDuration);
-      const constructionDuration =
+      const durationValue = Number(p.constructionDurationDays);
+      const constructionDurationDays =
         Number.isFinite(durationValue) && durationValue > 0
           ? durationValue
           : 0;
+      const constructionDurationMonths = constructionDurationDays / 30;
 
       let constructionStart: Date | undefined;
       const constructionEnd = late;
 
-      if (late && constructionDuration > 0) {
+      if (late && constructionDurationMonths > 0) {
         constructionStart = new Date(late);
         constructionStart.setMonth(
-          constructionStart.getMonth() - constructionDuration
+          constructionStart.getMonth() - constructionDurationMonths
         );
       }
 
@@ -1728,7 +1729,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
         late,
         constructionStart,
         constructionEnd,
-        constructionDuration,
+        constructionDurationDays,
         isPrimary: p.isPrimary
       };
 

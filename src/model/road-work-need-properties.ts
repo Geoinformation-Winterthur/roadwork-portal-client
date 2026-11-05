@@ -46,6 +46,6 @@ export class RoadWorkNeedProperties {
     decline?: boolean = false;
     stillRelevant?: boolean = false;
     feedbackGiven?: boolean = false;
-    constructionDuration?: number; // Added in 2026.4 (#608)
+    constructionDurationDays?: number; // Added in 2026.4 (#608)
     acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE (#609, 2026.4)
 }
