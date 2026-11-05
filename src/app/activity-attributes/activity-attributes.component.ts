@@ -17,7 +17,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 import { UserService } from 'src/services/user.service';
 import { User } from 'src/model/user';
 import { RoadworkPolygon } from 'src/model/road-work-polygon';
-import { FormControl, NgModel } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
@@ -31,7 +31,6 @@ import { OrganisationService } from 'src/services/organisation.service';
 import { AppConfigService } from 'src/services/app-config.service';
 import { ConfigurationData } from 'src/model/configuration-data';
 import { OrganisationalUnit } from 'src/model/organisational-unit';
-import { ConsultationInput } from 'src/model/consultation-input';
 import { environment } from 'src/environments/environment';
 import { StatusHelper } from 'src/helper/status-helper';
 import { EnumType } from 'src/model/enum-type';
@@ -45,8 +44,6 @@ import { DocxWordService } from 'src/services/docx-export.service';
 import { ReportingItemsComponent } from '../reporting-items/reporting-items.component';
 import { ActivityJournalComponent } from '../activity-journal/activity-journal.component';
 import { ActivityPropertiesComponent } from '../activity-properties/activity-properties.component';
-import { ActivityDatesComponent } from '../activity-dates/activity-dates.component';
-import { ActivityCostsComponent } from '../activity-costs/activity-costs.component';
 import * as echarts from 'echarts';
 import { EChartsOption } from 'echarts';
 import saveAs from 'file-saver';
@@ -84,6 +81,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   priorityCode: string = "";
   involvedUsersFromNeeds: User[] = [];
   involvedUsersFromConsults: User[] = [];
+  involvedOrgsNames: string[] = [];
+  primaryNeed: RoadWorkNeedFeature = new RoadWorkNeedFeature();
 
   /** Toggles for enabling/disabling scheduling fields and editing per role. */
   isScheduleEditingDisabled = true;
@@ -330,36 +329,12 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
             .subscribe({
               next: (roadWorkActivities) => {
                 if (roadWorkActivities.length === 1) {
-                  let roadWorkActivity: any = roadWorkActivities[0];
-                  // Convert backend geometry to a typed model class for the OL map.
-                  let rwPoly: RoadworkPolygon = new RoadworkPolygon();
-                  rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
-                  roadWorkActivity.geometry = rwPoly;
-                  this.roadWorkActivityFeature = roadWorkActivity;
+                  // Set the road work activity as active
+                  this.setActiveRoadWorkActivity(roadWorkActivities[0])
 
-                  // Normalize zero-values to undefined for optional numeric inputs.
-                  let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
-                  if (roadWorkActivityFeature.properties.costs == 0)
-                    roadWorkActivityFeature.properties.costs = undefined;
-                  if (roadWorkActivityFeature.properties.investmentNo == 0)
-                    roadWorkActivityFeature.properties.investmentNo = undefined;
-
-                  // Resolve management area and set its manager on the activity.
-                  this.managementAreaService.getIntersectingManagementArea(roadWorkActivityFeature.geometry)
-                    .subscribe({
-                      next: (managementArea) => {
-                        if (managementArea) {
-                          this.managementArea = managementArea;
-                          if (this.roadWorkActivityFeature)
-                            this.roadWorkActivityFeature.properties.areaManager = managementArea.manager;
-                        }
-                      },
-                      error: (error) => {
-                      }
-                    });
-
-                  // Pre-fill project type control for the UI.
-                  this.projectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
+                  // Update the due date
+                  this._updateDueDate();
+                  this._updateAllInvolvedUsersFromConsults();
 
                   // Load needs related to the activity (assigned vs registered).
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
@@ -368,38 +343,17 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                       this.roadWorkActivityFeature?.properties.uuid)
                       .subscribe({
                         next: (roadWorkNeeds) => {
-                          let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
-                          let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
-                          for (let roadWorkNeed of roadWorkNeeds) {
-                            if (roadWorkNeed.properties.activityRelationType === "assignedneed") {
-                              assignedRoadWorkNeeds.push(roadWorkNeed);
-                            } else if (roadWorkNeed.properties.activityRelationType === "registeredneed") {
-                              registeredRoadWorkNeeds.push(roadWorkNeed);
-                            }
-                          }
-                          this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
-                          this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
+                          // Set the related road work needs as active
+                          this.setActiveRoadworkNeeds(roadWorkNeeds)
 
-                          // Detect needs with documents for display.
-                          let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = [];
-                          for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
-                            if ((assignedRoadWorkNeed.properties.documentAtts &&
-                              assignedRoadWorkNeed.properties.documentAtts.length != 0)
-                              || assignedRoadWorkNeed.properties.url
-                            ) {
-                              assignedRoadWorkNeedsWithDocuments.push(assignedRoadWorkNeed);
-                            }
-                          }
-                          this.needsOfActivityService.assignedRoadWorkNeedsWithDocuments = assignedRoadWorkNeedsWithDocuments;
+                          // Populate helper lists and compute phase due date.
+                          this._updateAllInvolvedUsersFromNeeds(roadWorkNeeds);
+                          this._updatePrimaryNeed();
                         },
                         error: (error) => {
                         }
                       });
                   }
-                  // Populate helper lists and compute phase due date.
-                  this._updateAllInvolvedUsersFromNeeds();
-                  this._updateAllInvolvedUsersFromConsults();
-                  this._updateDueDate();
                 }
 
                 // Navigate to specific sub-tab when query param is present.
@@ -427,7 +381,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       });
 
   }
-
   
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -439,6 +392,63 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
+  setActiveRoadWorkActivity(roadWorkActivity: RoadWorkActivityFeature) {
+    // Convert backend geometry to a typed model class for the OL map.
+    let rwPoly: RoadworkPolygon = new RoadworkPolygon();
+    rwPoly.coordinates = roadWorkActivity.geometry.coordinates;
+    roadWorkActivity.geometry = rwPoly;
+    this.roadWorkActivityFeature = roadWorkActivity;
+
+    // Normalize zero-values to undefined for optional numeric inputs.
+    let roadWorkActivityFeature: RoadWorkActivityFeature = this.roadWorkActivityFeature as RoadWorkActivityFeature;
+    if (roadWorkActivityFeature.properties.costs == 0)
+      roadWorkActivityFeature.properties.costs = undefined;
+    if (roadWorkActivityFeature.properties.investmentNo == 0)
+      roadWorkActivityFeature.properties.investmentNo = undefined;
+
+    // Resolve management area and set its manager on the activity.
+    this.managementAreaService.getIntersectingManagementArea(roadWorkActivityFeature.geometry)
+      .subscribe({
+        next: (managementArea) => {
+          if (managementArea) {
+            this.managementArea = managementArea;
+            if (this.roadWorkActivityFeature)
+              this.roadWorkActivityFeature.properties.areaManager = managementArea.manager;
+          }
+        },
+        error: (error) => {
+        }
+      });
+
+    // Pre-fill project type control for the UI.
+    this.projectTypeEnumControl.setValue(roadWorkActivity.properties.projectType);
+  }
+
+  setActiveRoadworkNeeds(roadWorkNeeds: RoadWorkNeedFeature[]) {
+    let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+    let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
+    for (let roadWorkNeed of roadWorkNeeds) {
+      if (roadWorkNeed.properties.activityRelationType === "assignedneed") {
+        assignedRoadWorkNeeds.push(roadWorkNeed);
+      } else if (roadWorkNeed.properties.activityRelationType === "registeredneed") {
+        registeredRoadWorkNeeds.push(roadWorkNeed);
+      }
+    }
+    this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
+    this.needsOfActivityService.registeredRoadWorkNeeds = registeredRoadWorkNeeds;
+
+    // Detect needs with documents for display.
+    let assignedRoadWorkNeedsWithDocuments: RoadWorkNeedFeature[] = [];
+    for (let assignedRoadWorkNeed of assignedRoadWorkNeeds) {
+      if ((assignedRoadWorkNeed.properties.documentAtts &&
+        assignedRoadWorkNeed.properties.documentAtts.length != 0)
+        || assignedRoadWorkNeed.properties.url
+      ) {
+        assignedRoadWorkNeedsWithDocuments.push(assignedRoadWorkNeed);
+      }
+    }
+    this.needsOfActivityService.assignedRoadWorkNeedsWithDocuments = assignedRoadWorkNeedsWithDocuments;
+  }
 
   /** Publish wrapper: toggles privacy to public and saves/creates accordingly. */
   publish() {
@@ -928,14 +938,16 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   /** Finds the "primary" assigned need if present; otherwise returns a new (empty) need. */
-  get primaryNeed(): RoadWorkNeedFeature {
+  _updatePrimaryNeed() {
     if (this.needsOfActivityService.assignedRoadWorkNeeds.length > 0) {
       for (let roadWorkNeed of this.needsOfActivityService.assignedRoadWorkNeeds) {
-        if (roadWorkNeed.properties.isPrimary)
-          return roadWorkNeed;
+        if (roadWorkNeed.properties.isPrimary) {
+          this.primaryNeed = roadWorkNeed;
+          return;
+        }
       }
     }
-    return new RoadWorkNeedFeature();
+    this.primaryNeed = new RoadWorkNeedFeature();
   }
 
   /** Reset study dates when "isStudy" is toggled off. */
@@ -960,28 +972,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       this.chartInstance.dispose();
       this.chartInstance = undefined;
     }
-  }
-
-  /** Collect unique organisation abbreviations of involved users for display. */
-  getInvolvedOrgsNames(): string[] {
-    // TODO: Check if this is the correcty way or change to (currently unimplemented/empty) property this.roadWorkActivityFeature.properties.involvedUsers (14.07.2026)
-    const result: string[] = [];
-    if (this.roadWorkActivityFeature) {
-      // get organisational units from involved need users
-      for (const involvedUser of this.involvedUsersFromNeeds ?? []) {
-        const abbr = involvedUser?.organisationalUnit?.abbreviation;
-        if (abbr && !result.includes(abbr)) result.push(abbr);
-      }
-
-      // get organisational units from consult need users
-      for (const involvedUser of this.involvedUsersFromConsults ?? []) {
-        const abbr = involvedUser?.organisationalUnit?.abbreviation;
-        if (abbr && !result.includes(abbr)) result.push(abbr);
-      }
-
-      result.sort();
-    }
-    return result;
   }
 
   /** Internal deletion helper that handles result snackbars and redirect. */
@@ -1010,34 +1000,20 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
    * Build the union of involved users from all needs linked to the activity.
    * Shows a warning if needs could not be loaded.
    */
-  private _updateAllInvolvedUsersFromNeeds() {
-    // TODO: Clear list (this.involvedUsersFromNeeds) before load/reload?
-    if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids?.length) {
-      this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeature.properties.roadWorkNeedsUuids)
-        .subscribe({
-          next: (roadWorkNeeds) => {
-            if (roadWorkNeeds) {
-              if (roadWorkNeeds.length > 0 && roadWorkNeeds[0]) {
-                ErrorMessageEvaluation._evaluateErrorMessage(roadWorkNeeds[0]);
-                if (roadWorkNeeds[0].errorMessage.trim().length !== 0) {
-                  this.snckBar.open(roadWorkNeeds[0].errorMessage, "", {
-                    duration: 4000
-                  });
-                } else {
-                  for (let roadWorkNeed of roadWorkNeeds) {
-                    this.involvedUsersFromNeeds.push(roadWorkNeed.properties.orderer);
-                  }
-                }
-              }
-            }
-          },
-          error: (error) => {
-            this.snckBar.open("Organisationen konnten nicht geladen werden", "", {
-              duration: 4000,
-            });
-          }
-        });
+  private _updateAllInvolvedUsersFromNeeds(roadWorkNeeds: RoadWorkNeedFeature[]) {
+    // Clear involved users
+    this.involvedUsersFromNeeds = [];
+
+    for (let roadWorkNeed of roadWorkNeeds) {
+      this.involvedUsersFromNeeds.push(roadWorkNeed.properties.orderer);
     }
+
+    // add organisational units from involved need users
+    for (const involvedUser of this.involvedUsersFromNeeds ?? []) {
+      const abbr = involvedUser?.organisationalUnit?.abbreviation;
+      if (abbr && !this.involvedOrgsNames.includes(abbr)) this.involvedOrgsNames.push(abbr);
+    }
+    this.involvedOrgsNames.sort();
   }
 
     /**
@@ -1050,6 +1026,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
       this.consultationService.getConsultationInputs(this.roadWorkActivityFeature.properties.uuid)
         .subscribe({
           next: (consultationInputs) => {
+            // Clear involved users
             this.involvedUsersFromConsults = [];
 
             if (consultationInputs) {
@@ -1067,6 +1044,13 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
                       this.involvedUsersFromConsults.push(consultationInput.inputBy)
                     }
                   }
+
+                  // add organisational units from consult users
+                  for (const involvedUser of this.involvedUsersFromConsults ?? []) {
+                    const abbr = involvedUser?.organisationalUnit?.abbreviation;
+                    if (abbr && !this.involvedOrgsNames.includes(abbr)) this.involvedOrgsNames.push(abbr);
+                  }
+                  this.involvedOrgsNames.sort();
                 }
               }
             }
@@ -1315,9 +1299,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     this.reportingItemsInconsult2?.ngOnInit();
     this.reportingItemsReporting?.ngOnInit();
     this.ngOnInit();
-    this._updateAllInvolvedUsersFromNeeds();
-    this._updateAllInvolvedUsersFromConsults();
-    this._updateDueDate();
     this.editActivityMap?.refresh();
     this.activityJournal?.refresh();
     this.activityProperties?.refresh();

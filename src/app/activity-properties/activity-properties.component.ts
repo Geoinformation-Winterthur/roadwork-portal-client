@@ -9,6 +9,8 @@ import { ActivityResponsibilityFeature } from '../../model/activity-responsibili
 import { OrganisationalUnit } from '../../model/organisational-unit';
 import { User } from '../../model/user';
 import { DateHelper } from 'src/helper/date-helper';
+import { ManagementArea } from 'src/model/management-area';
+import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 
 @Component({
   selector: 'app-activity-properties',
@@ -24,6 +26,14 @@ export class ActivityPropertiesComponent implements OnInit {
 
   /** Project kinds from the parent. */
   @Input() projectKindOptions!: { value: string; label: string }[];
+
+  /** Management area from the parent. */
+  @Input() managementArea?: ManagementArea;
+
+  /** Involved organisation names from the parent */
+  @Input() involvedOrgsNames: string[] = [];
+
+  @Input() primaryNeed: RoadWorkNeedFeature = new RoadWorkNeedFeature();
 
   /** Injected services stored for reuse in methods. */
   private activityResponsibilityService: ActivityResponsibilityService;

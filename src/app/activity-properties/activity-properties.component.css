@@ -59,3 +59,36 @@ mat-card-header.left-right {
 mat-checkbox {
   width: fit-content;
 }
+
+/* Layout for multiple columns */
+.columns-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+/* A single column */
+.column {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* A single cell in a column */
+.column-cell {
+    padding: 0rem 1rem;
+    gap: 0.25rem;
+    min-width: 0; 
+}
+
+@media (max-width: 800px) {
+  .columns-layout {
+    flex-direction: column;
+  }
+
+  .column {
+    width: 100%;
+  }
+}
