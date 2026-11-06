@@ -160,7 +160,11 @@
 
                                 <mat-form-field>
                                     <mat-label>Beschrieb Bauvorhaben</mat-label>
-                                    <textarea matInput maxlength="255" cdkTextareaAutosize cdkAutosizeMaxRows="15"
+                                    <textarea matInput maxlength="255"
+                                        #commentTextarea
+                                        #autosize="cdkTextareaAutosize"
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMaxRows="15"
                                         [(ngModel)]="roadWorkActivityFeature.properties.comment"
                                         placeholder="Beschreibung des Bauvorhabens eingeben.."
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>

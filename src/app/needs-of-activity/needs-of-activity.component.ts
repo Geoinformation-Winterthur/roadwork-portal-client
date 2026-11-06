@@ -113,11 +113,25 @@ export class NeedsOfActivityComponent {
             this.needsOfActivityService.assignedRoadWorkNeeds = assignedRoadWorkNeeds;
             if(isFirstNeed)
               this.setAsPrimaryNeed(roadWorkNeed);
+
+            // Append comment in activity (is added in backend as well)
+            this.addNeedToActivityComment(roadWorkNeed);
           }
         },
         error: (error) => {
         }
       });
+  }
+
+  private addNeedToActivityComment(need: RoadWorkNeedFeature) {
+    let abbreviation = need.properties.orderer.organisationalUnit.abbreviation;
+    let description = need.properties.description;
+    let prefix = this.roadWorkActivity.properties.comment ? '\n' : '';
+
+    // Append the value in the activity comment.
+    // Note: there is a visibility observer in activity-properties to update the Textarea size,
+    // because the size is not update during the value change because it is invisible
+    this.roadWorkActivity.properties.comment += `${prefix}${abbreviation}: ${description}`;
   }
 
   unAssignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {

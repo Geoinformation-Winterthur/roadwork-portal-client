@@ -177,7 +177,7 @@ export class RoadWorkActivityProperties {
     privateEntityIsInitiator: boolean = false;
 
     // Provis (Abacus) (#624, 2026.4)
-    erpNumber?: string;
+    erpNumber?: string = "";
 
     // Ressources (#625, 2026.4)
     staffResourcesAprConfirmed: boolean = false;

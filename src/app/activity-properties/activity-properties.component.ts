@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { NgModel } from '@angular/forms';
 import { UserService } from '../../services/user.service';
@@ -11,6 +11,7 @@ import { User } from '../../model/user';
 import { DateHelper } from 'src/helper/date-helper';
 import { ManagementArea } from 'src/model/management-area';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-activity-properties',
@@ -71,13 +72,40 @@ export class ActivityPropertiesComponent implements OnInit {
     return true;
   }
 
+  @ViewChild('autosize')
+  private autosize!: CdkTextareaAutosize;
+
+  @ViewChild('commentTextarea')
+  private commentTextarea!: ElementRef<HTMLTextAreaElement>;
+
+  private visibilityObserver?: IntersectionObserver;
+
+  public ngAfterViewInit(): void {
+    // Required to resize text field when content is changed from outside,
+    // because the size is not update during the value change because it is invisible
+    // E.g. assignedRoadWorkNeed.properties.comment from needs-of-activity
+    this.visibilityObserver = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        this.autosize.resizeToFitContent(true);
+      }
+    });
+
+    this.visibilityObserver.observe(
+      this.commentTextarea.nativeElement
+    );
+  }
+
+  public ngOnDestroy(): void {
+    this.visibilityObserver?.disconnect();
+  }
+
   async refresh() {
     // load project project responsibility feature
     this.projectResponsibilityFeature = await this.activityResponsibilityService.getProjectActivityResponsibility(this.roadWorkActivityFeature.properties.uuid);
 
     // load phase project responsibility features
     this.phaseResponsibilityFeatures = await this.activityResponsibilityService.getPhaseActivityResponsibilities(this.roadWorkActivityFeature.properties.uuid);
-    
+
     // load organisational units
     this.allOrganisationalUnits = await firstValueFrom(this.organisationService.getAllOrgTypes(false));
 
@@ -173,7 +201,7 @@ export class ActivityPropertiesComponent implements OnInit {
     // delete phase responsibility entries
     for (const deletedPhaseResponsibilityFeature of this.deletedPhaseResponsibilityFeatures) {
       if (deletedPhaseResponsibilityFeature.properties.uuid) {
-          await this.activityResponsibilityService.deleteActivityResponsibility(deletedPhaseResponsibilityFeature.properties.uuid);
+        await this.activityResponsibilityService.deleteActivityResponsibility(deletedPhaseResponsibilityFeature.properties.uuid);
       }
     }
 
@@ -212,7 +240,7 @@ export class ActivityPropertiesComponent implements OnInit {
       this.roadWorkActivityFeature.properties.isOksActiveLastModified = DateHelper.getNormalizedDateNow(); // avoid date change due to timezone, see date-helper.normalizeDate
     }
   }
-  
+
   comparePhase = (a: any, b: any) =>
     a?.phase === b?.phase;
 }
