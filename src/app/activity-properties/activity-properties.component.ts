@@ -12,6 +12,7 @@ import { DateHelper } from 'src/helper/date-helper';
 import { ManagementArea } from 'src/model/management-area';
 import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-activity-properties',
@@ -207,6 +208,10 @@ export class ActivityPropertiesComponent implements OnInit {
 
     // reload elements
     await this.refresh();
+  }
+
+  normalizeDate(event: MatDatepickerInputEvent<Date>): void {
+    return DateHelper.normalizeDate(event);
   }
 
   onOeChange(responsibilityFeature: ActivityResponsibilityFeature) {

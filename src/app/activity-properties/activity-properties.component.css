@@ -92,3 +92,16 @@ mat-checkbox {
     width: 100%;
   }
 }
+
+/* multiple elements in same row, one after another (not same size) */
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-fields-split-three {
+    display: grid;
+    grid-template-columns: 1fr 2fr 7fr;
+    gap: 1rem;
+}

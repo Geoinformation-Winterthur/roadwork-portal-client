@@ -16,4 +16,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     visibility: hidden;
 }
 
-
+.multiline-tooltip {
+  white-space: pre-line;
+}

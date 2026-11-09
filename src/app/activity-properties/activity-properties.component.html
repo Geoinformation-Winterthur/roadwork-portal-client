@@ -284,6 +284,60 @@
                 <div class="column-cell">
                     <mat-card style="margin-top: 10px;">
                         <mat-card-header>
+                            <mat-card-title>Strassenzustand</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div class="info-row">
+                                <mat-icon>info</mat-icon>
+                                <p
+                                    matTooltipClass="multiline-tooltip"
+                                    [matTooltip]="'Strassenzustand (aus GIS) (1-5)
+
+    0.0-0.9 = gut (Neuwertiger Zustand. Kein unmittelbarer Handlungsbedarf, lediglich betrieblicher Unterhalt) -> Z-Klasse 1
+    1.0-1.9 = mittel (Erste leichte Verschleisserscheinungen. Mittelfristig sind kleinere Erhaltungsmassnahmen (z.B. Oberflächenbehandlungen) nötig. ) -> Z-Klasse 2
+    2.0-2.9 = ausreichen (Deutliche Schäden sichtbar. Systematischer baulicher Unterhalt oder Deckschichtenersatz ist erforderlich, um den Substanzwert zu sichern.)-> Z-Klasse 
+    3.0-3.9 = schlecht (Starke Schäden, die Tragfähigkeit ist teilweise beeinträchtigt. Grössere Instandsetzungen oder Teilerneuerungen sind kurzfristig notwendig.) -> Z-Klasse 4
+    4.0-5.0 = kritisch (Substanz ist weitgehend zerstört. Totalsanierung oder kompletter Neubau ist unumgänglich, um die Verkehrssicherheit zu gewährleisten.) -> Z-Klasse 5
+
+Bitte vorhandenen Strassenzustand aus GIS prüfen und den entsprechenden Wert im Feld eintragen d.h., bsp. wenn Wert = 2.6 (ausreichend), bitte = 3'">
+                                    Strassenzustand / Zustandsklasse (Index i1: Oberflächenschäden)
+                                </p>
+                            </div>
+
+                            <div class="form-fields-split-three">
+                                <mat-form-field>
+                                    <input matInput type="number" [min]="0" [max]="5"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.roadCondition" placeholder="Zustandklasse"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Datum</mat-label>
+                                    <input matInput
+                                        [(ngModel)]="roadWorkActivityFeature.properties.roadConditionDate"
+                                        [matDatepicker]="roadConditionDate"
+                                        (dateChange)="normalizeDate($event)"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    <mat-datepicker #roadConditionDate></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="roadConditionDate"></mat-datepicker-toggle>
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Bemerkung</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMaxRows="5"
+                                        [(ngModel)]="roadWorkActivityFeature.properties.roadConditionComment"
+                                        [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="column-cell">
+                    <mat-card style="margin-top: 10px;">
+                        <mat-card-header>
                             <mat-card-title>Verantwortlichkeiten</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>

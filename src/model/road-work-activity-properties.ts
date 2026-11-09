@@ -209,4 +209,9 @@ export class RoadWorkActivityProperties {
     plannedTasks: string = "";
     constraintsDependencies: string = "";
     acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE
+
+    // Road condition #704
+    roadCondition?: number;
+    roadConditionDate?: Date;
+    roadConditionComment: string = "";
 }
