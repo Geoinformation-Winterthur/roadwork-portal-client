@@ -843,6 +843,16 @@
                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                     </textarea>
                                 </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="full-width">
+                                    <mat-label>Aspekte / Faktoren</mat-label>
+                                    <textarea matInput maxlength="1000"
+                                            style="height:100px;"
+                                            [(ngModel)]="roadWorkActivityFeature.properties.sessionComment3"
+                                            placeholder="Keine Informationen"
+                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                </mat-form-field>
                                 
                             </div>
                     </mat-tab>

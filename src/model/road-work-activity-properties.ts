@@ -16,8 +16,9 @@ export class RoadWorkActivityProperties {
     approvals: RoadWorkApprovals = new RoadWorkApprovals();
     description: string = "";
     comment: string = "";
-    sessionComment1: string = "Keine Informationnen";
-    sessionComment2: string = "Keine Informationnen";    
+    sessionComment1: string = "Keine Informationen"; // Vorgehensvorschlag / Vorgehen
+    sessionComment2: string = "Keine Informationen"; // Beschluss
+    sessionComment3: string = "Keine Informationen"; // Aspekte / Faktoren
     section: string = "";
     type: string = "";
     workingTitle: string = "";

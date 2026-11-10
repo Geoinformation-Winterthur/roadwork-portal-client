@@ -654,6 +654,7 @@ export class SessionsComponent implements OnInit {
                   isRoadworkProject: true,
                   sessionComment1: act.properties.sessionComment1,
                   sessionComment2: act.properties.sessionComment2,
+                  sessionComment3: act.properties.sessionComment3,
                   notAssignedNeeds: [],
                   isAggloprog: act.properties.isAggloprog || false,
                   isParticip: act.properties.isParticip || false,
@@ -1268,6 +1269,8 @@ export class SessionsComponent implements OnInit {
 
       allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren'));
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment3));
+      allProjectBlocks.push(this.docxWordService.smallGap());
       allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"));
       const rows = [
         { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? 'X' : 'Keine' },
