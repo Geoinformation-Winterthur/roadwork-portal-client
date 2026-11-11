@@ -58,7 +58,33 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     const chart = this.chartInstance;
     const options: any = chart.getOption();
     const zooms: any[] = options?.dataZoom || [];
-    const zoomId = event.ctrlKey ? 'gantt-x-inside' : 'gantt-y-inside';
+    const normalizedDelta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 120 : 1);
+    const rowCount = options?.yAxis?.[0]?.data?.length || 0;
+
+    if (!event.shiftKey && !event.ctrlKey) {
+      // Plain wheel scrolls vertically through projects without changing the zoom level.
+      const zoom = zooms.find(item => item.id === 'gantt-y-inside');
+      if (!zoom || rowCount < 2) { return; }
+      const start = typeof zoom.start === 'number' ? zoom.start : 0;
+      const end = typeof zoom.end === 'number' ? zoom.end : 100;
+      const span = end - start;
+      if (span >= 99.999) { return; }
+      event.preventDefault();
+      event.stopPropagation();
+      const shift = (normalizedDelta / 100) * (100 / rowCount);
+      const nextStart = Math.max(0, Math.min(100 - span, start + shift));
+      chart.dispatchAction({
+        type: 'dataZoom',
+        dataZoomId: 'gantt-y-inside',
+        start: nextStart,
+        end: nextStart + span
+      });
+      return;
+    }
+
+    // Shift + wheel zooms the timeline (X); Ctrl + wheel zooms project rows (Y).
+    const zoomX = event.shiftKey;
+    const zoomId = zoomX ? 'gantt-x-inside' : 'gantt-y-inside';
     const zoom = zooms.find(item => item.id === zoomId);
     if (!zoom) { return; }
     event.preventDefault();
@@ -66,19 +92,27 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     const start = typeof zoom.start === 'number' ? zoom.start : 0;
     const end = typeof zoom.end === 'number' ? zoom.end : 100;
     const span = Math.max(0.1, end - start);
-    const normalizedDelta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 120 : 1);
     const factor = Math.exp(Math.max(-3, Math.min(3, normalizedDelta / 500)));
-    const newSpan = Math.max(0.5, Math.min(100, span * factor));
+    const minimumSpan = zoomX ? 0.5 : 100 / Math.max(1, rowCount);
+    const newSpan = Math.max(minimumSpan, Math.min(100, span * factor));
     const elementRect = this.timelineChartRef?.nativeElement.getBoundingClientRect();
     let position = 0.5;
-    if (elementRect && event.ctrlKey) {
-      const gridLeft = 370;
-      const gridRight = 58;
-      const plotWidth = Math.max(1, elementRect.width - gridLeft - gridRight);
-      position = Math.max(0, Math.min(1, (event.clientX - elementRect.left - gridLeft) / plotWidth));
+    if (elementRect) {
+      if (zoomX) {
+        const gridLeft = 370;
+        const gridRight = 76;
+        const plotWidth = Math.max(1, elementRect.width - gridLeft - gridRight);
+        position = Math.max(0, Math.min(1, (event.clientX - elementRect.left - gridLeft) / plotWidth));
+      } else {
+        // Keep the project under the pointer at the same vertical position while zooming.
+        const gridTop = typeof options?.grid?.[0]?.top === 'number' ? options.grid[0].top : 90;
+        const gridBottom = typeof options?.grid?.[0]?.bottom === 'number' ? options.grid[0].bottom : 55;
+        const plotHeight = Math.max(1, elementRect.height - gridTop - gridBottom);
+        position = Math.max(0, Math.min(1, (event.clientY - elementRect.top - gridTop) / plotHeight));
+      }
     }
-    const midpoint = start + span * position;
-    const nextStart = Math.max(0, Math.min(100 - newSpan, midpoint - newSpan * position));
+    const anchor = start + span * position;
+    const nextStart = Math.max(0, Math.min(100 - newSpan, anchor - newSpan * position));
     chart.dispatchAction({
       type: 'dataZoom',
       dataZoomId: zoomId,
