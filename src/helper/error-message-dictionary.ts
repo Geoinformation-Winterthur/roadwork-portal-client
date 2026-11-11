@@ -10,46 +10,106 @@ export class ErrorMessageDictionary {
      *   - Use String.includes/equals to detect specific failure reasons.
      */
     public static messages: string[] =
-            ["Es wurden keine gültigen Benutzerdaten empfangen.",
-             "Benutzer kann nicht entfernt werden.",
-             "Benutzer kann nicht entfernt werden, da er der letzte Administrator ist.",
-             "Unerwarteter Fehler.",
-             "Benutzer kann nicht bearbeitet werden.",
-             "Benutzerrolle kann nicht geändert werden, da es der letzte Administrator ist.",
+            ["Es wurden keine gültigen Benutzerdaten empfangen.", /* SSP-0 */
+             "Benutzer kann nicht entfernt werden.", /* SSP-1 */
+             "Benutzer kann nicht entfernt werden, da er der letzte Administrator ist.", /* SSP-2 */
+             "Unerwarteter Fehler.", /* SSP-3 */
+             "Benutzer kann nicht bearbeitet werden.", /* SSP-4 */
+             "Benutzerrolle kann nicht geändert werden, da es der letzte Administrator ist.", /* SSP-5 */
              "Der letzte Administrator kann nicht inaktiv gesetzt werden.",
              "Das Bedarfs-Polygon hat weniger als 3 Koordinaten.",
              "Die Fläche des Bedarfes ist kleiner als die zulässige Mindestgrösse.",
              "Der neue Bedarf liegt nicht in einem der Verwaltungsgebiete.",
-             "Die Geometrie des Bedarfes enspricht nicht den Regeln der geometrischen Simplizität (z.B. Selbst-Schnitt).",
+             "Die Geometrie des Bedarfes enspricht nicht den Regeln der geometrischen Simplizität (z.B. Selbst-Schnitt).", /* SSP-10 */
              "Die Geometrie des Bedarfes ist nicht valide (z.B. hat Dangles).",
              "Benutzer mit Mail-Adresse 'new' ist nicht zulässig",
              "Benutzer kann nicht hinzugefügt werden.",
              "Keine Berechtigung, diesen Bedarf zu editieren.",
-             "Es wurde keine gültige UUID empfangen.",
+             "Es wurde keine gültige UUID empfangen.", /* SSP-15 */
              "Die Fläche des Bedarfes ist grösser als die zulässige Maximalgrösse.",
              "Der:die zugewiesene:r Benutzer:in ist nicht vom Gebietsmanagement. Zuweisung abgebrochen.",
              "Gebietsmanagement kann nicht geändert werden, da ihm ein Gebiet zugewiesen ist.",
              "Das Startdatum darf nicht nach dem Enddatum liegen.",
-             "Es wurde kein Statuscode empfangen.",
+             "Es wurde kein Statuscode empfangen.", /* SSP-20 */
              "Es wurden keine Organisationsdaten empfangen.",
              "Der Bedarf konnte nicht empfangen werden.",
              "Alle mit einem Stern (*) gekennzeichneten Felder müssen ausgefüllt werden.",
              "Die Angabe der Art fehlt. Dies ist jedoch verpflichtend.",
-             "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.",
+             "Funktion wurde nicht ausgeführt, da sie explizit als \"Trockenübung\" aufgerufen wurde.", /* SSP-25 */
              "Änderung wurde nicht gespeichert, da die Angabe im Attribut \"Link (URL)\" keine richtige URL ist.",
              "Änderung wurde nicht gespeichert, da kein Umsetzungsjahr angegeben wurde.",
              "Änderung wurde nicht gespeichert, da dem Bauvorhaben kein Bedarf zugeordnet ist.",
              "Löschen/Zuweisen/Anmelden des Bedarfs nicht möglich, da ansonsten einem Bauvorhaben keine Bedarfe mehr zugeordnet wären.",
-             "Bedarf wurde nicht gespeichert, da kein Zeit-Faktor angegeben wurde.",
+             "Bedarf wurde nicht gespeichert, da kein Zeit-Faktor angegeben wurde.", /* SSP-30 */
              "Keine Berechtigung, dieses Bauvorhaben zu editieren.",
              "Prozessstatus kann nicht geändert werden, da sich das Bauvorhaben noch im Entwurfsstadium befindet",
              "Es können keine Rückmeldungen mehr eingereicht werden, da die entsprechende Phase geschlossen ist",
              "Abbruch, da dieser Statusübergang nicht zulässig ist",
-             "Änderung wurde nicht gespeichert, da Vorstudie ohne Start- oder Enddatum im Plantermin",
+             "Änderung wurde nicht gespeichert, da Vorstudie ohne Start- oder Enddatum im Plantermin", /* SSP-35 */
              "Änderung wurde nicht gespeichert, da Startdatum der Vorstudie nach dem Enddatum liegt",
              "Änderung wurde nicht gespeichert. 'Projektauftrag Vorstudie genehmigt' kann nicht gesetzt werden, da Bauvorhaben nicht im Status 'koordiniert'",
              "Bei aktivierter Schwammstadt-Massnahme muss mindestens eine Schwammstadt-Massnahme ausgewählt werden",
              "Es wurde kein Löschgrund angegeben, dies ist nicht zulässig",
-             "Dies ist ein Bedarf einer Tiefbauamt-Organisation, jedoch fehlen Attributwerte aus dem Bereich der Kostenschätzung"
+             "Dies ist ein Bedarf einer Tiefbauamt-Organisation, jedoch fehlen Attributwerte aus dem Bereich der Kostenschätzung", /* SSP-40 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-45 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-50 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-55 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-60 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-65 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-70 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-75 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-80 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-85 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-90 */
+             "",
+             "",
+             "",
+             "",
+             "",  /* SSP-95 */
+             "",
+             "",
+             "",
+             "",
+             "Es fehlen für Kleinmassnahmen obligatorische Werte im Bereich Kostenschätzung",  /* SSP-100 starting from here messages from GEOBOX (to avoid number collisions) */
             ];
 }
