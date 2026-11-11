@@ -95,6 +95,7 @@ import { ActivityJournalComponent } from './activity-journal/activity-journal.co
 import { ActivityPropertiesComponent } from './activity-properties/activity-properties.component';
 import { ActivityDatesComponent } from './activity-dates/activity-dates.component';
 import { ActivityCostsComponent } from './activity-costs/activity-costs.component';
+import { NeedAttributesMinorComponent } from './need-attributes-minor/need-attributes-minor.component';
 
 
  
@@ -162,7 +163,8 @@ export const CH_DATE_FORMATS = {
      ActivityJournalComponent,
      ActivityPropertiesComponent,
      ActivityDatesComponent,
-     ActivityCostsComponent
+     ActivityCostsComponent,
+     NeedAttributesMinorComponent
    ],
    imports: [
      BrowserModule,

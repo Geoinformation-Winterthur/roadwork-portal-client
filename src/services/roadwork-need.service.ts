@@ -26,7 +26,7 @@ export class RoadWorkNeedService {
     onlyMyNeeds?: boolean, filterWithDeleteComment?: boolean, relevance?: number,
     dateOfCreation?: Date, status: string[] = [],
     roadWorkActivityUuid?: string,
-    summary: boolean = false): Observable<RoadWorkNeedFeature[]> {
+    summary: boolean = false, isMinorWork: boolean = false): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
 
@@ -163,6 +163,15 @@ export class RoadWorkNeedService {
         queryString += "?";
       }
       queryString += "summary=true";
+    }
+
+    if (isMinorWork) {
+      if (hasParameters) {
+        queryString += "&";
+      } else {
+        queryString += "?";
+      }
+      queryString += "isMinorWork=true";
     }
 
     let result: Observable<RoadWorkNeedFeature[]> =

@@ -1,0 +1,456 @@
+<div style="margin:2em;">
+    <div *ngIf="roadWorkNeedFeature === undefined">
+        <p style="color: red;">Die Kleinmassnahme konnte nicht geladen werden.</p>
+    </div>
+    <div *ngIf="roadWorkNeedFeature !== undefined">
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid!==''">Kleinmassnahme<span style="font-weight: normal;"> / {{
+                roadWorkNeedFeature.properties.name }}</span><span *ngIf="roadWorkNeedFeature.properties.isPrivate"
+                style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
+        </h1>
+        <h1 *ngIf="roadWorkNeedFeature.properties.uuid===''">Neue Kleinmassnahme<span
+                *ngIf="roadWorkNeedFeature.properties.isPrivate"
+                style="font-size: small;color: rgb(138, 67, 67);border: 1px solid;padding: 0.5em;margin: 0.5em;">ENTWURF</span>
+        </h1>
+        <mat-tab-group>
+            <mat-tab label="Perimeter">
+                <app-edit-need-map [roadWorkNeedFeat]="roadWorkNeedFeature"
+                    [managementArea]="roadWorkNeedFeature.properties.managementArea"></app-edit-need-map>
+            </mat-tab>
+            <mat-tab label="Stammdaten">
+                <div style="float: right;">
+                    <button *ngIf="roadWorkNeedFeature.properties.isEditingAllowed" mat-button (click)="store()"
+                        style="margin: 1em;background-color: rgb(236,236,234);">
+                        SPEICHERN
+                    </button>
+                    <button *ngIf="roadWorkNeedFeature.properties.uuid!=='' &&
+                            (roadWorkNeedFeature.properties.isPrivate ||
+                                userService.getLocalUser().chosenRole == 'administrator')"
+                        (click)="openDeleteDialog(roadWorkNeedFeature.properties.uuid)"
+                        style="background-color: rgb(236,236,234);margin: 0.5em;" [disabled]="!roadWorkNeedFeature.properties.isPrivate && 
+                        userService.getLocalUser().chosenRole != 'administrator'" mat-button>LÖSCHEN</button>
+                    <button mat-button *ngIf="roadWorkNeedFeature.properties.isPrivate" (click)="publish()"
+                        style="margin: 1em;background-color: rgb(236,236,234);">
+                        <mat-icon aria-label="Icon zeigt einen Brief mit Pfeil">forward_to_inbox</mat-icon>&nbsp;PUBLIZIEREN
+                    </button>
+                </div>
+                <h2 style="font-weight: normal;">Wunschtermine</h2>
+                <div *ngIf="!roadWorkNeedFeature.properties.overarchingMeasure">
+                    <div style="margin: 0.5em;">
+                        <div>Frühester Baubeginn:&nbsp;</div><span
+                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
+                            {{writeOutQuartal("finishEarlyTo")}}
+                        </span>
+                        <mat-slider min="0" max="28" tickInterval="1" [formControl]="finishEarlyFormControl"
+                            showTickMarks (input)="updateQuartal($event, 'finishEarlyQuartal')"
+                            style="margin-left: 1em;width: 80%;"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                        </mat-slider>
+                    </div>
+                    <div style="margin: 0.5em;">
+                        <div>Wunsch Baubeginn:&nbsp;&nbsp;&nbsp;&nbsp;</div><span
+                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
+                            {{writeOutQuartal("finishOptimumTo")}}
+                        </span>
+                        <mat-slider min="0" max="28" tickInterval="1" [formControl]="finishOptimumFormControl"
+                            showTickMarks (input)="updateQuartal($event, 'finishOptimumQuartal')"
+                            style="margin-left: 1em;width: 80%;"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                        </mat-slider>
+                    </div>
+                    <div style="margin: 0.5em;">
+                        <div>Späteste Inbetriebnahme:&nbsp;</div><span
+                            style="font-size: 1.2em;font-weight: bolder;background-color: rgb(235, 235, 235);">
+                            {{writeOutQuartal("finishLateTo")}}
+                        </span>
+                        <mat-slider min="0" max="28" tickInterval="1" [formControl]="finishLateFormControl"
+                            showTickMarks (input)="updateQuartal($event, 'finishLateQuartal')"
+                            style="margin-left: 1em;width: 80%;"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                        </mat-slider>
+                    </div>
+                </div>
+                <div *ngIf="roadWorkNeedFeature.properties.overarchingMeasure">
+                    <mat-form-field style="margin: 1em;">
+                        <input matInput type="number" [min]="getCurrentYear()"
+                            [(ngModel)]="roadWorkNeedFeature.properties.desiredYearFrom"
+                            placeholder="Umsetzungsjahr von"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                    </mat-form-field>
+                    <mat-form-field style="margin: 1em;">
+                        <input matInput type="number" [min]="getCurrentYear()"
+                            [(ngModel)]="roadWorkNeedFeature.properties.desiredYearTo" placeholder="Umsetzungsjahr bis"
+                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                    </mat-form-field>
+                </div>
+                <!-- <mat-checkbox style="margin: 1em;" [(ngModel)]="roadWorkNeedFeature.properties.overarchingMeasure"
+                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                    Übergeordnete Massnahme
+                </mat-checkbox> -->
+                <div fxLayout="row wrap padding" style="width:100%;">
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-content>
+                            <p *ngIf="roadWorkNeedFeature.properties.uuid">UUID:
+                                <b>{{roadWorkNeedFeature.properties.uuid}}</b>
+                            </p>
+                            <p *ngIf="!roadWorkNeedFeature.properties.uuid">UUID: <b>keine (nicht eröffnet)</b></p>
+                            <div style="display:flex;flex-direction:column;">
+                                <mat-form-field>
+                                    <mat-label>Titel/Strasse</mat-label>
+                                    <input matInput type="text" maxlength="80"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.name" placeholder="Titel/Strasse"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <div *ngIf="!roadWorkNeedFeature.properties.name"
+                                    style="margin: 1em;margin-bottom: 2em;padding: 1em;background-color: rgb(209, 209, 243);">
+                                    Wenn Sie das Feld "Titel/Strasse" leerlassen, wird beim Eröffnen der Kleinmassnahme
+                                    ein Titel automatisch aus der geographischen Lage ermittelt.
+                                </div>
+
+                                <mat-form-field>
+                                    <mat-label>Abschnitt</mat-label>
+                                    <input matInput type="text" maxlength="80"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.section" placeholder="Abschnitt"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Tätigkeiten/Arbeiten</mat-label>
+                                    <textarea matInput maxlength="255"
+                                        cdkTextareaAutosize
+                                        cdkAutosizeMaxRows="15"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.description"
+                                        placeholder="Beschreibung, was mit der Kleinmassnahme umgesetzt werden soll." required
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Dauer der Bautätigkeit (Tage)</mat-label>
+                                    <input matInput
+                                        type="number"
+                                        min="0"
+                                        max="999"
+                                        [(ngModel)]="roadWorkNeedFeature.properties.constructionDurationDays"
+                                        placeholder="Zahl 0 - 999" required
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+
+                                <mat-form-field>
+                                    <mat-label>Rechtliche/technische Bewilligungen notwendig?</mat-label>
+                                    <mat-select 
+                                        [(ngModel)]="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                        <mat-option [value]="true">Ja</mat-option>
+                                        <mat-option [value]="false">Nein</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.strgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    StrG - Planauflageverfahren nach Strassengesetz §13/§16
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.bafuApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    BAFU - Bundesamt für Umwelt, Störfallverordnung
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.lsvApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    LSV - Lärmschutzverordnung
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.ssvApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    SSV - Signalisationsverordnung
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.wwgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    WWG - Wasserwirtschaftsgesetz
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.eriApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    ERI - Eidg. Rohrleitungsinspektorat
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.pbgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    PBG - Baubewilligung nach Planungs- und Baugesetz
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.ebgApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    EBG - Eisenbahngesetz
+                                </mat-checkbox>
+                                <mat-checkbox class="align-top"
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.awelApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    AWEL – Amt für Abfall, Wasser, Energie und Luft, zuständig für Wald, Fruchtfolgeflächen, Grundwasser, Hochwasser, Gewässerbestand, Altlasten, usw.
+                                </mat-checkbox>
+                                <mat-checkbox class="align-top"
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.estiApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    ESTI – Eidg. Starkstrominspektorat, zuständig für Mittel-/Starkstromanlagen
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired"
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.otherApprovalRequired"
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    Weitere
+                                </mat-checkbox>
+                                <mat-form-field *ngIf="roadWorkNeedFeature.properties.approvals.approvalRequired && 
+                                    roadWorkNeedFeature.properties.approvals.otherApprovalRequired">
+                                    <input matInput
+                                    [(ngModel)]="roadWorkNeedFeature.properties.approvals.otherApprovalDetails"
+                                    placeholder="Bitte spezifizieren" required>
+                                </mat-form-field>
+
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    
+                    <!-- Chips and Payments are within same mat-card for desired display (#613). Element structure might be improven when deprecated flex-layout functions are replaced -->
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <app-status-chip [statusCode]="roadWorkNeedFeature.properties.status"
+                                    [short]="false"></app-status-chip>
+                                <p *ngIf="roadWorkNeedFeature.properties.status == 'suspended'
+                                        && roadWorkNeedFeature.properties.deleteReason">
+                                    <b>Löschbegründung:</b>
+                                    {{roadWorkNeedFeature.properties.deleteReason}}
+                                </p>
+                                <div style="margin: 1em;">
+                                    <mat-chip-list>
+                                        <mat-chip *ngIf="priorityCode === 'high'" style="background-color: red;">Hohe
+                                            Priorität</mat-chip>
+                                        <mat-chip *ngIf="priorityCode === 'low'"
+                                            style="background-color: green;">Niedrige
+                                            Priorität</mat-chip>
+                                    </mat-chip-list>
+                                </div>
+                                <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
+                                    <mat-label>Status/Phase</mat-label>
+                                    <!-- Option bodies are a copy of the names from status-chip.component.html -->
+                                    <mat-select 
+                                        [(ngModel)]="roadWorkNeedFeature.properties.status">
+                                        <!-- Phase 1 -->
+
+                                        <mat-option [value]="'planning_p1'">Strategische Planung (Phase 1)</mat-option>
+
+                                        <mat-option [value]="'requirement'">Bedarf (Phase 11)</mat-option>
+
+                                        <mat-option [value]="'review'">in Prüfung (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'verified1'">verifiziert-1 (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'verified2'">verifiziert-2 (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'inconsult1'">in Bedarfsklärung - 1.Iteration (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'inconsult2'">in Bedarfsklärung - 2.Iteration (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'reporting'">Stellungnahme (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'coordinated'">koordiniert (Phase 12)</mat-option>
+
+                                        <mat-option [value]="'initiation_p13'">Initialisieren (Phase 13)</mat-option>
+
+                                        <!-- Phase 2 -->
+
+                                        <mat-option [value]="'prestudy_p2'">Vorstudie (Phase 2)</mat-option>
+
+                                        <mat-option [value]="'prestudy'">Vorstudie (Phase 21)</mat-option>
+
+                                        <!-- Phase 3 -->
+
+                                        <mat-option [value]="'design_p3'">Projektierung (Phase 3)</mat-option>
+
+                                        <mat-option [value]="'predesign_p31'">Vorprojekt (Phase 31)</mat-option>
+
+                                        <mat-option [value]="'design_p32'">Bauprojekt (Phase 32)</mat-option>
+
+                                        <mat-option [value]="'approval_p33'">Bewilligungsverfahren (Phase 33)</mat-option>
+
+                                        <!-- Phase 4 -->
+
+                                        <mat-option [value]="'tendering_p4'">Ausschreibung (Phase 4)</mat-option>
+
+                                        <mat-option [value]="'tendering_p41'">Ausschreibung / Vergabe (Phase 41)</mat-option>
+
+                                        <!-- Phase 5 -->
+
+                                        <mat-option [value]="'construction_p5'">Realisierung (Phase 5)</mat-option>
+
+                                        <mat-option [value]="'executiondesign_p51'">Ausführungsprojekt (Phase 51)</mat-option>
+
+                                        <mat-option [value]="'execution_p52'">Ausführung (Phase 52)</mat-option>
+
+                                        <mat-option [value]="'commissioning_p53'">Inbetriebnahme (Phase 53)</mat-option>
+
+                                        <!-- Phase 6 -->
+
+                                        <mat-option [value]="'operations_p6'">Bewirtschaftung (Phase 6)</mat-option>
+
+                                        <mat-option [value]="'closed_p61'">Abgerechnet (Abgeschlossen, Phase 61)</mat-option>
+
+                                        <!-- Other -->
+
+                                        <mat-option [value]="'archived'">Archiviert</mat-option>
+
+                                        <mat-option [value]="'need_archived'">Kleinmassnahme archiviert</mat-option>
+
+                                        <mat-option [value]="'deferred'">zurückgestellt</mat-option>
+
+                                        <mat-option [value]="'suspended'">sistiert</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </mat-card-content>
+                    
+                        <div *ngIf="roadWorkNeedFeature.properties.orderer.organisationalUnit.isCivilEngineering">
+                            <mat-card-header>
+                                <mat-card-title><mat-icon
+                                        aria-label="Dokument-Icon">payments</mat-icon>&nbsp;Kostenschätzung</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <button (click)="addCostsEstimation()" mat-button
+                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed"
+                                    style="background-color: lightgrey;margin-bottom: 1em;">
+                                    +Hinzufügen
+                                </button><br>
+                                <div *ngFor="let costObj of roadWorkNeedFeature.properties.costs"
+                                    style="margin-bottom: 1em;padding: 1em;border: 1.5px dashed">
+                                    <button (click)="deleteCostsEstimation(costObj.uuid)" mat-button
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed || (roadWorkNeedFeature?.properties?.costs?.length ?? 0) < 2"
+                                        style="background-color: lightgrey;margin-bottom: 1em;">
+                                        Entfernen
+                                    </button><br>
+                                    <div>
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Kredit-/Kostenart *</mat-label>
+                                            <mat-select [(ngModel)]="costObj.projectType" name="project_type"
+                                                [disabled]="true" required>
+                                                <mat-option value="streets">Strassenprojekt</mat-option>
+                                                <mat-option value="channel">Kanalbau / Kanalinnensanierung</mat-option>
+                                                <mat-option value="waters">Gewässerprojekt</mat-option>
+                                                <mat-option value="others">Übrige</mat-option>
+                                                <mat-option value="third_parties" *ngIf="userService.getLocalUser().chosenRole == 'administrator' || 
+                                                    userService.getLocalUser().chosenRole == 'territorymanager'">Im Auftrag Dritter</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>                                    
+                                        <div>
+                                            <mat-form-field>
+                                                <input matInput type="number" min="0" [(ngModel)]="costObj.costs"
+                                                    placeholder="Kostenschätzung (CHF)" step="1000" required
+                                                    [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            </mat-form-field>
+                                        </div>
+                                        <div style="color:grey;margin-bottom: 2em;">({{
+                                            costObj.costs
+                                            | number }} CHF)</div>
+                                        <mat-form-field style="width: 100%;">
+                                            <mat-label>Bemerkung/Kommentar</mat-label>
+                                            <textarea matInput maxlength="255" [(ngModel)]="costObj.costsComment"
+                                                placeholder="Angabe der Kostenstelle sowie Genauigkeit der Kostenschätzung." required
+                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                    </textarea>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </div>
+                    </mat-card>
+
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-content>
+                            <div style="display:flex;flex-direction:column;">
+                                <p>Gebietsmanagement:
+                                    <b>{{roadWorkNeedFeature.properties.managementArea?.manager?.firstName}}
+                                        {{roadWorkNeedFeature.properties.managementArea?.manager?.lastName}}
+                                    </b>
+                                </p>
+                                <p>Auslösendes Werk:
+                                    <b>{{roadWorkNeedFeature.properties.orderer.organisationalUnit.name}}</b>
+                                </p>
+                                <p>Auslösende:r: <b>{{roadWorkNeedFeature.properties.orderer.firstName}}
+                                        {{roadWorkNeedFeature.properties.orderer.lastName}}</b>
+                                </p>
+                                <p>Erstellt: <b>{{roadWorkNeedFeature.properties.created | date:'dd.MM.yyyy'}}</b></p>
+                                <p>
+                                    Zuletzt geändert: <b>{{roadWorkNeedFeature.properties.lastModified |
+                                        date:'dd.MM.yyyy'}}</b>
+                                </p>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="33"
+                        fxFlex.md="33" fxFlex.sm="50" fxLayout="column">
+                        <mat-card-header>
+                            <mat-card-title><mat-icon
+                                    aria-label="Dokument-Icon">description</mat-icon>&nbsp;Dokumente</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content>
+                            <div>
+                                <mat-form-field style="width: 100%;">
+                                    <input matInput maxlength="2048" [(ngModel)]="roadWorkNeedFeature.properties.url"
+                                        placeholder="Link (URL)"
+                                        [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                </mat-form-field>
+                                <a *ngIf="roadWorkNeedFeature.properties.url"
+                                    href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link öffnen</a>
+                                <div style="padding: 1em;margin-top: 1em;">
+                                    <p><b>PDF-Dokumente:</b></p>
+                                    <div *ngFor="let documentAtts of roadWorkNeedFeature.properties.documentAtts"
+                                        style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
+                                        <p [matTooltip]="documentAtts.filename!">Dateiname:
+                                            {{documentAtts.filename!.slice(0, 12)}}...</p>
+                                        <button (click)="downloadPdf(documentAtts.uuid!)" mat-button
+                                            style="background-color: rgb(236,236,234);margin: 1em;">
+                                            Herunterladen
+                                        </button>
+                                        <button (click)="deletePdf(documentAtts.uuid!)" mat-button
+                                            style="background-color: rgb(236,236,234);margin: 1em;"
+                                            [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed">
+                                            Löschen
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <p>Hochladen:</p>
+                                        <div *ngIf="(roadWorkNeedFeature?.properties?.documentAtts?.length ?? 0) < 1"
+                                            style="margin-bottom: 1em;padding: 1em;background-color: rgb(209, 209, 243);">
+                                            Bitte Skizze/Projektplan hochladen. <br><br>
+                                            (Die Kleinmassnahme muss gespeichert sein.)
+                                        </div>
+                                        <form method="post" enctype="multipart/form-data">
+                                            <input type="file" name="pdfFile" accept="application/pdf"
+                                                (change)="uploadPdf($event)"
+                                                [disabled]="!roadWorkNeedFeature.properties.isEditingAllowed || !roadWorkNeedFeature.properties.uuid"><br>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

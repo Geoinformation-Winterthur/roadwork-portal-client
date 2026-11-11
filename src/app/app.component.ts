@@ -24,6 +24,8 @@ export class AppComponent {
   public sideNavOpened: boolean = false;
   public sideNavMode: MatDrawerMode = 'side';
   public isMobilePlatform: boolean = true;
+  
+  public enableMinorWorks: boolean =  (environment as { enableMinorWorks?: boolean }).enableMinorWorks === true; // TODO remove when minorWorks is done.
 
   title: string = environment.title;
   shorttitle: string = environment.shorttitle;

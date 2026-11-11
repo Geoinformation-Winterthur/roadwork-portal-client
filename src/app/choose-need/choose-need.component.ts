@@ -23,6 +23,7 @@ import { ManagementAreaService } from 'src/services/management-area.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -31,6 +32,10 @@ import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
   styleUrls: ['./choose-need.component.css']
 })
 export class ChooseNeedComponent implements OnInit {
+
+  /** distinguishes between need and need-minor*/
+  isMinorWork: boolean = false;
+  private route: ActivatedRoute;
 
   /** Controls global loading indicator until grid data is ready. */
   isDataLoading = false;
@@ -184,7 +189,13 @@ export class ChooseNeedComponent implements OnInit {
         const tooltip = `${name} ${section}`.trim();
 
         const link = document.createElement('a');
-        link.href = `/civil-engineering/roadworks-portal/needs/${uuid}`;
+
+        if (this.isMinorWork) {
+          link.href = `/civil-engineering/roadworks-portal/needs-minor/${uuid}`;
+        }
+        else {
+          link.href = `/civil-engineering/roadworks-portal/needs/${uuid}`;  
+        }
         link.title = tooltip;
         link.textContent = label;
 
@@ -315,12 +326,13 @@ export class ChooseNeedComponent implements OnInit {
  
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    managementAreaService: ManagementAreaService, snckBar: MatSnackBar) {
+    managementAreaService: ManagementAreaService, snckBar: MatSnackBar, route: ActivatedRoute) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.snckBar = snckBar;
     this.isDataLoading = true;
+    this.route = route;
   }
 
   /**
@@ -328,7 +340,10 @@ export class ChooseNeedComponent implements OnInit {
    * Shows backend messages (if any) in a snackbar.
    */
   ngOnInit(): void {
-    this.getNeedsWithFilter();
+
+    this.isMinorWork = this.route.snapshot.data['isMinorWork'] ?? false;
+
+    this.getNeedsWithFilter(this.isMinorWork);
 
     this.userService.getUserFromDB(this.userService.getLocalUser().mailAddress)
       .subscribe({
@@ -360,8 +375,8 @@ export class ChooseNeedComponent implements OnInit {
    * management area and collects unique managers/orderers for dropdowns.
    * Refreshes the grid after a short delay to reflect async updates.
    */
-  getNeedsWithFilter() {
-
+  getNeedsWithFilter(isMinorWork: boolean = false) {  // TODO remove default parameter (when calls in need-name-filter.component.ts & need-year-filter.component.ts is fixed)
+    
     let roadWorkNeedName: string = this.filterNeedName.trim().toLowerCase();
 
     if (this.statusFilterCodes.length == 0) {
@@ -371,7 +386,7 @@ export class ChooseNeedComponent implements OnInit {
         .getRoadWorkNeeds([], this.filterNeedYearOptFrom, this.filterFinishOptimumTo,
           roadWorkNeedName, this.filterAreaManager?.uuid, this.filterOrderer?.uuid,
           this.filterMyNeeds, this.filterWithDeleteComment, this.filterRelevance,
-          this.filterDateOfCreation, this.statusFilterCodes).subscribe({
+          this.filterDateOfCreation, this.statusFilterCodes, undefined, false, isMinorWork).subscribe({
             next: (roadWorkNeeds) => {
 
               for (let roadWorkNeed of roadWorkNeeds) {

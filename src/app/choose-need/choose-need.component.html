@@ -3,10 +3,10 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 <div style="margin: 2em;">
-  <h1>Bedarfe ({{roadWorkNeedFeatures?.length}})<span *ngIf="filterNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
+  <h1>{{ isMinorWork ? 'Kleinmassnahmen' : 'Bedarfe' }} ({{roadWorkNeedFeatures?.length}})<span *ngIf="filterNeedYearOptFrom" style="font-weight: normal;"> / Realisierungsbeginn
       {{filterNeedYearOptFrom}}</span></h1>
   <div class="add-need-button-container">
-    <button mat-fab [routerLink]="['/needs', 'new']" style="background-color: rgb(255, 25, 0);" class="fab-button">
+    <button mat-fab [routerLink]="[isMinorWork ? '/needs-minor' : '/needs', 'new']" style="background-color: rgb(255, 25, 0);" class="fab-button">
       <mat-icon aria-label="Icon shows a plus sign">add</mat-icon>
       <mat-icon aria-label="Icon shows a lightbulb">tips_and_updates</mat-icon>
     </button>

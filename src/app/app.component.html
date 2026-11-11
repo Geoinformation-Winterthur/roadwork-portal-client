@@ -56,6 +56,10 @@
                             *ngIf="userService.hasUserAccess('see_reports')" [class.chosen-menu]="chosenMenu == 'report'">
                         <mat-icon aria-label="Dashboard">analytics</mat-icon>&nbsp;<span i18n>Dashboard</span>
                     </a>
+                    <a mat-list-item routerLink='/needs-minor' (click)="toggleSideNav('needs-minor')"
+                            *ngIf="enableMinorWorks && userService.hasUserAccess('see_needs_list')" [class.chosen-menu]="chosenMenu == 'needs-minor'"> <!-- TODO remove enableMinorWorks-->
+                        <mat-icon aria-label="Kleinmassnahmen">tips_and_updates</mat-icon>&nbsp;<span i18n>Kleinmassnahmen</span>
+                    </a>
                     <a mat-list-item routerLink='/needs' (click)="toggleSideNav('needs')"
                             *ngIf="userService.hasUserAccess('see_needs_list')" [class.chosen-menu]="chosenMenu == 'needs'">
                         <mat-icon aria-label="Bedarfe">tips_and_updates</mat-icon>&nbsp;<span i18n>Bedarfe</span>

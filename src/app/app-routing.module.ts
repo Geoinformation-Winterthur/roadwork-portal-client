@@ -10,6 +10,7 @@ import { UsersComponent } from "./users/users.component";
  import { LoginComponent } from './login/login.component';
  import { ChooseNeedComponent } from './choose-need/choose-need.component';
  import { NeedAttributesComponent } from './need-attributes/need-attributes.component';
+import { NeedAttributesMinorComponent } from './need-attributes-minor/need-attributes-minor.component';
 import { UserComponent } from './user/user.component';
 import { ManagementAreasComponent } from './management-areas/management-areas.component';
 import { ChooseActivityComponent } from './choose-activity/choose-activity.component';
@@ -26,9 +27,11 @@ import { SessionsComponent } from './sessions/sessions.component';
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
    {path: 'report', component: ReportComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
-   {path: 'needs', component: ChooseNeedComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
+   {path: 'needs-minor', component: ChooseNeedComponent, pathMatch: 'full', canActivate: [AuthGuardService], data: { isMinorWork: true } },
+   {path: 'needs', component: ChooseNeedComponent, pathMatch: 'full', canActivate: [AuthGuardService], data: { isMinorWork: false } },
    {path: 'activities', component: ChooseActivityComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'needs/:id', component: NeedAttributesComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
+   {path: 'needs-minor/:id', component: NeedAttributesMinorComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'activities/:id', component: ActivityAttributesComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'users/:email', component: UserComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
