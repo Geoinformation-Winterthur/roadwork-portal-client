@@ -383,10 +383,20 @@ export class ChooseNeedComponent implements OnInit {
       this.roadWorkNeedFeatures = [];
     } else {
       this.roadWorkNeedService
-        .getRoadWorkNeeds([], this.filterNeedYearOptFrom, this.filterFinishOptimumTo,
-          roadWorkNeedName, this.filterAreaManager?.uuid, this.filterOrderer?.uuid,
-          this.filterMyNeeds, this.filterWithDeleteComment, this.filterRelevance,
-          this.filterDateOfCreation, this.statusFilterCodes, undefined, false, isMinorWork).subscribe({
+        .getRoadWorkNeeds({
+          year: this.filterNeedYearOptFrom,
+          filterFinishOptimumTo: this.filterFinishOptimumTo,
+          name: roadWorkNeedName,
+          areaManagerUuid: this.filterAreaManager?.uuid,
+          ordererUuid: this.filterOrderer?.uuid,
+          onlyMyNeeds: this.filterMyNeeds,
+          filterWithDeleteComment: this.filterWithDeleteComment,
+          relevance: this.filterRelevance,
+          dateOfCreation: this.filterDateOfCreation,
+          status: this.statusFilterCodes,
+          summary: false, 
+          isMinorWork: isMinorWork
+        }).subscribe({
             next: (roadWorkNeeds) => {
 
               for (let roadWorkNeed of roadWorkNeeds) {

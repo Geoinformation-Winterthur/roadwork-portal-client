@@ -21,133 +21,97 @@ export class RoadWorkNeedService {
     this.http = http;
   }
 
-  getRoadWorkNeeds(ids: string[] = [], year?: number, filterFinishOptimumTo?: Date,
-    name: string = "", areaManagerUuid?: string, ordererUuid?: string,
-    onlyMyNeeds?: boolean, filterWithDeleteComment?: boolean, relevance?: number,
-    dateOfCreation?: Date, status: string[] = [],
-    roadWorkActivityUuid?: string,
-    summary: boolean = false, isMinorWork: boolean = false): Observable<RoadWorkNeedFeature[]> {
+  getRoadWorkNeeds({ids = [], year, filterFinishOptimumTo,
+    name = "", areaManagerUuid, ordererUuid,
+    onlyMyNeeds, filterWithDeleteComment, relevance,
+    dateOfCreation, status = [],
+    roadWorkActivityUuid,
+    summary = false, isMinorWork
+  }: {
+    ids?: string[]; year?: number; filterFinishOptimumTo?: Date;
+    name?: string; areaManagerUuid?: string; ordererUuid?: string;
+    onlyMyNeeds?: boolean; filterWithDeleteComment?: boolean; relevance?: number;
+    dateOfCreation?: Date; status?: string[];
+    roadWorkActivityUuid?: string;
+    summary?: boolean; isMinorWork?: boolean
+  }  = {}): Observable<RoadWorkNeedFeature[]> {
     let queryString = "/roadworkneed/";
     let hasParameters = false;
 
-    if (ids !== null && ids.length !== 0 && ids[0].trim() !== "") {
+    if (ids != null && ids.length !== 0 && ids[0].trim() !== "") {
       hasParameters = true;
       queryString += "?uuids=";
     }
 
     for (let id of ids) {
-      if (id !== null && id.trim() !== "") {
+      if (id != null && id.trim() !== "") {
         queryString += id + ",";
       }
     }
 
     if (year) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "year=" + year;
     }
 
-    if (name != "") {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+    if (name) {
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "name=" + name;
     }
 
     if (roadWorkActivityUuid) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "roadworkactivityuuid=" + roadWorkActivityUuid;
     }
 
     if (areaManagerUuid) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "areamanageruuid=" + areaManagerUuid;
     }
 
     if (ordererUuid) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "ordereruuid=" + ordererUuid;
     }
 
     if (onlyMyNeeds) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "onlymyneeds=true";
     }
 
     if (filterWithDeleteComment) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "onlywithdeletecomment=true";
     }
 
     if (relevance) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "relevance=" + relevance;
     }
 
     if (dateOfCreation) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "dateofcreation=" + dateOfCreation.toISOString();
     }
 
     if (filterFinishOptimumTo) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "filterfinishoptimumto=" + filterFinishOptimumTo.toISOString();
     }
 
-    if (status !== null && status.length !== 0
+    if (status != null && status.length !== 0
       && status[0].trim() !== "") {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
       hasParameters = true;
       queryString += "status=";
       for (let i = 0; i < status.length; i++) {
@@ -157,21 +121,15 @@ export class RoadWorkNeedService {
     }
 
     if (summary) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
+      queryString += hasParameters ? "&" : "?";
+      hasParameters = true;
       queryString += "summary=true";
     }
 
-    if (isMinorWork) {
-      if (hasParameters) {
-        queryString += "&";
-      } else {
-        queryString += "?";
-      }
-      queryString += "isMinorWork=true";
+    if (isMinorWork != null) {
+      queryString += hasParameters ? "&" : "?";
+      hasParameters = true;
+      queryString += "isMinorWork=" + isMinorWork;
     }
 
     let result: Observable<RoadWorkNeedFeature[]> =

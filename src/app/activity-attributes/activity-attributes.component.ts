@@ -325,7 +325,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
           let constProjId: string = params['id'];
 
           // Load a single activity by UUID/id from the backend.
-          this.roadWorkActivityService.getRoadWorkActivities(constProjId)
+          this.roadWorkActivityService.getRoadWorkActivities({ id: constProjId })
             .subscribe({
               next: (roadWorkActivities) => {
                 if (roadWorkActivities.length === 1) {
@@ -338,10 +338,9 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
 
                   // Load needs related to the activity (assigned vs registered).
                   if (this.roadWorkActivityFeature?.properties.roadWorkNeedsUuids.length !== 0) {
-                    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined, undefined,
-                      undefined, undefined, undefined, undefined, undefined, undefined, undefined,
-                      this.roadWorkActivityFeature?.properties.uuid)
-                      .subscribe({
+                    this.roadWorkNeedService.getRoadWorkNeeds({
+                    	roadWorkActivityUuid: this.roadWorkActivityFeature?.properties.uuid
+                    }).subscribe({
                         next: (roadWorkNeeds) => {
                           // Set the related road work needs as active
                           this.setActiveRoadworkNeeds(roadWorkNeeds)

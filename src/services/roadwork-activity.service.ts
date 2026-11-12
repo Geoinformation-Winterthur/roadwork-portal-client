@@ -27,25 +27,35 @@ export class RoadWorkActivityService {
     this.http = http;
   }
 
-  getRoadWorkActivities(id: string = "", status: string = "", summary: boolean = false):
+  getRoadWorkActivities({
+    id, status, summary = false, isMinorWorks
+  }: {
+    id?: string; status?: string; summary?: boolean; isMinorWorks?: boolean
+  }  = {}):
     Observable<RoadWorkActivityFeature[]> {
     let queryString = "/roadworkactivity/";
-    if ((id !== null && id !== "") || (status !== null && status !== "") || summary) {
+    if (id || status || summary || isMinorWorks) {
       queryString += "?";
     }
-    if (id !== null && id !== "") {
+    if (id) {
+      // id is set >> only one activity >> other parameters (filters) than summary make no sense
       queryString += "uuid=" + id;
       if (summary) {
-        queryString += "&";
+        queryString += "&summary=true";
       }
-    } else if (status !== null && status !== "") {
-      queryString += "status=" + status;
+    } else {
+      // id is not set >> combine the other parameters
+      let parameters: string[] = [];
+      if (status) {
+        parameters.push("status=" + status);
+      }
       if (summary) {
-        queryString += "&";
+        parameters.push("summary=true");
       }
-    }
-    if (summary) {
-      queryString += "summary=true";
+      if (isMinorWorks != null) {
+        parameters.push("isMinorWorks=" + isMinorWorks);
+      }
+      queryString += parameters.join('&');
     }
     let result: Observable<RoadWorkActivityFeature[]> =
       this.http.get(environment.apiUrl + queryString) as Observable<RoadWorkActivityFeature[]>;
