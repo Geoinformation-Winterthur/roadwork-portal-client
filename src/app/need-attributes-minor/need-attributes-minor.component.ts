@@ -128,7 +128,7 @@ export class NeedAttributesMinorComponent implements OnInit {
 
           let constProjId: string = params['id'];
 
-          this.roadWorkNeedService.getRoadWorkNeeds([constProjId])
+          this.roadWorkNeedService.getRoadWorkNeeds({ ids: [constProjId] })
             .subscribe({
               next: (roadWorkNeeds) => {
                 if (roadWorkNeeds.length === 1) {

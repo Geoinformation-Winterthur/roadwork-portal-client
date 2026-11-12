@@ -946,7 +946,7 @@ export class WelcomeComponent implements OnInit {
     if (this.userService.isUserLoggedIn()) {
 
       this.roadWorkNeedService
-        .getRoadWorkNeeds()
+        .getRoadWorkNeeds({ isMinorWork: false })
         .subscribe({
           next: (roadWorkNeeds) => {
 
@@ -1024,11 +1024,9 @@ export class WelcomeComponent implements OnInit {
       this.isLoadingRoadWorkActivities = true;
 
       this.roadWorkActivityService
-        .getRoadWorkActivities(
-          '',
-          'requirement,review,inconsult1,inconsult2,reporting,verified1,verified2,coordinated,prestudy,suspended'
-        )
-        .subscribe({
+        .getRoadWorkActivities({
+        	status: 'requirement,review,inconsult1,inconsult2,reporting,verified1,verified2,coordinated,prestudy,suspended'
+        }).subscribe({
 
           next: async (roadWorkActivities) => {
 
@@ -1114,9 +1112,7 @@ export class WelcomeComponent implements OnInit {
                     const roadWorkNeeds =
                       await firstValueFrom(
                         this.roadWorkNeedService
-                          .getRoadWorkNeeds(
-                            roadWorkNeedsUuids
-                          )
+                          .getRoadWorkNeeds({ ids: roadWorkNeedsUuids })
                       );
 
                     const hasOwnNeed =

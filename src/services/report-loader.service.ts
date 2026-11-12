@@ -221,7 +221,7 @@ export class ReportLoaderService {
    * Critical: ensures deterministic order of loading.
    */
   loadRoadWorkActivity$(uuid: string) {
-    return this.roadWorkActivityService.getRoadWorkActivities(uuid).pipe(
+    return this.roadWorkActivityService.getRoadWorkActivities({ id: uuid }).pipe(
       switchMap((activities: RoadWorkActivityFeature[]) => {
         // Expect exactly 1 activity per uuid
         if (activities.length !== 1) {
@@ -314,13 +314,7 @@ export class ReportLoaderService {
 
     // Load needs for this activity UUID
     return this.roadWorkNeedService
-      .getRoadWorkNeeds(
-        [],
-        undefined, undefined, undefined,
-        undefined, undefined, undefined, undefined,
-        undefined, undefined, undefined,
-        activity.properties.uuid
-      )
+      .getRoadWorkNeeds({ roadWorkActivityUuid: activity.properties.uuid })
       .pipe(
         tap((needs: RoadWorkNeedFeature[]) => {
           // Separate assigned vs. registered
@@ -356,7 +350,7 @@ export class ReportLoaderService {
   private loadPrimaryNeed(primaryNeedUuid: string): void {
     if (!primaryNeedUuid) return;
 
-    this.roadWorkNeedService.getRoadWorkNeeds([primaryNeedUuid]).subscribe({
+    this.roadWorkNeedService.getRoadWorkNeeds({ ids: [primaryNeedUuid] }).subscribe({
       next: (needs) => {
         if (needs.length === 1) {
           this.primaryNeed = needs[0];

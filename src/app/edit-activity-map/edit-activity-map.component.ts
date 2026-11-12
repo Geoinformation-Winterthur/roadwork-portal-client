@@ -386,8 +386,9 @@ export class EditActivityMapComponent implements OnInit {
                           if (this.roadWorkActivityFeat) {
                             this.roadWorkActivityFeat = roadWorkActivityFeature;
                             if (roadWorkActivityFeature.properties.roadWorkNeedsUuids.length !== 0) {
-                              this.roadWorkNeedService.getRoadWorkNeeds(roadWorkActivityFeature.properties.roadWorkNeedsUuids)
-                                .subscribe({
+                              this.roadWorkNeedService.getRoadWorkNeeds({
+                              	ids: roadWorkActivityFeature.properties.roadWorkNeedsUuids
+                              }).subscribe({
                                   next: (roadWorkNeeds) => {
                                     let assignedRoadWorkNeeds: RoadWorkNeedFeature[] = [];
                                     let registeredRoadWorkNeeds: RoadWorkNeedFeature[] = [];
@@ -577,8 +578,7 @@ export class EditActivityMapComponent implements OnInit {
    */
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
     this.roadWorkNeedSource.clear();
-    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
-      "", "", "", false, undefined, undefined, undefined, ["requirement"])
+    this.roadWorkNeedService.getRoadWorkNeeds({ status: ["requirement"] })
       .subscribe({
         next: (roadWorkNeeds) => {
           this.needsOnMap = roadWorkNeeds;
@@ -588,8 +588,9 @@ export class EditActivityMapComponent implements OnInit {
         }
       });
     if (this.roadWorkActivityFeat && !this.roadWorkActivityFeat.properties.dateSksReal) {
-      this.roadWorkNeedService.getRoadWorkNeeds(this.roadWorkActivityFeat.properties.roadWorkNeedsUuids)
-        .subscribe({
+      this.roadWorkNeedService.getRoadWorkNeeds({
+      	ids: this.roadWorkActivityFeat.properties.roadWorkNeedsUuids
+      }).subscribe({
           next: (roadWorkNeeds) => {
             this.needsOnMap = roadWorkNeeds;
             this._putRoadworksOnMap(refreshExtent);

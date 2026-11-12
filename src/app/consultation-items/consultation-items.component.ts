@@ -255,9 +255,9 @@ export class ConsultationItemsComponent implements OnInit, OnChanges {
       });
 
     // Query all needs linked to the current activity (filters mostly undefined).
-    this.roadWorkNeedService.getRoadWorkNeeds([], undefined, undefined,
-      undefined, undefined, undefined, undefined, undefined, undefined,
-      undefined, undefined, this.roadWorkActivity.properties.uuid).subscribe({
+    this.roadWorkNeedService.getRoadWorkNeeds({
+    	roadWorkActivityUuid: this.roadWorkActivity.properties.uuid
+    }).subscribe({
         next: (roadWorkNeeds) => {
           let needsOfActivityTemp = [];
           let needsOfUserTemp = [];
