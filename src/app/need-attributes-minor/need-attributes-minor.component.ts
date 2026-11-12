@@ -92,6 +92,7 @@ export class NeedAttributesMinorComponent implements OnInit {
             let finishOptimumToParamString: string = queryParams['finishOptimumTo'];
             let finishLateToParamString: string = queryParams['finishLateTo'];
             let coordinatesParamString: string = queryParams['coordinates'];
+            let constructionDurationDays: number = queryParams['days']
 
             if (finishEarlyToParamString) {
               this.roadWorkNeedFeature.properties.finishEarlyTo =
@@ -116,6 +117,9 @@ export class NeedAttributesMinorComponent implements OnInit {
             this._setUserOnRoadworkNeed();
             this.roadWorkNeedFeature.properties.managementArea = NeedAttributesMinorComponent.
               _createNewManagementArea();
+            
+              // set day from need-creation-dialog
+            this.roadWorkNeedFeature.properties.constructionDurationDays = constructionDurationDays;
 
             // add initial Cost estimation 
             this.addCostsEstimation();

@@ -18,13 +18,15 @@ import { UserService } from 'src/services/user.service';
 import { RoadWorkNeedFeature } from '../../model/road-work-need-feature';
 import { ErrorMessageEvaluation } from 'src/helper/error-message-evaluation';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { User } from 'src/model/user';
 import { ManagementAreaService } from 'src/services/management-area.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 import { ActivatedRoute } from '@angular/router';
-
+import { NeedCreationDialogComponent } from '../need-creation-dialog/need-creation-dialog.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-choose-need',
@@ -32,6 +34,8 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./choose-need.component.css']
 })
 export class ChooseNeedComponent implements OnInit {
+
+  public enableMinorWorks: boolean =  (environment as { enableMinorWorks?: boolean }).enableMinorWorks === true; // TODO remove when minorWorks is done.
 
   /** distinguishes between need and need-minor*/
   isMinorWork: boolean = false;
@@ -72,6 +76,7 @@ export class ChooseNeedComponent implements OnInit {
   private roadWorkNeedService: RoadWorkNeedService;
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;    
+  private dialog: MatDialog;
 
   /** German translations for AG Grid UI. */
   localeText = AG_GRID_LOCALE_DE;
@@ -326,13 +331,14 @@ export class ChooseNeedComponent implements OnInit {
  
 
   constructor(roadWorkNeedService: RoadWorkNeedService, userService: UserService,
-    managementAreaService: ManagementAreaService, snckBar: MatSnackBar, route: ActivatedRoute) {
+    managementAreaService: ManagementAreaService, snckBar: MatSnackBar, route: ActivatedRoute, dialog: MatDialog,) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.managementAreaService = managementAreaService;
     this.userService = userService;
     this.snckBar = snckBar;
     this.isDataLoading = true;
     this.route = route;
+    this.dialog = dialog;
   }
 
   /**
@@ -476,5 +482,9 @@ export class ChooseNeedComponent implements OnInit {
       this.orderers.push(orderer);
 
   }
+
+  openNeedCreationDialog() {
+      this.dialog.open(NeedCreationDialogComponent);
+    }
 
 }

@@ -92,6 +92,7 @@ export class NeedAttributesComponent implements OnInit {
             let finishOptimumToParamString: string = queryParams['finishOptimumTo'];
             let finishLateToParamString: string = queryParams['finishLateTo'];
             let coordinatesParamString: string = queryParams['coordinates'];
+            let constructionDurationDays: number = queryParams['days'];
 
             if (finishEarlyToParamString) {
               this.roadWorkNeedFeature.properties.finishEarlyTo =
@@ -116,6 +117,9 @@ export class NeedAttributesComponent implements OnInit {
             this._setUserOnRoadworkNeed();
             this.roadWorkNeedFeature.properties.managementArea = NeedAttributesComponent.
               _createNewManagementArea();
+
+            // set day from need-creation-dialog
+            this.roadWorkNeedFeature.properties.constructionDurationDays = constructionDurationDays;
           });
         } else {
 

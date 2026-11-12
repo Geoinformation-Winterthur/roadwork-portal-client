@@ -30,8 +30,7 @@ export class AppComponent {
   title: string = environment.title;
   shorttitle: string = environment.shorttitle;
   subtitle: string = environment.subtitle;
-  chosenMenu: string = "";
-
+  
   userService: UserService;
 
   private mediaWatcher: Subscription;
@@ -72,8 +71,7 @@ export class AppComponent {
     this.userService.logout();
   }
 
-  public toggleSideNav(linkName: string) {
-    this.chosenMenu = linkName;
+  public closeSideNavOnMobile() {
     if (!this.isMobilePlatform) {
       this.sideNavOpened = !this.sideNavOpened;
     }

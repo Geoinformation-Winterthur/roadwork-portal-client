@@ -18,6 +18,9 @@ import { ColDef, ColumnMenuTab } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
 import { firstValueFrom } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { NeedCreationDialogComponent } from '../need-creation-dialog/need-creation-dialog.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-welcome',
@@ -31,6 +34,8 @@ import { firstValueFrom } from 'rxjs';
  * page of the roadworks-portal web application.
  */
 export class WelcomeComponent implements OnInit {
+
+  public enableMinorWorks: boolean =  (environment as { enableMinorWorks?: boolean }).enableMinorWorks === true; // TODO remove when minorWorks is done.
 
   myRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
   myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
@@ -76,6 +81,8 @@ export class WelcomeComponent implements OnInit {
 
   private managementAreaService: ManagementAreaService;
   private snckBar: MatSnackBar;
+
+  private dialog: MatDialog;
 
   localeText = AG_GRID_LOCALE_DE;
 
@@ -918,13 +925,15 @@ export class WelcomeComponent implements OnInit {
     roadWorkActivityService: RoadWorkActivityService,
     roadWorkNeedService: RoadWorkNeedService,
     managementAreaService: ManagementAreaService,
-    snckBar: MatSnackBar
+    snckBar: MatSnackBar,
+    dialog: MatDialog,
   ) {
     this.userService = userService;
     this.roadWorkNeedService = roadWorkNeedService;
     this.roadWorkActivityService = roadWorkActivityService;
     this.managementAreaService = managementAreaService;
     this.snckBar = snckBar;
+    this.dialog = dialog;
 
     this.involvedOrgs = new Map();
   }
@@ -1521,5 +1530,9 @@ export class WelcomeComponent implements OnInit {
     return Math.floor(
       d.getMonth() / 3
     ) + 1;
+  }
+
+  openNeedCreationDialog() {
+    this.dialog.open(NeedCreationDialogComponent);
   }
 }

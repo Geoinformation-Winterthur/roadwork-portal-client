@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Erfassungsformular</h2>
+
+<mat-dialog-content>
+
+    <p>Bitte die Dauer der Bautätigkeit (in Tagen) eingeben</p>
+
+    <mat-form-field class="constructionDurationDays-field">
+        <mat-label>Dauer der Bautätigkeit (Tage)</mat-label>
+
+        <input matInput 
+            type="number" min="0" max="999" 
+            step="1"
+            placeholder="Zahl 0 - 999" required  
+            [(ngModel)]="constructionDurationDays" 
+            #constructionDurationDaysInput="ngModel">
+
+        <mat-error *ngIf="constructionDurationDaysInput.hasError('required')">
+            Bitte eine Dauer (Tage) eingeben.
+        </mat-error>
+        <mat-error *ngIf="constructionDurationDaysInput.hasError('min') || constructionDurationDaysInput.hasError('max')">
+            Die Nummer muss zwischen 0 und 999 liegen.
+        </mat-error>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button
+        [disabled]="constructionDurationDaysInput.invalid || !isInteger(constructionDurationDays) || constructionDurationDays === null || constructionDurationDays > 29"
+        (click) = "openPage('/needs-minor')">
+        Erstelle Kleinmassnahme
+    </button>
+    <button mat-button
+        [disabled]="constructionDurationDaysInput.invalid || !isInteger(constructionDurationDays) || constructionDurationDays === null || constructionDurationDays < 30"
+        (click) = "openPage('/needs')">
+        Erstelle Bedarf
+    </button>
+    <button mat-button mat-dialog-close>Abbrechen</button>
+</mat-dialog-actions>

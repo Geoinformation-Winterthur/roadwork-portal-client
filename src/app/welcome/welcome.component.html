@@ -391,7 +391,12 @@
             </mat-tab>
 
         </mat-tab-group>
-
+        <div *ngIf="enableMinorWorks" class="add-need-button-container"> <!-- TODO remove enableMinorWorks-->
+            <button mat-fab (click)="openNeedCreationDialog()" style="background-color: rgb(255, 25, 0);" class="fab-button">
+                <mat-icon aria-label="Icon shows a plus sign">add</mat-icon>
+                <mat-icon aria-label="Icon shows a lightbulb">tips_and_updates</mat-icon>
+            </button>
+        </div>
     </div>
 
 </div>

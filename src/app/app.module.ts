@@ -96,6 +96,7 @@ import { ActivityPropertiesComponent } from './activity-properties/activity-prop
 import { ActivityDatesComponent } from './activity-dates/activity-dates.component';
 import { ActivityCostsComponent } from './activity-costs/activity-costs.component';
 import { NeedAttributesMinorComponent } from './need-attributes-minor/need-attributes-minor.component';
+import { NeedCreationDialogComponent } from './need-creation-dialog/need-creation-dialog.component';
 
 
  
@@ -164,7 +165,8 @@ export const CH_DATE_FORMATS = {
      ActivityPropertiesComponent,
      ActivityDatesComponent,
      ActivityCostsComponent,
-     NeedAttributesMinorComponent
+     NeedAttributesMinorComponent,
+     NeedCreationDialogComponent
    ],
    imports: [
      BrowserModule,
