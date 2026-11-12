@@ -1469,7 +1469,7 @@ export class DocxWordService {
     if (!needUuids.length) return '-';
 
     const roadWorkNeeds = await firstValueFrom(
-      this.roadWorkNeedService.getRoadWorkNeeds(needUuids)
+      this.roadWorkNeedService.getRoadWorkNeeds({ ids: needUuids })
     );
 
     const orgs = new Set<string>();
