@@ -37,7 +37,11 @@ export class WelcomeComponent implements OnInit {
 
   public enableMinorWorks: boolean =  (environment as { enableMinorWorks?: boolean }).enableMinorWorks === true; // TODO remove when minorWorks is done.
 
+  contextNeedMinor = { isNeedMinor: true };
+  contextNeed = { isNeedMinor: false };
+
   myRoadWorkNeedFeatures: RoadWorkNeedFeature[] = [];
+  myRoadWorkNeedMinorFeatures: RoadWorkNeedFeature[] = [];
   myRoadWorkActivityFeatures: RoadWorkActivityFeature[] = [];
 
   isLoadingRoadWorkActivities: boolean = false;
@@ -318,7 +322,13 @@ export class WelcomeComponent implements OnInit {
 
         const tooltip = `${name} ${section || ''}`;
 
-        return `<a href="/civil-engineering/roadworks-portal//needs/${uuid}" title="${tooltip}">${name}</a>`;
+        if (params.context.isNeedMinor) {
+          return `<a href="/civil-engineering/roadworks-portal//needs-minor/${uuid}" title="${tooltip}">${name}</a>`;
+        }
+        else {
+          return `<a href="/civil-engineering/roadworks-portal//needs/${uuid}" title="${tooltip}">${name}</a>`;
+        }
+        
       }
     },
     {
@@ -685,7 +695,6 @@ export class WelcomeComponent implements OnInit {
 
       valueGetter: ({ data }) => {
         const m = data?.properties?.areaManager;
-
         return m
           ? `${m.firstName} ${m.lastName}`
           : '';
@@ -917,6 +926,9 @@ export class WelcomeComponent implements OnInit {
   @ViewChild('agGridNeed')
   agGridNeed!: AgGridAngular;
 
+  @ViewChild('agGridNeedMinor')
+  agGridNeedMinor!: AgGridAngular;
+
   @ViewChild('agGridActivity')
   agGridActivity!: AgGridAngular;
 
@@ -949,64 +961,22 @@ export class WelcomeComponent implements OnInit {
         .getRoadWorkNeeds({ isMinorWork: false })
         .subscribe({
           next: (roadWorkNeeds) => {
+            this.myRoadWorkNeedFeatures = this.prepareRoadWorks(roadWorkNeeds, loggedInUser);
+          },
 
-            const myRoadWorkNeeds:
-              Map<string, RoadWorkNeedFeature> =
-              new Map();
+          error: (error) => {
+            console.error(
+              'Error while loading requirements',
+              error
+            );
+          }
+        });
 
-            for (const roadWorkNeed of roadWorkNeeds) {
-
-              this.managementAreaService
-                .getIntersectingManagementArea(
-                  roadWorkNeed.geometry
-                )
-                .subscribe({
-                  next: (managementArea) => {
-
-                    if (managementArea) {
-                      roadWorkNeed.properties.managementArea =
-                        managementArea;
-
-                      setTimeout(() => {
-                        if (
-                          this.agGridNeed?.api?.refreshCells
-                        ) {
-                          this.agGridNeed.api.refreshCells({
-                            force: true
-                          });
-                        }
-                      }, 1000);
-                    }
-                  },
-
-                  error: (error) => {
-                    console.error(
-                      'Error while loading management area for requirement',
-                      error
-                    );
-                  }
-                });
-
-              if (
-                roadWorkNeed.properties.status !==
-                'coordinated'
-              ) {
-                if (
-                  roadWorkNeed.properties.orderer.uuid ===
-                  loggedInUser.uuid
-                ) {
-                  myRoadWorkNeeds.set(
-                    roadWorkNeed.properties.uuid,
-                    roadWorkNeed
-                  );
-                }
-              }
-            }
-
-            this.myRoadWorkNeedFeatures =
-              Array.from(
-                myRoadWorkNeeds.values()
-              );
+      this.roadWorkNeedService
+        .getRoadWorkNeeds({ isMinorWork: true })
+        .subscribe({
+          next: (roadWorkNeedsMinor) => {
+            this.myRoadWorkNeedMinorFeatures = this.prepareRoadWorks(roadWorkNeedsMinor, loggedInUser);
           },
 
           error: (error) => {
@@ -1025,8 +995,9 @@ export class WelcomeComponent implements OnInit {
 
       this.roadWorkActivityService
         .getRoadWorkActivities({
-        	status: 'requirement,review,inconsult1,inconsult2,reporting,verified1,verified2,coordinated,prestudy,suspended'
-        }).subscribe({
+          status: 'requirement,review,inconsult1,inconsult2,reporting,verified1,verified2,coordinated,prestudy,suspended'
+        })
+        .subscribe({
 
           next: async (roadWorkActivities) => {
 
@@ -1112,7 +1083,9 @@ export class WelcomeComponent implements OnInit {
                     const roadWorkNeeds =
                       await firstValueFrom(
                         this.roadWorkNeedService
-                          .getRoadWorkNeeds({ ids: roadWorkNeedsUuids })
+                          .getRoadWorkNeeds({
+                            ids: roadWorkNeedsUuids
+                          })
                       );
 
                     const hasOwnNeed =
@@ -1268,6 +1241,59 @@ export class WelcomeComponent implements OnInit {
           }
         });
     }
+  }
+
+  prepareRoadWorks(roadWorkNeeds: RoadWorkNeedFeature[], loggedInUser: User) {
+    const myRoadWorkNeeds:
+      Map<string, RoadWorkNeedFeature> =
+      new Map();
+
+    for (const roadWorkNeed of roadWorkNeeds) {
+
+      this.managementAreaService
+        .getIntersectingManagementArea(
+          roadWorkNeed.geometry
+        )
+        .subscribe({
+          next: (managementArea) => {
+
+            if (managementArea) {
+              roadWorkNeed.properties.managementArea =
+                managementArea;
+
+              setTimeout(() => {
+                this.agGridNeed?.api?.refreshCells({ force: true });
+                this.agGridNeedMinor?.api?.refreshCells({ force: true });
+              }, 1000);
+            }
+          },
+
+          error: (error) => {
+            console.error(
+              'Error while loading management area for requirement',
+              error
+            );
+          }
+        });
+
+      if (
+        roadWorkNeed.properties.status !==
+        'coordinated'
+      ) {
+        if (
+          roadWorkNeed.properties.orderer.uuid ===
+          loggedInUser.uuid
+        ) {
+          myRoadWorkNeeds.set(
+            roadWorkNeed.properties.uuid,
+            roadWorkNeed
+          );
+        }
+      }
+    }
+    return Array.from(
+      myRoadWorkNeeds.values()
+    );
   }
 
   update(

@@ -3,9 +3,7 @@
  Copyright (c) Fachstelle Geoinformation Winterthur. All rights reserved.
 -->
 
-<div
-    *ngIf="!userService.isUserLoggedIn()"
-    style="
+<div *ngIf="!userService.isUserLoggedIn()" style="
         color: white;
         padding: 2em;
         background-color: rgb(196, 30, 30);
@@ -14,8 +12,7 @@
     <h1>Tiefbauamt Winterthur</h1>
     <br />
 
-    <h2
-        style="
+    <h2 style="
             margin-top: -1em;
             text-decoration: none;
             font-weight: lighter;
@@ -26,16 +23,12 @@
 </div>
 
 
-<div
-    style="
+<div style="
         margin: 2em;
         color: rgb(90, 90, 90);
     ">
 
-    <h3
-        i18n
-        *ngIf="!userService.isUserLoggedIn()"
-        style="
+    <h3 i18n *ngIf="!userService.isUserLoggedIn()" style="
             font-weight: lighter;
             color: black;
         ">
@@ -50,9 +43,7 @@
     </h3>
 
 
-    <div
-        i18n
-        *ngIf="!userService.isUserLoggedIn()">
+    <div i18n *ngIf="!userService.isUserLoggedIn()">
 
         <p>
             Gemäss Verordnung über die Koordination von Bauarbeiten
@@ -87,8 +78,7 @@
             </a>
         </p>
 
-        <p
-            style="
+        <p style="
                 margin-top: 5em;
                 font-size: 0.8em;
             ">
@@ -98,10 +88,7 @@
     </div>
 
 
-    <h3
-        i18n
-        *ngIf="userService.isUserLoggedIn()"
-        style="
+    <h3 i18n *ngIf="userService.isUserLoggedIn()" style="
             font-weight: lighter;
             color: black;
         ">
@@ -122,8 +109,7 @@
     </h3>
 
 
-    <div
-        *ngIf="userService.isUserLoggedIn()">
+    <div *ngIf="userService.isUserLoggedIn()">
 
         <mat-tab-group>
 
@@ -135,10 +121,7 @@
                     Darstellung der Bauvorhaben.
                     Für Details bitte diesen Button klicken:
 
-                    <button
-                        mat-button
-                        (click)="openWinWebGIS()"
-                        style="
+                    <button mat-button (click)="openWinWebGIS()" style="
                             margin: 1em;
                             background-color: rgb(236,236,234);
                         ">
@@ -156,15 +139,13 @@
                         Do not show the empty message while
                         road work activities are still loading.
                     -->
-                    <div
-                        *ngIf="
+                    <div *ngIf="
                             myRoadWorkActivityFeatures.length === 0 &&
                             myRoadWorkNeedFeatures.length === 0 &&
                             !isLoadingRoadWorkActivities
                         ">
 
-                        <span
-                            style="
+                        <span style="
                                 padding: 0.5em;
                                 border: 1px solid;
                                 border-color: rgb(219, 255, 198);
@@ -183,10 +164,10 @@
                         Show this area also while Bauvorhaben
                         are still loading.
                     -->
-                    <div
-                        *ngIf="
+                    <div *ngIf="
                             myRoadWorkActivityFeatures.length !== 0 ||
                             myRoadWorkNeedFeatures.length !== 0 ||
+                            myRoadWorkNeedMinorFeatures.length !== 0 ||
                             isLoadingRoadWorkActivities
                         ">
 
@@ -194,23 +175,40 @@
                         <b>persönlichen Login</b>:
 
 
+
+                        <!-- Kleinmassnamen -->
+
+                        <div *ngIf="myRoadWorkNeedMinorFeatures.length !== 0 && enableMinorWorks" style="margin-top: 2em;"> <!-- TODO remove enableMinorWorks-->
+
+                            <h3>
+                                Kleinmassnahmen
+                            </h3>
+
+                            <ag-grid-angular #agGridNeedMinor class="ag-theme-alpine" [rowData]="myRoadWorkNeedMinorFeatures"
+                                [columnDefs]="columnDefsNeed" [defaultColDef]="defaultColDef" [localeText]="localeText"
+                                [context]="contextNeedMinor"
+                                style="
+                                    width: 100%;
+                                    height: 25vh;
+                                ">
+                            </ag-grid-angular>
+
+                        </div>
+
+
+
+
                         <!-- Bedarfe -->
 
-                        <div
-                            *ngIf="myRoadWorkNeedFeatures.length !== 0"
-                            style="margin-top: 2em;">
+                        <div *ngIf="myRoadWorkNeedFeatures.length !== 0" style="margin-top: 2em;">
 
                             <h3>
                                 Bedarfe
                             </h3>
 
-                            <ag-grid-angular
-                                #agGridNeed
-                                class="ag-theme-alpine"
-                                [rowData]="myRoadWorkNeedFeatures"
-                                [columnDefs]="columnDefsNeed"
-                                [defaultColDef]="defaultColDef"
-                                [localeText]="localeText"
+                            <ag-grid-angular #agGridNeed class="ag-theme-alpine" [rowData]="myRoadWorkNeedFeatures"
+                                [columnDefs]="columnDefsNeed" [defaultColDef]="defaultColDef" [localeText]="localeText"
+                                [context]="contextNeed"
                                 style="
                                     width: 100%;
                                     height: 25vh;
@@ -222,12 +220,10 @@
 
                         <!-- Bauvorhaben -->
 
-                        <div
-                            *ngIf="
+                        <div *ngIf="
                                 isLoadingRoadWorkActivities ||
                                 myRoadWorkActivityFeatures.length !== 0
-                            "
-                            style="margin-top: 2em;">
+                            " style="margin-top: 2em;">
 
                             <h3>
                                 Bauvorhaben
@@ -236,14 +232,11 @@
 
                             <!-- Loading indicator -->
 
-                            <div
-                                *ngIf="isLoadingRoadWorkActivities"
-                                style="
+                            <div *ngIf="isLoadingRoadWorkActivities" style="
                                     padding: 12px 0 16px 0;
                                 ">
 
-                                <div
-                                    style="
+                                <div style="
                                         margin-bottom: 8px;
                                         font-size: 0.9em;
                                         color: rgb(100, 100, 100);
@@ -253,8 +246,7 @@
 
                                 </div>
 
-                                <mat-progress-bar
-                                    mode="indeterminate">
+                                <mat-progress-bar mode="indeterminate">
                                 </mat-progress-bar>
 
                             </div>
@@ -262,20 +254,14 @@
 
                             <!-- Grid -->
 
-                            <div
-                                *ngIf="
+                            <div *ngIf="
                                     !isLoadingRoadWorkActivities &&
                                     myRoadWorkActivityFeatures.length !== 0
                                 ">
 
-                                <ag-grid-angular
-                                    #agGridActivity
-                                    class="ag-theme-alpine"
-                                    [rowData]="myRoadWorkActivityFeatures"
-                                    [columnDefs]="columnDefsActivity"
-                                    [defaultColDef]="defaultColDef"
-                                    [localeText]="localeText"
-                                    style="
+                                <ag-grid-angular #agGridActivity class="ag-theme-alpine"
+                                    [rowData]="myRoadWorkActivityFeatures" [columnDefs]="columnDefsActivity"
+                                    [defaultColDef]="defaultColDef" [localeText]="localeText" style="
                                         width: 100%;
                                         height: 25vh;
                                     ">
@@ -302,48 +288,42 @@
 
                         <b>
 
-                            <span
-                                *ngIf="
+                            <span *ngIf="
                                     userService.getLocalUser().chosenRole ===
                                     'view'
                                 ">
                                 View
                             </span>
 
-                            <span
-                                *ngIf="
+                            <span *ngIf="
                                     userService.getLocalUser().chosenRole ===
                                     'eventmanager'
                                 ">
                                 Eventmanagement
                             </span>
 
-                            <span
-                                *ngIf="
+                            <span *ngIf="
                                     userService.getLocalUser().chosenRole ===
                                     'projectmanager'
                                 ">
                                 Projektleitung
                             </span>
 
-                            <span
-                                *ngIf="
+                            <span *ngIf="
                                     userService.getLocalUser().chosenRole ===
                                     'orderer'
                                 ">
                                 Auslösende:r
                             </span>
 
-                            <span
-                                *ngIf="
+                            <span *ngIf="
                                     userService.getLocalUser().chosenRole ===
                                     'territorymanager'
                                 ">
                                 Gebietsmanagement
                             </span>
 
-                            <span
-                                *ngIf="
+                            <span *ngIf="
                                     userService.getLocalUser().chosenRole ===
                                     'administrator'
                                 ">
@@ -355,8 +335,7 @@
                     </p>
 
 
-                    <div
-                        style="
+                    <div style="
                             padding: 1em;
                             border: 1px solid lightgray;
                         ">
@@ -367,18 +346,11 @@
 
                         <mat-form-field>
 
-                            <input
-                                matInput
-                                [(ngModel)]="user.passPhrase"
-                                placeholder="Neue Passphrase"
-                                type="password">
+                            <input matInput [(ngModel)]="user.passPhrase" placeholder="Neue Passphrase" type="password">
 
                         </mat-form-field>
 
-                        <button
-                            mat-button
-                            (click)="update(true)"
-                            style="margin: 1em;">
+                        <button mat-button (click)="update(true)" style="margin: 1em;">
 
                             ÄNDERN
 
@@ -392,7 +364,8 @@
 
         </mat-tab-group>
         <div *ngIf="enableMinorWorks" class="add-need-button-container"> <!-- TODO remove enableMinorWorks-->
-            <button mat-fab (click)="openNeedCreationDialog()" style="background-color: rgb(255, 25, 0);" class="fab-button">
+            <button mat-fab (click)="openNeedCreationDialog()" style="background-color: rgb(255, 25, 0);"
+                class="fab-button">
                 <mat-icon aria-label="Icon shows a plus sign">add</mat-icon>
                 <mat-icon aria-label="Icon shows a lightbulb">tips_and_updates</mat-icon>
             </button>
