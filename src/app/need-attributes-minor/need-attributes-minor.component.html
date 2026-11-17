@@ -417,7 +417,21 @@
                                 <a *ngIf="roadWorkNeedFeature.properties.url"
                                     href="{{roadWorkNeedFeature.properties.url}}" target="_blank">Link öffnen</a>
                                 <div style="padding: 1em;margin-top: 1em;">
-                                    <p><b>PDF-Dokumente:</b></p>
+                                    <div class="info-row">
+                                        <button mat-icon-button 
+                                            matSuffix 
+                                            type="button" 
+                                            (mousedown)="$event.stopPropagation()"
+                                            (click)="$event.stopPropagation(); switchPdfInfo()" 
+                                            aria-label="Info zum Strassenzustand">
+                                            <mat-icon>info</mat-icon>
+                                        </button>
+                                        <p><b>PDF-Dokumente:</b></p>
+                                    </div>
+                                    <div *ngIf="showPdfInfo"
+                                        style="background-color: rgb(236,236,234);padding: 1em;">
+                                        Bitte Skizze/Projektplan hochladen.
+                                    </div>
                                     <div *ngFor="let documentAtts of roadWorkNeedFeature.properties.documentAtts"
                                         style="padding: 1em;border: 2px dotted;border-color: lightgray;margin-top: 1em;">
                                         <p [matTooltip]="documentAtts.filename!">Dateiname:
@@ -434,11 +448,6 @@
                                     </div>
                                     <div>
                                         <p>Hochladen:</p>
-                                        <div *ngIf="(roadWorkNeedFeature?.properties?.documentAtts?.length ?? 0) < 1"
-                                            style="margin-bottom: 1em;padding: 1em;background-color: rgb(209, 209, 243);">
-                                            Bitte Skizze/Projektplan hochladen. <br><br>
-                                            (Die Kleinmassnahme muss gespeichert sein.)
-                                        </div>
                                         <form method="post" enctype="multipart/form-data">
                                             <input type="file" name="pdfFile" accept="application/pdf"
                                                 (change)="uploadPdf($event)"

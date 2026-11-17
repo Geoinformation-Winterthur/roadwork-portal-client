@@ -38,6 +38,7 @@ export class NeedAttributesMinorComponent implements OnInit {
   areaManagerName: string = "";
   statusCode: string = "";
   priorityCode: string = "";
+  showPdfInfo: boolean = false;
 
   finishEarlyFormControl: FormControl = new FormControl();
   finishOptimumFormControl: FormControl = new FormControl();
@@ -611,6 +612,10 @@ export class NeedAttributesMinorComponent implements OnInit {
     managerForRoadWorkNeed.lastName = "Noch nicht ermittelt";
     managementarea.manager = managerForRoadWorkNeed;
     return managementarea;
+  }
+
+  switchPdfInfo() {
+    this.showPdfInfo = !this.showPdfInfo;
   }
 
 }

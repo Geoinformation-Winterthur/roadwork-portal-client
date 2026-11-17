@@ -49,6 +49,7 @@ export class ActivityPropertiesComponent implements OnInit {
   public organisationalUnits: OrganisationalUnit[] = [];
   public allUsers: User[] = [];
   public projectManagerUsersByOrganisationalUnit: Record<string, User[]> = {};
+  public showRoadConditionInfo: boolean = false;
 
   constructor(userService: UserService, organisationService: OrganisationService, activityResponsibilityService: ActivityResponsibilityService) {
     this.userService = userService;
@@ -248,4 +249,10 @@ export class ActivityPropertiesComponent implements OnInit {
 
   comparePhase = (a: any, b: any) =>
     a?.phase === b?.phase;
+
+  switchRoadConditionInfo() {
+    this.showRoadConditionInfo = !this.showRoadConditionInfo;
+  }
 }
+
+

@@ -288,22 +288,30 @@
                         </mat-card-header>
                         <mat-card-content>
                             <div class="info-row">
-                                <mat-icon>info</mat-icon>
-                                <p
-                                    matTooltipClass="multiline-tooltip"
-                                    [matTooltip]="'Strassenzustand (aus GIS) (1-5)
-
-    0.0-0.9 = gut (Neuwertiger Zustand. Kein unmittelbarer Handlungsbedarf, lediglich betrieblicher Unterhalt) -> Z-Klasse 1
-    1.0-1.9 = mittel (Erste leichte Verschleisserscheinungen. Mittelfristig sind kleinere Erhaltungsmassnahmen (z.B. Oberflächenbehandlungen) nötig. ) -> Z-Klasse 2
-    2.0-2.9 = ausreichen (Deutliche Schäden sichtbar. Systematischer baulicher Unterhalt oder Deckschichtenersatz ist erforderlich, um den Substanzwert zu sichern.)-> Z-Klasse 
-    3.0-3.9 = schlecht (Starke Schäden, die Tragfähigkeit ist teilweise beeinträchtigt. Grössere Instandsetzungen oder Teilerneuerungen sind kurzfristig notwendig.) -> Z-Klasse 4
-    4.0-5.0 = kritisch (Substanz ist weitgehend zerstört. Totalsanierung oder kompletter Neubau ist unumgänglich, um die Verkehrssicherheit zu gewährleisten.) -> Z-Klasse 5
-
-Bitte vorhandenen Strassenzustand aus GIS prüfen und den entsprechenden Wert im Feld eintragen d.h., bsp. wenn Wert = 2.6 (ausreichend), bitte = 3'">
+                                <button mat-icon-button 
+                                    matSuffix 
+                                    type="button" 
+                                    (mousedown)="$event.stopPropagation()"
+                                    (click)="$event.stopPropagation(); switchRoadConditionInfo()" 
+                                    aria-label="Info zum Strassenzustand">
+                                    <mat-icon>info</mat-icon>
+                                </button>
+                                <p>
                                     Strassenzustand / Zustandsklasse (Index i1: Oberflächenschäden)
                                 </p>
                             </div>
+                            <div *ngIf="showRoadConditionInfo"
+                                    style="background-color: rgb(236,236,234);padding: 1em;">
+                                    Strassenzustand (aus GIS) (1-5)<br><br>
 
+                                    <b>0.0-0.9</b> = gut (Neuwertiger Zustand. Kein unmittelbarer Handlungsbedarf, lediglich betrieblicher Unterhalt) -> Z-Klasse 1<br>
+                                    <b>1.0-1.9</b> = mittel (Erste leichte Verschleisserscheinungen. Mittelfristig sind kleinere Erhaltungsmassnahmen (z.B. Oberflächenbehandlungen) nötig. ) -> Z-Klasse 2<br>
+                                    <b>2.0-2.9</b> = ausreichen (Deutliche Schäden sichtbar. Systematischer baulicher Unterhalt oder Deckschichtenersatz ist erforderlich, um den Substanzwert zu sichern.)-> Z-Klasse <br>
+                                    <b>3.0-3.9</b> = schlecht (Starke Schäden, die Tragfähigkeit ist teilweise beeinträchtigt. Grössere Instandsetzungen oder Teilerneuerungen sind kurzfristig notwendig.) -> Z-Klasse 4<br>
+                                    <b>4.0-5.0</b> = kritisch (Substanz ist weitgehend zerstört. Totalsanierung oder kompletter Neubau ist unumgänglich, um die Verkehrssicherheit zu gewährleisten.) -> Z-Klasse 5<br><br>
+
+                                    Bitte vorhandenen Strassenzustand aus GIS prüfen und den entsprechenden Wert im Feld eintragen d.h., bsp. wenn Wert = 2.6 (ausreichend), bitte = 3
+                                </div>
                             <div class="form-fields-split-three">
                                 <mat-form-field>
                                     <input matInput type="number" [min]="0" [max]="5"

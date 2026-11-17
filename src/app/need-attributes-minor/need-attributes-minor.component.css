@@ -13,3 +13,10 @@
 .mat-slider-thumb {
     background-color: rgb(255, 25, 0) !important;
 }
+
+/* multiple elements in same row, one after another (not same size) */
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
