@@ -53,7 +53,7 @@ export class RoadWorkActivityService {
         parameters.push("summary=true");
       }
       if (isMinorWorks != null) {
-        parameters.push("isMinorWorks=" + isMinorWorks);
+        parameters.push("isMinorWork=" + isMinorWorks);
       }
       queryString += parameters.join('&');
     }

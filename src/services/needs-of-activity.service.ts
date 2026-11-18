@@ -45,4 +45,8 @@ export class NeedsOfActivityService {
       });
   }
 
+  getFilteredNonAssignedRoadWorkNeeds(isMinorWork: boolean | null) :RoadWorkNeedFeature[] {
+    return this.nonAssignedRoadWorkNeeds.filter((roadWorkNeed) => isMinorWork === null || roadWorkNeed.properties.isMinorWork === isMinorWork);
+  }
+
 }

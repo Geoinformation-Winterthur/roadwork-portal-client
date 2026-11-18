@@ -15,9 +15,21 @@
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> Titel & Abschnitt </th>
                     <td mat-cell *matCellDef="let assignedRoadWorkNeed">
-                        <a routerLink="/needs/{{assignedRoadWorkNeed.properties.uuid}}">
-                            {{assignedRoadWorkNeed.properties.name}}
+                        <a [routerLink]="[
+                                    assignedRoadWorkNeed.properties.isMinorWork
+                                        ? '/needs-minor'
+                                        : '/needs',
+                                    assignedRoadWorkNeed.properties.uuid
+                                ]">
+                            {{ assignedRoadWorkNeed.properties.name }}
                         </a>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Typ</th>
+                    <td mat-cell *matCellDef="let assignedRoadWorkNeed">
+                        {{ assignedRoadWorkNeed.properties.isMinorWork ? 'Kleinmassnahme' : 'Bedarf' }}
                     </td>
                 </ng-container>
 
@@ -92,14 +104,28 @@
             Bei diesem Vorhaben liegen keine Bedarfe in der Vorhabenfläche
             vor (die nicht bereits zugewiesen sind).
         </div>
-        <div *ngIf="needsOfActivityService.nonAssignedRoadWorkNeeds.length !== 0" style="margin-bottom: 3em;">
-            <table mat-table [dataSource]="needsOfActivityService.nonAssignedRoadWorkNeeds" class="mat-elevation-z2"
+        <div *ngIf="needsOfActivityService.getFilteredNonAssignedRoadWorkNeeds(roadWorkActivity.properties.isMinorWork).length !== 0" style="margin-bottom: 3em;">
+            <table mat-table [dataSource]="needsOfActivityService.getFilteredNonAssignedRoadWorkNeeds(roadWorkActivity.properties.isMinorWork)" class="mat-elevation-z2"
                 style="width: 100%">
 
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> Bezeichnung </th>
-                    <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed"> <a
-                            routerLink="/needs/{{nonAssignedRoadWorkNeed.properties.uuid}}">{{nonAssignedRoadWorkNeed.properties.name}}</a>
+                    <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed"> 
+                        <a [routerLink]="[
+                                    nonAssignedRoadWorkNeed.properties.isMinorWork
+                                        ? '/needs-minor'
+                                        : '/needs',
+                                    nonAssignedRoadWorkNeed.properties.uuid
+                                ]">
+                            {{ nonAssignedRoadWorkNeed.properties.name }}
+                        </a>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Typ</th>
+                    <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
+                        {{ nonAssignedRoadWorkNeed.properties.isMinorWork ? 'Kleinmassnahme' : 'Bedarf' }}
                     </td>
                 </ng-container>
 
@@ -142,7 +168,7 @@
                     <th mat-header-cell *matHeaderCellDef> Zuweisen </th>
                     <td mat-cell *matCellDef="let nonAssignedRoadWorkNeed">
                         <mat-icon *ngIf="isInEditingMode" matTooltip="Diesen Bedarf dem Vorhaben zuweisen"
-                            (click)="assignRoadWorkNeed(nonAssignedRoadWorkNeed)" aria-label="Zuweisung entfernen"
+                            (click)="confirmAssignRoadWorkNeed(nonAssignedRoadWorkNeed)" aria-label="Zuweisung entfernen"
                             class="arrow_button">arrow_upward</mat-icon>
                         <mat-icon *ngIf="!isInEditingMode" aria-label="Zuweisung aufheben nicht möglich"
                             matTooltip="Keine Berechtigung für eine Aktion"

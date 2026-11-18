@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Zuweisung bestätigen</h2>
+
+<mat-dialog-content>
+    <p>Möchten Sie diese Kleinmassnahme wirklich dem Bauvorhaben zuweisen?</p>
+    <p><strong>Diese Zuweisung kann nicht mehr geändert werden.</strong></p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Nein</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="true">
+        Ja, zuweisen
+    </button>
+</mat-dialog-actions>

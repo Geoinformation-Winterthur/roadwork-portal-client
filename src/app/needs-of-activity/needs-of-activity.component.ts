@@ -7,6 +7,8 @@ import { RoadWorkNeedFeature } from 'src/model/road-work-need-feature';
 import { NeedsOfActivityService } from 'src/services/needs-of-activity.service';
 import { RoadWorkNeedService } from 'src/services/roadwork-need.service';
 import { UserService } from 'src/services/user.service';
+import { NeedAssignDialogComponent } from '../need-assign-dialog/need-assign-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-needs-of-activity',
@@ -15,8 +17,8 @@ import { UserService } from 'src/services/user.service';
 })
 export class NeedsOfActivityComponent {
 
-  assignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'optRealYears', 'isOrigin', 'dateCreated', 'action'];
-  nonAssignedActColumns: string[] = ['name', 'reason', 'orderer', 'org', 'optRealYears', 'dateCreated', 'action'];
+  assignedActColumns: string[] = ['name', 'type', 'reason', 'orderer', 'org', 'optRealYears', 'isOrigin', 'dateCreated', 'action'];
+  nonAssignedActColumns: string[] = ['name', 'type', 'reason', 'orderer', 'org', 'optRealYears', 'dateCreated', 'action'];
 
   @Input()
   roadWorkActivity: RoadWorkActivityFeature = new RoadWorkActivityFeature();
@@ -39,15 +41,18 @@ export class NeedsOfActivityComponent {
 
   private roadWorkNeedService: RoadWorkNeedService;
   private snckBar: MatSnackBar;
+  private dialog: MatDialog;
 
   constructor(roadWorkNeedService: RoadWorkNeedService,
     needsOfActivityService: NeedsOfActivityService,
     userService: UserService,
-    snckBar: MatSnackBar) {
+    snckBar: MatSnackBar,
+    dialog: MatDialog) {
     this.roadWorkNeedService = roadWorkNeedService;
     this.needsOfActivityService = needsOfActivityService;
     this.snckBar = snckBar;
     this.userService = userService;
+    this.dialog = dialog;
   }
 
   ngOnInit(): void {
@@ -77,6 +82,15 @@ export class NeedsOfActivityComponent {
   }
 
   assignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
+
+    if (this.roadWorkActivity.properties.isMinorWork) {
+      if (this.needsOfActivityService.assignedRoadWorkNeeds && this.needsOfActivityService.assignedRoadWorkNeeds.length > 0) {
+        this.snckBar.open("Es kann nur eine Kleinmassnahme zugewiesen werden.", "", {
+            duration: 4000
+          });
+          return;
+      }
+    }
     let originalActivityRelationType: string = roadWorkNeed.properties.activityRelationType;    
     let originalNeedIsEditingAllowed: boolean = roadWorkNeed.properties.isEditingAllowed;    
     roadWorkNeed.properties.activityRelationType = "assignedneed";
@@ -87,6 +101,8 @@ export class NeedsOfActivityComponent {
     if(this.needsOfActivityService.assignedRoadWorkNeeds &&
         this.needsOfActivityService.assignedRoadWorkNeeds.length == 0)
           isFirstNeed = true;
+
+    
 
     this.roadWorkNeedService.updateRoadWorkNeed(roadWorkNeed)
       .subscribe({
@@ -114,8 +130,10 @@ export class NeedsOfActivityComponent {
             if(isFirstNeed)
               this.setAsPrimaryNeed(roadWorkNeed);
 
-            // Append comment in activity (is added in backend as well)
+            // Append comment in activity (is added in backend as well) 
             this.addNeedToActivityComment(roadWorkNeed);
+            // Assign isMinorWork (is set in backend as well) 
+            this.roadWorkActivity.properties.isMinorWork = roadWorkNeed.properties.isMinorWork;
           }
         },
         error: (error) => {
@@ -292,6 +310,22 @@ export class NeedsOfActivityComponent {
             return false;
           }
         });
+  }
+
+  confirmAssignRoadWorkNeed(roadWorkNeed: RoadWorkNeedFeature) {
+
+    if (roadWorkNeed.properties.isMinorWork === false) {
+      this.assignRoadWorkNeed(roadWorkNeed);
+    }
+    else {
+      const dialogRef = this.dialog.open(NeedAssignDialogComponent);
+
+      dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (confirmed === true) {
+          this.assignRoadWorkNeed(roadWorkNeed);
+        }
+      });
+    }
   }
 
 }

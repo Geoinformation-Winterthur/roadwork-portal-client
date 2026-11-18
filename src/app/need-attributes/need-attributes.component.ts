@@ -590,6 +590,8 @@ export class NeedAttributesComponent implements OnInit {
     roadWorkNeedFeature.properties.finishOptimumTo = today;
     roadWorkNeedFeature.properties.finishLateTo = today;
 
+    roadWorkNeedFeature.properties.isMinorWork = false;
+
     return roadWorkNeedFeature;
   }
 

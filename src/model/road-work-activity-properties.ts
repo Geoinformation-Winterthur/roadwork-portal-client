@@ -215,4 +215,7 @@ export class RoadWorkActivityProperties {
     roadCondition?: number;
     roadConditionDate?: Date;
     roadConditionComment: string = "";
+
+    // Distinguish between an assigned need or need-mior. Is null when nothing ist assigned.
+    isMinorWork: boolean | null = null;
 }
