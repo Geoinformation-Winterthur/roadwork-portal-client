@@ -117,6 +117,8 @@ export class ChooseNeedComponent implements OnInit {
           reporting: '12/Stellungnahme',
           coordinated: '12/koordiniert',
           prestudy: '21/Vorstudie',
+          suspended_after_sks: '12/ruhend nach SKS',
+          construction_accounting_p53: '53/Bauabrechnung',
           suspended: 'sistiert'
         };
         return labelMap[status] ?? status ?? '';
@@ -134,6 +136,8 @@ export class ChooseNeedComponent implements OnInit {
           reporting: { label: '12/Stellungnahme', color: '#93e3ff' },
           coordinated: { label: '12/koordiniert', color: '#93e3ff' },
           prestudy: { label: '21/Vorstudie', color: '#3dc3f4' },
+          suspended_after_sks: { label: '12/ruhend nach SKS', color: '#e0e0e0' },
+          construction_accounting_p53: { label: '53/Bauabrechnung', color: '#70ad47' },
           suspended: { label: 'sistiert', color: '#e0e0e0' }
         };
 

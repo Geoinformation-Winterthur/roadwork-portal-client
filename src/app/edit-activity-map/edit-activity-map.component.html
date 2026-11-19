@@ -22,6 +22,9 @@
         <mat-icon aria-label="Icon zeigt zwei überlappende Flächen">content_copy</mat-icon>
         &nbsp;GEOMETRIE ÜBERNEHMEN
     </button>
+    <button mat-button (click)="toggleAllRequirements()" style="margin: 1em;">
+        {{ showAllRequirements ? 'ALLE BEDARFE AUSBLENDEN' : 'ALLE BEDARFE EINBLENDEN' }}
+    </button>
     Kartenhintergrund:                         
     <mat-button-toggle-group
         [(ngModel)]="selectedBaseLayer"

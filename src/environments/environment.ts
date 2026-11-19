@@ -8,11 +8,7 @@ export const environment = {
   apiUrl: "http://localhost:7297",
   roadworksPortalToken: "roadworks.token.test",
   roadworksPortalUserToken: "roadworks.user.token.test",
-  hideInfoCookieName: "hide_info.test",
-  issuer: "https://accounts.google.com",
-  redirectUri: "http://localhost:4200/openid",
-  clientId: "545260861106-tgfacmvouu3lhpddesi1upgjeme33ibk.apps.googleusercontent.com",
-  scope: "openid profile email",
-  clearHashAfterLogin: false,
-  strictDiscoveryDocumentValidation: false
+  hideInfoCookieName: "hide_info.test",  
+  redirectUri: "http://localhost:4200/openid", 
+  enableMinorWorks: true 
 };

@@ -139,6 +139,8 @@ export class ChooseActivityComponent implements OnInit {
           archived: 'Archiviert',
           need_archived: 'Bedarf archiviert',
           deferred: 'zurückgestellt',
+          suspended_after_sks: '12/ruhend nach SKS',
+          construction_accounting_p53: '53/Bauabrechnung',
           suspended: 'sistiert'
         };
         return labelMap[status] ?? status ?? '';
@@ -173,6 +175,8 @@ export class ChooseActivityComponent implements OnInit {
           archived: { label: 'Archiviert', color: '#e0e0e0' },
           need_archived: { label: 'Bedarf archiviert', color: '#e0e0e0' },
           deferred: { label: 'zurückgestellt', color: '#e0e0e0' },
+          suspended_after_sks: { label: '12/ruhend nach SKS', color: '#e0e0e0' },
+          construction_accounting_p53: { label: '53/Bauabrechnung', color: '#70ad47' },
           suspended: { label: 'sistiert', color: '#e0e0e0' }
         };
 
