@@ -48,6 +48,7 @@ import { AddressService } from 'src/services/address.service';
 import html2canvas from 'html2canvas';
 import { StorageService } from 'src/services/storage.service';
 import { fromLonLat } from 'ol/proj';
+import { forkJoin, of } from 'rxjs';
 import BaseLayer from 'ol/layer/Base';
 import { BaseLayerName, BaseLayers, MapBaseLayerService } from 'src/services/map-base-layer.service';
 
@@ -69,6 +70,8 @@ export class EditActivityMapComponent implements OnInit {
 
   /** Optional filter/year context for needs reloading. */
   chosenYear?: number;
+  showAllRequirements = false;
+  private needsRequestId = 0;
 
   /** UI flags indicating current editing mode. */
   isInDrawNewMode: boolean = false;
@@ -577,28 +580,33 @@ export class EditActivityMapComponent implements OnInit {
    * - Finally calls `_putRoadworksOnMap` to redraw layers and optionally fit view.
    */
   private _reloadRoadworkNeeds(refreshExtent: boolean) {
-    this.roadWorkNeedSource.clear();
-    this.roadWorkNeedService.getRoadWorkNeeds({ status: ["requirement"] })
-      .subscribe({
-        next: (roadWorkNeeds) => {
-          this.needsOnMap = roadWorkNeeds;
-          this._putRoadworksOnMap(refreshExtent);
-        },
-        error: (error) => {
+    const requestId = ++this.needsRequestId;
+    const linkedIds = this.roadWorkActivityFeat?.properties?.roadWorkNeedsUuids || [];
+    const linked$ = linkedIds.length
+      ? this.roadWorkNeedService.getRoadWorkNeeds({ ids: linkedIds })
+      : of([] as RoadWorkNeedFeature[]);
+    const requirements$ = this.showAllRequirements
+      ? this.roadWorkNeedService.getRoadWorkNeeds({ status: ['requirement'] })
+      : of([] as RoadWorkNeedFeature[]);
+
+    forkJoin([linked$, requirements$]).subscribe({
+      next: ([linked, requirements]) => {
+        if (requestId !== this.needsRequestId) return;
+        const byId = new globalThis.Map<string, RoadWorkNeedFeature>();
+        for (const need of [...requirements, ...linked]) {
+          const id = need.properties.uuid;
+          if (id) byId.set(id, need);
         }
-      });
-    if (this.roadWorkActivityFeat && !this.roadWorkActivityFeat.properties.dateSksReal) {
-      this.roadWorkNeedService.getRoadWorkNeeds({
-      	ids: this.roadWorkActivityFeat.properties.roadWorkNeedsUuids
-      }).subscribe({
-          next: (roadWorkNeeds) => {
-            this.needsOnMap = roadWorkNeeds;
-            this._putRoadworksOnMap(refreshExtent);
-          },
-          error: (error) => {
-          }
-        });
-    }
+        this.needsOnMap = Array.from(byId.values());
+        this._putRoadworksOnMap(refreshExtent);
+      },
+      error: (error) => console.error('Could not load roadwork needs for map', error)
+    });
+  }
+
+  toggleAllRequirements(): void {
+    this.showAllRequirements = !this.showAllRequirements;
+    this._reloadRoadworkNeeds(false);
   }
 
   /**

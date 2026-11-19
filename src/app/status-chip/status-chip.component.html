@@ -119,6 +119,14 @@
     <mat-chip *ngIf="statusCode === 'deferred'" class="chip-deferred">
       zurückgestellt
     </mat-chip>
+    <mat-chip *ngIf="statusCode === 'suspended_after_sks'" class="chip-suspended">
+      <span *ngIf="short">12/ruhend nach SKS</span>
+      <span *ngIf="!short">ruhend nach SKS (Phase 12)</span>
+    </mat-chip>
+    <mat-chip *ngIf="statusCode === 'construction_accounting_p53'" class="chip-phase-5">
+      <span *ngIf="short">53/Bauabrechnung</span>
+      <span *ngIf="!short">Bauabrechnung (Phase 53)</span>
+    </mat-chip>
     <mat-chip *ngIf="statusCode === 'suspended'" class="chip-suspended">
       sistiert
     </mat-chip>

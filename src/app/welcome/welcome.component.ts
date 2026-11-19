@@ -135,6 +135,8 @@ export class WelcomeComponent implements OnInit {
           archived: 'Archiviert',
           need_archived: 'Bedarf archiviert',
           deferred: 'zurückgestellt',
+          suspended_after_sks: '12/ruhend nach SKS',
+          construction_accounting_p53: '53/Bauabrechnung',
           suspended: 'sistiert'
         };
 
@@ -538,6 +540,8 @@ export class WelcomeComponent implements OnInit {
           archived: 'Archiviert',
           need_archived: 'Bedarf archiviert',
           deferred: 'zurückgestellt',
+          suspended_after_sks: '12/ruhend nach SKS',
+          construction_accounting_p53: '53/Bauabrechnung',
           suspended: 'sistiert'
         };
 
