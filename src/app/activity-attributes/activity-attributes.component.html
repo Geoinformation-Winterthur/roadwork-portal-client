@@ -21,6 +21,9 @@
             </mat-tab>
             <mat-tab label="Stammdaten">
                 <div style="text-align: right;">
+                    <button mat-button *ngIf="showNoMinorWorkButton()" (click)="archiveNeedMinorAndRoadWorkActivity()" style="margin: 1em;background-color: rgb(236,236,234);">
+                        <mat-icon aria-label="Icon zeigt Archivieren">archive</mat-icon>&nbsp;KEINE KLEINMASSNAHME
+                    </button>
                     <button mat-button (click)="refresh()" style="margin: 1em;background-color: rgb(236,236,234);">
                         <mat-icon aria-label="Icon zeigt Aktualisieren">refresh</mat-icon>&nbsp;AKTUALISIEREN
                     </button>
@@ -770,7 +773,7 @@
                                                             (selectionChange)='onRoadWorkActivityEnumChange()'
                                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                             <mat-option
-                                                                *ngFor="let availableProjectType of availableProjectTypes"
+                                                                *ngFor="let availableProjectType of getFilteredProjectTypes(roadWorkActivityFeature.properties.isMinorWork)"
                                                                 [value]="availableProjectType.code">
                                                                 {{availableProjectType.name}}
                                                             </mat-option>
@@ -792,7 +795,8 @@
                                                     style="background-color: rgb(236,236,234);padding: 1em;">
                                                     <b>Typ A</b>: Bauvorhaben mit geplanten Veränderungen an der Oberfläche werden in der SKS besprochen und beschlossen (Zuständigkeit/Lead bei TBA)<br>
                                                     <b>Typ B</b>: Bauvorhaben ohne geplante Veränderungen an der Oberfläche werden von der SKS zur Kenntnis genommen. Komplexe Bauvorhaben können durch die APK der SKS zur Besprechung und Beschlussfassung vorgelegt werden (Zuständigkeit/Lead bei TBA)<br>
-                                                    <b>Typ C</b>: Bauvorhaben ohne geplante Veränderungen an der Oberfläche und ohne bauliche Beteiligung des Tiefbauamts werden direkt umgesetzt und von der SKS zur Kenntnis genommen (Zuständigkeit bei federführende Verwaltungseinheit oder federführende Dritte)
+                                                    <b>Typ C</b>: Bauvorhaben ohne geplante Veränderungen an der Oberfläche und ohne bauliche Beteiligung des Tiefbauamts werden direkt umgesetzt und von der SKS zur Kenntnis genommen (Zuständigkeit bei federführende Verwaltungseinheit oder federführende Dritte)<br>
+                                                    <b>Typ K</b>: Kleinmassnahmen, welche direkt durch das TBA oder im Auftrag des TBA umgesetzt werden (Zuständigkeit/Lead bei TBA). Sie entsprechen keinem der Typen A, B oder C und wurden im Vorfeld auf die entsprechenden Merkmale gem. Baukoordinationsverordnung geprüft.
                                                 </div>
                                                 
                                                 <mat-checkbox

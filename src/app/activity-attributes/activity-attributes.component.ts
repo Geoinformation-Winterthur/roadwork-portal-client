@@ -49,6 +49,7 @@ import { EChartsOption } from 'echarts';
 import saveAs from 'file-saver';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { DateHelper } from 'src/helper/date-helper';
+import { ActivityArchiveDialogComponent } from '../activity-archive-dialog/activity-archive-dialog.component';
 
 @Component({
   selector: 'app-activity-attributes',
@@ -618,6 +619,14 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   /** Sync enum value into the model when the UI control changes. */
   onRoadWorkActivityEnumChange() {
     if (this.roadWorkActivityFeature && this.roadWorkActivityFeature.properties.uuid) {
+
+      if (this.projectTypeEnumControl.value === "type_k") {
+        this.roadWorkActivityFeature.properties.isMinorWork = true;
+      }
+      else {
+        this.roadWorkActivityFeature.properties.isMinorWork = false;
+      }
+
       this.roadWorkActivityFeature.properties.projectType = this.projectTypeEnumControl.value;
     }
   }
@@ -1941,4 +1950,73 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     return `${quarter}.Q ${date.getFullYear()}`;
   }
 
+  getFilteredProjectTypes(isMinorWork: boolean | null) {
+    return this.availableProjectTypes.filter(
+      projectType => isMinorWork === null || projectType.isMinorWork === isMinorWork
+    );
+  }
+  
+  showNoMinorWorkButton(): boolean {
+    if (this.roadWorkActivityFeature?.properties.isMinorWork === true && 
+      this.roadWorkActivityFeature?.properties.projectType === "type_k" && 
+      this.roadWorkActivityFeature?.properties.isPrivate == false) {
+      
+      let chosenRole = this.userService.getLocalUser().chosenRole;
+      if (chosenRole === "administrator" || chosenRole === "territorymanager") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  archiveNeedMinorAndRoadWorkActivity() {
+    
+    const dialogRef = this.dialog.open(ActivityArchiveDialogComponent);
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed === true) {
+
+        // archive activity (needs & Needs minor will be archived as well)
+        if (this.roadWorkActivityFeature?.properties) {
+          this.roadWorkActivityFeature.properties.status = "archived";
+        }
+
+        // hold data for creating a need.
+        let assignedNeedMinorClone = this.needsOfActivityService.assignedRoadWorkNeeds[0];
+
+        // archive activity(and need)
+        // TODO Errorhandling
+        this.save().then(() => {
+          // this will be executeted anyways, even when save() failes.
+          assignedNeedMinorClone.properties.uuid = "";
+          assignedNeedMinorClone.properties.status = "requirement";
+          assignedNeedMinorClone.properties.priority.code = "middle";
+          assignedNeedMinorClone.properties.isEditingAllowed = true;
+          assignedNeedMinorClone.properties.isPrivate = true;
+          assignedNeedMinorClone.properties.created = new Date();
+          assignedNeedMinorClone.properties.lastModified = new Date();
+
+          assignedNeedMinorClone.properties.finishEarlyTo = new Date();
+          assignedNeedMinorClone.properties.finishOptimumTo = new Date();
+          assignedNeedMinorClone.properties.finishLateTo = new Date();
+          // save need-minor clone as need
+          assignedNeedMinorClone.properties.isMinorWork = false;
+          this.roadWorkNeedService.addRoadworkNeed(assignedNeedMinorClone).subscribe({
+            next: () => {
+              // TODO implement in API (setting orderer)
+              // Der GM oder Administrator der den Knopf gedrückt hat ist nun der Auslösende:r ¨
+              // this.roadWorkNeedService.updateRoadWorkNeed()  funktioniert auch nicht da hier der Orderer im backend von der DB geholt wird. (also wieder der GM oder Administrator)
+
+              const empfaenger = assignedNeedMinorClone.properties.orderer.mailAddress;
+              const body = 'Ihre Kleinmassnahme wurde abgelehnt.';
+
+              window.open(`mailto:${empfaenger}?body=${encodeURIComponent(body)}`);
+
+              this.router.navigate(['/activities']);
+            }
+          });
+        });
+      }
+    });
+  }
 }

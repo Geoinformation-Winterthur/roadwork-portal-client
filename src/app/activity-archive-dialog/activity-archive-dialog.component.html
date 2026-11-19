@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Archivierung bestätigen</h2>
+
+<mat-dialog-content>
+    <p>Sind Sie sicher dass das Bauvorhaben und die Zugewiesene Kleinmassnahme archiviert werden soll?</p>
+    <p><strong>Bei einem Klick auf Ja, wird das Bauvorhaben sowie die zugewiesene Kleinmassnahme archiviert.<br> 
+        Die Daten der Kleinmassnahme werden als Bedarf im Entwurf übernommen und gespeichert.<br>
+        Der Auslösende:r muss per Mail informiert werden, dass seine Kleinmassnahme abgelehnt wurde und als Bedarf im Entwurf vorhanden ist.<br>
+    </strong></p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Nein</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="true">
+        Ja
+    </button>
+</mat-dialog-actions>

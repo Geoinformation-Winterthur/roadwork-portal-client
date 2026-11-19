@@ -6,4 +6,5 @@ export class EnumType
 {
     public code: string = "";
     public name: string = "";
+    public isMinorWork: boolean = false; 
 }
