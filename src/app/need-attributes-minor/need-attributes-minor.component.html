@@ -248,6 +248,7 @@
                                 <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
                                     <mat-label>Status/Phase</mat-label>
                                     <!-- Option bodies are a copy of the names from status-chip.component.html -->
+                                    <!-- TODO: Use values from StatusHelper.getStatuses() -->
                                     <mat-select 
                                         [(ngModel)]="roadWorkNeedFeature.properties.status">
                                         <!-- Phase 1 -->

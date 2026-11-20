@@ -99,6 +99,7 @@ const LS_KEY_SELECTED_SESSION = 'sks.selectedSession';
 const LS_KEY_SELECTED_PROJECT = 'sks.selectedProject';
 
 const TITLE_PROTOCOL_NAME = "SKS (Strategische Koordinationssitzung)";
+const TITLE_PROTOCOL_NAME_MINOR_WORKS = "Sitzung Kleinmassnahmen";
 
 @Component({
   selector: 'app-sessions',
@@ -901,7 +902,9 @@ export class SessionsComponent implements OnInit {
     this.isDataLoading = true;
 
     try {
+      // TODO: switch between sks and kks (Kleinmassnahmen)
       await this.downloadWord(children, reportType, session);
+      //await this.downloadMinorWorkWord(children, reportType, session);
     } catch (error) {
       this.snckBar.open('Fehler beim Generieren des Berichts.', '', { duration: 4000 });
       console.log(error);
@@ -1271,6 +1274,9 @@ export class SessionsComponent implements OnInit {
       allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren'));
       allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment3));
       allProjectBlocks.push(this.docxWordService.smallGap());
+      
+      // Obsolete, replaced by project.sessionComment3 (#717)
+      /*
       allProjectBlocks.push(this.docxWordService.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"));
       const rows = [
         { label: "Ist im Aggloprogramm", value: activity.project.isAggloprog ? 'X' : 'Keine' },
@@ -1294,6 +1300,7 @@ export class SessionsComponent implements OnInit {
       }
 
       allProjectBlocks.push(this.docxWordService.smallGap());
+      */
 
       allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung'));
 
@@ -1381,6 +1388,172 @@ export class SessionsComponent implements OnInit {
     });
 
     saveAs(blob, TITLE_PROTOCOL_NAME + ' - ' + reportType + '.docx');
+  }
+
+  async downloadMinorWorkWord(children: SessionChild[], reportType: string, session: any) {
+
+    const intro = await this.docxWordService.makeIntroBlock.call(this.docxWordService, {
+      logoUrl: "assets/win_logo.png",
+      addressLines: [
+        'Stadt Winterthur',
+        '*Tiefbauamt*',
+        'Pionierstrasse 7',
+        '8403 Winterthur',
+        ''
+      ],
+      title: TITLE_PROTOCOL_NAME_MINOR_WORKS + ' - ' + reportType,
+      logoWidthPx: 140,
+    });
+
+    const projectInfo = [
+      {
+        key: 'Datum und Zeit',
+        value: `${String(session.plannedDate)} / ${session.timeWindow || ''}`
+      },
+      {
+        key: 'Ort',
+        value: session.location || ''
+      },
+      {
+        key: 'Vorsitz',
+        value: session.chairperson || ''
+      },
+      {
+        key: 'Protokoll',
+        value: session.minuteTaker || ''
+      },
+    ];
+
+    const tableInfo         = this.docxWordService.makeInfoTable(projectInfo);
+    const listExcused       = this.docxWordService.makeExcusedPersonsList(children);
+    const listPresent       = this.docxWordService.makePresentPersonsList(children);
+    const listDistribution  = this.docxWordService.makeDistributionPersonsList(children);
+
+    const t1 = this.docxWordService.pBold('Anwesende');
+    const t2 = this.docxWordService.pBold('Entschuldigt');
+    const t3 = this.docxWordService.pBold('Verteiler');
+
+    const pageBreak = this.docxWordService.pageBreak();
+
+    const gap = this.docxWordService.spacer();
+    const smallGap = this.docxWordService.smallGap();
+
+    const agendaSection = this.docxWordService.makeMinorWorkAgendaAndAttachmentsSection({
+      prevSessionDate: session.prevSessionDate,
+      attachments: session.attachments,
+      isPreProtocol: session.isPreProtocol
+    });
+
+    const protocolSection = this.docxWordService.makeMinorWorkProtocolSections({
+      lastSessionMinorWorkDate: session.prevSessionDate,
+      sessionMinorWorkDate: session.plannedDate,
+      nextSessionMinorWorkDate: session.nextSessionDate,
+      acceptanceText: session.acceptance1 || '',
+      reportType: reportType,
+      isPreProtocol: session.isPreProtocol,
+    });
+
+    const activities = await this.docxWordService.prepareRoadWorkActivity(this.projectRows);
+    const allProjectBlocks: Array<Paragraph | Table> = [];
+
+    activities.sort((a, b) =>
+      a.project.roadWorkActivityNo.localeCompare(b.project.roadWorkActivityNo)
+    );
+
+    for (const activity of activities) {
+      allProjectBlocks.push(
+        this.docxWordService.makeFullWidthTitle(
+          `Kleinmassnahme ${activity.project.roadWorkActivityNo ?? ''}`,
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore:true }
+        )
+      );
+      allProjectBlocks.push(
+        this.docxWordService.makeFullWidthTitle(
+          `${activity.project.name ?? ''} `,
+          { bgColor: "E0E0E0", sizeHalfPt: 24, pageBreakBefore: false }
+        )
+      );
+
+      const imageRun = await this.docxWordService.imageFromUrlFitted(activity.mapUrl, 680);
+      if (imageRun) {
+        allProjectBlocks.push(new Paragraph({ alignment: AlignmentType.LEFT, children: [imageRun] }));
+      }
+
+      allProjectBlocks.push(...this.docxWordService.makeMinorWorkProjectMetaBlock(activity.meta));
+
+      const assignedNeedsRowsSorted =
+        activity.assignedNeedsRows.sort((a, b) =>
+          a.ausloesend.localeCompare(b.ausloesend)
+        );
+
+      allProjectBlocks.push(
+        this.docxWordService.smallGap(),
+        this.docxWordService.pBold('Zugewiesene (berücksichtigte) Kleinmassnahme'),
+        this.docxWordService.makeMinorWorkNeedsTableFromRows(assignedNeedsRowsSorted)
+      );
+
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Aspekte/Faktoren'));
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment3));
+      allProjectBlocks.push(this.docxWordService.smallGap());
+
+      allProjectBlocks.push(this.docxWordService.pBold('Vernehmlassung'));
+
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold('Bedarfsklärung - 1.Iteration'));
+      const consultationSection1 = await this.docxWordService.makeConsultationInputsSection({
+        uuid: activity.project.id,
+        feedbackPhase: "inconsult1",
+        isPhaseReporting: false
+      });
+      allProjectBlocks.push(...consultationSection1);
+
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold(session.isPreProtocol ? 'Vorgehensvorschlag' : 'Vorgehen'));
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment1));
+
+      allProjectBlocks.push(this.docxWordService.smallGap());
+      allProjectBlocks.push(this.docxWordService.pBold(`Beschluss:`));
+      allProjectBlocks.push(this.docxWordService.pPreserveLines(activity.project.sessionComment2));
+    }
+
+    const projectsOverviewSection = await this.docxWordService.makeMinorWorkProjectsOverviewSection();
+
+    const nextSessionSection = this.docxWordService.makeMinorWorkNextSessionSection({
+      nextMinorWorkSessionDate: session.nextSessionDate,
+      reportWriter: session.minuteTaker || '-',
+    });
+
+    const separator = new Paragraph({
+      border: { bottom: { style: BorderStyle.SINGLE, color: 'CCCCCC', size: 6 } },
+      spacing: { before: 60, after: 120 },
+    });
+
+    let mailAddress = this.userService.getLocalUser().mailAddress;
+    const blob = await this.docxWordService.build({
+      username: mailAddress,
+      orientation: 'portrait',
+      marginsCm: { top: 2, right: 1, bottom: 2, left: 2 },
+      isPreProtocol: session.isPreProtocol,
+      children: [
+        ...intro,
+        separator,
+        gap,
+        tableInfo, gap,
+        t1, ...listPresent, gap,
+        t2, ...listExcused, gap,
+        t3, ...listDistribution, gap,
+        pageBreak,
+        ...agendaSection,
+        gap,
+        ...protocolSection,
+        ...allProjectBlocks,
+        ...projectsOverviewSection,
+        ...nextSessionSection
+      ],
+    });
+
+    saveAs(blob, TITLE_PROTOCOL_NAME_MINOR_WORKS + ' - ' + reportType + '.docx');
   }
 
   formatDate(dateInput: string | Date): string {

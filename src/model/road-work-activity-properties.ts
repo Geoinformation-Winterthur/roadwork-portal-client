@@ -77,10 +77,10 @@ export class RoadWorkActivityProperties {
     //isDesire: boolean = false; // removed in #650
     //dateDesireStart?: Date; // removed in #650
     //dateDesireEnd?: Date; // removed in #650
-    isParticip: boolean = false;
+    isParticip: boolean = false; // unused
     dateParticipStart?: Date; // Modul Termine, Phase3: "Planauflage §13" >> Start
     dateParticipEnd?: Date; // Modul Termine, Phase3: "Planauflage §13" >> End
-    isPlanCirc: boolean = false;
+    isPlanCirc: boolean = false;  // unused
     datePlanCircStart?: Date; // Modul Termine, Phase3: "Planauflage §16" >> Start
     datePlanCircEnd?: Date; // Modul Termine, Phase3: "Planauflage §16" >> End
     dateConsultStart1?: Date; // Modul Termine, Phase2: "Bedarfsklärung - 1. Iteration" >> Start
@@ -115,7 +115,7 @@ export class RoadWorkActivityProperties {
     //dateInfoStart?: Date; // removed in #650
     //dateInfoEnd?: Date; // removed in #650
     //dateInfoClose?: Date; // removed in #650
-    isAggloprog: boolean = false;
+    isAggloprog: boolean = false; // unused
     url: string = "";
     documentAtts?: DocumentAttributes[];
     dateStartInconsult1?: Date; // unused, Phase: in Bedarfsklärung - 1.Iteration (Phase 12)
@@ -216,6 +216,6 @@ export class RoadWorkActivityProperties {
     roadConditionDate?: Date;
     roadConditionComment: string = "";
 
-    // Distinguish between an assigned need or need-mior. Is null when nothing ist assigned.
+	// Minor work (Kleinmassnahme), might be undefined before any need is assigned or type choosen
     isMinorWork: boolean | null = null;
 }

@@ -48,5 +48,5 @@ export class RoadWorkNeedProperties {
     feedbackGiven?: boolean = false;
     constructionDurationDays?: number; // Added in 2026.4 (#608)
     acquisitionPlanned: string = "NO"; // Valid values: YES, NO, MAYBE (#609, 2026.4)
-    isMinorWork: boolean = false;
+    isMinorWork: boolean = false; // Minor work (Kleinmassnahme), always created as need or Kleinmassnahme (is_minor_work = true), never undefined
 }

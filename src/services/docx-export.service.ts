@@ -24,7 +24,11 @@ import {
 } from 'docx';
 import { firstValueFrom } from 'rxjs';
 import { RoadWorkNeedService } from './roadwork-need.service';
+import { RoadWorkActivityService } from './roadwork-activity.service';
 import { ConsultationService } from './consultation.service';
+import { ActivityResponsibilityService } from './activity-responsibility.service';
+import { OrganisationService } from './organisation.service';
+import { StatusHelper } from 'src/helper/status-helper';
 
 /** Public options for document generation. */
 export interface DocxBuildOptions {
@@ -71,9 +75,17 @@ const TITLE_PROTOCOL_NAME = "SKS (Strategische Koordinationssitzung)";
 
 @Injectable({ providedIn: 'root' })
 export class DocxWordService {
+
+  /** Helper for status transitions and label mapping. */
+  statusHelper: StatusHelper;
+
   constructor(private reportLoaderService: ReportLoaderService,
               private roadWorkNeedService: RoadWorkNeedService,
-              private consultationService: ConsultationService) {
+              private consultationService: ConsultationService,
+              private roadWorkActivityService: RoadWorkActivityService,
+              private activityResponsibilityService: ActivityResponsibilityService,
+              private organisationService: OrganisationService) {
+    this.statusHelper = new StatusHelper();
   }
 
   // -------- sanitize text (remove control chars that can break XML)
@@ -721,6 +733,46 @@ export class DocxWordService {
     ];
   }
 
+
+  /**
+   * Render meta-section (four lines) under a project for minor works (Kleinmassnahme).
+   * Call this right after the project's map/title.
+   */
+  makeMinorWorkProjectMetaBlock(meta: {
+    ausloesende: string;
+    ausloesendesWerk: string;
+    gm: string;
+    comment: string;
+    mitwirkende: string;
+  }): Paragraph[] {        
+    return [
+      this.pChildren([
+        new TextRun({ text: "Auslösende:r: ", bold: true }),
+        new TextRun(meta.ausloesende || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Auslösendes Werk: ", bold: true }),
+        new TextRun(meta.ausloesendesWerk || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Gebietsmanagement: ", bold: true }),
+        new TextRun(meta.gm || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Beschrieb Kleinmassnahme: ", bold: true }),
+        new TextRun(meta.comment || "Keine")
+      ]),
+
+      this.pChildren([
+        new TextRun({ text: "Mitwirkende: ", bold: true }),
+        new TextRun(meta.mitwirkende ? meta.mitwirkende : "Keine")
+      ])
+    ];
+  }
+
   /** Inserts soft hyphens into long words to allow wrapping in Word tables */
   private hyphenateLongTokens(s: string, chunk = 12): string {
     if (!s) return '';
@@ -779,6 +831,101 @@ export class DocxWordService {
         new TableCell({
           verticalAlign: 'top',
           children: [this.pSmall('Auslösegrund', true)],
+        }),      
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Werk', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Erstellt am', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Wunschtermin', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('auslösend', true)],
+        }),
+      ],
+    });
+
+    // --- Table body rows ---
+    const body = (rows ?? []).map((r) =>
+      new TableRow({
+        children: [
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.ausloesende)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [
+              this.pSmall(r.titelAbschnitt),
+            ],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.ausloesegrund)],
+          }),        
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.werk)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.erstelltAm)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.wunschtermin)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.ausloesend)],
+          }),
+        ],
+      })
+    );
+
+    // --- Build final table with compact cell margins ---
+    return new Table({
+      width: { type: WidthType.PERCENTAGE, size: 100 },
+      margins: { top: 80, bottom: 80, left: 80, right: 80 }, // ~1.1 mm padding
+      rows: [header, ...body],
+    });
+  }
+
+  /**
+   * Builds a compact minor Needs table
+   */
+  makeMinorWorkNeedsTableFromRows(
+    rows: Array<{
+      titelAbschnitt: string;
+      ausloesegrund: string;
+      ausloesende: string;
+      werk: string;
+      erstelltAm: string;
+      wunschtermin: string;
+      ausloesend: string;
+    }>    
+  ): Table {
+    // --- Table header row ---
+    const header = new TableRow({
+      tableHeader: true,
+        children: [
+          new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Auslösende:r', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Titel & Abschnitt', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Tätigkeiten/Arbeiten', true)],
         }),      
         new TableCell({
           verticalAlign: 'top',
@@ -974,6 +1121,41 @@ export class DocxWordService {
     return blocks;
   }
 
+  /** Builds “Traktanden” + “Beilagen” section for minor works (Kleinmassnahmen). */
+  makeMinorWorkAgendaAndAttachmentsSection(opts: {
+    prevSessionDate: string;      
+    attachments: string;   
+    isPreProtocol?: boolean;
+  }): Paragraph[] {
+    const { prevSessionDate, attachments, isPreProtocol } = opts;
+
+    // Traktanden (agenda)
+    const blocks: Paragraph[] = [
+      this.pBold('Traktanden'),
+      this.p(`1. Abnahme Protokoll vom ${this.sanitizeText(prevSessionDate)}`),
+      isPreProtocol? this.p('2. Koordination neuer Kleinmassnahmen') :  this.p('2. Koordination Kleinmassnahmen'),
+      this.p('3. Übersicht Bestellungen/Projektaufträge'),
+      this.p('4. Nächste Sitzungen'),
+      this.smallGap(),
+      this.pBold('Beilagen'),
+    ];
+
+    // Beilagen (attachments) from a single string
+    const raw = (attachments ?? '').trim();
+    if (raw.length === 0) {
+      blocks.push(this.p('–'));
+    } else {
+      // split by comma or newline
+      const items = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      for (const it of items) {
+        // simple hyphen list; avoids numbering definitions
+        blocks.push(this.p(`${this.sanitizeText(it)}`));
+      }
+    }
+
+    return blocks;
+  }
+
   /** Approach-Proposal / Approach **/
   makeProtocolSections(opts: {
     lastSksDate: string;
@@ -1015,6 +1197,48 @@ export class DocxWordService {
       approach.push(this.smallGap());
       approach.push(this.pBold(`2. Koordination Bauvorhaben`));
       approach.push(this.p("Die nachfolgenden Vorgehen wurden an der SKS vom " +
+                        this.sanitizeText(sksDate) +
+                        " behandelt."));
+    }
+    return approach;
+  }
+
+  /** Approach-Proposal / Approach for minor works (Kleinmassnahmen) **/
+  makeMinorWorkProtocolSections(opts: {
+    lastSessionMinorWorkDate: string;
+    sessionMinorWorkDate: string;
+    nextSessionMinorWorkDate: string;
+    acceptanceText: string;
+    reportType?: string;
+    isPreProtocol?: boolean;
+  }): Paragraph[] {
+    const { lastSessionMinorWorkDate: lastSksDate, sessionMinorWorkDate: sksDate, nextSessionMinorWorkDate: nextSksDate, acceptanceText, reportType, isPreProtocol } = opts;
+    
+
+    let approach = [];    
+    approach.push(this.smallGap());    
+    approach.push(this.pBold(`1. Abnahme Protokoll vom ${this.sanitizeText(lastSksDate)}`));
+    approach.push(this.p(acceptanceText || '–', { colorHex: '333333' }));
+
+    if (isPreProtocol) {      
+      approach.push(this.smallGap());
+      approach.push(this.pBold(`2. Koordination neuer Kleinmassnahmen`));
+
+      approach.push(this.smallGap());
+      let approachText1 = 
+              "Die nachfolgenden " + (isPreProtocol ? "Kleinmassnahmen" : "Kleinmassnahmen") + " wurden " +
+              "mit Bedarfsklärung 1. Iteration zur Verfügung gestellt. ";
+              
+      let approachText3 =  
+              "Nachfolgend eine Gesamtübersicht aller Kleinmassnahmen, welche für diese Sitzung traktandiert wurden.";
+
+      approach.push(this.p(approachText1, { lineSpacing: 400 }));
+      approach.push(this.p(approachText3, { lineSpacing: 400 }));
+
+    } else {
+      approach.push(this.smallGap());
+      approach.push(this.pBold(`2. Koordination Kleinmassnahmen`));
+      approach.push(this.p("Die nachfolgenden Kleinmassnahmen wurden an der Sitzung vom " +
                         this.sanitizeText(sksDate) +
                         " behandelt."));
     }
@@ -1462,6 +1686,409 @@ export class DocxWordService {
     return [table];
   }
 
+  /** 
+   * Minor work overview
+   */
+  async makeMinorWorkProjectsOverviewSection(): Promise<(Paragraph | Table)[]> {
+    const blocks: (Paragraph | Table)[] = [
+      this.smallGap(),
+      this.pBold('3. Übersicht Bestellungen/Projektaufträge'),
+    ];
+
+    // Fetch and filter by phase
+    let activeMinorWorkActivities = await firstValueFrom(
+      this.roadWorkActivityService.getRoadWorkActivities({
+        /* All stus starting from coordinated to commissioning_p53*/
+        status:
+          'prestudy,coordinated,planning_p1,initiation_p13,prestudy_p2,design_p3,predesign_p31,design_p32,approval_p33' +
+          ',tendering_p4,tendering_p41,construction_p5,executiondesign_p51,execution_p52,commissioning_p53',
+        isMinorWork: true
+      })
+    );
+
+    // We need all activities from coordinated (filtered in get request) and without dateGuarantee (filtered here)
+    activeMinorWorkActivities = (activeMinorWorkActivities ?? [])
+      .filter(proj => proj?.properties?.dateGuarantee == null);
+
+    // check if ther is any relevant activity
+    if (activeMinorWorkActivities.length) {
+      activeMinorWorkActivities = activeMinorWorkActivities.sort((a, b) => {
+        if (a?.properties?.projectNo == null) return 1;
+        if (b?.properties?.projectNo == null) return -1;
+
+        return a.properties.projectNo.localeCompare(b.properties.projectNo);
+      });
+      
+      // load organisational units
+      let allOrganisationalUnits = await firstValueFrom(this.organisationService.getAllOrgTypes(false));
+
+      // join the responsible organisational unit (zuständige OE) via project responsibility
+      const minorWorkActivitiesRows = await Promise.all(
+        activeMinorWorkActivities.map(async (item: any) => {
+          const responsibility =
+            await this.activityResponsibilityService.getProjectActivityResponsibility(
+              item?.properties?.uuid
+            );
+
+            // get the responsible org unit
+          const organisationalUnit = allOrganisationalUnits.find(
+            orgUnit => orgUnit.uuid === responsibility?.properties?.uuidOrganisationalUnit
+          );
+
+          // map all for the table rows 
+          return {
+            roadWorkActivityNo: item?.properties?.roadWorkActivityNo ?? '-',
+            organisation: organisationalUnit?.abbreviation ?? '-',
+            plannedTasks: item?.properties?.plannedTasks ?? '-',
+            comment: item?.properties?.comment ?? '-',
+            dateKksReal: this.formatDate(item?.properties?.dateSksReal),
+            phase: this.statusHelper.getPhaseNumberFromKey(item?.properties?.status) ?? '-',
+          };
+        })
+      );
+
+      blocks.push(this.makeProjectsTableFromRows(minorWorkActivitiesRows));
+    }
+    else {
+      blocks.push(this.p('Keine Einträge vorhanden.'));
+    }
+
+    return blocks;
+  }
+
+  /**
+   * Builds a compact Needs table
+   */
+  makeProjectsTableFromRows(
+    rows: Array<{
+      roadWorkActivityNo: string;
+      organisation: string;
+      plannedTasks: string;
+      comment: string;
+      dateKksReal: string;
+      phase: string;
+    }>    
+  ): Table {
+    // --- Table header row ---
+    const header = new TableRow({
+      tableHeader: true,
+        children: [
+          new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Nr. Kleinmassnahme', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Zuständige OE', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Tätigkeit/Arbeit', true)],
+        }),      
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Beschrieb Bauvorhaben', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Beschluss von Sitzung', true)],
+        }),
+        new TableCell({
+          verticalAlign: 'top',
+          children: [this.pSmall('Phase/Status', true)],
+        }),
+      ],
+    });
+
+    // --- Table body rows ---
+    const body = (rows ?? []).map((r) =>
+      new TableRow({
+        children: [
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.roadWorkActivityNo)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.organisation)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.plannedTasks)],
+          }),        
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.comment)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.dateKksReal)],
+          }),
+          new TableCell({
+            verticalAlign: 'top',
+            children: [this.pSmall(r.phase)],
+          }),
+        ],
+      })
+    );
+
+    // --- Build final table with compact cell margins ---
+    return new Table({
+      width: { type: WidthType.PERCENTAGE, size: 100 },
+      margins: { top: 80, bottom: 80, left: 80, right: 80 }, // ~1.1 mm padding
+      rows: [header, ...body],
+    });
+  }
+
+  /**
+   * Builds a minor Needs (Kleinmassnahmen) overview table
+   */
+  /*async makeMinorWorkProjectsOverviewTable(): Promise<(Paragraph | Table)[]> {
+    // --- Visual tuning constants (very compact)
+    const FONT_SMALL = 14;            // ~7 pt
+    const LINE_SPACING = 220;         // ~ single / slightly tight
+    const CELL_MARG = { top: 10, bottom: 10, left: 10, right: 10 }; // tiny margins (twips)
+    const HEADER_ROW_HEIGHT = 1300;   // taller header row for vertical text (twips, ~55pt)
+    const BODY_ROW_HEIGHT = 500;      // slightly taller body rows for some vertical padding (twips)
+
+    // Helper: compact paragraph (optionally bold, optional no-break)
+    const pTiny = (text: string, bold = false, noBreak = false) =>
+      new Paragraph({
+        spacing: { line: LINE_SPACING, before: 0, after: 0 },
+        children: [
+          new TextRun({
+            text: noBreak ? (text ?? '').replace(/\s/g, '\u00A0') : (text ?? '-'),
+            bold: bold || undefined,
+            size: FONT_SMALL,
+          }),
+        ],
+      });
+
+    // Fetch and filter by phase
+    let activeMinorWorkProjects = await firstValueFrom(
+      this.roadWorkActivityService.getRoadWorkActivities({
+      // All stus starting from coordinated to commissioning_p53
+      status:
+      'prestudy,coordinated,planning_p1,initiation_p13,prestudy_p2,design_p3,predesign_p31,design_p32,approval_p33' + 
+      ',tendering_p4,tendering_p41,construction_p5,executiondesign_p51,execution_p52,commissioning_p53',
+      isMinorWork: true
+    })
+    );
+
+    // We need all activities from coordinated (filtered in get request) and without dateGuarantee (filtered here)
+    activeMinorWorkProjects = (activeMinorWorkProjects ?? [])
+                      .filter(proj => proj?.properties?.dateGuarantee == null);
+
+    activeMinorWorkProjects = activeMinorWorkProjects.sort((a, b) => {
+      if (a?.properties?.projectNo == null) return 1;
+      if (b?.properties?.projectNo == null) return -1;
+
+      return a.properties.projectNo.localeCompare(b.properties.projectNo);
+    });
+
+    if (!activeMinorWorkProjects.length) {
+      return [
+        this.p('Keine Einträge vorhanden.'),
+      ];
+    }
+
+    // Column set definition
+    type ColKey =
+      | 'road_work_activity_no'
+      | 'organisation'
+      | 'planned_tasks'
+      | 'comment'
+      | 'date_kks_real'
+      | 'phase';
+
+    const baseCols: ColKey[] = [
+      'road_work_activity_no',
+      'organisation',
+      'planned_tasks',
+      'comment',
+      'date_kks_real',
+      'phase',
+    ];
+
+    // Columns that should have vertical header text
+    const verticalHeaderCols: ColKey[] = [
+      //'has_feedback',
+      //'no_requirement_anymore',
+      //'activity_okay',
+    ];
+
+    // Header labels (slightly shortened for "checkmark" columns)
+    const headerLabel = (key: ColKey): string => {
+      switch (key) {
+        case 'road_work_activity_no': return 'Nr. Kleinmassnahme';
+        case 'organisation': return 'Zuständige OE';
+        case 'planned_tasks': return 'Tätigkeit/Arbeit';
+        case 'comment': return 'Beschrieb Bauvorhaben';
+        case 'date_kks_real': return 'Beschluss von Sitzung';
+        case 'phase': return 'Phase/Status';
+        default: return '';
+      }
+    };
+
+    // Optional trimming of vertical header labels (in case they get too long)
+    const headerText = (key: ColKey): string => {
+      const label = headerLabel(key);
+      if (!verticalHeaderCols.includes(key)) return label;
+      const maxLen = 18;
+      return label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
+    };
+
+    // Column widths (sum ≈ 100)
+    const widths: Record<ColKey, number> = {
+      road_work_activity_no: 14,
+      organisation: 14,
+      planned_tasks: 24,
+      comment: 24,
+      date_kks_real: 14,
+      phase: 10,
+    };
+
+    // Formatters
+    const fmtDate = (d?: string | Date): string => {
+      try {
+        if (!d) return '-';
+        const dt = typeof d === 'string' ? new Date(d) : d;
+        if (isNaN(dt.getTime())) return '-';
+        const dd = String(dt.getDate()).padStart(2, '0');
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const yyyy = dt.getFullYear();
+        return `${dd}.${mm}.${yyyy}`;
+      } catch {
+        return '-';
+      }
+    };
+
+    // Header row (taller, with vertical text for selected columns)
+    const headerRow = new TableRow({
+      tableHeader: true,
+      height: { value: HEADER_ROW_HEIGHT, rule: HeightRule.ATLEAST },
+      children: baseCols.map((key) =>
+        new TableCell({
+          verticalAlign: VerticalAlign.CENTER,
+          width: { size: widths[key], type: WidthType.PERCENTAGE },
+          margins: CELL_MARG,
+          shading: { fill: 'EEEEEE' },
+          textDirection: verticalHeaderCols.includes(key)
+            ? TextDirection.BOTTOM_TO_TOP_LEFT_TO_RIGHT
+            : undefined,
+          children: [pTiny(headerText(key), true, true)],
+        })
+      ),
+    });
+
+    // Body rows (slightly increased height for better readability)
+    const rows = activeMinorWorkProjects.map((ci: any) => {
+      const cells: TableCell[] = [];
+
+      // Nr. Kleinmassnahme
+      const activityNo = ci?.roadWorkActivityNo ?? '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.road_work_activity_no, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(activityNo)],
+      }));
+
+     // Zuständige OE (Werk)
+      const org = ci?.inputBy?.organisationalUnit?.abbreviation ?? '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.organisation, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(org, false, true)],
+      }));
+
+      // Tätigkeit/Arbeit
+      const plannedTasks = ci?.plannedTasks ?? '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.planned_tasks, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(plannedTasks)],
+      }));
+
+      // Beschrieb Bauvorhaben
+      const comment = ci?.comment ?? '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.comment, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(comment)],
+      }));
+
+      // Beschluss von Sitzung
+      const dateKksReal = fmtDate(ci?.dateSksReal);
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.date_kks_real, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(dateKksReal === '-' ? '-' : dateKksReal, false, true)],
+      }));
+
+      // Phase/Status
+      const mgr = ci?.comment ?? '-';
+      cells.push(new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        width: { size: widths.phase, type: WidthType.PERCENTAGE },
+        margins: CELL_MARG,
+        children: [pTiny(mgr)],
+      }));
+
+      return new TableRow({
+        height: { value: BODY_ROW_HEIGHT, rule: HeightRule.ATLEAST },
+        children: cells,
+      });
+    });
+
+    const table = new Table({
+      width: { type: WidthType.PERCENTAGE, size: 100 },
+      borders: {
+        top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+        insideHorizontal: { style: BorderStyle.SINGLE, size: 1, color: 'DDDDDD' },
+        insideVertical: { style: BorderStyle.SINGLE, size: 1, color: 'DDDDDD' },
+      },
+      rows: [headerRow, ...rows],
+    });
+
+    return [table];
+  }*/
+
+  makeMinorWorkNextSessionSection(opts: {
+    nextMinorWorkSessionDate?: string;
+    reportWriter: string;
+  }): Paragraph[] {
+    const {
+      nextMinorWorkSessionDate: nextMinorWorkSessionDate = '«Datum nächste Sitzung Kleinmassnahmen',
+      reportWriter = '«Name Protokollführer:in»'
+    } = opts;
+
+    const blocks: Paragraph[] = [
+      this.smallGap(),
+      this.pBold('4. Nächste Sitzungen'),
+
+      this.pBold('Kleinmassnahmen'),
+      this.p(`Die nächsten Sitzungen Kleinmassnahmen finden statt am:`),
+      this.p(`Nächste: ${nextMinorWorkSessionDate}`),  
+
+      this.smallGap(),
+      this.p('Für das Protokoll'),
+      this.smallGap(),
+      this.p(`Winterthur, ${this.formatDate(new Date())}`),
+      this.p('Abteilung Planung und Koordination (APK)'),
+      this.pItalic(`${reportWriter}`),
+    ];
+
+    return blocks;
+  }
+
   private async buildMitwirkendeFromNeeds(): Promise<string> {
     const rwa = (this.reportLoaderService as any)?.roadWorkActivity;
     const needUuids: string[] = rwa?.properties?.roadWorkNeedsUuids ?? [];
@@ -1537,32 +2164,6 @@ export class DocxWordService {
         wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
         ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
       }));
-
-      // Fetch intersecting road work needs
-      const roadWorkNeeds: any[] = await firstValueFrom(
-        this.roadWorkNeedService.getIntersectingRoadWorkNeeds(project.id)
-      );
-      const assignedUuids = new Set(
-        assigned
-          .map((item: any) => item?.properties?.uuid)
-          .filter((uuid: string | undefined) => !!uuid)
-      );
-
-      const notAssignedNeedsRows = roadWorkNeeds
-        .filter((item: any) => {
-          const uuid = item?.properties?.uuid;
-          if (!uuid) return true;
-          return !assignedUuids.has(uuid);
-        })
-        .map((item: any) => ({
-          titelAbschnitt: `${item?.properties?.name ?? '-'}`,
-          ausloesegrund: item?.properties?.description ?? '-',
-          ausloesende: `${item?.properties?.orderer?.firstName ?? '-'} ${item?.properties?.orderer?.lastName ?? '-'}`,
-          werk: item?.properties?.orderer?.organisationalUnit?.abbreviation ?? '-',
-          erstelltAm: this.formatDate(item?.properties?.created),
-          wunschtermin: this.formatDate(item?.properties?.finishOptimumTo),
-          ausloesend: item?.properties?.isPrimary ? 'Ja' : 'Nein',
-        }));
 
       // Build content blocks
       const allProjectBlocks: Array<Paragraph | Table> = [];
@@ -1641,6 +2242,11 @@ export class DocxWordService {
       // Aspects/Factors
       allProjectBlocks.push(this.smallGap());
       allProjectBlocks.push(this.pBold('Aspekte/Faktoren'));
+      allProjectBlocks.push(this.pPreserveLines(project.sessionComment3));
+      allProjectBlocks.push(this.smallGap());
+      
+      // Obsolete, replaced by project.sessionComment3 (#717)
+      /*
       allProjectBlocks.push(this.p("Folgende Aspekte und/oder Faktoren können das Bauvorhaben beeinflussen:"));
       
       const rows = [
@@ -1661,6 +2267,7 @@ export class DocxWordService {
       }
 
       allProjectBlocks.push(this.smallGap());
+      */
 
       // Consultation section 1
       allProjectBlocks.push(this.pBold('Vernehmlassung'));

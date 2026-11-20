@@ -28,13 +28,13 @@ export class RoadWorkActivityService {
   }
 
   getRoadWorkActivities({
-    id, status, summary = false, isMinorWorks
+    id, status, summary = false, isMinorWork
   }: {
-    id?: string; status?: string; summary?: boolean; isMinorWorks?: boolean
+    id?: string; status?: string; summary?: boolean; isMinorWork?: boolean
   }  = {}):
     Observable<RoadWorkActivityFeature[]> {
     let queryString = "/roadworkactivity/";
-    if (id || status || summary || isMinorWorks) {
+    if (id || status || summary || isMinorWork) {
       queryString += "?";
     }
     if (id) {
@@ -52,8 +52,8 @@ export class RoadWorkActivityService {
       if (summary) {
         parameters.push("summary=true");
       }
-      if (isMinorWorks != null) {
-        parameters.push("isMinorWork=" + isMinorWorks);
+      if (isMinorWork != null) {
+        parameters.push("isMinorWork=" + isMinorWork);
       }
       queryString += parameters.join('&');
     }
