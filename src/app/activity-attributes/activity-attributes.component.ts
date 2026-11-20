@@ -69,6 +69,8 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild(ActivityPropertiesComponent) activityProperties!: ActivityPropertiesComponent;
   @ViewChild('timelineChart') timelineChartRef!: ElementRef<HTMLDivElement>;
 
+  public enableMinorWorks: boolean =  (environment as { enableMinorWorks?: boolean }).enableMinorWorks === true; // TODO remove when minorWorks is done.
+
   /** Currently edited activity entity and its intersecting management area. */
   roadWorkActivityFeature?: RoadWorkActivityFeature;
   managementArea?: ManagementArea;

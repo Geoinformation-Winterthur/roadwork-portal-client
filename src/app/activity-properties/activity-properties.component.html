@@ -6,6 +6,7 @@
             <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
                 <mat-label>Status/Phase</mat-label>
                 <!-- Option bodies are a copy of the names from status-chip.component.html -->
+                <!-- TODO: Use values from StatusHelper.getStatuses() -->
                 <mat-select [(ngModel)]="roadWorkActivityFeature.properties.status">
                     <!-- Phase 1 -->
 
@@ -98,14 +99,16 @@
                                 </p>
                                 <mat-form-field>
                                     <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.roadWorkActivityNo"
-                                        placeholder="Nummer-Bauvorhaben"
+                                        [placeholder]="(roadWorkActivityFeature.properties.isMinorWork ?? false) ? 'Nummer Kleinmassnahme (Nr. KM)' : 'Nummer-Bauvorhaben'"
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                 </mat-form-field>
 
                                 <mat-form-field appearance="fill">
-                                    <mat-label>SKS (Strategische Koord.)</mat-label>
-                                    <input matInput type="text" [(ngModel)]="roadWorkActivityFeature.properties.sksNo"
-                                        placeholder="Sks-Nr" [disabled]="true" />
+                                    <mat-label>{{ (roadWorkActivityFeature.properties.isMinorWork ?? false) ? 'Sitzung Kleinmassnahme' : 'SKS (Strategische Koord.)' }}</mat-label>
+                                    <input matInput type="text" 
+                                        [(ngModel)]="roadWorkActivityFeature.properties.sksNo"
+                                        placeholder="Sks-Nr"
+                                        [disabled]="true" />
                                 </mat-form-field>
 
                                 <mat-form-field *ngIf="userService.getLocalUser().chosenRole == 'administrator'">
@@ -283,7 +286,7 @@
                         </mat-card-content>
                     </mat-card>
                 </div>
-                <div class="column-cell">
+                <div class="column-cell" *ngIf="!(roadWorkActivityFeature.properties.isMinorWork ?? false)">
                     <mat-card style="margin-top: 10px;">
                         <mat-card-header>
                             <mat-card-title>Strassenzustand</mat-card-title>
@@ -302,18 +305,6 @@
                                     Strassenzustand / Zustandsklasse (Index i1: Oberflächenschäden)
                                 </p>
                             </div>
-                            <div *ngIf="showRoadConditionInfo"
-                                    style="background-color: rgb(236,236,234);padding: 1em;">
-                                    Strassenzustand (aus GIS) (1-5)<br><br>
-
-                                    <b>0.0-0.9</b> = gut (Neuwertiger Zustand. Kein unmittelbarer Handlungsbedarf, lediglich betrieblicher Unterhalt) -> Z-Klasse 1<br>
-                                    <b>1.0-1.9</b> = mittel (Erste leichte Verschleisserscheinungen. Mittelfristig sind kleinere Erhaltungsmassnahmen (z.B. Oberflächenbehandlungen) nötig. ) -> Z-Klasse 2<br>
-                                    <b>2.0-2.9</b> = ausreichen (Deutliche Schäden sichtbar. Systematischer baulicher Unterhalt oder Deckschichtenersatz ist erforderlich, um den Substanzwert zu sichern.)-> Z-Klasse <br>
-                                    <b>3.0-3.9</b> = schlecht (Starke Schäden, die Tragfähigkeit ist teilweise beeinträchtigt. Grössere Instandsetzungen oder Teilerneuerungen sind kurzfristig notwendig.) -> Z-Klasse 4<br>
-                                    <b>4.0-5.0</b> = kritisch (Substanz ist weitgehend zerstört. Totalsanierung oder kompletter Neubau ist unumgänglich, um die Verkehrssicherheit zu gewährleisten.) -> Z-Klasse 5<br><br>
-
-                                    Bitte vorhandenen Strassenzustand aus GIS prüfen und den entsprechenden Wert im Feld eintragen d.h., bsp. wenn Wert = 2.6 (ausreichend), bitte = 3
-                                </div>
                             <div class="form-fields-split-three">
                                 <mat-form-field>
                                     <input matInput type="number" [min]="0" [max]="5"
@@ -342,6 +333,54 @@
                                         [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"></textarea>
                                 </mat-form-field>
                             </div>
+                            <div *ngIf="showRoadConditionInfo"
+                                style="background-color: rgb(236,236,234);padding: 1em;">
+                                Strassenzustand (aus GIS) (1-5)<br><br>
+
+                                <table style="border-collapse: collapse;">
+                                    <tr>
+                                        <td style="vertical-align: top; padding-right: 1em; white-space: nowrap;"><b>0.0-0.9</b>:</td>
+                                        <td style="vertical-align: top; padding-right: 1em;">
+                                            gut (Neuwertiger Zustand. Kein unmittelbarer Handlungsbedarf, lediglich betrieblicher Unterhalt)
+                                        </td>
+                                        <td style="vertical-align: top; white-space: nowrap;">→ Z-Klasse 1</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="vertical-align: top; padding-right: 1em; white-space: nowrap;"><b>1.0-1.9</b>:</td>
+                                        <td style="vertical-align: top; padding-right: 1em;">
+                                            mittel (Erste leichte Verschleisserscheinungen. Mittelfristig sind kleinere Erhaltungsmassnahmen (z.B. Oberflächenbehandlungen) nötig. )
+                                        </td>
+                                        <td style="vertical-align: top; white-space: nowrap;">→ Z-Klasse 2</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="vertical-align: top; padding-right: 1em; white-space: nowrap;"><b>2.0-2.9</b>:</td>
+                                        <td style="vertical-align: top; padding-right: 1em;">
+                                            ausreichen (Deutliche Schäden sichtbar. Systematischer baulicher Unterhalt oder Deckschichtenersatz ist erforderlich, um den Substanzwert zu sichern.)
+                                        </td>
+                                        <td style="vertical-align: top; white-space: nowrap;">→ Z-Klasse 3</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="vertical-align: top; padding-right: 1em; white-space: nowrap;"><b>3.0-3.9</b>:</td>
+                                        <td style="vertical-align: top; padding-right: 1em;">
+                                            schlecht (Starke Schäden, die Tragfähigkeit ist teilweise beeinträchtigt. Grössere Instandsetzungen oder Teilerneuerungen sind kurzfristig notwendig.)
+                                        </td>
+                                        <td style="vertical-align: top; white-space: nowrap;">→ Z-Klasse 4</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="vertical-align: top; padding-right: 1em; white-space: nowrap;"><b>4.0-5.0</b>:</td>
+                                        <td style="vertical-align: top; padding-right: 1em;">
+                                            kritisch (Substanz ist weitgehend zerstört. Totalsanierung oder kompletter Neubau ist unumgänglich, um die Verkehrssicherheit zu gewährleisten.)
+                                        </td>
+                                        <td style="vertical-align: top; white-space: nowrap;">→ Z-Klasse 5</td>
+                                    </tr>
+                                </table>
+                                <br>
+                                Bitte vorhandenen Strassenzustand aus GIS prüfen und den entsprechenden Wert im Feld eintragen d.h., bsp. wenn Wert = 2.6 (ausreichend), bitte = 3
+                            </div>
                         </mat-card-content>
                     </mat-card>
                 </div>
@@ -353,7 +392,7 @@
                         <mat-card-content>
                             <div class="row">
                                 <mat-checkbox [(ngModel)]="roadWorkActivityFeature.properties.implementationByThird"
-                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed"
+                                    [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed || (roadWorkActivityFeature.properties.isMinorWork ?? false)"
                                     (change)="onImplementationByThirdChange()"
                                     matTooltip="Umsetzung durch Werk/Dritte (ausserhalb TBA)">
                                     Umsetzung durch Werk/Dritte
