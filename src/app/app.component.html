@@ -92,6 +92,10 @@
                             *ngIf="userService.hasUserAccess('analyzes')" routerLinkActive="chosen-menu">
                         <mat-icon aria-label="Analyzes">analytics</mat-icon>&nbsp;<span i18n>Analyzen</span>
                     </a>
+                    <a mat-list-item routerLink='/provis' (click)="closeSideNavOnMobile()"
+                       *ngIf="userService.hasUserAccess('see_activities_list')" routerLinkActive="chosen-menu">
+                        <mat-icon aria-label="PROVIS">account_tree</mat-icon>&nbsp;<span>PROVIS</span>
+                    </a>
                 </div>
                 <a mat-list-item href="https://stadt.winterthur.ch/impressum" (click)="closeSideNavOnMobile()">
                     <mat-icon aria-label="Impressum">star_border</mat-icon>&nbsp;<span i18n>Impressum</span>

@@ -32,7 +32,8 @@
             "styles": [
               "src/styles.css",
               "node_modules/ag-grid-community/styles/ag-grid.css",
-              "node_modules/ag-grid-community/styles/ag-theme-alpine.css"          
+              "node_modules/ag-grid-community/styles/ag-theme-alpine.css",
+              "node_modules/maplibre-gl/dist/maplibre-gl.css"
             ],
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json"
@@ -125,7 +126,8 @@
             "styles": [
               "src/styles.css",
               "node_modules/ag-grid-community/styles/ag-grid.css",
-              "node_modules/ag-grid-community/styles/ag-theme-alpine.css"              
+              "node_modules/ag-grid-community/styles/ag-theme-alpine.css",
+              "node_modules/maplibre-gl/dist/maplibre-gl.css"
             ],
             "scripts": []
           }

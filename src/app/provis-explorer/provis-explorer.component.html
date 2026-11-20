@@ -1,0 +1,64 @@
+<section class="explorer">
+  <header class="explorer-header">
+    <div><h1>PROVIS Explorer <span class="readonly">READ ONLY</span></h1>
+      <p>Projektabgleich · WiKIS / Excel / PROVIS</p></div>
+    <button mat-stroked-button (click)="refresh()"><mat-icon>refresh</mat-icon> Aktualisieren</button>
+  </header>
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+  <p *ngIf="error" class="error">{{ error }}</p>
+  <ag-grid-angular class="ag-theme-alpine projects compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="activities" [columnDefs]="mainColumns"
+    [defaultColDef]="defaultColDef" rowSelection="single"
+    (rowClicked)="onRowClicked($event)"></ag-grid-angular>
+  <div class="lower">
+    <section class="detail-panel">
+      <div class="detail-heading">
+        <div><h2>{{ selected?.bv_nr || 'Bauvorhaben auswählen' }}</h2>
+        <p>{{ selected?.name || 'Für Details eine Zeile in der oberen Tabelle anklicken.' }}</p></div>
+      </div>
+      <nav class="tabs">
+        <button *ngFor="let tab of ['provis','needs','costs','compare','journal']" type="button"
+          [class.active]="activeTab===tab" (click)="setTab(tab)">
+          {{ tab === 'provis' ? 'PROVIS-Projekte' : tab === 'needs' ? 'Bedarfe' : tab === 'costs' ? 'Kosten' : tab === 'compare' ? 'Attributvergleich' : 'Journal' }}
+        </button>
+      </nav>
+      <div *ngIf="detail" class="tab-area">
+        <ng-container [ngSwitch]="activeTab">
+          <div *ngSwitchCase="'provis'">
+            <p class="notice">Excel G = Hauptprojekt · N = PROVIS 322 · O = PROVIS 328. Exakte Nummern und Teilprojekte (-HA, -BA usw.) werden separat angezeigt.</p>
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="detail.provis"
+               [columnDefs]="provisColumns" [defaultColDef]="defaultColDef"></ag-grid-angular>
+          </div>
+          <div *ngSwitchCase="'needs'">
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="detail.needs"
+               [columnDefs]="needColumns" [defaultColDef]="defaultColDef"></ag-grid-angular>
+          </div>
+          <div *ngSwitchCase="'costs'">
+            <div class="financial"><strong>WiKIS-Bedarfe: CHF {{ money(totalCosts) }}</strong>
+              <span>PROVIS-Teilprojekte und Hauptprojekte nicht summieren: mögliche Doppelzählungen.</span></div>
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="detail.costs"
+               [columnDefs]="costColumns" [defaultColDef]="defaultColDef"></ag-grid-angular>
+          </div>
+          <div *ngSwitchCase="'compare'" class="comparison">
+            <table><thead><tr><th>Attribut</th><th>Excel</th><th>WiKIS</th><th>PROVIS</th></tr></thead>
+            <tbody><tr *ngFor="let x of compareRows"><th>{{x.attribute}}</th><td>{{x.excel || '—'}}</td><td>{{x.wikis || '—'}}</td><td>{{x.provis || '—'}}</td></tr></tbody></table>
+            <p class="notice">Quellwerte werden unverändert verglichen. Abweichungen sind keine automatische Fehlklassifikation.</p>
+          </div>
+          <div *ngSwitchCase="'journal'" class="journal">
+            <article *ngFor="let j of detail.journal"><small>{{j.created | date:'dd.MM.yyyy'}}</small><p>{{j.content}}</p></article>
+            <p *ngIf="!detail.journal.length">Keine Journal-Einträge</p>
+          </div>
+        </ng-container>
+      </div>
+    </section>
+    <section class="map-panel">
+      <div class="map-toolbar"><strong>Geometrievergleich</strong><span class="spacer"></span>
+        <label><input type="checkbox" [(ngModel)]="showWikis" (change)="setLayers()"> WiKIS-Fläche</label>
+        <label><input type="checkbox" [(ngModel)]="showProvis" (change)="setLayers()"> PROVIS-Punkte</label>
+        <button mat-stroked-button (click)="setPitch()">{{pitched ? '2D' : '3D-Perspektive'}}</button>
+      </div>
+      <div #mapContainer class="map"></div>
+      <footer><span class="legend-wikis">■</span> WiKIS Polygon &nbsp; <span class="legend-provis">●</span> PROVIS MultiPoint
+        <span class="map-note">3D = Gebäudemodelle aus Kartenkacheln, kein Bauwerksmodell</span></footer>
+    </section>
+  </div>
+</section>

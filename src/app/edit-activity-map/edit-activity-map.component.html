@@ -22,31 +22,16 @@
         <mat-icon aria-label="Icon zeigt zwei überlappende Flächen">content_copy</mat-icon>
         &nbsp;GEOMETRIE ÜBERNEHMEN
     </button>
-    <button mat-button (click)="toggleAllRequirements()" style="margin: 1em;">
-        {{ showAllRequirements ? 'ALLE BEDARFE AUSBLENDEN' : 'ALLE BEDARFE EINBLENDEN' }}
-    </button>
-    Kartenhintergrund:                         
-    <mat-button-toggle-group
-        [(ngModel)]="selectedBaseLayer"
-        (change)="setBaseLayer($event.value)"        
-        style="margin: 1em;"
-        >        
-        <mat-button-toggle value="standard">
-            Standard
-        </mat-button-toggle>
-        <mat-button-toggle value="upwms">
-            Amtliche Vermessung
-        </mat-button-toggle>
-        <mat-button-toggle value="swissimage">
-            Swissimage
-        </mat-button-toggle>
-        <mat-button-toggle value="osm_de">
-            OpenStreetMap
-        </mat-button-toggle>
-        <mat-button-toggle value="stadtplan">
-            Stadtplan
-        </mat-button-toggle>
-    </mat-button-toggle-group>
+    <mat-form-field style="margin: 1em;">
+        <mat-label>Hintergrundkarte</mat-label>
+        <mat-select [(ngModel)]="selectedBaseLayer" (selectionChange)="setBaseLayer($event.value)">
+            <mat-option value="upwms">Amtliche Vermessung</mat-option>
+            <mat-option value="standard">Standard</mat-option>
+            <mat-option value="swissimage">Swissimage</mat-option>
+            <mat-option value="osm_de">OpenStreetMap</mat-option>
+            <mat-option value="stadtplan">Stadtplan</mat-option>
+        </mat-select>
+    </mat-form-field>
 
     <mat-form-field *ngIf="!isInDrawNewMode && !isInModifyExistingMode" style="margin-left: 1em;margin-top: 0.5em;">
         <input matInput maxlength="4" placeholder="Bedarf Real. von (Jahr)..." type="number" [(ngModel)]="chosenYear"

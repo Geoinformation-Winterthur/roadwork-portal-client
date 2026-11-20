@@ -23,6 +23,7 @@ import { DataexportComponent } from './dataexport/dataexport.component';
 import { AnalyzesComponent } from './analyzes/analyzes.component';
 import { AuthGuardService } from 'src/services/auth-guard.service';
 import { SessionsComponent } from './sessions/sessions.component';
+import { ProvisExplorerComponent } from './provis-explorer/provis-explorer.component';
  
  const routes: Routes = [
    {path: '', component: WelcomeComponent, pathMatch: 'full'},
@@ -41,6 +42,7 @@ import { SessionsComponent } from './sessions/sessions.component';
    {path: 'events/:id', component: EventAttributesComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'configuration', component: ConfigurationComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'dataexport', component: DataexportComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
+   {path: 'provis', component: ProvisExplorerComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'analyzes', component: AnalyzesComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'sessions', component: SessionsComponent, pathMatch: 'full', canActivate: [AuthGuardService]},
    {path: 'openid', component: TestopenidComponent, pathMatch: 'full'},

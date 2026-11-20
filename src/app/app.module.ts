@@ -98,6 +98,7 @@ import { ActivityCostsComponent } from './activity-costs/activity-costs.componen
 import { NeedAttributesMinorComponent } from './need-attributes-minor/need-attributes-minor.component';
 import { NeedCreationDialogComponent } from './need-creation-dialog/need-creation-dialog.component';
 import { NeedAssignDialogComponent } from './need-assign-dialog/need-assign-dialog.component';
+import { ProvisExplorerComponent } from './provis-explorer/provis-explorer.component';
 
 
  
@@ -168,7 +169,8 @@ export const CH_DATE_FORMATS = {
      ActivityCostsComponent,
      NeedAttributesMinorComponent,
      NeedCreationDialogComponent,
-     NeedAssignDialogComponent
+     NeedAssignDialogComponent,
+     ProvisExplorerComponent
    ],
    imports: [
      BrowserModule,
