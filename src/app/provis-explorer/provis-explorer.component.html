@@ -6,14 +6,15 @@
   </header>
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
   <p *ngIf="error" class="error">{{ error }}</p>
-  <ag-grid-angular class="ag-theme-alpine projects compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="activities" [columnDefs]="mainColumns"
+  <ag-grid-angular class="ag-theme-alpine projects compact-grid" [style.height.px]="topPanelHeight" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="activities" [columnDefs]="mainColumns"
     [defaultColDef]="defaultColDef" rowSelection="single"
     (rowClicked)="onRowClicked($event)"></ag-grid-angular>
-  <div class="lower">
+  <div class="horizontal-splitter" (mousedown)="beginResize($event, 'height')" title="Höhe anpassen" role="separator" aria-label="Höhe der Projekttabelle anpassen"></div>
+  <div class="lower" [style.gridTemplateColumns]="detailWidth + '% 8px minmax(0, 1fr)'">
     <section class="detail-panel">
       <div class="detail-heading">
-        <div><h2>{{ selected?.bv_nr || 'Bauvorhaben auswählen' }}</h2>
-        <p>{{ selected?.name || 'Für Details eine Zeile in der oberen Tabelle anklicken.' }}</p></div>
+        <div><h2>{{ selected?.bv_nr || 'Bauvorhaben auswählen' }}<span *ngIf="selected?.name" class="selected-title"> · {{ selected?.name }}</span></h2>
+        <p *ngIf="!selected">Für Details eine Zeile in der oberen Tabelle anklicken.</p></div>
       </div>
       <nav class="tabs">
         <button *ngFor="let tab of ['provis','needs','costs','compare','journal']" type="button"
@@ -24,23 +25,25 @@
       <div *ngIf="detail" class="tab-area">
         <ng-container [ngSwitch]="activeTab">
           <div *ngSwitchCase="'provis'">
-            <p class="notice">Excel G = Hauptprojekt · N = PROVIS 322 · O = PROVIS 328. Exakte Nummern und Teilprojekte (-HA, -BA usw.) werden separat angezeigt.</p>
-            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="detail.provis"
-               [columnDefs]="provisColumns" [defaultColDef]="defaultColDef"></ag-grid-angular>
+            <p class="notice">Excel <strong class="source-letter">G</strong> = Hauptprojekt · <strong class="source-letter">N</strong> = PROVIS 322 · <strong class="source-letter">O</strong> = PROVIS 328</p>
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [style.height.px]="childPanelHeight" [rowHeight]="27" [headerHeight]="31" [rowData]="detail.provis"
+               [columnDefs]="provisColumns" [defaultColDef]="childColDef" (gridReady)="onProvisGridReady($event)" (firstDataRendered)="fitProvisColumns()"></ag-grid-angular>
           </div>
           <div *ngSwitchCase="'needs'">
-            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="detail.needs"
-               [columnDefs]="needColumns" [defaultColDef]="defaultColDef"></ag-grid-angular>
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [style.height.px]="childPanelHeight" [rowHeight]="27" [headerHeight]="31" [rowData]="detail.needs"
+               [columnDefs]="needColumns" [defaultColDef]="childColDef" rowSelection="single" (rowClicked)="selectNeed($event)"></ag-grid-angular>
           </div>
           <div *ngSwitchCase="'costs'">
             <div class="financial"><strong>WiKIS-Bedarfe: CHF {{ money(totalCosts) }}</strong>
               <span>PROVIS-Teilprojekte und Hauptprojekte nicht summieren: mögliche Doppelzählungen.</span></div>
-            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [rowHeight]="27" [headerHeight]="31" [floatingFiltersHeight]="27" [rowData]="detail.costs"
-               [columnDefs]="costColumns" [defaultColDef]="defaultColDef"></ag-grid-angular>
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid" [style.height.px]="childPanelHeight" [rowHeight]="27" [headerHeight]="31" [rowData]="detail.costs"
+               [columnDefs]="costColumns" [defaultColDef]="childColDef"></ag-grid-angular>
           </div>
           <div *ngSwitchCase="'compare'" class="comparison">
-            <table><thead><tr><th>Attribut</th><th>Excel</th><th>WiKIS</th><th>PROVIS</th></tr></thead>
-            <tbody><tr *ngFor="let x of compareRows"><th>{{x.attribute}}</th><td>{{x.excel || '—'}}</td><td>{{x.wikis || '—'}}</td><td>{{x.provis || '—'}}</td></tr></tbody></table>
+            <ag-grid-angular class="ag-theme-alpine child-grid compact-grid comparison-grid"
+              [style.height.px]="childPanelHeight" [rowHeight]="30" [headerHeight]="31"
+              [rowData]="compareRows" [columnDefs]="compareColumns"
+              [defaultColDef]="childColDef"></ag-grid-angular>
             <p class="notice">Quellwerte werden unverändert verglichen. Abweichungen sind keine automatische Fehlklassifikation.</p>
           </div>
           <div *ngSwitchCase="'journal'" class="journal">
@@ -50,15 +53,18 @@
         </ng-container>
       </div>
     </section>
+    <div class="vertical-splitter" (mousedown)="beginResize($event, 'width')" title="Breite anpassen" role="separator" aria-label="Breite der Detailansicht anpassen"></div>
     <section class="map-panel">
       <div class="map-toolbar"><strong>Geometrievergleich</strong><span class="spacer"></span>
         <label><input type="checkbox" [(ngModel)]="showWikis" (change)="setLayers()"> WiKIS-Fläche</label>
         <label><input type="checkbox" [(ngModel)]="showProvis" (change)="setLayers()"> PROVIS-Punkte</label>
+        <label><input type="checkbox" [(ngModel)]="showNeeds" (change)="setLayers()"> Bedarfe</label>
         <button mat-stroked-button (click)="setPitch()">{{pitched ? '2D' : '3D-Perspektive'}}</button>
       </div>
-      <div #mapContainer class="map"></div>
-      <footer><span class="legend-wikis">■</span> WiKIS Polygon &nbsp; <span class="legend-provis">●</span> PROVIS MultiPoint
+      <div #mapContainer class="map" [style.height.px]="mapPanelHeight"></div>
+      <footer><span class="legend-wikis">■</span> WiKIS Polygon &nbsp; <span class="legend-provis">●</span> PROVIS MultiPoint &nbsp; <span class="legend-needs">■</span> Bedarfe &nbsp; <span class="legend-selected">■</span> Ausgewählter Bedarf
         <span class="map-note">3D = Gebäudemodelle aus Kartenkacheln, kein Bauwerksmodell</span></footer>
     </section>
   </div>
+  <div class="horizontal-splitter lower-height-splitter" (mousedown)="beginResize($event, 'lowerHeight')" title="Höhe der unteren Panels anpassen" role="separator" aria-label="Höhe der Detailansicht und Karte anpassen"></div>
 </section>

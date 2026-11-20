@@ -24,6 +24,7 @@ export interface ExplorerDetail {
   costs: any[];
   journal: any[];
   excel: any[];
+  pdb: any[];
 }
 
 @Injectable({ providedIn: 'root' })
