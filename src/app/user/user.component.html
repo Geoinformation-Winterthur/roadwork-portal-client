@@ -49,9 +49,13 @@
             <div style="margin-bottom: 2em;">
               <p><b>Sitzungen</b></p>
               <mat-checkbox [(ngModel)]="user.isParticipantList" (change)="updateUser()"
-                style="margin-right: 1em;">Teilnehmerliste</mat-checkbox>
+                style="margin-right: 1em;">Teilnehmerliste SKS</mat-checkbox>
               <mat-checkbox [(ngModel)]="user.isDistributionList" (change)="updateUser()"
-                style="margin-right: 1em;">Verteiler</mat-checkbox>              
+                style="margin-right: 1em;">Verteiler SKS</mat-checkbox>
+              <mat-checkbox [(ngModel)]="user.isParticipantListMinorWork" (change)="updateUser()"
+                style="margin-right: 1em;">Teilnehmerliste KKS</mat-checkbox>
+              <mat-checkbox [(ngModel)]="user.isDistributionListMinorWork" (change)="updateUser()"
+                style="margin-right: 1em;">Verteiler KKS</mat-checkbox>
             </div>
             <form class="choose_organisation_form">
               <mat-form-field appearance="fill">

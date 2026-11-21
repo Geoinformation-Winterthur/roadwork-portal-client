@@ -12,7 +12,21 @@
     <p>Hier können Sie Benutzer dieses Systems hinzufügen, entfernen oder bearbeiten.</p>
     <p *ngIf="responseMessage !== null" style="color: red;">{{ responseMessage }}</p>
 
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width: 100%">
+    <mat-form-field>
+      <mat-label>Benutzer filtern</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="z.B. Auslösende:r">
+    </mat-form-field>
+
+    <mat-form-field style="margin-left: 2em;">
+      <mat-label>Status</mat-label>
+      <mat-select [(value)]="activeFilter" (selectionChange)="applyFilters()">
+        <mat-option value="all">Alle</mat-option>
+        <mat-option value="active">Nur aktive</mat-option>
+        <mat-option value="inactive">Nur inaktive</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" style="width: 100%" matSort>
 
       <ng-container matColumnDef="editAction">
         <th mat-header-cell *matHeaderCellDef></th>
@@ -26,53 +40,86 @@
       </ng-container>
 
       <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef> Vorname </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Vorname </th>
         <td mat-cell *matCellDef="let user"> {{user.firstName}} </td>
       </ng-container>
       
       <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef> Nachname </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nachname </th>
         <td mat-cell *matCellDef="let user"> {{user.lastName}} </td>
       </ng-container>
   
       <ng-container matColumnDef="mailAddress">
-        <th mat-header-cell *matHeaderCellDef> E-Mail-Adresse </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> E-Mail-Adresse </th>
         <td mat-cell *matCellDef="let user"> {{user.mailAddress}} </td>
       </ng-container>
   
       <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef> Rollen </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rollen </th>
         <td mat-cell *matCellDef="let user"> {{userService.roleListToString(user)}} </td>
       </ng-container>
       
       <ng-container matColumnDef="workArea">
-        <th mat-header-cell *matHeaderCellDef> Tätigkeitsgebiet </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Tätigkeitsgebiet </th>
         <td mat-cell *matCellDef="let user"> {{user.workArea}} </td>
       </ng-container>
 
       <ng-container matColumnDef="organisation">
-        <th mat-header-cell *matHeaderCellDef> Organisation </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Organisation </th>
         <td mat-cell *matCellDef="let user"> {{user.organisationalUnit.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="isParticipantList">
-        <th mat-header-cell *matHeaderCellDef> Teilnehmerliste </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Teilnehmerliste SKS </th>
         <td mat-cell *matCellDef="let user">
           <mat-checkbox
             [checked]="user.isParticipantList"
             disabled 
-            aria-label="Teilnehmerliste">
+            aria-label="Teilnehmerliste SKS">
           </mat-checkbox>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="isDistributionList">
-        <th mat-header-cell *matHeaderCellDef> Verteiler </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Verteiler SKS </th>
         <td mat-cell *matCellDef="let user">
           <mat-checkbox
             [checked]="user.isDistributionList"
             disabled 
-            aria-label="Distributionliste">
+            aria-label="Verteiler SKS">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="isParticipantListMinorWork">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Teilnehmerliste KKS </th>
+        <td mat-cell *matCellDef="let user">
+          <mat-checkbox
+            [checked]="user.isParticipantListMinorWork"
+            disabled 
+            aria-label="Teilnehmerliste KKS">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="isDistributionListMinorWork">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Verteiler KKS </th>
+        <td mat-cell *matCellDef="let user">
+          <mat-checkbox
+            [checked]="user.isDistributionListMinorWork"
+            disabled 
+            aria-label="Verteiler KKS">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="active">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Aktiv </th>
+        <td mat-cell *matCellDef="let user">
+          <mat-checkbox
+            [checked]="user.active"
+            disabled 
+            aria-label="Aktiv">
           </mat-checkbox>
         </td>
       </ng-container>

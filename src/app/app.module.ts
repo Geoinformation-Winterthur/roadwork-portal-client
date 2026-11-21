@@ -46,6 +46,7 @@ import { environment } from '../environments/environment';
 import { LoginComponent } from './login/login.component';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatSortModule } from '@angular/material/sort';
  
 import { JwtModule } from '@auth0/angular-jwt';
 import { ChooseNeedComponent } from './choose-need/choose-need.component';
@@ -209,7 +210,8 @@ export const CH_DATE_FORMATS = {
      MatSidenavModule,
      MatTableModule,
      MatTabsModule,
-     MatNativeDateModule,     
+     MatNativeDateModule,
+     MatSortModule,     
      ChartsModule,
      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
      OAuthModule.forRoot(),
