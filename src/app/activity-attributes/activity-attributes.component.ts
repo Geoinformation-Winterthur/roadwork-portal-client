@@ -1959,10 +1959,11 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
   
   showNoMinorWorkButton(): boolean {
-    if (this.roadWorkActivityFeature?.properties.isMinorWork === true && 
-      this.roadWorkActivityFeature?.properties.projectType === "type_k" && 
-      this.roadWorkActivityFeature?.properties.isPrivate == false) {
-      
+    if (this.roadWorkActivityFeature?.properties.isMinorWork === true &&
+      this.roadWorkActivityFeature?.properties.projectType === "type_k" &&
+      this.roadWorkActivityFeature?.properties.isPrivate == false &&
+      this.roadWorkActivityFeature?.properties.status !== "archived") {
+
       let chosenRole = this.userService.getLocalUser().chosenRole;
       if (chosenRole === "administrator" || chosenRole === "territorymanager") {
         return true;
@@ -1972,52 +1973,52 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   }
 
   archiveNeedMinorAndRoadWorkActivity() {
-    
+
     const dialogRef = this.dialog.open(ActivityArchiveDialogComponent);
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed === true) {
 
-        // archive activity (needs & Needs minor will be archived as well)
-        if (this.roadWorkActivityFeature?.properties) {
-          this.roadWorkActivityFeature.properties.status = "archived";
+        // the minor work need to create the new need from
+        let minorNeedToClone = this.needsOfActivityService.assignedRoadWorkNeeds[0];
+
+        if (!this.roadWorkActivityFeature?.properties || !minorNeedToClone?.properties) {
+          // nothing to archive
+          return;
         }
 
-        // hold data for creating a need.
-        let assignedNeedMinorClone = this.needsOfActivityService.assignedRoadWorkNeeds[0];
+        // first create the new need
+        this.roadWorkNeedService.createNeedFromMinorWork(minorNeedToClone.properties.uuid)
+          .subscribe({
+            next: (createdResourceResult) => {
+              ErrorMessageEvaluation._evaluateErrorMessage(createdResourceResult);
+              if (createdResourceResult.errorMessage.trim().length !== 0) {
+                this.snckBar.open(createdResourceResult.errorMessage, "", {
+                  duration: 4000
+                });
+              }
+              else {
 
-        // archive activity(and need)
-        // TODO Errorhandling
-        this.save().then(() => {
-          // this will be executeted anyways, even when save() failes.
-          assignedNeedMinorClone.properties.uuid = "";
-          assignedNeedMinorClone.properties.status = "requirement";
-          assignedNeedMinorClone.properties.priority.code = "middle";
-          assignedNeedMinorClone.properties.isEditingAllowed = true;
-          assignedNeedMinorClone.properties.isPrivate = true;
-          assignedNeedMinorClone.properties.created = new Date();
-          assignedNeedMinorClone.properties.lastModified = new Date();
+                // check again to satisfy compiler
+                if (!this.roadWorkActivityFeature?.properties) {
+                  return;
+                }
 
-          assignedNeedMinorClone.properties.finishEarlyTo = new Date();
-          assignedNeedMinorClone.properties.finishOptimumTo = new Date();
-          assignedNeedMinorClone.properties.finishLateTo = new Date();
-          // save need-minor clone as need
-          assignedNeedMinorClone.properties.isMinorWork = false;
-          this.roadWorkNeedService.addRoadworkNeed(assignedNeedMinorClone).subscribe({
-            next: () => {
-              // TODO implement in API (setting orderer)
-              // Der GM oder Administrator der den Knopf gedrückt hat ist nun der Auslösende:r ¨
-              // this.roadWorkNeedService.updateRoadWorkNeed()  funktioniert auch nicht da hier der Orderer im backend von der DB geholt wird. (also wieder der GM oder Administrator)
+                // archive activity (minor need will be archived as well, because is child of activity)
+                this.roadWorkActivityFeature.properties.status = "archived";
+                this.save().then(() => {
+                  // this will be executeted anyways, even when save() failes
 
-              const empfaenger = assignedNeedMinorClone.properties.orderer.mailAddress;
-              const body = 'Ihre Kleinmassnahme wurde abgelehnt.';
+                  // create email for owner of the need
+                  const empfaenger = minorNeedToClone.properties.orderer?.mailAddress;
+                  const body = 'Ihre Kleinmassnahme wurde abgelehnt.';
+                  window.open(`mailto:${empfaenger}?body=${encodeURIComponent(body)}`);
 
-              window.open(`mailto:${empfaenger}?body=${encodeURIComponent(body)}`);
-
-              this.router.navigate(['/activities']);
+                  //this.router.navigate(['/activities']);
+                });
+              }
             }
           });
-        });
       }
     });
   }

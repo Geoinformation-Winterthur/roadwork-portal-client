@@ -111,5 +111,6 @@ export class ErrorMessageDictionary {
              "",
              "",
              "Es fehlen für Kleinmassnahmen obligatorische Werte im Bereich Kostenschätzung",  /* SSP-100 starting from here messages from GEOBOX (to avoid number collisions) */
+             "Es konnte kein neuer Bedarf aus der vorhandenen Kleinmassnahme erstellt werden",
             ];
 }

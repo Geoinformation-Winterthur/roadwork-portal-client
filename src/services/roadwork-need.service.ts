@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { RoadWorkNeedFeature } from '../model/road-work-need-feature';
 import { environment } from 'src/environments/environment';
 import { ErrorMessage } from 'src/model/error-message';
+import { CreatedResourceResult } from 'src/model/created-resource-result';
 
 
 @Injectable({
@@ -174,4 +175,9 @@ export class RoadWorkNeedService {
     return result;
   }
 
+  createNeedFromMinorWork(roadworkNeedUuid: string): 
+              Observable<CreatedResourceResult> {
+      let url = environment.apiUrl + "/roadworkneed/" + roadworkNeedUuid + "/create-need-from-minor-work";
+      return this.http.post(url, CreatedResourceResult) as Observable<CreatedResourceResult>;
+    }
 }
