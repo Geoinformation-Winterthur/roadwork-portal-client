@@ -45,7 +45,7 @@
             </span>
         </mat-toolbar-row>
     </mat-toolbar>
-    <mat-sidenav-container>
+    <mat-sidenav-container autosize>
         <mat-sidenav [(opened)]="sideNavOpened" #drawer [mode]="sideNavMode" role="navigation">
             <mat-nav-list>
                 <a mat-list-item routerLink='/' (click)="closeSideNavOnMobile()" routerLinkActive="chosen-menu" [routerLinkActiveOptions]="{ exact: true }">

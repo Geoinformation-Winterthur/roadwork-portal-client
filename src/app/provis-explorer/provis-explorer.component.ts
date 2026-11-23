@@ -13,6 +13,7 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
   detail?: ExplorerDetail;
   selected?: ExplorerActivity;
   isLoading = false;
+  isDetailLoading = false;
   error = '';
   activeTab = 'provis';
   showWikis = true;
@@ -20,8 +21,8 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
   showNeeds = true;
   selectedNeedUuid: string | null = null;
   topPanelHeight = 308;
-  childPanelHeight = 300;
-  mapPanelHeight = 475;
+  explorerHeight = 750;
+  lowerPanelMinHeight = 285;
   detailWidth = 60;
   private resizeMode: 'width' | 'height' | 'lowerHeight' | null = null;
   private startDrag = 0;
@@ -34,6 +35,10 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
   readonly vectorStyleUrl = 'https://tiles.openfreemap.org/styles/liberty';
   private map?: maplibregl.Map;
   private requestId = 0;
+  private layoutObserver?: ResizeObserver;
+  private layoutResizeFrame?: number;
+  @ViewChild('explorerRoot') explorerRoot!: ElementRef<HTMLElement>;
+  @ViewChild('lowerPanels') lowerPanels!: ElementRef<HTMLElement>;
 
   readonly labels: { [key: string]: string } = {
     MATCH: 'Eindeutig', MULTIPLE: 'Mehrere Kandidaten', PARTIAL: 'Teilweise',
@@ -89,7 +94,7 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
     { field: 'costs_total', headerName: 'Kosten CHF', width: 150, valueFormatter: p => this.money(p.value) }
   ];
   readonly provisColumns: ColDef[] = [
-    { field: 'source_column', headerName: 'Excel', width: 125, valueFormatter: p => ({ G: 'G', N: 'PROVIS 322 (N)', O: 'PROVIS 328 (O)' } as any)[p.value] || p.value, cellStyle: { color: '#1466b6', fontWeight: 'bold' } },
+    { field: 'source_column', headerName: 'Excel', width: 125, valueFormatter: p => ({ G: 'Hauptprojekte (G)', N: 'PROVIS 322 (N)', O: 'PROVIS 328 (O)' } as any)[p.value] || p.value, cellStyle: { color: '#1466b6', fontWeight: 'bold' } },
     { field: 'reference_number', headerName: 'Referenz', width: 160 },
     { field: 'match_status', headerName: 'Treffer', width: 110 },
     { field: 'projekt_nr', headerName: 'PROVIS-Nr.', width: 150 },
@@ -122,7 +127,11 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
 
   constructor(private explorer: ProvisExplorerService) {}
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit(): void {    
+    this.layoutObserver = new ResizeObserver(() => this.scheduleLayoutResize());
+    const root = this.explorerRoot.nativeElement;
+    this.layoutObserver.observe(root);
+    if (root.parentElement) this.layoutObserver.observe(root.parentElement);
     this.map = new maplibregl.Map({
       container: this.mapContainer.nativeElement,
       style: this.vectorStyleUrl,
@@ -160,10 +169,36 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
       this.map.on('mouseleave', 'provis-circles', () => { if (this.map) this.map.getCanvas().style.cursor = ''; });
       this.updateMap();
     });
-    this.refresh();
+    this.refresh();    
+    setTimeout(() => this.scheduleLayoutResize(), 0);
   }
 
-  ngOnDestroy(): void { this.map?.remove(); }
+  ngOnDestroy(): void {
+    ++this.requestId;
+    this.layoutObserver?.disconnect();
+    if (this.layoutResizeFrame !== undefined) cancelAnimationFrame(this.layoutResizeFrame);
+    this.map?.remove();
+  }
+  private scheduleLayoutResize(): void {
+    if (this.layoutResizeFrame !== undefined) cancelAnimationFrame(this.layoutResizeFrame);
+    this.layoutResizeFrame = requestAnimationFrame(() => {
+      this.layoutResizeFrame = undefined;
+      this.updateExplorerHeight();
+      this.map?.resize();
+    });
+  }
+  private updateExplorerHeight(): void {
+    const root = this.explorerRoot?.nativeElement;
+    if (!root) return;
+    // Fill the available viewport below the routed view's actual top edge.
+    const availableHeight = Math.max(450, window.innerHeight - root.getBoundingClientRect().top);
+    const headerHeight = root.querySelector('.explorer-header')?.getBoundingClientRect().height || 48;
+    const loadingHeight = root.querySelector('mat-progress-bar')?.getBoundingClientRect().height || 0;
+    // Allow the lower resize handle to extend the page when requested.
+    const requiredHeight = headerHeight + loadingHeight + this.topPanelHeight + this.lowerPanelMinHeight + 65;
+    const target = Math.ceil(Math.max(availableHeight, requiredHeight));
+    if (this.explorerHeight !== target) this.explorerHeight = target;
+  }
   refresh(): void {
     this.isLoading = true;
     this.error = '';
@@ -178,11 +213,13 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
     this.selected = activity;
     this.selectedNeedUuid = null;
     this.detail = undefined;
+    this.isDetailLoading = true;
+    this.error = '';
     this.updateMap();
     const requestId = ++this.requestId;
     this.explorer.detail(activity.uuid).subscribe({
-      next: d => { if (requestId !== this.requestId) { return; } this.detail = d; this.updateMap(true); },
-      error: () => { if (requestId === this.requestId) { this.error = 'Detaildaten konnten nicht geladen werden.'; } }
+      next: d => { if (requestId !== this.requestId) { return; } this.detail = d; this.isDetailLoading = false; this.updateMap(true); },
+      error: () => { if (requestId === this.requestId) { this.isDetailLoading = false; this.error = 'Detaildaten konnten nicht geladen werden.'; } }
     });
   }
   money(value: any): string {
@@ -237,20 +274,20 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
     event.preventDefault();
     this.resizeMode = mode;
     this.startDrag = mode === 'width' ? event.clientX : event.clientY;
-    this.startSize = mode === 'width' ? this.detailWidth : mode === 'height' ? this.topPanelHeight : this.mapPanelHeight;
+    this.startSize = mode === 'width' ? this.detailWidth : mode === 'height' ? this.topPanelHeight : this.lowerPanels.nativeElement.getBoundingClientRect().height;
   }
   @HostListener('document:mousemove', ['$event'])
   onDrag(event: MouseEvent): void {
     if (!this.resizeMode) return;
     if (this.resizeMode === 'height') this.topPanelHeight = Math.max(130, Math.min(680, this.startSize + event.clientY - this.startDrag));
     else if (this.resizeMode === 'lowerHeight') {
-      this.mapPanelHeight = Math.max(220, Math.min(900, this.startSize + event.clientY - this.startDrag));
-      this.childPanelHeight = Math.max(160, this.mapPanelHeight - 175);
+      this.lowerPanelMinHeight = Math.max(260, Math.min(1200, this.startSize + event.clientY - this.startDrag));
     } else {
       const parent = this.mapContainer?.nativeElement.closest('.lower');
       if (parent) this.detailWidth = Math.max(25, Math.min(70, this.startSize + (event.clientX - this.startDrag) * 100 / parent.clientWidth));
     }
-    this.map?.resize();
+    this.updateExplorerHeight();
+    this.scheduleLayoutResize();
   }
   @HostListener('document:mouseup')
   stopDrag(): void {
@@ -260,7 +297,7 @@ export class ProvisExplorerComponent implements AfterViewInit, OnDestroy {
     this.fitProvisColumns();
   }
   @HostListener('window:resize')
-  onWindowResize(): void { this.map?.resize(); }
+  onWindowResize(): void { this.scheduleLayoutResize(); }
 
   setPitch(): void {
     this.pitched = !this.pitched;

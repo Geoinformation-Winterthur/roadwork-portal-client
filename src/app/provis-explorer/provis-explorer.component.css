@@ -57,3 +57,65 @@
   .vertical-splitter { display: none; }
   .map { height: 380px; }
 }
+
+/* Keep the routed view inside the actual Angular Material sidenav content width. */
+:host { display: block; box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; overflow-x: clip; }
+.explorer { width: 100%; max-width: 100%; min-width: 0; overflow-x: hidden; }
+.explorer-header, .lower, .detail-panel, .map-panel, .tab-area { min-width: 0; max-width: 100%; }
+.projects, .child-grid { min-width: 0; max-width: 100%; }
+.detail-loading { padding: 6px 12px 8px; font-size: 12px; color: #526478; }
+.detail-loading mat-progress-bar { margin-top: 6px; }
+
+/* Full-height responsive workspace: avoid fixed child grid / map heights. */
+.explorer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: 8px;
+}
+.explorer-header, .projects, .horizontal-splitter, .lower-height-splitter {
+  flex-shrink: 0;
+}
+.lower {
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: stretch;
+}
+.detail-panel, .map-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.detail-heading, .tabs, .map-toolbar, .map-panel footer, .detail-loading {
+  flex: 0 0 auto;
+}
+.tab-area {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.tab-area > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.child-grid {
+  height: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.map {
+  height: auto;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.comparison .notice, .tab-area .notice, .financial { flex: 0 0 auto; }
+.journal { height: auto; overflow: auto; }
+@media (max-width: 900px) {
+  .lower { min-height: 700px !important; }
+  .detail-panel, .map-panel { flex: 1 1 auto; min-height: 320px; }
+  .map { height: auto; min-height: 240px; }
+}
