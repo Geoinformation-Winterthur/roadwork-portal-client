@@ -276,3 +276,26 @@
   padding: 2px 6px;
   font-size: 12px;
 }
+
+.gantt-phase-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  padding: 2px 0 8px;
+  font-size: 11px;
+  color: #39434b;
+}
+
+.gantt-phase-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.gantt-phase-swatch {
+  display: inline-block;
+  width: 21px;
+  height: 9px;
+  border-radius: 2px;
+}

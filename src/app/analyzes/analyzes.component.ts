@@ -209,6 +209,14 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     '6': '#ed7d31'
   };
 
+  readonly ganttPhaseLegend = [
+    { label: 'Phase 1', color: this.PHASE_COLORS['1'] },
+    { label: 'Phase 2', color: this.PHASE_COLORS['2'] },
+    { label: 'Phase 3', color: this.PHASE_COLORS['3'] },
+    { label: 'Phase 4', color: this.PHASE_COLORS['4'] },
+    { label: 'Phase 5', color: this.PHASE_COLORS['5'] }
+  ];
+
   /** Die propertyKeys sind bewusst zentral gehalten und können ans Backend angepasst werden. */
   readonly FLAG_DEFS: Array<{
     key: string;
@@ -494,6 +502,21 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.syncChartWithGridState();
   }
 
+  private selectProjectFromTimeline(project: RoadWorkActivityFeature): void {
+    if (!this.gridApi) { return; }
+    const uuid = project?.properties?.uuid;
+    if (!uuid) { return; }
+    let matchingNode: any;
+    this.gridApi.forEachNodeAfterFilterAndSort((node: any) => {
+      if (node.data?.properties?.uuid === uuid) { matchingNode = node; }
+    });
+    if (!matchingNode) { return; }
+    matchingNode.setSelected(true, true);
+    if (typeof matchingNode.rowIndex === 'number') {
+      this.gridApi.ensureIndexVisible(matchingNode.rowIndex, 'middle');
+    }
+  }
+
   onSplitterPointerDown(event: PointerEvent): void {
     event.preventDefault();
     document.addEventListener('pointermove', this.splitterPointerMove);
@@ -595,6 +618,17 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.chartInstance = echarts.init(this.timelineChartRef.nativeElement);
     this.timelineChartRef.nativeElement.addEventListener('wheel', this.ganttWheelHandler, { passive: false, capture: true });
     this.chartInstance.on('datazoom', () => this.ganttOnZoom());
+    this.chartInstance.on('click', (event: any) => {
+      if (!event?.data || event.seriesName === 'Auswahl') { return; }
+      const data = event.data;
+      const rowIndex = event.seriesType === 'scatter' ? data.value?.[1] : data.value?.[0];
+      const selectedUuid = this.selectedProject?.properties?.uuid;
+      const visible = this.getDisplayedRowsFromGrid().filter(row =>
+        this.hasTimelineDates(row) || (!!selectedUuid && row?.properties?.uuid === selectedUuid));
+      if (Number.isInteger(rowIndex) && visible[rowIndex]) {
+        this.selectProjectFromTimeline(visible[rowIndex]);
+      }
+    });
     this.chartInstance.on('legendselectchanged', (event: any) => {
       // Legend visibility must not change the series chosen in the date selector.
       for (const name of this.ganttSelected) {
@@ -718,7 +752,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly ganttGroups: string[] = ['Bedarf', 'Sitzungen', 'Vorstudie', 'Koordination', 'Projektierung', 'Bauausführung', 'Abschluss'];
   readonly ganttVisibleChoices: number[] = [10, 15, 25, 40, 60, 100, 0];
   ganttVisibleRows = 15;
-  ganttColorMode: 'period' | 'phase' = 'period';
+  ganttColorMode: 'period' | 'phase' | 'phases' = 'phases';
   ganttTimePreset: 'three' | 'five' | 'seven' | 'all' | 'custom' = 'five';
   private ganttStoredXZoom: { start: number; end: number } | null = null;
   private readonly ganttSettingsKey = 'wikis.analyzes.gantt.v4';
@@ -761,13 +795,6 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderTimeline(this.getDisplayedRowsFromGrid());
   }
 
-  ganttSetColorMode(value: string): void {
-    if (value !== 'period' && value !== 'phase') { return; }
-    this.ganttColorMode = value;
-    this.ganttSaveSettings();
-    this.renderTimeline(this.getDisplayedRowsFromGrid());
-  }
-
   ganttSetRowCount(value: string): void {
     this.ganttVisibleRows = Math.max(0, Number(value) || 0);
     this.ganttSaveSettings();
@@ -781,7 +808,6 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         selected: Array.from(this.ganttSelected),
         legendHidden: Array.from(this.ganttLegendHidden),
         visibleRows: this.ganttVisibleRows,
-        colorMode: this.ganttColorMode,
         timePreset: this.ganttTimePreset,
         xZoom: this.ganttStoredXZoom
       }));
@@ -802,7 +828,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ganttLegendHidden = new Set<string>(Array.isArray(saved.legendHidden)
         ? saved.legendHidden.filter((name: any) => typeof name === 'string' && validNames.has(name) && this.ganttSelected.has(name))
         : []);
-      if (saved.colorMode === 'period' || saved.colorMode === 'phase') { this.ganttColorMode = saved.colorMode; }
+      // The chart always uses the phase timeline, regardless of saved preferences.
+      this.ganttColorMode = 'phases';
       if (this.ganttVisibleChoices.includes(saved.visibleRows)) { this.ganttVisibleRows = saved.visibleRows; }
       if (['three', 'five', 'seven', 'all', 'custom'].includes(saved.timePreset)) { this.ganttTimePreset = saved.timePreset; }
       if (saved.xZoom && Number.isFinite(saved.xZoom.start) && Number.isFinite(saved.xZoom.end)) {
@@ -838,7 +865,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       'Baubeginn effektiv', 'Bauende effektiv', 'Abnahme / Garantie'
     ]);
     this.ganttVisibleRows = 15;
-    this.ganttColorMode = 'period';
+    this.ganttColorMode = 'phases';
     this.ganttTimePreset = 'five';
     this.ganttStoredXZoom = null;
     this.ganttSaveSettings();
@@ -925,6 +952,65 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     return { start, end: end > start ? end : start + day, source: 'Bekannte Projekttermine', dates };
   }
 
+  /** Derive phase spans from dated milestones, without inventing missing dates. */
+  private getTimelinePhaseSegments(props: any, range: { start: number; end: number }, currentPhase: string): Array<{
+    phase: string; label: string; start: number; end: number
+  }> {
+    const date = (...keys: string[]): number => {
+      for (const key of keys) {
+        const timestamp = this.ganttTimestamp(props[key]);
+        if (timestamp) { return timestamp; }
+      }
+      return 0;
+    };
+    const first = (...values: number[]): number => Math.min(...values.filter(value => value > 0)) || 0;
+    const last = (...values: number[]): number => Math.max(0, ...values);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const now = today.getTime();
+    const phaseNumber = Number(currentPhase);
+    const studyStart = date('dateStudyStart');
+    const studyEnd = first(date('studyApproved'), date('projectStudyApproved'), date('dateStudyEnd'));
+    const designMilestones = [
+      date('dateDesignAssignmentIssued'), date('dateSks'), date('dateSksReal'),
+      date('dateGlTbaReal'), date('dateProjectApprovalStart'),
+      date('dateConstructionBudgetApprovalStart')
+    ];
+    const designStart = first(...designMilestones, studyEnd);
+    const designEnd = last(date('dateProjectApprovalEnd'), date('dateConstructionBudgetApprovalEnd'));
+    const submissionStart = date('dateSubmissionStart');
+    const submissionEnd = date('dateSubmissionEnd');
+    const constructionStart = date('startOfConstruction', 'dateStartOfConstructionReal');
+    const constructionEnd = date('endOfConstruction', 'dateEndOfConstructionReal');
+    const acceptance = date('dateAccept', 'dateGuarantee');
+
+    // A later phase must not be used as proof that Phase 1 lasted until that date.
+    const phase1End = first(studyStart, designStart, submissionStart);
+    const phase2End = studyEnd || first(designStart, submissionStart, constructionStart);
+    const phase3Start = designStart || (phaseNumber === 3 ? studyEnd : 0);
+    const phase3End = first(submissionStart, constructionStart) || designEnd;
+    const phase4End = submissionEnd || constructionStart;
+    const phases = [
+      { phase: '1', label: 'Strategische Planung', start: date('dateFrom') || range.start, end: phase1End },
+      { phase: '2', label: 'Vorstudien', start: studyStart, end: phase2End },
+      { phase: '3', label: 'Projektierung inkl. Bewilligung', start: phase3Start, end: phase3End },
+      { phase: '4', label: 'Ausschreibungen', start: submissionStart, end: phase4End },
+      { phase: '5', label: 'Realisierung', start: constructionStart, end: acceptance || constructionEnd }
+    ];
+    const results: Array<{ phase: string; label: string; start: number; end: number }> = [];
+    for (let index = 0; index < phases.length; index++) {
+      const item = phases[index];
+      if (!item.start) { continue; }
+      const nextStart = first(...phases.slice(index + 1).map(candidate => candidate.start));
+      // A current phase may run up to today when it has a real start but no known end.
+      const inferredCurrentEnd = item.phase === currentPhase && phaseNumber >= 2 && phaseNumber <= 4
+        && item.start <= now ? now : 0;
+      const end = first(item.end, nextStart) || inferredCurrentEnd;
+      if (end > item.start) { results.push({ ...item, end }); }
+    }
+    return results;
+  }
+
   private hasTimelineDates(project?: RoadWorkActivityFeature): boolean {
     return this.getTimelineRange(project) !== null;
   }
@@ -932,49 +1018,74 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Render a readable, vertically navigable Gantt chart. */
   private renderTimeline(projects: RoadWorkActivityFeature[]): void {
     if (!this.chartInstance) { return; }
-    const rows = (projects || []).filter(project => this.hasTimelineDates(project));
+    const selectedUuid = this.selectedProject?.properties?.uuid;
+    // Keep the selected project visible even when it has no timeline dates.
+    // Such rows remain label-only: no artificial phase or construction bars are created.
+    const rows = (projects || []).filter(project =>
+      this.hasTimelineDates(project) || (!!selectedUuid && project?.properties?.uuid === selectedUuid));
     if (!rows.length) {
       this.chartInstance.clear();
-      this.chartInstance.setOption({ title: { text: 'Keine Projekte mit fachlichen Terminen im aktuellen Filter', left: 'center', top: 'middle' } });
+      this.chartInstance.setOption({ title: { text: 'Keine Projekte mit fachlichen Terminen im aktuellen Filter', left: 'center', top: 'middle' } }, true);
       return;
     }
 
     const labels = rows.map(project => this.getProjectDisplayName(project));
-    const ranges = rows.map(project => this.getTimelineRange(project)!);
-    const min = Math.min(...ranges.map(range => range.start));
-    const max = Math.max(...ranges.map(range => range.end));
+    const categoryIds = rows.map((project, index) => project?.properties?.uuid || `row-${index}`);
+    const categoryLabels = new Map(categoryIds.map((id, index) => [id, labels[index]]));
+    const realRanges = rows.map(project => this.getTimelineRange(project));
+    const datedRanges = realRanges.filter((range): range is NonNullable<typeof range> => range !== null);
+    const todayTimestamp = Date.now();
+    const min = datedRanges.length ? Math.min(...datedRanges.map(range => range.start)) : todayTimestamp - 86400000 * 30;
+    const max = datedRanges.length ? Math.max(...datedRanges.map(range => range.end)) : todayTimestamp + 86400000 * 30;
+    // Fallback range is used solely for axis layout, never to draw a bar.
+    const ranges = realRanges.map(range => range || { start: min, end: max });
     const padding = Math.max(86400000 * 60, Math.round((max - min) * 0.04));
     const axisMin = min - padding;
     const axisMax = max + padding;
     const initialXZoom = this.ganttInitialXZoom(axisMin, axisMax);
-    const selectedUuid = this.selectedProject?.properties?.uuid;
     const ROWS_VISIBLE = this.ganttVisibleRows === 0 ? rows.length : Math.min(this.ganttVisibleRows, rows.length);
     const needsVerticalZoom = rows.length > ROWS_VISIBLE;
+    const selectedRowIndex = rows.findIndex(project => project?.properties?.uuid === selectedUuid);
+    // Center the selected project in the visible chart window.
+    const firstVisibleRow = selectedRowIndex < 0 || !needsVerticalZoom ? 0
+      : Math.max(0, Math.min(rows.length - ROWS_VISIBLE, selectedRowIndex - Math.floor(ROWS_VISIBLE / 2)));
+    const lastVisibleRow = Math.min(rows.length - 1, firstVisibleRow + ROWS_VISIBLE - 1);
     const top = 102;
     const bottom = 64;
     const gridLeft = 370;
     const gridRight = 76;
-
     const makeBars = (name: string, color: string, barFraction: number, z: number,
       getBounds: (props: any, range: { start: number; end: number }) => [number, number] | null) => {
-      const data = rows.map((project, index) => {
+      const data = rows.reduce((items: any[], project, index) => {
+        if (!realRanges[index]) { return items; }
         const bounds = getBounds(project.properties as any, ranges[index]);
-        if (!bounds || bounds[1] < bounds[0]) { return null; }
-        return {
-          name: labels[index],
-          value: [index, bounds[0], bounds[1]],
-          projectName: labels[index],
-          source: name,
-          itemStyle: {
-            color: name === 'Projektzeitraum' && this.ganttColorMode === 'phase'
-              ? (this.getPhaseColor(project) || color)
-              : color,
-            opacity: 0.9
-          },
-          currentStatus: String(project.properties?.status || ''),
-          currentPhase: this.getPhase(project)
-        };
-      }).filter(Boolean);
+        if (!bounds || bounds[1] < bounds[0]) { return items; }
+        const phaseSpans = name === 'Projektzeitraum' && this.ganttColorMode === 'phases'
+          ? this.getTimelinePhaseSegments(project.properties || {}, ranges[index], this.getPhase(project)) : [];
+        const spans = phaseSpans.length ? phaseSpans.map(span => ({
+          start: span.start, end: span.end, phase: span.phase, label: span.label
+        })) : [{ start: bounds[0], end: bounds[1], phase: '',
+          label: name === 'Projektzeitraum' && this.ganttColorMode === 'phases' ? 'Phase nicht bestimmbar (Termine fehlen)' : '' }];
+        for (const span of spans) {
+          items.push({
+            name: labels[index],
+            value: [index, span.start, span.end],
+            projectName: labels[index],
+            source: name,
+            phaseLabel: span.label,
+            itemStyle: {
+              color: span.phase ? this.PHASE_COLORS[span.phase]
+                : name === 'Projektzeitraum' && this.ganttColorMode === 'phases' ? '#a7adb5'
+                : name === 'Projektzeitraum' && this.ganttColorMode === 'phase'
+                  ? (this.getPhaseColor(project) || color) : color,
+              opacity: 0.9
+            },
+            currentStatus: String(project.properties?.status || ''),
+            currentPhase: this.getPhase(project)
+          });
+        }
+        return items;
+      }, []);
       return {
         name, type: 'custom', data, z, silent: false,
         renderItem: (_params: any, api: any) => {
@@ -982,8 +1093,11 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           const start = api.coord([api.value(1), rowIndex]);
           const end = api.coord([api.value(2), rowIndex]);
           const rowHeight = api.size([0, 1])[1];
-          const height = Math.max(2, Math.min(name === 'Projektzeitraum' ? 6 : 15, rowHeight * barFraction));
-          const offset = name === 'Bauausführung' ? rowHeight * 0.15 : name === 'Projektzeitraum' ? -rowHeight * 0.12 : rowHeight * 0.04;
+          const isConstructionDetail = name === 'Bauausführung geplant' || name === 'Bauausführung effektiv';
+          const height = Math.max(2, Math.min(isConstructionDetail ? 5 : name === 'Projektzeitraum' ? 7 : 15, rowHeight * barFraction));
+          const offset = name === 'Bauausführung geplant' ? rowHeight * 0.09
+            : name === 'Bauausführung effektiv' ? rowHeight * 0.32
+            : name === 'Projektzeitraum' ? -rowHeight * 0.18 : rowHeight * 0.04;
           const shape = echarts.graphic.clipRectByRect({
             x: Math.min(start[0], end[0]),
             y: start[1] - height / 2 + offset,
@@ -1002,11 +1116,38 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const projectBar = makeBars('Projektzeitraum', '#168c93', 0.15, 2, (_props, range) => [range.start, range.end]);
-    const constructionBar = makeBars('Bauausführung', '#70ad47', 0.62, 4, (props) => {
-      const start = this.ganttTimestamp(props.dateStartOfConstructionReal) || this.ganttTimestamp(props.startOfConstruction);
-      const end = this.ganttTimestamp(props.dateEndOfConstructionReal) || this.ganttTimestamp(props.endOfConstruction);
-      return start && end ? [start, end] : null;
+    // Keep planned and effective construction periods separate instead of mixing their dates.
+    const plannedConstructionBar = makeBars('Bauausführung geplant', '#a9d08e', 0.16, 3, (props) => {
+      const start = this.ganttTimestamp(props.startOfConstruction);
+      const end = this.ganttTimestamp(props.endOfConstruction);
+      return start && end && end >= start ? [start, end] : null;
     });
+    const actualConstructionBar = makeBars('Bauausführung effektiv', '#385723', 0.16, 4, (props) => {
+      const start = this.ganttTimestamp(props.dateStartOfConstructionReal);
+      const end = this.ganttTimestamp(props.dateEndOfConstructionReal);
+      return start && end && end >= start ? [start, end] : null;
+    });
+    // Highlight the complete chart row, not only its axis label.
+    // Match by project UUID so sorting and filtering cannot move the selection.
+    const selectedRowSeries = selectedRowIndex < 0 ? [] : [{
+      name: 'Auswahl', type: 'custom', silent: true, z: -1,
+      data: [{ value: [selectedRowIndex, axisMin, axisMax] }],
+      renderItem: (_params: any, api: any) => {
+        const index = api.value(0);
+        const rowPoint = api.coord([axisMin, index]);
+        const rowHeight = api.size([0, 1])[1];
+        const shape = echarts.graphic.clipRectByRect({
+          x: _params.coordSys.x, y: rowPoint[1] - rowHeight * 0.46,
+          width: _params.coordSys.width, height: rowHeight * 0.92
+        }, {
+          x: _params.coordSys.x, y: _params.coordSys.y,
+          width: _params.coordSys.width, height: _params.coordSys.height
+        });
+        return shape ? { type: 'rect', shape, style: { fill: 'rgba(255, 235, 59, 0.28)' } } : null;
+      },
+      tooltip: { show: false }
+    }];
+
     const milestoneSeries = this.GANTT_MILESTONES.filter(def => this.ganttSelected.has(def.label)).map(def => ({
       name: def.label,
       type: 'scatter',
@@ -1027,6 +1168,22 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       }).filter(Boolean)
     }));
 
+    const currentPhaseMarkerSeries = this.ganttColorMode === 'phases' && this.ganttSelected.has('Projektzeitraum') ? [{
+      name: 'Aktuelle Phase (Status)', type: 'scatter', symbol: 'diamond', symbolSize: 12, z: 12,
+      data: rows.map((project, index) => {
+        const currentPhase = this.getPhase(project);
+        if (!['2', '3', '33', '4'].includes(currentPhase)) { return null; }
+        const todayTimestamp = new Date();
+        todayTimestamp.setHours(0, 0, 0, 0);
+        const now = todayTimestamp.getTime();
+        const spans = this.getTimelinePhaseSegments(project.properties || {}, ranges[index], currentPhase);
+        if (spans.some(span => span.phase === currentPhase && span.start <= now && now <= span.end)) { return null; }
+        return { value: [now, index], projectName: labels[index], milestoneLabel: `Aktuelle Phase ${currentPhase} (Status, kein Terminbalken)`,
+          date: now, roadWorkActivityNo: project.properties?.roadWorkActivityNo || '-',
+          itemStyle: { color: this.PHASE_COLORS[currentPhase] || this.PHASE_COLORS['3'], borderColor: '#333', borderWidth: 1 } };
+      }).filter(Boolean)
+    }] : [];
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const option: echarts.EChartsOption = {
@@ -1042,13 +1199,14 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         textStyle: { fontSize: 11 },
         selectedMode: 'multiple',
         selected: Object.fromEntries(
-          ['Projektzeitraum', 'Bauausführung', ...this.GANTT_MILESTONES.map(def => def.label)]
-            .filter(name => this.ganttSelected.has(name))
+          ['Projektzeitraum', 'Bauausführung geplant', 'Bauausführung effektiv', ...this.GANTT_MILESTONES.map(def => def.label)]
+            .filter(name => name.startsWith('Bauausführung') ? this.ganttSelected.has('Bauausführung') : this.ganttSelected.has(name))
             .map(name => [name, !this.ganttLegendHidden.has(name)])
         ),
         data: [
           ...(this.ganttSelected.has('Projektzeitraum') ? [{ name: 'Projektzeitraum', icon: 'roundRect' }] : []),
-          ...(this.ganttSelected.has('Bauausführung') ? [{ name: 'Bauausführung', icon: 'roundRect' }] : []),
+          ...(this.ganttSelected.has('Bauausführung') ? [ ...(this.ganttColorMode === 'phases' ? [] : [{ name: 'Bauausführung geplant', icon: 'roundRect' }]), { name: 'Bauausführung effektiv', icon: 'roundRect' }] : []),
+          ...(currentPhaseMarkerSeries.length ? [{ name: 'Aktuelle Phase (Status)', icon: 'diamond' }] : []),
           ...this.GANTT_MILESTONES.filter(def => this.ganttSelected.has(def.label)).map(def => ({ name: def.label, icon: def.symbol }))
         ] as any
       },
@@ -1060,11 +1218,15 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         splitLine: { show: true, lineStyle: { color: '#e6e9ed' } }
       },
       yAxis: {
-        type: 'category', data: labels, inverse: true,
+        type: 'category', data: categoryIds, inverse: true,
         axisLabel: {
           width: 320, margin: 16, overflow: 'truncate',
-          formatter: (name: string, index: number) => rows[index]?.properties?.uuid === selectedUuid ? `{selected|${name}}` : name,
-          rich: { selected: { backgroundColor: '#fff3bf', color: '#222', borderRadius: 3, padding: [2, 4, 2, 4] } }
+          // Category IDs are stable across dataZoom, sorting and repeated project names.
+          formatter: (categoryId: string) => {
+            const label = categoryLabels.get(categoryId) || categoryId;
+            return categoryId === selectedUuid ? `{selected|${label}}` : label;
+          },
+          rich: { selected: { backgroundColor: '#ffe36e', color: '#20252b', fontWeight: 'bold', borderRadius: 3, padding: [3, 5, 3, 5] } }
         },
         axisTick: { show: false },
         splitLine: { show: true, lineStyle: { color: '#f0f2f4' } }
@@ -1072,7 +1234,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
       dataZoom: [
         {
           id: 'gantt-x-slider', type: 'slider', xAxisIndex: 0,
-          bottom: 6, height: 21, filterMode: 'weakFilter',
+          orient: 'horizontal', top: 'auto', bottom: 8,
+          height: 21, filterMode: 'weakFilter',
           start: initialXZoom.start, end: initialXZoom.end
         },
         {
@@ -1085,7 +1248,7 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           yAxisIndex: 0, orient: 'vertical' as const,
           right: 10, top, bottom, width: 17,
           showDetail: false, showDataShadow: false,
-          startValue: 0, endValue: Math.max(0, ROWS_VISIBLE - 1),
+          startValue: firstVisibleRow, endValue: lastVisibleRow,
           filterMode: 'empty' as const,
           fillerColor: 'rgba(38, 113, 170, 0.23)',
           borderColor: '#c7d2de', handleSize: 13, moveHandleSize: 9
@@ -1093,7 +1256,8 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
         {
           id: 'gantt-y-inside', type: 'inside' as const,
           yAxisIndex: 0, filterMode: 'empty' as const,
-          start: 0, end: needsVerticalZoom ? 100 * ROWS_VISIBLE / rows.length : 100,
+          start: needsVerticalZoom ? 100 * firstVisibleRow / rows.length : 0,
+          end: needsVerticalZoom ? 100 * (lastVisibleRow + 1) / rows.length : 100,
           moveOnMouseWheel: false, zoomOnMouseWheel: false
         }
       ],
@@ -1106,20 +1270,22 @@ export class AnalyzesComponent implements OnInit, AfterViewInit, OnDestroy {
           if (params.seriesType === 'scatter') {
             return `<b>${safe(data.projectName)}</b><br/>${safe(data.milestoneLabel)}: ${this.formatDate(data.date)}<br/>BV-Nr: ${safe(data.roadWorkActivityNo)}`;
           }
-          const phaseInfo = data.source === 'Projektzeitraum' && this.ganttColorMode === 'phase'
+          const phaseInfo = data.phaseLabel ? `<br/>Phase: ${safe(data.phaseLabel)}`
+            : data.source === 'Projektzeitraum' && this.ganttColorMode === 'phase'
             ? `<br/>Aktuelle Phase: ${safe(data.currentPhase || '-')} · Status: ${safe(data.currentStatus || '-')}`
             : '';
           return `<b>${safe(data.projectName)}</b><br/>${safe(data.source)}${phaseInfo}<br/>Start: ${this.formatDate(data.value[1])}<br/>Ende: ${this.formatDate(data.value[2])}`;
         }
       },
       series: [
+        ...selectedRowSeries,
         ...(this.ganttSelected.has('Projektzeitraum') ? [{ ...projectBar, markLine: {
           silent: true, symbol: ['none', 'none'],
           data: [{ xAxis: today.getTime() }],
           lineStyle: { color: '#c42d3a', width: 1.5, type: 'dashed' },
           label: { formatter: 'Heute', color: '#c42d3a', position: 'insideEndTop' }
         } }] : []),
-        ...(this.ganttSelected.has('Bauausführung') ? [constructionBar] : []), ...milestoneSeries
+        ...(this.ganttSelected.has('Bauausführung') ? [...(this.ganttColorMode === 'phases' ? [] : [plannedConstructionBar]), actualConstructionBar] : []), ...currentPhaseMarkerSeries, ...milestoneSeries
       ] as any[]
     };
     this.chartInstance.setOption(option, true);

@@ -18,14 +18,6 @@
           {{ showChart ? 'Zeitlinie ausblenden' : 'Zeitlinie anzeigen' }}
         </button>
         <div class="gantt-toolbar-controls" *ngIf="showChart">
-          <label for="gantt-color-mode">Balkenfarben:</label>
-          <select id="gantt-color-mode" [value]="ganttColorMode"
-                  (change)="ganttSetColorMode($any($event.target).value)"
-                  title="Projektzeitraum entweder einheitlich oder nach aktueller Projektphase einfärben">
-            <option value="period">Zeiträume</option>
-            <option value="phase">Aktuelle Phase</option>
-          </select>
-
           <label for="gantt-row-count">Sichtbare Projekte:</label>
           <select id="gantt-row-count" [value]="ganttVisibleRows"
                   (change)="ganttSetRowCount($any($event.target).value)">
@@ -66,12 +58,20 @@
     </p>
   </header>
 
+<div class="gantt-phase-legend" *ngIf="showChart && ganttColorMode === 'phases'" aria-label="Farblegende der Projektphasen">
+  <span *ngFor="let phase of ganttPhaseLegend" class="gantt-phase-legend-item">
+    <span class="gantt-phase-swatch" [style.background-color]="phase.color"></span>
+    {{ phase.label }}
+  </span>
+  <span class="gantt-phase-legend-item"><span class="gantt-phase-swatch" style="background-color:#a7adb5"></span> Phase nicht bestimmbar</span>
+</div>
+
 <div class="gantt-selector" *ngIf="showChart && ganttLegendExpanded">
   <div class="gantt-selector-actions">
     <button type="button" (click)="ganttSelectAll(true)">Alle anzeigen</button>
     <button type="button" (click)="ganttSelectAll(false)">Alle ausblenden</button>
     <label><input type="checkbox" [checked]="ganttIsSelected('Projektzeitraum')" (change)="ganttToggle('Projektzeitraum', $any($event.target).checked)"> Projektzeitraum</label>
-    <label><input type="checkbox" [checked]="ganttIsSelected('Bauausführung')" (change)="ganttToggle('Bauausführung', $any($event.target).checked)"> Bauausführung</label>
+    <label><input type="checkbox" [checked]="ganttIsSelected('Bauausführung')" (change)="ganttToggle('Bauausführung', $any($event.target).checked)"> Bauausführung effektiv</label>
   </div>
   <div class="gantt-selector-groups">
     <fieldset *ngFor="let group of ganttGroups">
