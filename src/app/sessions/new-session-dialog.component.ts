@@ -19,12 +19,12 @@ import {
       style="padding-top: 8px; display: grid; gap: 12px;"
     >
       <p>
-        Die neue Sitzung wird automatisch mit der nächsten verfügbaren SKS-Nummer vorgeschlagen.
+        Die neue Sitzung wird automatisch mit der nächsten verfügbaren Nummer vorgeschlagen.
         Sie können die Nummer bei Bedarf anpassen.
       </p>
 
       <mat-form-field appearance="outline">
-        <mat-label>SKS-Nr</mat-label>
+        <mat-label>Nr</mat-label>
         <input
           matInput
           type="number"
@@ -37,13 +37,13 @@ import {
           Pflichtfeld.
         </mat-error>
         <mat-error *ngIf="form.controls['sksNo']?.hasError('min')">
-          Die SKS-Nr muss ≥ 1 sein.
+          Die Nr muss ≥ 1 sein.
         </mat-error>
         <mat-error *ngIf="form.controls['sksNo']?.hasError('pattern')">
           Nur ganze Zahlen sind erlaubt.
         </mat-error>
         <mat-error *ngIf="form.controls['sksNo']?.hasError('sksNoTaken')">
-          Diese SKS-Nr ist bereits vergeben.
+          Diese Nr ist bereits vergeben.
         </mat-error>
       </mat-form-field>
     </mat-dialog-content>
@@ -67,12 +67,18 @@ export class NewSessionDialogComponent {
 
   /** Existing SKS numbers used for duplicate-check */
   private existingSksNumbers: Set<number>;
+  private defaultNumber: number = 1;
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<NewSessionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { sessions: any[] }
+    @Inject(MAT_DIALOG_DATA) public data: { sessions: any[], defaultNumber?: number }
   ) {
+
+    if (data.defaultNumber){
+      this.defaultNumber = data.defaultNumber;
+    }
+
     // Build set of existing SKS numbers
     this.existingSksNumbers = new Set(
       (data?.sessions ?? [])
@@ -98,7 +104,7 @@ export class NewSessionDialogComponent {
   /** Computes max(sksNo) + 1 from the existing sessions list */
   private computeNextSksNo(sessions: any[]): number {
     if (!sessions || sessions.length === 0) {
-      return 1;
+      return this.defaultNumber;
     }
 
     const numbers = sessions
@@ -106,7 +112,7 @@ export class NewSessionDialogComponent {
       .filter(n => !isNaN(n) && n > 0);
 
     if (!numbers.length) {
-      return 1;
+      return this.defaultNumber;
     }
 
     return Math.max(...numbers) + 1;

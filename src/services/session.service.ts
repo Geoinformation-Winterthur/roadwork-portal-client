@@ -10,6 +10,7 @@ const BASE_URL = `${environment.apiUrl}/Session`;
 
 export interface CreateSessionDto {
   sksNo: number;
+  dateType?: string;
   plannedDateForBackend?: string;               // 'DD.MM.YYYY'
   reportType?: string;
   acceptance1?: string;
@@ -20,8 +21,9 @@ export interface CreateSessionDto {
 }
 
 export interface SessionDto {
-  plannedDate: string;
   sksNo: number;
+  dateType: string;
+  plannedDate: string;
   reportType: string;
   acceptance1: string;
   attachments: string;

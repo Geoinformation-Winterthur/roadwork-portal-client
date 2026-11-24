@@ -16,7 +16,7 @@
 <div style="margin:0;margin-left: 2em;margin-right: 2em;">
   <div style="margin-bottom: 1em;">
     <h2>
-      SKS Sitzungen ({{ sessionsData.length }})
+      Sitzungen ({{ sessionsData.length }})
       <label class="quick-filter" style="display:inline-flex; gap:.5em; align-items:center; margin-left:20px;margin-right:20px">
         <input
           type="text"
@@ -29,10 +29,18 @@
 
       <button mat-button
             *ngIf="isRoleAdministrator"
-            (click)="openNewSessionDialog()"
+            (click)="openNewSKSSessionDialog()"
             [disabled]="isDataLoading"
             style="margin: 1em;background-color: rgb(236,236,234);">
-            <mat-icon aria-label="Icon zeigt Plus">add</mat-icon>&nbsp;NEUE SITZUNG
+            <mat-icon aria-label="Icon zeigt Plus">add</mat-icon>&nbsp;NEUE SKS SITZUNG
+      </button>
+
+      <button mat-button
+            *ngIf="isRoleAdministrator"
+            (click)="createNewKKSSession()"
+            [disabled]="isDataLoading"
+            style="margin: 1em;background-color: rgb(236,236,234);">
+            <mat-icon aria-label="Icon zeigt Plus">add</mat-icon>&nbsp;NEUE KKS SITZUNG
       </button>
 
       <button mat-button (click)="saveDetails(); savePeopleAsCsv();"
@@ -190,7 +198,7 @@
       <!-- Acceptance -->
       <div class="field"
            [ngStyle]="SESSION_TYPE_TO_DB[detailsForm.get('reportType')?.value] === 'PRE_PROTOCOL' ? {'pointer-events':'none','opacity':'0.6'} : null">
-        <h5 style="margin: .25rem;">1. Abnahme SKS-Protokoll</h5>
+        <h5 style="margin: .25rem;">1. Abnahme Protokoll</h5>
         <textarea
           id="acceptance1"
           formControlName="acceptance1"

@@ -28,10 +28,11 @@ import {
 import { UserService } from 'src/services/user.service';
 import { RoadWorkActivityService } from 'src/services/roadwork-activity.service';
 import { RoadWorkActivityFeature } from 'src/model/road-work-activity-feature';
+import { SessionData } from 'src/model/session';
 import { ReportLoaderService } from 'src/services/report-loader.service';
 import saveAs from 'file-saver';
 import { AG_GRID_LOCALE_DE } from 'src/helper/locale.de';
-import { SessionService } from 'src/services/session.service';
+import { SessionService, SessionDto } from 'src/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { debounceTime, filter, finalize, map, switchMap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
@@ -46,6 +47,7 @@ import { environment } from 'src/environments/environment';
 /** Top-level row model representing one session. */
 interface Session {
   id: string;
+  isMinorWork: boolean;
   reportType: string;
   sessionName: string;
   sessionCreator: string;
@@ -405,7 +407,14 @@ export class SessionsComponent implements OnInit {
       type: 'numericColumn',
     },
     {
-      headerName: 'SKS No',
+      headerName: 'Typ',
+      field: 'sessionType',
+      width: 130,
+      suppressSizeToFit: true,
+      filter: 'agNumberColumnFilter'
+    },
+    {
+      headerName: 'No',
       field: 'sksNo',
       width: 130,
       suppressSizeToFit: true,
@@ -436,7 +445,7 @@ export class SessionsComponent implements OnInit {
       flex: 1
     },
     {
-      headerName: '1. Abnahme SKS-Protokoll',
+      headerName: '1. Abnahme Protokoll',
       field: 'acceptance1',
       minWidth: 400,
       tooltipField: 'acceptance1',
@@ -490,6 +499,7 @@ export class SessionsComponent implements OnInit {
               params.data.reportType,
               params.data.children,
               {
+                'isMinorWork': this.selectedNode?.data.isMinorWork,
                 'sksNo': String(this.selectedNode?.data.sksNo),
                 'acceptance1': this.selectedNode?.data.acceptance1,
                 'attachments': this.selectedNode?.data.attachments,
@@ -574,9 +584,11 @@ export class SessionsComponent implements OnInit {
         this.nextSessionDateKAP = this.formatDate(futureKAP[0]?.plannedDate ?? null);
 
         this.sessionsData = rows
-          .filter(row => row.dateType?.toUpperCase() === 'SKS')
+          .filter(row => row.dateType?.toUpperCase() === 'SKS' || row.dateType?.toUpperCase() === 'KKS')
           .map((row, idx) => ({
             id: String(idx + 1),
+            sessionType: row.dateType.toUpperCase(),
+            isMinorWork: this.sessionIsMinorWork(row),
             reportType: this.SESSION_TYPE_TO_UI[row.reportType] ?? this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
             sessionName: 'Sitzung ' + row.sksNo,
             sessionDate: row.plannedDate?.toString() ?? '',
@@ -628,6 +640,18 @@ export class SessionsComponent implements OnInit {
               isDistributionList: user.isDistributionList === true
             }));
 
+            const basePeopleMinorWork: SessionChild[] = (users ?? []).map((user) => ({
+              id: user.mailAddress,
+              name: `${user.firstName} ${user.lastName}`,
+              isRoadworkProject: false,
+              department: user.organisationalUnit?.abbreviation ?? '',
+              workArea: user.workArea ?? '',
+              mailAddress: user.mailAddress ?? '',
+              isPresent: user.isParticipantListMinorWork === true,
+              shouldBePresent: user.isParticipantListMinorWork === true,
+              isDistributionList: user.isDistributionListMinorWork === true
+            }));
+
             const matchedActivityIds = new Set<string>();
 
             const enriched = sessions.map(s => {
@@ -664,8 +688,11 @@ export class SessionsComponent implements OnInit {
                 } as any;
               });
 
+              // Switch to the correct default people list depending if SKS or KKS (Kleinmassnahme)
+              let basePeopleForSession = s.dateType === "SKS" ? basePeople : basePeopleMinorWork;
+
               const uniq = new Map<string, SessionChild>();
-              for (const p of basePeople) {
+              for (const p of basePeopleForSession) {
                 const k = this.normalizeEmail(p.mailAddress ?? p.id);
                 if (!uniq.has(k)) uniq.set(k, p);
               }
@@ -692,6 +719,8 @@ export class SessionsComponent implements OnInit {
               a => a?.properties?.uuid && !matchedActivityIds.has(a.properties.uuid)
             );
 
+            // Add empty session at the end with the remaining activities
+            // Currently all activities (isMinorWork (KKS) and not isMinorWork (SKS)) people for SKS only, split? 
             if (unmatchedActs.length > 0) {
               const unknownProjects: SessionChild[] = unmatchedActs.map(act => {
                 const { type, section, name } = act.properties;
@@ -718,6 +747,7 @@ export class SessionsComponent implements OnInit {
 
               const unknownSession: Session = {
                 id: null as any,
+                isMinorWork: false,
                 reportType: '-',
                 sessionName: 'Sitzung Unbekannt',
                 prevSessionDate: '',
@@ -902,9 +932,11 @@ export class SessionsComponent implements OnInit {
     this.isDataLoading = true;
 
     try {
-      // TODO: switch between sks and kks (Kleinmassnahmen)
-      await this.downloadWord(children, reportType, session);
-      //await this.downloadMinorWorkWord(children, reportType, session);
+      if (session?.isMinorWork === true) {
+        await this.downloadMinorWorkWord(children, reportType, session);
+      } else {
+        await this.downloadWord(children, reportType, session);
+      }
     } catch (error) {
       this.snckBar.open('Fehler beim Generieren des Berichts.', '', { duration: 4000 });
       console.log(error);
@@ -998,6 +1030,7 @@ export class SessionsComponent implements OnInit {
     });
 
     this.isDataLoading = true;
+
     this.sessionService.updateSessionUsers(session.sksNo, presentCsv, distributionCsv).pipe(
       finalize(() => this.isDataLoading = false)
     )
@@ -1017,25 +1050,46 @@ export class SessionsComponent implements OnInit {
       });
   }
 
-  openNewSessionDialog(): void {
+  openNewSKSSessionDialog(): void {
     const ref = this.dialog.open(NewSessionDialogComponent, {
       width: '640px',
-      data: { sessions: this.sessionsData }
+      data: { sessions: this.sessionsData.filter(s => !s.isMinorWork) }
     });
 
     ref.afterClosed().subscribe(payload => {
       if (!payload) return;
 
-      const newSksNo = payload.sksNo;
-      const defaultPlannedDate = this.getDefaultPlannedDate();
-      const defaultPlannedDateForBackend = this.getDefaultPlannedDateForBackend();
+      const defaultPlannedDate = this.getDefaultPlannedSksDate();
+      const defaultPlannedDateForBackend = this.formatDate(defaultPlannedDate);
 
-      this.isDataLoading = true;
+      this.createNewSession(false, payload.sksNo, defaultPlannedDate, defaultPlannedDateForBackend);
+    });
+  }
 
-      this.sessionService.createSession({
-        sksNo: newSksNo,
-        plannedDateForBackend: defaultPlannedDateForBackend
-      })
+  createNewKKSSession(): void {
+    const ref = this.dialog.open(NewSessionDialogComponent, {
+      width: '640px',
+      data: { sessions: this.sessionsData.filter(s => s.isMinorWork), defaultNumber: 202701 }
+    });
+
+    ref.afterClosed().subscribe(payload => {
+      if (!payload) return;
+
+      const defaultPlannedDate = this.getDefaultPlannedSksDate();
+      const defaultPlannedDateForBackend = this.formatDate(defaultPlannedDate);
+
+      this.createNewSession(true, payload.sksNo, defaultPlannedDate, defaultPlannedDateForBackend);
+    });
+  }
+
+  private createNewSession(isMinorWork: boolean, newSksNo: number, defaultPlannedDate: Date, defaultPlannedDateForBackend: string): void {
+    this.isDataLoading = true;
+
+    this.sessionService.createSession({
+      sksNo: newSksNo,
+      plannedDateForBackend: defaultPlannedDateForBackend,
+      dateType: isMinorWork ? 'KKS' : 'SKS'
+    })
       .pipe(finalize(() => this.isDataLoading = false))
       .subscribe({
         next: (created) => {
@@ -1043,6 +1097,8 @@ export class SessionsComponent implements OnInit {
           const sessionRow = {
             id: this.sessionsData.length + 1,
             sksNo: newSksNo,
+            sessionType: created.dateType,
+            isMinorWork: this.sessionIsMinorWork(created),
             reportType: 'PRE_PROTOCOL',
             sessionName: 'Sitzung ' + newSksNo,
             sessionDate: created.plannedDate?.toString() ?? defaultPlannedDate.toString(),
@@ -1096,8 +1152,8 @@ export class SessionsComponent implements OnInit {
           );
         }
       });
-    });
   }
+
   /** Normalize to YYYY-MM-DD (null → null) */
   private toIsoDateOnly(d: any): string | null {
     if (!d) return null;
@@ -1115,7 +1171,7 @@ export class SessionsComponent implements OnInit {
     if (!current) return null;
 
     const withDate = (this.sessionsData ?? [])
-      .filter(s => !!this.toIsoDateOnly(s.plannedDate))
+      .filter(s => !!this.toIsoDateOnly(s.plannedDate) && s.isMinorWork === current.isMinorWork)
       .slice();
 
     withDate.sort((a, b) => {
@@ -1137,7 +1193,7 @@ export class SessionsComponent implements OnInit {
     if (!current) return null;
 
     const withDate = (this.sessionsData ?? [])
-      .filter(s => !!this.toIsoDateOnly(s.plannedDate))
+      .filter(s => !!this.toIsoDateOnly(s.plannedDate) && s.isMinorWork === current.isMinorWork)
       .slice();
 
     withDate.sort((a, b) => {
@@ -1612,14 +1668,50 @@ export class SessionsComponent implements OnInit {
     }
   }
 
-  private getDefaultPlannedDate(daysToAdd = 30): Date {
+  private getDefaultPlannedSksDate(daysToAdd = 30): Date {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     d.setDate(d.getDate() + daysToAdd);
     return d;
   }
 
-  private getDefaultPlannedDateForBackend(daysToAdd = 30): string {
-    return this.formatDate(this.getDefaultPlannedDate(daysToAdd));
+  /*private getDefaultPlannedKksDate(daysToAdd = 30): Date {
+    // get the last planned KKS (two KKS withun one month are not allowed because of the sksNo = YYYYMM)
+    const d = this.sessionsData.reduce(
+      (max, item) => !max || item.plannedDate > max ? item.plannedDate : max, new Date()
+    );
+    
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + daysToAdd);
+    return d;
+  }
+
+  private getKKSNo(plannedDate: Date): number {
+    return plannedDate.getFullYear() * 100 + (plannedDate.getMonth() + 1);
+  }
+
+  plannedDateChanged(plannedDate: Date): void {
+    const focusedCell = this.sessionsGrid?.api?.getFocusedCell();
+
+    if (!focusedCell || !plannedDate) {
+      return;
+    }
+
+    const row = this.sessionsGrid.api.getDisplayedRowAtIndex(
+      focusedCell.rowIndex
+    );
+
+    if (!row?.data || !row.data.isMinorWork) {
+      return;
+    }
+
+    row.setDataValue(
+      'sksNo',
+      this.getKKSNo(plannedDate)
+    );
+  }*/
+
+  private sessionIsMinorWork(session: SessionData | SessionDto): boolean {
+    return session.dateType.toUpperCase() === 'KKS'
   }
 }
