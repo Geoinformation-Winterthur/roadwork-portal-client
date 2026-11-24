@@ -649,7 +649,8 @@
                             <div style="margin: 1em;">                                
                                 <div fxLayout="row wrap">
                                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
-                                        fxFlex="25" fxFlex.md="25" fxFlex.sm="50" fxLayout="column">
+                                        fxFlex="25" fxFlex.md="25" fxFlex.sm="50" fxLayout="column"
+                                        *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">
                                         <mat-card-header>
                                             <mat-card-title>Sitzungen, berechnet</mat-card-title>
                                         </mat-card-header>
@@ -679,11 +680,29 @@
                                     <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100"
                                         fxFlex="25" fxFlex.md="25" fxFlex.sm="50" fxLayout="column">
                                         <mat-card-header>
-                                            <mat-card-title title style="white-space: nowrap;">Sitzungen, terminiert ({{configurationData?.sksNos?.length }})</mat-card-title>
+                                            <mat-card-title title style="white-space: nowrap;" *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">Sitzungen, terminiert ({{configurationData?.sksNos?.length }})</mat-card-title>
+                                            <mat-card-title title style="white-space: nowrap;" *ngIf="roadWorkActivityFeature.properties.isMinorWork === true">Sitzungen, terminiert ({{configurationData?.kksNos?.length }})</mat-card-title>
                                         </mat-card-header>
                                         <mat-card-content>
                                             <div style="display:flex;flex-direction:column;">
-                                                <form>
+                                                <form *ngIf="roadWorkActivityFeature.properties.isMinorWork === true">
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-label>Kleinmassnahme für Sitzung vorgesehen</mat-label>
+                                                        <mat-select
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateSksPlanned"
+                                                            (selectionChange)="onSksPlannedChanged($event.value)"
+                                                            [formControl]="dateSksPlannedControl"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">                                                            
+                                                            <mat-option
+                                                                *ngFor="let plannedDateKks of configurationData.plannedDatesKks; let i = index"
+                                                                [value]="plannedDateKks">
+                                                                {{ plannedDateKks | date:'dd.MM.yyyy' }}
+                                                                ({{ configurationData.kksNos?.[i] || '—' }})
+                                                            </mat-option>                                                      
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </form>
+                                                <form *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">
                                                     <mat-form-field appearance="fill">
                                                         <mat-label>SKS (Strategische Koord.)</mat-label>
                                                         <mat-select
@@ -700,7 +719,7 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </form>
-                                                <form>
+                                                <form *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">
                                                     <mat-form-field appearance="fill">
                                                         <mat-label>OKS (Operative Koord.)</mat-label>
                                                         <mat-select
@@ -725,7 +744,22 @@
                                         </mat-card-header>
                                         <mat-card-content>
                                             <div style="display:flex;flex-direction:column;">
-                                                <form>
+                                                <form *ngIf="roadWorkActivityFeature.properties.isMinorWork === true">
+                                                    <mat-form-field appearance="fill">
+                                                        <mat-label>Beschluss genehmigt</mat-label>
+                                                        <mat-select
+                                                            [(ngModel)]="roadWorkActivityFeature.properties.dateSksReal"
+                                                            [formControl]="dateSksControl"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                            <mat-option
+                                                                *ngFor="let plannedDateKks of configurationData.plannedDatesKks"
+                                                                value="{{plannedDateKks}}">{{plannedDateKks |
+                                                                date:'dd.MM.yyyy'}}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </form>
+                                                <form *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">
                                                     <mat-form-field appearance="fill">
                                                         <mat-label>SKS (Strategische Koord.)</mat-label>
                                                         <mat-select
@@ -740,7 +774,7 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </form>
-                                                <form>
+                                                <form *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">
                                                     <mat-form-field appearance="fill">
                                                         <mat-label>KAP (Koordinationsausschuss Proj.)</mat-label>
                                                         <mat-select
@@ -755,6 +789,27 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </form>                                                
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                    <mat-card style="padding:40px;box-shadow: none;webkit-box-shadow: none;" fxFlex.xs="100" fxFlex="25" fxFlex.md="25"
+                                        fxFlex.sm="50" fxLayout="column"
+                                        *ngIf="roadWorkActivityFeature.properties.isMinorWork === true">
+                                        <mat-card-header>
+                                            <mat-card-title>Genehmigungen</mat-card-title>
+                                        </mat-card-header>
+                                        <mat-card-content>
+                                            <div style="display:flex;flex-direction:column;">
+                                                <form>
+                                                    <mat-form-field style="margin:10px;">
+                                                        <mat-label>Leitung APK, genehmigt</mat-label>
+                                                        <input matInput name="dateGlTbaReal" [(ngModel)]="roadWorkActivityFeature.properties.dateGlTbaReal"
+                                                            [matDatepicker]="dateGlTbaReal" (dateChange)="normalizeDate($event)"
+                                                            [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
+                                                        <mat-datepicker #dateGlTbaReal></mat-datepicker>
+                                                        <mat-datepicker-toggle matSuffix [for]="dateGlTbaReal"></mat-datepicker-toggle>
+                                                    </mat-form-field>
+                                                </form>
                                             </div>
                                         </mat-card-content>
                                     </mat-card>

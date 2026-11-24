@@ -1291,14 +1291,6 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
 
   }
 
-  getSksNo(): number {
-    const selectedDate = this.roadWorkActivityFeature?.properties.dateSksPlanned;
-    const idx = this.configurationData.plannedDatesSks
-                  .findIndex(d => d === selectedDate);
-
-    return this.configurationData.sksNos?.[idx] ?? -1;
-  }
-
   /**
    * Full UI refresh convenience:
    * - Re-runs init of child reporting components and this component.
@@ -1315,15 +1307,37 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     //this.editActivityMap?.updateRoadworkActivityFeature(this.roadWorkActivityFeature); // missing, todo: cleanup
   }
 
-  onSksPlannedChanged(selectedDate: Date) {
-    const index = this.configurationData.plannedDatesSks.findIndex(
+  getSksNo(selectedDate: Date): number {
+    const index = this.configurationData.plannedDatesSks?.findIndex(
       d => new Date(d).getTime() === new Date(selectedDate).getTime()
-    );
+    ) ?? 0;
 
-    if (index >= 0 && this.roadWorkActivityFeature?.properties) {
-      this.roadWorkActivityFeature.properties.sksNo = this.configurationData.sksNos[index];
-    } else if (this.roadWorkActivityFeature?.properties) {
-      this.roadWorkActivityFeature.properties.sksNo = -1;
+    if (index >= 0) {
+      return this.configurationData.sksNos[index];
+    }
+
+    return -1;
+  }
+
+  getKksNo(selectedDate: Date): number {
+    const index = this.configurationData.plannedDatesKks?.findIndex(
+      d => new Date(d).getTime() === new Date(selectedDate).getTime()
+    ) ?? 0;
+
+    if (index >= 0) {
+      return this.configurationData.kksNos[index];
+    }
+
+    return -1;
+  }
+
+  onSksPlannedChanged(selectedDate: Date) {
+    if (this.roadWorkActivityFeature?.properties) {
+      if (this.roadWorkActivityFeature.properties.isMinorWork === true) {
+        this.roadWorkActivityFeature.properties.sksNo = this.getKksNo(selectedDate);
+      } else {
+        this.roadWorkActivityFeature.properties.sksNo = this.getSksNo(selectedDate);
+      }
     }
   }
 
