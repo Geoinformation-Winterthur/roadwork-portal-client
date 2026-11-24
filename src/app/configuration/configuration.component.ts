@@ -127,13 +127,17 @@ export class ConfigurationComponent implements OnInit {
    * Only truthy control values are included.
    */
   private updateCurrentDates(){
-    this.configurationData.plannedDatesSks = [];
+    // Set null to not delete any existing entry ([] deletes any with planneddate >= NOW)
+    this.configurationData.plannedDatesSks = null;
+    this.configurationData.plannedDatesKks = null;
+    
+    /*this.configurationData.plannedDatesSks = [];
     if(this.dateSks1Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks1Control.value));
     if(this.dateSks2Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks2Control.value));
     if(this.dateSks3Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks3Control.value));
     if(this.dateSks4Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks4Control.value));
     if(this.dateSks5Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks5Control.value));
-    if(this.dateSks6Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks6Control.value));
+    if(this.dateSks6Control.value) this.configurationData.plannedDatesSks.push(new Date(this.dateSks6Control.value));*/
 
     this.configurationData.plannedDatesKap = [];
     if(this.dateKap1Control.value) this.configurationData.plannedDatesKap.push(new Date(this.dateKap1Control.value));
