@@ -109,6 +109,8 @@ const TITLE_PROTOCOL_NAME_MINOR_WORKS = "Sitzung Kleinmassnahmen";
   styleUrls: ['./sessions.component.css'],
 })
 export class SessionsComponent implements OnInit {
+  public enableMinorWorks: boolean =  (environment as { enableMinorWorks?: boolean }).enableMinorWorks === true; // TODO remove when minorWorks is done.
+  
   /** Busy flag toggling spinners/UX blocking. */
   isDataLoading = false;
 
@@ -1099,7 +1101,7 @@ export class SessionsComponent implements OnInit {
             sksNo: newSksNo,
             sessionType: created.dateType,
             isMinorWork: this.sessionIsMinorWork(created),
-            reportType: 'PRE_PROTOCOL',
+            reportType: this.SESSION_TYPE_TO_UI["PRE_PROTOCOL"],
             sessionName: 'Sitzung ' + newSksNo,
             sessionDate: created.plannedDate?.toString() ?? defaultPlannedDate.toString(),
             plannedDate: created.plannedDate ?? defaultPlannedDate,
