@@ -586,7 +586,7 @@ export class SessionsComponent implements OnInit {
         this.nextSessionDateKAP = this.formatDate(futureKAP[0]?.plannedDate ?? null);
 
         this.sessionsData = rows
-          .filter(row => row.dateType?.toUpperCase() === 'SKS' || row.dateType?.toUpperCase() === 'KKS')
+          .filter(row => row.dateType?.toUpperCase() === 'SKS' || row.dateType?.toUpperCase() === 'KMS')
           .map((row, idx) => ({
             id: String(idx + 1),
             sessionType: row.dateType.toUpperCase(),
@@ -690,7 +690,7 @@ export class SessionsComponent implements OnInit {
                 } as any;
               });
 
-              // Switch to the correct default people list depending if SKS or KKS (Kleinmassnahme)
+              // Switch to the correct default people list depending if SKS or KMS (Kleinmassnahme)
               let basePeopleForSession = s.dateType === "SKS" ? basePeople : basePeopleMinorWork;
 
               const uniq = new Map<string, SessionChild>();
@@ -722,7 +722,7 @@ export class SessionsComponent implements OnInit {
             );
 
             // Add empty session at the end with the remaining activities
-            // Currently all activities (isMinorWork (KKS) and not isMinorWork (SKS)) people for SKS only, split? 
+            // Currently all activities (isMinorWork (KMS) and not isMinorWork (SKS)) people for SKS only, split? 
             if (unmatchedActs.length > 0) {
               const unknownProjects: SessionChild[] = unmatchedActs.map(act => {
                 const { type, section, name } = act.properties;
@@ -1068,7 +1068,7 @@ export class SessionsComponent implements OnInit {
     });
   }
 
-  createNewKKSSession(): void {
+  createNewKMSSession(): void {
     const ref = this.dialog.open(NewSessionDialogComponent, {
       width: '640px',
       data: { sessions: this.sessionsData.filter(s => s.isMinorWork), defaultNumber: 202701 }
@@ -1090,7 +1090,7 @@ export class SessionsComponent implements OnInit {
     this.sessionService.createSession({
       sksNo: newSksNo,
       plannedDateForBackend: defaultPlannedDateForBackend,
-      dateType: isMinorWork ? 'KKS' : 'SKS'
+      dateType: isMinorWork ? 'KMS' : 'SKS'
     })
       .pipe(finalize(() => this.isDataLoading = false))
       .subscribe({
@@ -1677,8 +1677,8 @@ export class SessionsComponent implements OnInit {
     return d;
   }
 
-  /*private getDefaultPlannedKksDate(daysToAdd = 30): Date {
-    // get the last planned KKS (two KKS withun one month are not allowed because of the sksNo = YYYYMM)
+  /*private getDefaultPlannedKmsDate(daysToAdd = 30): Date {
+    // get the last planned KMS (two KMS withun one month are not allowed because of the sksNo = YYYYMM)
     const d = this.sessionsData.reduce(
       (max, item) => !max || item.plannedDate > max ? item.plannedDate : max, new Date()
     );
@@ -1688,7 +1688,7 @@ export class SessionsComponent implements OnInit {
     return d;
   }
 
-  private getKKSNo(plannedDate: Date): number {
+  private getKMSNo(plannedDate: Date): number {
     return plannedDate.getFullYear() * 100 + (plannedDate.getMonth() + 1);
   }
 
@@ -1709,11 +1709,11 @@ export class SessionsComponent implements OnInit {
 
     row.setDataValue(
       'sksNo',
-      this.getKKSNo(plannedDate)
+      this.getKMSNo(plannedDate)
     );
   }*/
 
   private sessionIsMinorWork(session: SessionData | SessionDto): boolean {
-    return session.dateType.toUpperCase() === 'KKS'
+    return session.dateType.toUpperCase() === 'KMS'
   }
 }

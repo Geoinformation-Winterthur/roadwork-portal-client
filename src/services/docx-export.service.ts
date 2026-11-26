@@ -1741,7 +1741,7 @@ export class DocxWordService {
             organisation: organisationalUnit?.abbreviation ?? '-',
             plannedTasks: item?.properties?.plannedTasks ?? '-',
             comment: item?.properties?.comment ?? '-',
-            dateKksReal: this.formatDate(item?.properties?.dateSksReal),
+            dateKmsReal: this.formatDate(item?.properties?.dateSksReal),
             phase: this.statusHelper.getPhaseNumberFromKey(item?.properties?.status) ?? '-',
           };
         })
@@ -1765,7 +1765,7 @@ export class DocxWordService {
       organisation: string;
       plannedTasks: string;
       comment: string;
-      dateKksReal: string;
+      dateKmsReal: string;
       phase: string;
     }>    
   ): Table {
@@ -1822,7 +1822,7 @@ export class DocxWordService {
           }),
           new TableCell({
             verticalAlign: 'top',
-            children: [this.pSmall(r.dateKksReal)],
+            children: [this.pSmall(r.dateKmsReal)],
           }),
           new TableCell({
             verticalAlign: 'top',
@@ -1898,7 +1898,7 @@ export class DocxWordService {
       | 'organisation'
       | 'planned_tasks'
       | 'comment'
-      | 'date_kks_real'
+      | 'date_kms_real'
       | 'phase';
 
     const baseCols: ColKey[] = [
@@ -1906,7 +1906,7 @@ export class DocxWordService {
       'organisation',
       'planned_tasks',
       'comment',
-      'date_kks_real',
+      'date_kms_real',
       'phase',
     ];
 
@@ -1924,7 +1924,7 @@ export class DocxWordService {
         case 'organisation': return 'Zuständige OE';
         case 'planned_tasks': return 'Tätigkeit/Arbeit';
         case 'comment': return 'Beschrieb Bauvorhaben';
-        case 'date_kks_real': return 'Beschluss von Sitzung';
+        case 'date_kms_real': return 'Beschluss von Sitzung';
         case 'phase': return 'Phase/Status';
         default: return '';
       }
@@ -1944,7 +1944,7 @@ export class DocxWordService {
       organisation: 14,
       planned_tasks: 24,
       comment: 24,
-      date_kks_real: 14,
+      date_kms_real: 14,
       phase: 10,
     };
 
@@ -2022,12 +2022,12 @@ export class DocxWordService {
       }));
 
       // Beschluss von Sitzung
-      const dateKksReal = fmtDate(ci?.dateSksReal);
+      const dateKmsReal = fmtDate(ci?.dateSksReal);
       cells.push(new TableCell({
         verticalAlign: VerticalAlign.CENTER,
-        width: { size: widths.date_kks_real, type: WidthType.PERCENTAGE },
+        width: { size: widths.date_kms_real, type: WidthType.PERCENTAGE },
         margins: CELL_MARG,
-        children: [pTiny(dateKksReal === '-' ? '-' : dateKksReal, false, true)],
+        children: [pTiny(dateKmsReal === '-' ? '-' : dateKmsReal, false, true)],
       }));
 
       // Phase/Status

@@ -681,7 +681,7 @@
                                         fxFlex="25" fxFlex.md="25" fxFlex.sm="50" fxLayout="column">
                                         <mat-card-header>
                                             <mat-card-title title style="white-space: nowrap;" *ngIf="roadWorkActivityFeature.properties.isMinorWork !== true">Sitzungen, terminiert ({{configurationData?.sksNos?.length }})</mat-card-title>
-                                            <mat-card-title title style="white-space: nowrap;" *ngIf="roadWorkActivityFeature.properties.isMinorWork === true">Sitzungen, terminiert ({{configurationData?.kksNos?.length }})</mat-card-title>
+                                            <mat-card-title title style="white-space: nowrap;" *ngIf="roadWorkActivityFeature.properties.isMinorWork === true">Sitzungen, terminiert ({{configurationData?.kmsNos?.length }})</mat-card-title>
                                         </mat-card-header>
                                         <mat-card-content>
                                             <div style="display:flex;flex-direction:column;">
@@ -694,10 +694,10 @@
                                                             [formControl]="dateSksPlannedControl"
                                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">                                                            
                                                             <mat-option
-                                                                *ngFor="let plannedDateKks of configurationData.plannedDatesKks; let i = index"
-                                                                [value]="plannedDateKks">
-                                                                {{ plannedDateKks | date:'dd.MM.yyyy' }}
-                                                                ({{ configurationData.kksNos?.[i] || '—' }})
+                                                                *ngFor="let plannedDateKms of configurationData.plannedDatesKms; let i = index"
+                                                                [value]="plannedDateKms">
+                                                                {{ plannedDateKms | date:'dd.MM.yyyy' }}
+                                                                ({{ configurationData.kmsNos?.[i] || '—' }})
                                                             </mat-option>                                                      
                                                         </mat-select>
                                                     </mat-form-field>
@@ -752,8 +752,8 @@
                                                             [formControl]="dateSksControl"
                                                             [disabled]="!roadWorkActivityFeature.properties.isEditingAllowed">
                                                             <mat-option
-                                                                *ngFor="let plannedDateKks of configurationData.plannedDatesKks"
-                                                                value="{{plannedDateKks}}">{{plannedDateKks |
+                                                                *ngFor="let plannedDateKms of configurationData.plannedDatesKms"
+                                                                value="{{plannedDateKms}}">{{plannedDateKms |
                                                                 date:'dd.MM.yyyy'}}
                                                             </mat-option>
                                                         </mat-select>

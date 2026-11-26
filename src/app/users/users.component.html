@@ -92,23 +92,23 @@
       </ng-container>
 
       <ng-container matColumnDef="isParticipantListMinorWork">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Teilnehmerliste KKS </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Teilnehmerliste KMS </th>
         <td mat-cell *matCellDef="let user">
           <mat-checkbox
             [checked]="user.isParticipantListMinorWork"
             disabled 
-            aria-label="Teilnehmerliste KKS">
+            aria-label="Teilnehmerliste KMS">
           </mat-checkbox>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="isDistributionListMinorWork">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Verteiler KKS </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Verteiler KMS </th>
         <td mat-cell *matCellDef="let user">
           <mat-checkbox
             [checked]="user.isDistributionListMinorWork"
             disabled 
-            aria-label="Verteiler KKS">
+            aria-label="Verteiler KMS">
           </mat-checkbox>
         </td>
       </ng-container>

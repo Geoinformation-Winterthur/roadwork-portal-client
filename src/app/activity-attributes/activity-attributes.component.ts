@@ -1319,13 +1319,13 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
     return -1;
   }
 
-  getKksNo(selectedDate: Date): number {
-    const index = this.configurationData.plannedDatesKks?.findIndex(
+  getKmsNo(selectedDate: Date): number {
+    const index = this.configurationData.plannedDatesKms?.findIndex(
       d => new Date(d).getTime() === new Date(selectedDate).getTime()
     ) ?? 0;
 
     if (index >= 0) {
-      return this.configurationData.kksNos[index];
+      return this.configurationData.kmsNos[index];
     }
 
     return -1;
@@ -1334,7 +1334,7 @@ export class ActivityAttributesComponent implements OnInit, AfterViewInit, OnDes
   onSksPlannedChanged(selectedDate: Date) {
     if (this.roadWorkActivityFeature?.properties) {
       if (this.roadWorkActivityFeature.properties.isMinorWork === true) {
-        this.roadWorkActivityFeature.properties.sksNo = this.getKksNo(selectedDate);
+        this.roadWorkActivityFeature.properties.sksNo = this.getKmsNo(selectedDate);
       } else {
         this.roadWorkActivityFeature.properties.sksNo = this.getSksNo(selectedDate);
       }

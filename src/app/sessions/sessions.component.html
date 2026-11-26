@@ -37,10 +37,10 @@
 
       <button mat-button
             *ngIf="isRoleAdministrator && enableMinorWorks"
-            (click)="createNewKKSSession()"
+            (click)="createNewKMSSession()"
             [disabled]="isDataLoading"
             style="margin: 1em;background-color: rgb(236,236,234);">
-            <mat-icon aria-label="Icon zeigt Plus">add</mat-icon>&nbsp;NEUE KKS SITZUNG
+            <mat-icon aria-label="Icon zeigt Plus">add</mat-icon>&nbsp;NEUE KMS SITZUNG
       </button>
 
       <button mat-button (click)="saveDetails(); savePeopleAsCsv();"
