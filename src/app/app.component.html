@@ -93,7 +93,7 @@
                         <mat-icon aria-label="Analyzes">analytics</mat-icon>&nbsp;<span i18n>Analyzen</span>
                     </a>
                     <a mat-list-item routerLink='/provis' (click)="closeSideNavOnMobile()"
-                       *ngIf="userService.hasUserAccess('see_activities_list')" routerLinkActive="chosen-menu">
+                       *ngIf="userService.hasUserAccess('app_configuration')" routerLinkActive="chosen-menu">
                         <mat-icon aria-label="PROVIS">account_tree</mat-icon>&nbsp;<span>PROVIS</span>
                     </a>
                 </div>
